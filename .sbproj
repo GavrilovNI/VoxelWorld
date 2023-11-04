@@ -1,0 +1,188 @@
+{
+  "Title": "Sandcube",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "sandcube",
+  "Tags": "game multiplayer sandbox",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "Resources": null,
+  "MenuResources": null,
+  "HasCode": true,
+  "CodePath": "/code/",
+  "PackageReferences": [],
+  "EditorReferences": null,
+  "Metadata": {
+    "MaxPlayers": 16,
+    "MinPlayers": 1,
+    "GameNetworkType": "Multiplayer",
+    "MapSelect": "Unrestricted",
+    "MapList": [
+      "facepunch.square"
+    ],
+    "RankType": "None",
+    "PerMapRanking": false,
+    "LeaderboardType": "None",
+    "GameCategory": "TechDemos",
+    "ProjectTemplate": null,
+    "CsProjName": "",
+    "HttpAllowList": null,
+    "SavedGames": true,
+    "MapDependentSaves": false,
+    "SaveFormatVersion": 1001,
+    "TickRate": 50,
+    "Compiler": {
+      "RootNamespace": "Sandcube",
+      "DefineConstants": "SANDBOX;ADDON;DEBUG",
+      "NoWarn": "1701;1702;1591;",
+      "WarningsAsErrors": "",
+      "Nullables": true,
+      "AssemblyReferences": [],
+      "IgnoreFolders": [],
+      "DistinctAssemblyReferences": []
+    },
+    "ControlModes": {
+      "Keyboard": true
+    },
+    "InputSettings": {
+      "Actions": [
+        {
+          "Name": "Forward",
+          "KeyboardCode": "W",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Backward",
+          "KeyboardCode": "S",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Left",
+          "KeyboardCode": "A",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Right",
+          "KeyboardCode": "D",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Jump",
+          "KeyboardCode": "space",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Run",
+          "KeyboardCode": "CTRL",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Duck",
+          "KeyboardCode": "SHIFT",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "attack1",
+          "KeyboardCode": "mouse1",
+          "GroupName": "Actions"
+        },
+        {
+          "Name": "attack2",
+          "KeyboardCode": "mouse2",
+          "GroupName": "Actions"
+        },
+        {
+          "Name": "Slot1",
+          "KeyboardCode": "1",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot2",
+          "KeyboardCode": "2",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot3",
+          "KeyboardCode": "3",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot4",
+          "KeyboardCode": "4",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot5",
+          "KeyboardCode": "5",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot6",
+          "KeyboardCode": "6",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot7",
+          "KeyboardCode": "7",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot8",
+          "KeyboardCode": "8",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot9",
+          "KeyboardCode": "9",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Slot0",
+          "KeyboardCode": "0",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "SlotPrev",
+          "KeyboardCode": "mouse4",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "SlotNext",
+          "KeyboardCode": "mouse5",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "View",
+          "KeyboardCode": "F5",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Voice",
+          "KeyboardCode": "v",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Drop",
+          "KeyboardCode": "q",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Score",
+          "KeyboardCode": "tab",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Inventory",
+          "KeyboardCode": "e",
+          "GroupName": "Inventory"
+        },
+        {
+          "Name": "Chat",
+          "KeyboardCode": "t",
+          "GroupName": "Other"
+        }
+      ]
+    }
+  }
+}
