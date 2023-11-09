@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace Sandcube.Sandcube;
+namespace Sandcube.Editor;
 
 [CustomEditor(typeof(Axis))]
 [CustomEditor(typeof(AxisDirection))]

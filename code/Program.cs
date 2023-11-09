@@ -13,7 +13,7 @@ public static class Program
 		//
 
 		GameManager.ActiveScene = new Scene();
-		GameManager.ActiveScene.LoadFromFile( "scenes/sandcube.scene" );
+		GameManager.ActiveScene.LoadFromFile( "scenes/main.scene" );
 
 		GameManager.IsPlaying = true;
 	}

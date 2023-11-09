@@ -1,0 +1,70 @@
+{
+  "GameObjects": [
+    {
+      "Id": "e9aebd45-7f85-4fff-8f75-cfcb5ac9bb38",
+      "Name": "Directional Light",
+      "Enabled": true,
+      "Position": "0,0,0",
+      "Rotation": "0.4351622,0.4351622,-0.5573454,0.5573453",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Components": [
+        {
+          "__type": "DirectionalLightComponent",
+          "__enabled": true,
+          "LightColor": "0.91373,0.98039,1,1",
+          "Shadows": true,
+          "SkyColor": "0.05882,0.07451,0.08235,1"
+        }
+      ]
+    },
+    {
+      "Id": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
+      "Name": "Sandcube Game",
+      "Enabled": true,
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Components": [
+        {
+          "__type": "SandcubeGame",
+          "__enabled": true,
+          "Test": false,
+          "Test2": false,
+          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+        }
+      ]
+    },
+    {
+      "Id": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+      "Name": "World",
+      "Enabled": true,
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "world",
+      "Components": [
+        {
+          "__type": "World",
+          "__enabled": true,
+          "ChunkSize": {
+            "x": 16,
+            "y": 16,
+            "z": 16,
+            "Normal": "0.5773503,0.5773503,0.5773503",
+            "Length": 27.712812
+          },
+          "Generator": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "VoxelSize": "39.37,39.37,39.37",
+          "VoxelsMaterial": "materials/voxel_map.vmat"
+        },
+        {
+          "__type": "WorldGenerator",
+          "__enabled": true
+        }
+      ]
+    }
+  ],
+  "__references": []
+}
