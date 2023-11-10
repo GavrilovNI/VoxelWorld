@@ -87,6 +87,12 @@
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
         },
         {
+          "__type": "WorldInteractor",
+          "__enabled": true,
+          "Eye": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+          "ReachDistance": 196.84999
+        },
+        {
           "__type": "CharacterController",
           "__enabled": true,
           "Acceleration": 10,

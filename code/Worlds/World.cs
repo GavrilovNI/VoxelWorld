@@ -29,6 +29,7 @@ public class World : BaseComponent, IBlockStateAccessor
         chunkGameObject.Name = $"Chunk {position}";
         chunkGameObject.Parent = this.GameObject;
         chunkGameObject.Transform.Position = position * VoxelSize * ChunkSize;
+        chunkGameObject.Tags.Add("world");
 
         var chunk = new Chunk(position, ChunkSize, VoxelSize)
         {
@@ -52,6 +53,33 @@ public class World : BaseComponent, IBlockStateAccessor
             chunk = GenerateChunk(position);
         return chunk;
     }
+
+    public virtual Vector3Int GetBlockPosition(Vector3 position, Vector3 hitNormal)
+    {
+        hitNormal = hitNormal.Normal;
+        var result = position.Divide(VoxelSize);
+
+        foreach(var axis in Axis.All)
+        {
+            var mod = result.GetAxis(axis) % 1;
+            var hitAxis = hitNormal.GetAxis(axis);
+
+            if(hitAxis > 0)
+            {
+                if(mod.AlmostEqual(0) || mod.AlmostEqual(-1))
+                    result = result.WithAxis(axis, result.GetAxis(axis) - 1);
+            }
+            else if(mod.AlmostEqual(1))
+            {
+                result = result.WithAxis(axis, result.GetAxis(axis) + 1);
+            }
+        }
+
+        return result.Floor();
+    }
+    public virtual Vector3Int GetBlockPosition(Vector3 position) => position.Divide(VoxelSize).Floor();
+    public virtual Vector3Int GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
+    public virtual Vector3 GetBlockWorldPosition(Vector3Int position) => position * VoxelSize;
 
     public virtual Vector3Int GetChunkPosition(Vector3Int blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
     public virtual Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
