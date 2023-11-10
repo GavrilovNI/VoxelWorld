@@ -81,6 +81,12 @@
           "Target": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
         },
         {
+          "__type": "WorldAutoLoader",
+          "__enabled": true,
+          "Distance": 2,
+          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+        },
+        {
           "__type": "CharacterController",
           "__enabled": true,
           "Acceleration": 10,
