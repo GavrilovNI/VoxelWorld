@@ -64,6 +64,231 @@
           "__enabled": true
         }
       ]
+    },
+    {
+      "Id": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+      "Name": "Player",
+      "Enabled": true,
+      "Position": "0,0,2000",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Components": [
+        {
+          "__type": "CitizenAnimation",
+          "__enabled": true,
+          "Height": 1,
+          "Target": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
+        },
+        {
+          "__type": "CharacterController",
+          "__enabled": true,
+          "Acceleration": 10,
+          "GroundAngle": 45,
+          "Height": 64,
+          "IgnoreLayers": "",
+          "Radius": 16,
+          "StepHeight": 18,
+          "UnstackEnabled": false
+        },
+        {
+          "__type": "PlayerController",
+          "__enabled": true,
+          "AnimationHelper": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+          "Body": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
+          "CameraDistance": 200,
+          "Eye": "edb447df-b691-4153-8652-070d2533e7c4",
+          "FirstPerson": true,
+          "Gravity": "0,0,800"
+        }
+      ],
+      "Children": [
+        {
+          "Id": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
+          "Name": "Body",
+          "Enabled": false,
+          "Position": "0,-0.66093,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Components": [
+            {
+              "__type": "AnimatedModelComponent",
+              "__enabled": true,
+              "BodyGroups": 18446744073709551615,
+              "CreateBoneObjects": false,
+              "MaterialGroup": null,
+              "MaterialOverride": null,
+              "Model": "models/citizen/citizen.vmdl",
+              "ShouldCastShadows": true,
+              "Tint": "1,1,1,1"
+            }
+          ],
+          "Children": [
+            {
+              "Id": "975e3006-e7c3-46a5-9f30-c31a196c89f9",
+              "Name": "Name Tag UI",
+              "Enabled": true,
+              "Position": "-0.000001814945,0.1895752,80.7357",
+              "Rotation": "-0.00000005960058,0.000000000000005518709,-0.9999317,0.01167414",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Components": [
+                {
+                  "__type": "WorldPanel",
+                  "__enabled": true,
+                  "HorizontalAlign": "Center",
+                  "LookAtCamera": true,
+                  "PanelSize": "1024,256",
+                  "RenderScale": 1,
+                  "VerticalAlign": "Center"
+                },
+                {
+                  "__type": "NameTagPanel",
+                  "__enabled": true,
+                  "Name": "Prickly Pete"
+                }
+              ]
+            },
+            {
+              "Id": "258a1012-ff9e-49b5-bf1b-887d483bb0bf",
+              "Name": "Hair",
+              "Enabled": true,
+              "Position": "0,0.66093,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Components": [
+                {
+                  "__type": "AnimatedModelComponent",
+                  "__enabled": true,
+                  "BodyGroups": 18446744073709551615,
+                  "CreateBoneObjects": false,
+                  "MaterialGroup": null,
+                  "MaterialOverride": null,
+                  "Model": "models/citizen_clothes/hair/hair_fade/models/hair_fade.vmdl",
+                  "ShouldCastShadows": true,
+                  "Tint": "1,1,1,1"
+                }
+              ]
+            },
+            {
+              "Id": "f14d65a1-eea4-4fe5-89d7-a550ec6b8f11",
+              "Name": "Hair",
+              "Enabled": true,
+              "Position": "0,0.66093,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Components": [
+                {
+                  "__type": "AnimatedModelComponent",
+                  "__enabled": true,
+                  "BodyGroups": 18446744073709551615,
+                  "CreateBoneObjects": false,
+                  "MaterialGroup": null,
+                  "MaterialOverride": null,
+                  "Model": "models/citizen_clothes/shoes/boots/models/army_boots.vmdl",
+                  "ShouldCastShadows": true,
+                  "Tint": "1,1,1,1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Id": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+          "Name": "Camera",
+          "Enabled": true,
+          "Position": "-200,0,64",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Components": [
+            {
+              "__type": "CameraComponent",
+              "__enabled": true,
+              "BackgroundColor": "0.25292,0.26086,0.29703,1",
+              "ClearFlags": "Color, Depth, Stencil",
+              "FieldOfView": 80,
+              "Orthographic": false,
+              "OrthographicHeight": 1204,
+              "TargetEye": "None",
+              "ZFar": 10000,
+              "ZNear": 1
+            },
+            {
+              "__type": "FilmGrain",
+              "__enabled": true,
+              "Intensity": 0.03,
+              "Response": 1
+            },
+            {
+              "__type": "Vignette",
+              "__enabled": true,
+              "Center": "0.5,0.5",
+              "Color": "0,0,0,0.38",
+              "Intensity": 1,
+              "Roundness": 0.5,
+              "Smoothness": 1
+            },
+            {
+              "__type": "ChromaticAberration",
+              "__enabled": true,
+              "Offset": "4,6,4.049999",
+              "Scale": 0.2
+            },
+            {
+              "__type": "Sharpen",
+              "__enabled": true,
+              "Scale": 1
+            },
+            {
+              "__type": "Highlight",
+              "__enabled": true
+            },
+            {
+              "__type": "Bloom",
+              "__enabled": true,
+              "BloomColor": {
+                "color": [
+                  {
+                    "c": "1,1,1,1"
+                  },
+                  {
+                    "t": 1,
+                    "c": "0.5,0.5,0.5,1"
+                  }
+                ],
+                "alpha": []
+              },
+              "BloomCurve": {
+                "rangey": "0,106.45",
+                "frames": [
+                  {},
+                  {
+                    "x": 1,
+                    "y": 1
+                  }
+                ]
+              },
+              "Mode": "Screen",
+              "Strength": 1,
+              "Threshold": 0.3,
+              "ThresholdWidth": 2
+            }
+          ]
+        },
+        {
+          "Id": "edb447df-b691-4153-8652-070d2533e7c4",
+          "Name": "EyePos",
+          "Enabled": true,
+          "Position": "0,0,64",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": ""
+        }
+      ]
     }
   ],
   "__references": []
