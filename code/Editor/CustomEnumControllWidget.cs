@@ -1,16 +1,15 @@
 ﻿using Sandcube.Mth;
-using System;
+using System.Collections;
 using System.Reflection;
 
 namespace Sandcube.Editor;
 
-[CustomEditor(typeof(Axis))]
-[CustomEditor(typeof(AxisDirection))]
-[CustomEditor(typeof(Direction))]
+[CustomEditor(typeof(CustomEnum))]
 public class CustomEnumControllWidget : ControlWidget
 {
     protected PopupWidget? _menu;
-    protected readonly FieldInfo[] _fields;
+    protected readonly MethodInfo _tryParseMethod;
+    protected readonly IEnumerable<CustomEnum> _enumValues;
 
     public override bool IsControlButton => true;
     public override bool IsControlHovered => base.IsControlHovered || _menu.IsValid();
@@ -25,36 +24,31 @@ public class CustomEnumControllWidget : ControlWidget
         Layout = Layout.Row();
         Layout.Spacing = 2;
 
-        var fields = property.PropertyType.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(f => f.FieldType == property.PropertyType);
-
-        _fields = fields.ToArray();
+        _tryParseMethod = property.PropertyType.GetMethod("TryParse")!;
+        _enumValues = (property.PropertyType.GetProperty("All", BindingFlags.Static | BindingFlags.Public)!.GetValue(null) as IEnumerable)!.Cast<CustomEnum>();
 
         var value = SerializedProperty.GetValue<object>();
-        if(value is null && _fields.Length > 0)
-            SerializedProperty.SetValue(_fields[0].GetValue(null));
+        if(value is null)
+            SerializedProperty.SetValue(_enumValues.First());
     }
 
-    protected virtual object? GetValue(string name)
+    protected virtual CustomEnum Parse(string name)
     {
-        return _fields.FirstOrDefault(f => f.Name == name, null)?.GetValue(null);
-    }
-
-    protected virtual string? GetName(object value)
-    {
-        return _fields.FirstOrDefault(f => Object.Equals(f?.GetValue(null), value), null)?.Name;
+        object?[] parameters = new object?[] { name, null };
+        _tryParseMethod.Invoke(null, parameters);
+        return (parameters[1] as CustomEnum)!;
     }
 
     protected override void PaintControl()
     {
-        var value = SerializedProperty.GetValue<object>();
+        var value = SerializedProperty.GetValue<CustomEnum>();
 
         var color = IsControlHovered ? Theme.Blue : Theme.ControlText;
         var rect = LocalRect;
 
         rect = rect.Shrink(8, 0);
 
-        string? name = value == null ? null : GetName(value);
+        string? name = value == null ? null : value.Name;
         Paint.SetPen(color);
         Paint.DrawText(rect, name ?? "Unset", TextFlag.LeftCenter);
 
@@ -78,12 +72,12 @@ public class CustomEnumControllWidget : ControlWidget
     protected virtual bool IsCurrent(string name)
     {
         var value = SerializedProperty.GetValue<object>();
-        return object.Equals(value, GetValue(name));
+        return object.Equals(value, Parse(name));
     }
 
     protected virtual void SetValue(string name)
     {
-        SerializedProperty.SetValue(GetValue(name));
+        SerializedProperty.SetValue(Parse(name));
     }
 
     protected virtual void OpenMenu()
@@ -93,7 +87,7 @@ public class CustomEnumControllWidget : ControlWidget
             Layout = Layout.Column()
         };
 
-        foreach(var o in _fields.Select(f => f.Name))
+        foreach(var o in _enumValues.Select(v => v.Name))
         {
             var button = _menu.Layout.Add(new Widget(_menu));
             button.MinimumSize = 22;

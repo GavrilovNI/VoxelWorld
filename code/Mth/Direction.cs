@@ -1,31 +1,33 @@
-﻿using Sandcube.Components;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Sandcube.Mth;
 
-public sealed record class Direction
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {
-    [CustomEnumValue]
-    public static readonly Direction Forward = new("forward", Axis.X, AxisDirection.Positive);
-    [CustomEnumValue]
-    public static readonly Direction Backward = new("backward", Axis.X, AxisDirection.Negative);
-    [CustomEnumValue]
-    public static readonly Direction Left = new("left", Axis.Y, AxisDirection.Positive);
-    [CustomEnumValue]
-    public static readonly Direction Right = new("right", Axis.Y, AxisDirection.Negative);
-    [CustomEnumValue]
-    public static readonly Direction Up = new("up", Axis.Z, AxisDirection.Positive);
-    [CustomEnumValue]
-    public static readonly Direction Down = new("down", Axis.Z, AxisDirection.Negative);
+    public static readonly Direction Forward = new(0, "Forward", Axis.X, AxisDirection.Positive);
+    public static readonly Direction Backward = new(1, "Backward", Axis.X, AxisDirection.Negative);
+    public static readonly Direction Left = new(2, "Left", Axis.Y, AxisDirection.Positive);
+    public static readonly Direction Right = new(3, "Right", Axis.Y, AxisDirection.Negative);
+    public static readonly Direction Up = new(4, "Up", Axis.Z, AxisDirection.Positive);
+    public static readonly Direction Down = new(5, "Down", Axis.Z, AxisDirection.Negative);
 
-    public static readonly IReadOnlyList<Direction> All = new List<Direction>() { Forward, Backward, Left, Right, Up, Down }.AsReadOnly();
+    public static IReadOnlyList<Direction> All { get; private set; } = new List<Direction>() { Forward, Backward, Left, Right, Up, Down }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Horizontal = new List<Direction>() { Forward, Backward, Left, Right }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Vertical = new List<Direction>() { Up, Down }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Positive = new List<Direction>() { Forward, Left, Up }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Negative = new List<Direction>() { Backward, Right, Down }.AsReadOnly();
 
+    public static readonly IReadOnlySet<Direction> AllSet = All.ToHashSet();
+    public static readonly IReadOnlySet<Direction> HorizontalSet = Horizontal.ToHashSet();
+    public static readonly IReadOnlySet<Direction> VerticalSet = Vertical.ToHashSet();
+    public static readonly IReadOnlySet<Direction> PositiveSet = Positive.ToHashSet();
+    public static readonly IReadOnlySet<Direction> NegativeSet = Negative.ToHashSet();
 
-    public string Name { get; init; }
+
     public Axis Axis { get; init; }
     public AxisDirection AxisDirection { get; init; }
     public Vector3Int Normal { get; init; }
@@ -33,16 +35,18 @@ public sealed record class Direction
     [Obsolete("For serialization only", true)]
     public Direction()
     {
-
+        Axis = Axis.X;
+        AxisDirection = AxisDirection.Positive;
+        Normal = Vector3Int.Zero;
     }
 
-    private Direction(string name, Axis axis, AxisDirection axisDirection)
+    private Direction(int ordinal, string name, Axis axis, AxisDirection axisDirection) : base(ordinal, name)
     {
-        Name = name;
         Axis = axis;
         AxisDirection = axisDirection;
         Normal = Axis.PositiveNormal * AxisDirection.Normal;
     }
+    public static bool TryParse(string name, out Direction value) => TryParse(All, name, out value);
 
     public static Direction Of(Axis axis, AxisDirection axisDirection)
     {
@@ -76,6 +80,7 @@ public sealed record class Direction
     }
     public static Direction ClosestTo(Vector3 direction) => ClosestTo(direction, Direction.Up);
 
+    public static explicit operator Direction(int ordinal) => All[ordinal];
     public static implicit operator Vector3Int(Direction direction) => direction.Normal;
 
     public static Vector3Int operator *(Direction direction, int value) => direction.Normal * value;
@@ -83,4 +88,6 @@ public sealed record class Direction
     public static Vector3 operator *(Direction direction, float value) => direction.Normal * value;
     public static Vector3 operator *(float value, Direction direction) => direction.Normal * value;
 
+    public static bool operator ==(Direction a, Direction b) => a.Ordinal == b.Ordinal;
+    public static bool operator !=(Direction a, Direction b) => a.Ordinal != b.Ordinal;
 }

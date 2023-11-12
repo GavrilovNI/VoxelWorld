@@ -37,6 +37,13 @@ public struct Vector3Int
         this.z = all;
     }
 
+    public Vector3Int(Vector3Int other)
+    {
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
+    }
+
 
     public readonly Vector3 Normal
     {
