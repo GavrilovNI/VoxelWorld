@@ -12,9 +12,6 @@ public class Chunk : BaseComponent, IBlockStateAccessor
     [Property] public Vector3Int Size { get; init; } = 16;
     [Property] public Vector3 VoxelSize { get; init; } = Vector3.One * 39.37f;
 
-    [Property] public bool AutoUpdate { get; set; }
-    [Property] public bool UpdateOnce { get; set; }
-
     [Property] public Material VoxelsMaterial { get; set; } = null!;
 
     protected bool _meshRebuildRequired = false;
@@ -61,11 +58,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     public override void Update()
     {
-        if(AutoUpdate || UpdateOnce || _meshRebuildRequired)
-        {
+        if(_meshRebuildRequired)
             UpdateModel();
-            UpdateOnce = false;
-        }
     }
 
     public virtual void Clear()
