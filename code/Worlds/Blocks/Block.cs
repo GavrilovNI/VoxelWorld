@@ -8,7 +8,7 @@ public abstract class Block
     public readonly ModedId Id;
     public BlockState DefaultBlockState { get; init; }
 
-    public Block(ModedId id)
+    public Block(in ModedId id)
     {
         Id = id;
         DefaultBlockState = new BlockState(this);

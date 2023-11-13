@@ -2,11 +2,11 @@
 
 namespace Sandcube;
 
-public record struct Id
+public readonly record struct Id
 {
     public static readonly Regex Regex = new("^[a-z_]+$");
 
-    public string Name { get; init; }
+    public readonly string Name { get; init; }
 
     public Id(string name)
     {
@@ -18,7 +18,7 @@ public record struct Id
     public static implicit operator string(Id id) => id.ToString();
     public static explicit operator Id(string id) => new(id);
 
-    public override string ToString()
+    public readonly override string ToString()
     {
         return Name;
     }

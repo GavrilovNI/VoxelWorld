@@ -21,17 +21,17 @@ public class SimpleBlock : Block
     private Texture? Texture { get; set; }
     private Rect TextureRect { get; set; }
 
-    public SimpleBlock(ModedId id, Rect textureRect) : base(id)
+    public SimpleBlock(in ModedId id, in Rect textureRect) : base(id)
     {
         TextureRect = textureRect;
     }
 
-    public SimpleBlock(ModedId id, Texture texture) : base(id)
+    public SimpleBlock(in ModedId id, Texture texture) : base(id)
     {
         Texture = texture;
     }
 
-    public SimpleBlock(ModedId id) : this(id, Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/blocks/{id.Name}.png", true))
+    public SimpleBlock(in ModedId id) : this(id, Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/blocks/{id.Name}.png", true))
     {
     }
 

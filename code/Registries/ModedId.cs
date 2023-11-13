@@ -2,17 +2,17 @@
 
 namespace Sandcube.Registries;
 
-public record struct ModedId
+public readonly record struct ModedId
 {
-    public string ModId { get; init; }
-    public string Name { get; init; }
+    public readonly Id ModId { get; init; }
+    public readonly Id Name { get; init; }
 
-    public ModedId(string modId, string name)
+    public ModedId(string modId, string name) : this((Id)modId, (Id)name)
     {
-        if(string.IsNullOrEmpty(modId) || !Id.Regex.IsMatch(modId))
-            throw new ArgumentException($"{nameof(modId)} {modId} should match {nameof(Id.Regex)}");
-        if(string.IsNullOrEmpty(name) || !Id.Regex.IsMatch(name))
-            throw new ArgumentException($"{nameof(name)} {name} should match {nameof(Id.Regex)}");
+    }
+
+    public ModedId(in Id modId, in Id name)
+    {
         ModId = modId;
         Name = name;
     }
@@ -52,7 +52,7 @@ public record struct ModedId
 
     public static implicit operator string(ModedId id) => id.ToString();
 
-    public override string ToString()
+    public readonly override string ToString()
     {
         return $"{ModId}:{Name}";
     }
