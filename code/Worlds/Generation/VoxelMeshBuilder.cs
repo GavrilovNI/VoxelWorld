@@ -10,10 +10,10 @@ public class VoxelMeshBuilder
     public static readonly Vector4 TangentUp = new(Vector3.Up, 1);
 
     protected readonly List<List<Vertex>> _vertices = new();
-    protected readonly List<List<int>> _indices = new();
+    protected readonly List<List<ushort>> _indices = new();
 
     protected List<Vertex>? _currentVertices = null;
-    protected List<int>? _currentIndices = null;
+    protected List<ushort>? _currentIndices = null;
 
     public Vertex Default;
 
@@ -26,7 +26,7 @@ public class VoxelMeshBuilder
     protected VoxelMeshBuilder AddNewDataList()
     {
         _currentVertices = new List<Vertex>();
-        _currentIndices = new List<int>();
+        _currentIndices = new List<ushort>();
         _vertices.Add(_currentVertices);
         _indices.Add(_currentIndices);
         return this;
@@ -49,14 +49,14 @@ public class VoxelMeshBuilder
         return this;
     }
 
-    protected VoxelMeshBuilder AddRawIndex(int i)
+    protected VoxelMeshBuilder AddRawIndex(ushort i)
     {
         _currentIndices!.Add(i);
         return this;
     }
-    protected VoxelMeshBuilder AddIndex(int i) => AddRawIndex(_currentVertices!.Count - i);
+    protected VoxelMeshBuilder AddIndex(ushort i) => AddRawIndex((ushort)(_currentVertices!.Count - i));
 
-    protected VoxelMeshBuilder AddTriangleIndex(int a, int b, int c)
+    protected VoxelMeshBuilder AddTriangleIndex(ushort a, ushort b, ushort c)
     {
         AddIndex(a);
         AddIndex(b);
@@ -102,7 +102,7 @@ public class VoxelMeshBuilder
         {
             var indices = builder._indices[i];
             if(!object.ReferenceEquals(indices, builder._currentIndices))
-                _indices.Add(new List<int>(indices));
+                _indices.Add(new List<ushort>(indices));
         }
 
         if(builder._currentVertices is null || builder._currentIndices is null)
@@ -118,7 +118,7 @@ public class VoxelMeshBuilder
                 _currentVertices.Add(newVertex);
             }
             foreach(var index in builder._currentIndices)
-                AddRawIndex(index + startIndex);
+                AddRawIndex((ushort)(index + startIndex));
         }
         else
         {
