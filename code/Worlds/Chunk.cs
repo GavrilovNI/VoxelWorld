@@ -76,6 +76,9 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     protected virtual void AddVoxelsToMeshBuilder(VoxelMeshBuilder meshBuilder)
     {
+        HashSet<Direction> visibleFaces = new();
+        var meshes = SandcubeGame.Instance!.BlockMeshes;
+
         for(int x = 0; x < Size.x; ++x)
         {
             for(int y = 0; y < Size.y; ++y)
@@ -87,19 +90,20 @@ public class Chunk : BaseComponent, IBlockStateAccessor
                     if(blockState.IsAir())
                         continue;
 
-                    HashSet<Direction> sidesToHide = new();
                     foreach(var direction in Direction.All)
                     {
                         var neighborBlockState = GetBlockState(position + direction);
-                        if(!neighborBlockState.IsAir())
-                            sidesToHide.Add(direction);
+                        if(neighborBlockState.IsAir())
+                            visibleFaces.Add(direction);
+                        else
+                            visibleFaces.Remove(direction);
                     }
-                    var mesh = blockState.Block.BuildMesh(position, VoxelSize, sidesToHide);
-                    meshBuilder.AddMeshBuilder(mesh);
+                    meshes.BuildAt(meshBuilder, blockState.Block, position * MathV.InchesInMeter, visibleFaces);
                 }
             }
         }
     }
+
     protected virtual void UpdateModelComponents(int requiredCount)
     {
         if(_modelComponents.Count < requiredCount)

@@ -30,8 +30,6 @@
         {
           "__type": "SandcubeGame",
           "__enabled": true,
-          "Test": false,
-          "Test2": false,
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
         }
       ]
@@ -100,8 +98,7 @@
           "Height": 64,
           "IgnoreLayers": "",
           "Radius": 16,
-          "StepHeight": 18,
-          "UnstackEnabled": false
+          "StepHeight": 18
         },
         {
           "__type": "PlayerController",

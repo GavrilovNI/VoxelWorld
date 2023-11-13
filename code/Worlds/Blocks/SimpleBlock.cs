@@ -2,12 +2,22 @@
 using Sandcube.Mth;
 using Sandcube.Registries;
 using Sandcube.Worlds.Generation;
-using System.Collections.Generic;
 
 namespace Sandcube.Worlds.Blocks;
 
 public class SimpleBlock : Block
 {
+    protected readonly Vector3[] FullCubeCorners = new Vector3[8]
+    {
+        Vector3.Zero,
+        new Vector3(MathV.InchesInMeter, 0f, 0f),
+        new Vector3(MathV.InchesInMeter, MathV.InchesInMeter, 0f),
+        new Vector3(0f, MathV.InchesInMeter, 0f),
+        new Vector3(0f, 0f, MathV.InchesInMeter),
+        new Vector3(MathV.InchesInMeter, 0f, MathV.InchesInMeter),
+        new Vector3(MathV.InchesInMeter, MathV.InchesInMeter, MathV.InchesInMeter),
+        new Vector3(0f, MathV.InchesInMeter, MathV.InchesInMeter)
+    };
     private Texture? Texture { get; set; }
     private Rect TextureRect { get; set; }
 
@@ -31,10 +41,18 @@ public class SimpleBlock : Block
             TextureRect = SandcubeGame.Instance!.TextureMap.AddTexture(Texture);
     }
 
-    public override VoxelMeshBuilder BuildMesh(Vector3Int voxelPosition, Vector3 voxelSize, HashSet<Direction> exceptSides)
+    public override VoxelMesh CreateMesh()
     {
-        VoxelMeshBuilder builder = new();
-        builder.AddVoxel(voxelPosition, voxelSize, SandcubeGame.Instance!.TextureMap.GetUv(TextureRect), exceptSides);
-        return builder;
+        var uv = SandcubeGame.Instance!.TextureMap.GetUv(TextureRect);
+
+        VoxelMesh voxelMesh = new();
+        voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[7], FullCubeCorners[3], FullCubeCorners[0], FullCubeCorners[4], Vector3.Backward, VoxelMeshBuilder.TangentUp, uv), Direction.Backward);
+        voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[5], FullCubeCorners[1], FullCubeCorners[2], FullCubeCorners[6], Vector3.Forward, VoxelMeshBuilder.TangentUp, uv), Direction.Forward);
+        voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[6], FullCubeCorners[2], FullCubeCorners[3], FullCubeCorners[7], Vector3.Left, VoxelMeshBuilder.TangentUp, uv), Direction.Left);
+        voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[4], FullCubeCorners[0], FullCubeCorners[1], FullCubeCorners[5], Vector3.Right, VoxelMeshBuilder.TangentUp, uv), Direction.Right);
+        voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[6], FullCubeCorners[7], FullCubeCorners[4], FullCubeCorners[5], Vector3.Up, VoxelMeshBuilder.TangentForward, uv), Direction.Up);
+        voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[3], FullCubeCorners[2], FullCubeCorners[1], FullCubeCorners[0], Vector3.Down, VoxelMeshBuilder.TangentForward, uv), Direction.Down);
+
+        return voxelMesh;
     }
 }

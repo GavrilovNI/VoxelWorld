@@ -3,6 +3,7 @@ using Sandcube.Events;
 using Sandcube.Mth;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Blocks;
+using Sandcube.Worlds.Generation;
 
 namespace Sandcube;
 
@@ -18,43 +19,17 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     [Property] public World World { get; private set; } = null!;
     public BlocksRegistry BlocksRegistry { get; private set; } = new ();
     public TextureMap TextureMap { get; private set; } = new ();
-
-
-    [Property] public bool Test { get; set; } = false;
-    [Property] public bool Test2 { get; set; } = false;
-
     public SandcubeBlocks Blocks { get; private set; } = new();
+    public BlockMeshMap BlockMeshes { get; private set; } = new();
 
-
-    public override void Update()
-    {
-        if(Test)
-        {
-            Test = false;
-            for(int x = -2; x <= 2; ++x)
-            {
-                for(int y = -2; y <= 2; ++y)
-                {
-                    for(int z = 0; z <= 10; ++z)
-                    {
-                        Vector3Int position = new(x, y, z);
-                        World.GenerateChunk(position);
-                    }
-                }
-            }
-        }
-        if(Test2)
-        {
-            Test2 = false;
-            World.Clear();
-        }
-    }
+    private bool _blockMeshesRebuildRequiered;
 
     public override void OnStart()
     {
         Event.Register(this);
         Instance = this;
         Event.Run(SandcubeEvent.Game.Start);
+        _blockMeshesRebuildRequiered = true;
         RegisterAllBlocks();
     }
 
@@ -80,8 +55,19 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
 
     protected void RegisterAllBlocks()
     {
+        var oldTextureMapSize = TextureMap.Texture.Size;
+
         BlocksRegistry.Clear();
         RegsiterBlocks(BlocksRegistry);
+
+        _blockMeshesRebuildRequiered |= oldTextureMapSize != TextureMap.Texture.Size;
+
+        if(_blockMeshesRebuildRequiered)
+        {
+            BlockMeshes.Clear();
+            foreach(var block in BlocksRegistry.All)
+                BlockMeshes.Add(block.Value);
+        }
     }
 
     public void RegsiterBlocks(BlocksRegistry registry)
