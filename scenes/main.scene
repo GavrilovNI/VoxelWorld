@@ -218,7 +218,7 @@
               "__type": "CameraComponent",
               "__enabled": true,
               "BackgroundColor": "0.25292,0.26086,0.29703,1",
-              "ClearFlags": "Color, Depth, Stencil",
+              "ClearFlags": "All",
               "FieldOfView": 80,
               "Orthographic": false,
               "OrthographicHeight": 1204,
