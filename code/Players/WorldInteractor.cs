@@ -2,6 +2,7 @@
 using Sandcube.Mth;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Blocks;
+using Sandcube.Worlds.Blocks.States.Properties;
 
 namespace Sandcube.Players;
 
@@ -34,7 +35,10 @@ public class WorldInteractor : BaseComponent
             if(Input.Pressed("attack1"))
                 world.SetBlockState(_blockPos, blocks.Air.DefaultBlockState);
             else if(Input.Pressed("attack2"))
-                world.SetBlockState(_blockPos + Direction.ClosestTo(_traceResult.Normal), blocks.Stone.DefaultBlockState);
+            {
+                var blockState = Game.Random.Next(100) < 50 ? blocks.StoneSlab.DefaultBlockState : blocks.StoneSlab.DefaultBlockState.With(SlabBlock.SlabTypeProperty, (Enum<SlabBlock.SlabType>)SlabBlock.SlabType.Top);
+                world.SetBlockState(_blockPos + Direction.ClosestTo(_traceResult.Normal), blockState);
+            }
         }
     }
 

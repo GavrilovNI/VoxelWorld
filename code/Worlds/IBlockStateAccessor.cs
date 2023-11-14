@@ -1,5 +1,5 @@
 ﻿using Sandcube.Mth;
-using Sandcube.Worlds.Blocks;
+using Sandcube.Worlds.Blocks.States;
 
 namespace Sandcube.Worlds;
 

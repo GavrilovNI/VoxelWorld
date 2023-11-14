@@ -1,6 +1,6 @@
 using Sandbox;
 using Sandcube.Mth;
-using Sandcube.Worlds.Blocks;
+using Sandcube.Worlds.Blocks.States;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
 
@@ -87,12 +87,12 @@ public class Chunk : BaseComponent, IBlockStateAccessor
                     foreach(var direction in Direction.All)
                     {
                         var neighborBlockState = GetBlockState(position + direction);
-                        if(neighborBlockState.IsAir())
+                        if(neighborBlockState.IsAir() || !neighborBlockState.Block.IsFullBlock(neighborBlockState))
                             visibleFaces.Add(direction);
                         else
                             visibleFaces.Remove(direction);
                     }
-                    meshes.BuildAt(meshBuilder, blockState.Block, position * MathV.InchesInMeter, visibleFaces);
+                    meshes.BuildAt(meshBuilder, blockState, position * MathV.InchesInMeter, visibleFaces);
                 }
             }
         }

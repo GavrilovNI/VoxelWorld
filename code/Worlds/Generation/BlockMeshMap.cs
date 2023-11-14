@@ -1,14 +1,15 @@
 ﻿using Sandcube.Mth;
 using Sandcube.Worlds.Blocks;
+using Sandcube.Worlds.Blocks.States;
 using System.Collections.Generic;
 
 namespace Sandcube.Worlds.Generation;
 
 public class BlockMeshMap
 {
-    private readonly Dictionary<Block, VoxelMesh> _meshes = new();
+    private readonly Dictionary<BlockState, VoxelMesh> _meshes = new();
 
     public void Clear() => _meshes.Clear();
-    public void Add(Block block) => _meshes.Add(block, block.CreateMesh());
-    public void BuildAt(VoxelMeshBuilder builder, Block block, Vector3 position, HashSet<Direction> visibleFaces) => _meshes[block].BuildAt(builder, position, visibleFaces);
+    public void Add(BlockState blockState) => _meshes.Add(blockState, blockState.Block.CreateMesh(blockState));
+    public void BuildAt(VoxelMeshBuilder builder, BlockState blockState, Vector3 position, HashSet<Direction> visibleFaces) => _meshes[blockState].BuildAt(builder, position, visibleFaces);
 }

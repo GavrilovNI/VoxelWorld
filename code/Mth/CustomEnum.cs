@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Sandcube.Worlds.Blocks.States.Properties;
+using System.Collections.Generic;
 
 namespace Sandcube.Mth;
 
-public class CustomEnum
+public abstract class CustomEnum
 {
     public int Ordinal { get; init; }
     public string Name { get; init; }
@@ -19,13 +20,17 @@ public class CustomEnum
         Ordinal = ordinal;
         Name = name;
     }
+
+    // TODO: remove. its workaround of whitelist error when calling interface static member
+    public abstract IEnumerable<CustomEnum> GetAll();
 }
 
-public class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICustomEnum<T>
+public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICustomEnum<T>
 {
     [Obsolete("For serialization only", true)]
     public CustomEnum()
     {
+
     }
 
     public CustomEnum(int ordinal, string name) : base(ordinal, name)
@@ -36,7 +41,7 @@ public class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICustomEnum<T>
     {
         foreach (var item in all)
         {
-            if(item.Name == name)
+            if(item.Name.ToLower() == name.ToLower())
             {
                 value = item;
                 return true;

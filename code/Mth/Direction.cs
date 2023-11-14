@@ -15,7 +15,7 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
     public static readonly Direction Up = new(4, "Up", Axis.Z, AxisDirection.Positive);
     public static readonly Direction Down = new(5, "Down", Axis.Z, AxisDirection.Negative);
 
-    public static IReadOnlyList<Direction> All { get; private set; } = new List<Direction>() { Forward, Backward, Left, Right, Up, Down }.AsReadOnly();
+    public static IReadOnlyList<Direction> All { get; } = new List<Direction>() { Forward, Backward, Left, Right, Up, Down }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Horizontal = new List<Direction>() { Forward, Backward, Left, Right }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Vertical = new List<Direction>() { Up, Down }.AsReadOnly();
     public static readonly IReadOnlyList<Direction> Positive = new List<Direction>() { Forward, Left, Up }.AsReadOnly();
@@ -90,4 +90,6 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
 
     public static bool operator ==(Direction a, Direction b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(Direction a, Direction b) => a.Ordinal != b.Ordinal;
+
+    public override IEnumerable<CustomEnum> GetAll() => All;
 }

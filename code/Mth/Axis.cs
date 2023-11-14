@@ -12,7 +12,7 @@ public sealed class Axis : CustomEnum<Axis>, ICustomEnum<Axis>
     public static readonly Axis Y = new(1, "Y", new Vector3Int(0, 1, 0));
     public static readonly Axis Z = new(2, "Z", new Vector3Int(0, 0, 1));
 
-    public static IReadOnlyList<Axis> All { get; private set; } = new List<Axis>() { X, Y, Z }.AsReadOnly();
+    public static IReadOnlyList<Axis> All { get; } = new List<Axis>() { X, Y, Z }.AsReadOnly();
     public static readonly IReadOnlySet<Axis> AllSet = All.ToHashSet();
 
     public Vector3Int PositiveNormal { get; init; }
@@ -34,4 +34,6 @@ public sealed class Axis : CustomEnum<Axis>, ICustomEnum<Axis>
 
     public static bool operator ==(Axis a, Axis b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(Axis a, Axis b) => a.Ordinal != b.Ordinal;
+
+    public override IEnumerable<CustomEnum> GetAll() => All;
 }

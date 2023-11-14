@@ -11,7 +11,7 @@ public sealed class AxisDirection : CustomEnum<AxisDirection>, ICustomEnum<AxisD
     public static readonly AxisDirection Positive = new(0, "Positive", 1);
     public static readonly AxisDirection Negative = new(1, "Negative", -1);
 
-    public static IReadOnlyList<AxisDirection> All { get; private set; } = new List<AxisDirection>() { Positive, Negative }.AsReadOnly();
+    public static IReadOnlyList<AxisDirection> All { get; } = new List<AxisDirection>() { Positive, Negative }.AsReadOnly();
     public static readonly IReadOnlySet<AxisDirection> AllSet = All.ToHashSet();
 
 
@@ -37,4 +37,6 @@ public sealed class AxisDirection : CustomEnum<AxisDirection>, ICustomEnum<AxisD
 
     public static bool operator ==(AxisDirection a, AxisDirection b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(AxisDirection a, AxisDirection b) => a.Ordinal != b.Ordinal;
+
+    public override IEnumerable<CustomEnum> GetAll() => All;
 }

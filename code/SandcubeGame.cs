@@ -66,7 +66,10 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
         {
             BlockMeshes.Clear();
             foreach(var block in BlocksRegistry.All)
-                BlockMeshes.Add(block.Value);
+            {
+                foreach(var blockState in block.Value.BlockStateSet)
+                    BlockMeshes.Add(blockState);
+            }
         }
     }
 
