@@ -7,5 +7,5 @@ public interface ISandcubeMod
 {
     public Id Id { get; }
 
-    public void RegsiterBlocks(Registry<Block> registry);
+    public void RegisterBlocks(Registry<Block> registry);
 }

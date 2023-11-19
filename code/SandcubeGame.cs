@@ -73,10 +73,10 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     private void RegisterAllBlocks()
     {
         BlocksRegistry.Clear();
-        RegsiterBlocks(BlocksRegistry);
+        RegisterBlocks(BlocksRegistry);
     }
 
-    public void RegsiterBlocks(Registry<Block> registry)
+    public void RegisterBlocks(Registry<Block> registry)
     {
         Blocks.Register(registry);
     }
