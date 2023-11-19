@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Events;
-using Sandcube.Mth;
+using Sandcube.Registries;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Blocks;
 using Sandcube.Worlds.Generation;
@@ -17,7 +17,7 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     public Id Id { get; private set; } = new(ModName);
 
     [Property] public World World { get; private set; } = null!;
-    public BlocksRegistry BlocksRegistry { get; private set; } = new ();
+    public Registry<Block> BlocksRegistry { get; private set; } = new ();
     public TextureMap TextureMap { get; private set; } = new ();
     public SandcubeBlocks Blocks { get; private set; } = new();
     public BlockMeshMap BlockMeshes { get; private set; } = new();
@@ -73,7 +73,7 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
         }
     }
 
-    public void RegsiterBlocks(BlocksRegistry registry)
+    public void RegsiterBlocks(Registry<Block> registry)
     {
         Blocks.Register(registry);
     }
