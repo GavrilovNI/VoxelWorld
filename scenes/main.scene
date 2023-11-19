@@ -67,7 +67,7 @@
       "Id": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
       "Name": "Player",
       "Enabled": true,
-      "Position": "0,0,2000",
+      "Position": "0,0,450",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
