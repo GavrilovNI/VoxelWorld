@@ -3,6 +3,7 @@
 using Sandcube.Mth;
 using Sandcube.Worlds.Blocks.States.Properties;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Sandcube.Worlds.Blocks.States;
 
@@ -20,8 +21,6 @@ public sealed class BlockState
     }
 
     public bool IsAir() => Block == SandcubeGame.Instance!.Blocks.Air;
-
-    public override string ToString() => $"{nameof(BlockState)}({Block})";
 
     public BlockState With(BlockProperty property, CustomEnum value)
     {
@@ -43,4 +42,19 @@ public sealed class BlockState
 
     public T GetValue<T>(BlockProperty<T> blockProperty) where T : CustomEnum<T>, ICustomEnum<T> =>
         (GetValue((BlockProperty)blockProperty) as T)!;
+
+    public override string ToString()
+    {
+        StringBuilder builder = new($"Block: \"{Block.ModedId}\"");
+
+        if(_properties.Count > 0)
+        {
+            builder.Append(", Properties: {");
+            foreach( var property in _properties)
+                builder.Append($"\"{property.Key.Name}\": \"{property.Value.Name}\"");
+            builder.Append("}");
+        }
+
+        return builder.ToString();
+    }
 }
