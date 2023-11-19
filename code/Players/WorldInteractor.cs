@@ -33,11 +33,17 @@ public class WorldInteractor : BaseComponent
             _blockPos = world.GetBlockPosition(_traceResult.EndPosition, _traceResult.Normal);
 
             if(Input.Pressed("attack1"))
+            {
                 world.SetBlockState(_blockPos, blocks.Air.DefaultBlockState);
+            }
             else if(Input.Pressed("attack2"))
             {
+                var setPosition = _blockPos + Direction.ClosestTo(_traceResult.Normal);
+                if(!world.GetBlockState(setPosition).IsAir())
+                    return;
+
                 var blockState = Game.Random.Next(100) < 50 ? blocks.StoneSlab.DefaultBlockState : blocks.StoneSlab.DefaultBlockState.With(SlabBlock.SlabTypeProperty, (Enum<SlabBlock.SlabType>)SlabBlock.SlabType.Top);
-                world.SetBlockState(_blockPos + Direction.ClosestTo(_traceResult.Normal), blockState);
+                world.SetBlockState(setPosition, blockState);
             }
         }
     }
