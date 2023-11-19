@@ -10,7 +10,7 @@ public class WorldAutoLoader : BaseComponent
 
     public override void Update()
     {
-        if(!SandcubeGame.Started || World is null)
+        if(!SandcubeGame.IsStarted || World is null)
             return;
 
         var centralChunkPositrion = World.GetChunkPosition(Transform.Position);

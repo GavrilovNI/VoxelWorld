@@ -12,9 +12,11 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     public const string ModName = "sandcube";
 
     public static SandcubeGame? Instance { get; private set; } = null;
-    public static bool Started => Instance != null;
+    public static bool IsStarted => Instance?.Started ?? false;
 
     public Id Id { get; private set; } = new(ModName);
+
+    public bool Started { get; private set; } = false;
 
     [Property] public World World { get; private set; } = null!;
     public Registry<Block> BlocksRegistry { get; private set; } = new ();
@@ -22,15 +24,14 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     public SandcubeBlocks Blocks { get; private set; } = new();
     public BlockMeshMap BlockMeshes { get; private set; } = new();
 
-    private bool _blockMeshesRebuildRequiered;
-
     public override void OnStart()
     {
         Event.Register(this);
         Instance = this;
+        Prepare();
+
+        Started = true;
         Event.Run(SandcubeEvent.Game.Start);
-        _blockMeshesRebuildRequiered = true;
-        RegisterAllBlocks();
     }
 
     public override void OnDestroy()
@@ -38,10 +39,17 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
         if(Instance == this)
         {
             Event.Run(SandcubeEvent.Game.Stop);
+            Started = false;
             Instance = null;
         }
         Event.Unregister(this);
 
+    }
+
+    protected virtual void Prepare()
+    {
+        RegisterAllBlocks();
+        RebuildBlockMeshes();
     }
 
     [Event.Hotload]
@@ -49,28 +57,23 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     {
         Log.Info("Hotload");
         Instance = this;
-        Id = new(ModName);
-        RegisterAllBlocks();
+        Prepare();
     }
 
-    protected void RegisterAllBlocks()
+    private void RebuildBlockMeshes()
     {
-        var oldTextureMapSize = TextureMap.Texture.Size;
+        BlockMeshes.Clear();
+        foreach(var block in BlocksRegistry.All)
+        {
+            foreach(var blockState in block.Value.BlockStateSet)
+                BlockMeshes.Add(blockState);
+        }
+    }
 
+    private void RegisterAllBlocks()
+    {
         BlocksRegistry.Clear();
         RegsiterBlocks(BlocksRegistry);
-
-        _blockMeshesRebuildRequiered |= oldTextureMapSize != TextureMap.Texture.Size;
-
-        if(_blockMeshesRebuildRequiered)
-        {
-            BlockMeshes.Clear();
-            foreach(var block in BlocksRegistry.All)
-            {
-                foreach(var blockState in block.Value.BlockStateSet)
-                    BlockMeshes.Add(blockState);
-            }
-        }
     }
 
     public void RegsiterBlocks(Registry<Block> registry)

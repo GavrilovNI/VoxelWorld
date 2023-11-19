@@ -22,7 +22,7 @@ public class WorldInteractor : BaseComponent
 
     public override void Update()
     {
-        if(!SandcubeGame.Started)
+        if(!SandcubeGame.IsStarted)
             return;
 
         _traceResult = TraceWorld();
@@ -50,7 +50,7 @@ public class WorldInteractor : BaseComponent
 
     public override void DrawGizmos()
     {
-        if(!SandcubeGame.Started)
+        if(!SandcubeGame.IsStarted)
             return;
 
         using var scope = Gizmo.Scope($"{GetHashCode()}");
