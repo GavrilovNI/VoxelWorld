@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Items;
 using Sandcube.Mth;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Blocks;
@@ -8,13 +9,11 @@ namespace Sandcube.Players;
 
 public class WorldInteractor : BaseComponent
 {
+    [Property] public SandcubePlayer Player { get; set; } = null!;
     [Property] public GameObject Eye { get; set; } = null!;
     [Property] public float ReachDistance { get; set; } = 39.37f * 5;
 
-    private PhysicsTraceResult _traceResult;
-    private Vector3Int _blockPos;
-
-    protected virtual PhysicsTraceResult TraceWorld()
+    protected virtual PhysicsTraceResult Trace()
     {
         var ray = new Ray(Eye.Transform.Position, Eye.Transform.Rotation.Forward);
         return Scene.PhysicsWorld.Trace.Ray(ray, ReachDistance).Run();
@@ -25,45 +24,39 @@ public class WorldInteractor : BaseComponent
         if(!SandcubeGame.IsStarted)
             return;
 
-        _traceResult = TraceWorld();
-        if(_traceResult.Hit)
-        {
-            var world = SandcubeGame.Instance!.World;
-            var blocks = SandcubeGame.Instance.Blocks;
-            _blockPos = world.GetBlockPosition(_traceResult.EndPosition, _traceResult.Normal);
-
-            if(Input.Pressed("attack1"))
-            {
-                world.SetBlockState(_blockPos, blocks.Air.DefaultBlockState);
-            }
-            else if(Input.Pressed("attack2"))
-            {
-                var setPosition = _blockPos + Direction.ClosestTo(_traceResult.Normal);
-                if(!world.GetBlockState(setPosition).IsAir())
-                    return;
-
-                var blockState = Game.Random.Next(100) < 50 ? blocks.StoneSlab.DefaultBlockState : blocks.StoneSlab.DefaultBlockState.With(SlabBlock.SlabTypeProperty, (Enum<SlabBlock.SlabType>)SlabBlock.SlabType.Top);
-                world.SetBlockState(setPosition, blockState);
-            }
-        }
+        var items = SandcubeGame.Instance!.Items;
+        Item? currentItem = items.Dirt;
+        Interact(currentItem);
     }
 
-    public override void DrawGizmos()
+    protected void Interact(Item? item)
     {
-        if(!SandcubeGame.IsStarted)
+        bool attacking = Input.Pressed("attack1");
+        bool usingItem = Input.Pressed("attack2");
+
+        if(!attacking && !usingItem)
             return;
 
-        using var scope = Gizmo.Scope($"{GetHashCode()}");
-        Gizmo.Transform = Gizmo.Transform.ToLocal(Gizmo.Transform);
-        Gizmo.Draw.Color = (_traceResult.Hit ? Color.Green : Color.Red).WithAlpha(0.4f);
-        Gizmo.Draw.Line(_traceResult.StartPosition, _traceResult.EndPosition);
+        var traceResult = Trace();
 
-        if(_traceResult.Hit)
+        if(item is not null)
         {
-            var world = SandcubeGame.Instance!.World;
-            var blockWoorldPOsition = world.GetBlockWorldPosition(_blockPos);
-            Gizmo.Draw.Color = Color.White.WithAlpha(0.4f);
-            Gizmo.Draw.LineBBox(new BBox(blockWoorldPOsition, blockWoorldPOsition + world.VoxelSize));
+            var itemInteractionResult = attacking ? item.OnAttack(Player, traceResult) : item.OnUse(Player, traceResult);
+            if(itemInteractionResult.ConsumesAction)
+                return;
         }
+
+        var world = Player.World;
+        var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
+        var blockState = world.GetBlockState(blockPosition);
+
+        var block = blockState.Block;
+        var blockInteractionResult = attacking ? block.OnAttack(world, blockPosition, blockState, Player) :
+            block.OnInteract(world, blockPosition, blockState, Player);
+        if(blockInteractionResult.ConsumesAction)
+            return;
+
+        if(!blockState.IsAir())
+            world.SetBlockState(blockPosition, SandcubeGame.Instance!.Blocks.Air.GetStateForPlacement(world, blockPosition));
     }
 }

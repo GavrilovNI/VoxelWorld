@@ -1,4 +1,6 @@
-﻿using Sandcube.Registries;
+﻿using Sandcube.Mth;
+using Sandcube.Players;
+using Sandcube.Registries;
 using Sandcube.Worlds.Blocks.States;
 using Sandcube.Worlds.Blocks.States.Properties;
 using Sandcube.Worlds.Generation;
@@ -24,6 +26,12 @@ public abstract class Block : IRegisterable
     public virtual bool IsFullBlock(BlockState blockState) => !blockState.IsAir();
     public virtual IEnumerable<BlockProperty> CombineProperties() => Enumerable.Empty<BlockProperty>();
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
+
+    public bool IsAir() => this == SandcubeGame.Instance!.Blocks.Air;
+    public virtual bool CanBeReplaced(IWorldProvider world, Vector3Int placePosition, BlockState blockState, Block placingBlock) => IsAir();
+    public virtual BlockState GetStateForPlacement(IWorldProvider world, Vector3Int placePosition) => DefaultBlockState;
+    public virtual InteractionResult OnAttack(IWorldProvider world, Vector3Int position, BlockState blockState, SandcubePlayer player) => InteractionResult.Pass;
+    public virtual InteractionResult OnInteract(IWorldProvider world, Vector3Int position, BlockState blockState, SandcubePlayer player) => InteractionResult.Pass;
 
     public abstract VoxelMesh CreateMesh(BlockState blockState);
 

@@ -20,7 +20,7 @@ public sealed class BlockState
         _neighbors = new();
     }
 
-    public bool IsAir() => Block == SandcubeGame.Instance!.Blocks.Air;
+    public bool IsAir() => Block.IsAir();
 
     public BlockState With(BlockProperty property, CustomEnum value)
     {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Sandcube.Worlds;
 
-public class World : BaseComponent, IBlockStateAccessor
+public class World : BaseComponent, IWorldAccessor
 {
     [Property] public Vector3 VoxelSize { get; init; } = Vector3.One * 39.37f;
     [Property] public Vector3Int ChunkSize { get; init; } = 16;
