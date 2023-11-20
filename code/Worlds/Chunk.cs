@@ -45,6 +45,9 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         if(position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a)))
             throw new ArgumentOutOfRangeException(nameof(position), position, "block position is out of chunk bounds");
 
+        if(GetBlockState(position) == blockState)
+            return;
+
         _blockStates[position] = blockState;
         _meshRebuildRequired = true;
     }
