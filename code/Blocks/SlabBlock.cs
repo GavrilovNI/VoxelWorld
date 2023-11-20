@@ -1,8 +1,11 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
+using Sandcube.Interactions;
+using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
+using Sandcube.Worlds;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
 
@@ -18,13 +21,7 @@ public class SlabBlock : SimpleBlock
         (FullCubeCorners[3] + FullCubeCorners[7]) / 2f,
     };
 
-    public enum SlabType
-    {
-        Top,
-        Bottom,
-        Double
-    }
-    public static BlockProperty<Enum<SlabType>> SlabTypeProperty = new("type", (Enum<SlabType>)SlabType.Bottom);
+    public static BlockProperty<SlabType> SlabTypeProperty = new("type", SlabType.Bottom);
 
 
     public SlabBlock(in ModedId id, in Rect textureRect) : base(id, textureRect)
@@ -41,13 +38,62 @@ public class SlabBlock : SimpleBlock
 
     public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { SlabTypeProperty };
 
-    public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(SlabTypeProperty, (Enum<SlabType>)SlabType.Bottom);
+    public override bool IsFullBlock(BlockState blockState) => blockState.GetValue(SlabTypeProperty) == SlabType.Double;
 
-    public override bool IsFullBlock(BlockState blockState) => (SlabType)blockState.GetValue(SlabTypeProperty) == SlabType.Double;
+    public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(SlabTypeProperty, SlabType.Bottom);
+
+    public override bool CanBeReplaced(BlockActionContext context, BlockState placingBlockState)
+    {
+        if(placingBlockState.Block != this)
+            return false;
+
+        var currentSlabType = context.BlockState.GetValue(SlabTypeProperty);
+        if(currentSlabType == SlabType.Double)
+            return false;
+
+        var wantedType = GetSlabPart(context.World, context.Position, context.TraceResult, currentSlabType.GetOpposite());
+        return wantedType != currentSlabType;
+    }
+
+    protected virtual SlabType GetSlabPart(IWorldProvider world, Vector3Int blockPosition, PhysicsTraceResult traceResult, SlabType slabTypeAtCenter)
+    {
+        var blockLocalYPosition = traceResult.HitPosition.z - world.GetBlockWorldPosition(blockPosition).z;
+
+        const float halfBlockHeight = MathV.InchesInMeter / 2f;
+
+        if(blockLocalYPosition.AlmostEqual(halfBlockHeight, 0.1f))
+            return slabTypeAtCenter;
+
+        bool isBottom = blockLocalYPosition < halfBlockHeight;
+        return isBottom ? SlabType.Bottom : SlabType.Top;
+    }
+
+    public override BlockState GetStateForPlacement(BlockActionContext context)
+    {
+        var currentBlockState = context.BlockState;
+        if(currentBlockState.Block == this)
+            return currentBlockState.With(SlabTypeProperty, SlabType.Double);
+
+        var slabType = GetSlabPart(context.World, context.Position, context.TraceResult, SlabType.Bottom);
+        return DefaultBlockState.With(SlabTypeProperty, slabType);
+    }
+
+    public override void Break(BlockActionContext context)
+    {
+        var currentSlabType = context.BlockState.GetValue(SlabTypeProperty);
+        if(currentSlabType != SlabType.Double)
+        {
+            base.Break(context);
+            return;
+        }
+
+        var slabType = GetSlabPart(context.World, context.Position, context.TraceResult, SlabType.Bottom);
+        context.World.SetBlockState(context.Position, DefaultBlockState.With(SlabTypeProperty, slabType.GetOpposite()));
+    }
 
     public override VoxelMesh CreateMesh(BlockState blockState)
     {
-        var slabType = (SlabType)blockState.GetValue(SlabTypeProperty);
+        var slabType = blockState.GetValue(SlabTypeProperty);
 
         if(slabType == SlabType.Double)
             return base.CreateMesh(blockState);

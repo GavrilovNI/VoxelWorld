@@ -22,7 +22,7 @@ public class WorldInteractor : BaseComponent
             return;
 
         var items = SandcubeGame.Instance!.Items;
-        Item? currentItem = items.Dirt;
+        Item? currentItem = items.StoneSlab;
         Interact(currentItem);
     }
 
