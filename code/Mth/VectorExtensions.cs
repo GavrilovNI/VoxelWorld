@@ -1,5 +1,7 @@
 ﻿
 
+using Sandcube.Mth.Enums;
+
 namespace Sandcube.Mth;
 
 public static class VectorExtensions

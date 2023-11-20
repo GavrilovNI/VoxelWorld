@@ -1,5 +1,5 @@
 ﻿using Sandcube.Blocks.States.Properties;
-using Sandcube.Mth;
+using Sandcube.Mth.Enums;
 using System.Collections;
 using System.Collections.Generic;
 

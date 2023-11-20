@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
-using Sandcube.Mth;
+using Sandcube.Mth.Enums;
 using Sandcube.Players;
 
 namespace Sandcube.Items;

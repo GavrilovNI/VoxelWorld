@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sandcube.Mth;
+namespace Sandcube.Mth.Enums;
 
 #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 #pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
@@ -78,7 +78,7 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
 
         return Of(maxAxis, maxValue > 0 ? AxisDirection.Positive : AxisDirection.Negative);
     }
-    public static Direction ClosestTo(Vector3 direction) => ClosestTo(direction, Direction.Up);
+    public static Direction ClosestTo(Vector3 direction) => ClosestTo(direction, Up);
 
     public static explicit operator Direction(int ordinal) => All[ordinal];
     public static implicit operator Vector3Int(Direction direction) => direction.Normal;

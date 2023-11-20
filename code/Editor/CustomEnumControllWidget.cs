@@ -1,4 +1,4 @@
-﻿using Sandcube.Mth;
+﻿using Sandcube.Mth.Enums;
 using System.Collections;
 using System.Reflection;
 

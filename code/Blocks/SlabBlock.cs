@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
-using Sandcube.Mth;
+using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;

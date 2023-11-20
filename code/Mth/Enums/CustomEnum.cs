@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sandcube.Mth;
+namespace Sandcube.Mth.Enums;
 
 public abstract class CustomEnum
 {
@@ -38,7 +38,7 @@ public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICusto
 
     protected static bool TryParse(IReadOnlyList<T> all, string name, out T value)
     {
-        foreach (var item in all)
+        foreach(var item in all)
         {
             if(item.Name.ToLower() == name.ToLower())
             {
