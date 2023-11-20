@@ -1,21 +1,21 @@
 ﻿using Sandbox;
+using Sandcube.Blocks.States;
+using Sandcube.Blocks.States.Properties;
 using Sandcube.Mth;
 using Sandcube.Registries;
-using Sandcube.Worlds.Blocks.States;
-using Sandcube.Worlds.Blocks.States.Properties;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Blocks;
+namespace Sandcube.Blocks;
 
 public class SlabBlock : SimpleBlock
 {
     protected readonly Vector3[] CenterPositions = new Vector3[4]
     {
-        (SimpleBlock.FullCubeCorners[0] + SimpleBlock.FullCubeCorners[4]) / 2f,
-        (SimpleBlock.FullCubeCorners[1] + SimpleBlock.FullCubeCorners[5]) / 2f,
-        (SimpleBlock.FullCubeCorners[2] + SimpleBlock.FullCubeCorners[6]) / 2f,
-        (SimpleBlock.FullCubeCorners[3] + SimpleBlock.FullCubeCorners[7]) / 2f,
+        (FullCubeCorners[0] + FullCubeCorners[4]) / 2f,
+        (FullCubeCorners[1] + FullCubeCorners[5]) / 2f,
+        (FullCubeCorners[2] + FullCubeCorners[6]) / 2f,
+        (FullCubeCorners[3] + FullCubeCorners[7]) / 2f,
     };
 
     public enum SlabType

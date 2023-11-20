@@ -1,13 +1,9 @@
-﻿using Sandcube.Mth;
-using Sandcube.Worlds.Blocks.States.Properties;
-using System;
+﻿using Sandcube.Blocks.States.Properties;
+using Sandcube.Mth;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Sandcube.Worlds.Blocks.States;
+namespace Sandcube.Blocks.States;
 
 public sealed class BlockStateSet : IEnumerable<BlockState>
 {

@@ -1,6 +1,5 @@
-﻿using Sandcube.Mth;
-using Sandcube.Worlds.Blocks;
-using Sandcube.Worlds.Blocks.States;
+﻿using Sandcube.Blocks.States;
+using Sandcube.Mth;
 using System.Collections.Generic;
 
 namespace Sandcube.Worlds.Generation;

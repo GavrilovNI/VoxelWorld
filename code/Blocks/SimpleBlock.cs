@@ -1,10 +1,10 @@
 ﻿using Sandbox;
+using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Registries;
-using Sandcube.Worlds.Blocks.States;
 using Sandcube.Worlds.Generation;
 
-namespace Sandcube.Worlds.Blocks;
+namespace Sandcube.Blocks;
 
 public class SimpleBlock : Block
 {

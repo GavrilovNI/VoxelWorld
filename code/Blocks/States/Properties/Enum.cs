@@ -1,11 +1,11 @@
 ﻿using Sandcube.Mth;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Blocks.States.Properties;
+namespace Sandcube.Blocks.States.Properties;
 
 #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 #pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
-public sealed class Enum<T> : CustomEnum<Enum<T>>, ICustomEnum<Enum<T>> where T : struct, System.Enum, IComparable
+public sealed class Enum<T> : CustomEnum<Enum<T>>, ICustomEnum<Enum<T>> where T : struct, Enum, IComparable
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {

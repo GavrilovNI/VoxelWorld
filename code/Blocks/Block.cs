@@ -1,12 +1,13 @@
-﻿using Sandcube.Mth;
+﻿using Sandcube.Blocks.States;
+using Sandcube.Blocks.States.Properties;
+using Sandcube.Mth;
 using Sandcube.Players;
 using Sandcube.Registries;
-using Sandcube.Worlds.Blocks.States;
-using Sandcube.Worlds.Blocks.States.Properties;
+using Sandcube.Worlds;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Blocks;
+namespace Sandcube.Blocks;
 
 public abstract class Block : IRegisterable
 {

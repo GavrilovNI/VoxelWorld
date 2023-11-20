@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Registries;
 
-namespace Sandcube.Worlds.Blocks;
+namespace Sandcube.Blocks;
 
 public sealed class SandcubeBlocks : ModRegisterables<Block>
 {

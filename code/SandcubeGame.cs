@@ -1,9 +1,9 @@
 ﻿using Sandbox;
+using Sandcube.Blocks;
 using Sandcube.Events;
 using Sandcube.Items;
 using Sandcube.Registries;
 using Sandcube.Worlds;
-using Sandcube.Worlds.Blocks;
 using Sandcube.Worlds.Generation;
 
 namespace Sandcube;

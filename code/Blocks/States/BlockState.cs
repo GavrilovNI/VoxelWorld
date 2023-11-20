@@ -1,11 +1,9 @@
-﻿
-
+﻿using Sandcube.Blocks.States.Properties;
 using Sandcube.Mth;
-using Sandcube.Worlds.Blocks.States.Properties;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sandcube.Worlds.Blocks.States;
+namespace Sandcube.Blocks.States;
 
 public sealed class BlockState
 {
@@ -50,7 +48,7 @@ public sealed class BlockState
         if(_properties.Count > 0)
         {
             builder.Append(", Properties: {");
-            foreach( var property in _properties)
+            foreach(var property in _properties)
                 builder.Append($"\"{property.Key.Name}\": \"{property.Value.Name}\"");
             builder.Append("}");
         }

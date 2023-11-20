@@ -2,7 +2,7 @@
 using Sandcube.Mth;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Blocks.States.Properties;
+namespace Sandcube.Blocks.States.Properties;
 
 public abstract class BlockProperty
 {
@@ -22,12 +22,12 @@ public abstract class BlockProperty
 
     public abstract IEnumerable<CustomEnum> GetAllValues();
 
-    public static bool operator==(BlockProperty a, BlockProperty b) => a.PropertyType == b.PropertyType && a.Name == b.Name;
-    public static bool operator!=(BlockProperty a, BlockProperty b) => a.PropertyType != b.PropertyType || a.Name != b.Name;
+    public static bool operator ==(BlockProperty a, BlockProperty b) => a.PropertyType == b.PropertyType && a.Name == b.Name;
+    public static bool operator !=(BlockProperty a, BlockProperty b) => a.PropertyType != b.PropertyType || a.Name != b.Name;
 
     public virtual bool Equals(BlockProperty property) => this == property;
     public override bool Equals(object? obj) => obj is BlockProperty property && Equals(property);
-    
+
     public override int GetHashCode() => HashCode.Combine(Name, PropertyType);
 }
 

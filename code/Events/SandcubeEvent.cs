@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandcube.Worlds.Blocks;
 
 namespace Sandcube.Events;
 
