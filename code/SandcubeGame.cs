@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Events;
+using Sandcube.Items;
 using Sandcube.Registries;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Blocks;
@@ -20,8 +21,10 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
 
     [Property] public World World { get; private set; } = null!;
     public Registry<Block> BlocksRegistry { get; private set; } = new ();
+    public Registry<Item> ItemsRegistry { get; private set; } = new ();
     public TextureMap TextureMap { get; private set; } = new ();
     public SandcubeBlocks Blocks { get; private set; } = new();
+    public SandcubeItems Items { get; private set; } = new();
     public BlockMeshMap BlockMeshes { get; private set; } = new();
 
     public override void OnStart()
@@ -49,6 +52,7 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     protected virtual void Prepare()
     {
         RegisterAllBlocks();
+        RegisterAllItems();
         RebuildBlockMeshes();
     }
 
@@ -76,8 +80,19 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
         RegisterBlocks(BlocksRegistry);
     }
 
+    private void RegisterAllItems()
+    {
+        ItemsRegistry.Clear();
+        RegisterItems(ItemsRegistry);
+    }
+
     public void RegisterBlocks(Registry<Block> registry)
     {
         Blocks.Register(registry);
+    }
+
+    public void RegisterItems(Registry<Item> registry)
+    {
+        Items.Register(registry);
     }
 }

@@ -85,12 +85,6 @@
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
         },
         {
-          "__type": "WorldInteractor",
-          "__enabled": true,
-          "Eye": "7c163f9b-273d-41e8-91d6-9f096d02854b",
-          "ReachDistance": 196.84999
-        },
-        {
           "__type": "CharacterController",
           "__enabled": true,
           "Acceleration": 10,
@@ -109,6 +103,18 @@
           "Eye": "edb447df-b691-4153-8652-070d2533e7c4",
           "FirstPerson": true,
           "Gravity": "0,0,800"
+        },
+        {
+          "__type": "SandcubePlayer",
+          "__enabled": true,
+          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+        },
+        {
+          "__type": "WorldInteractor",
+          "__enabled": true,
+          "Eye": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+          "Player": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+          "ReachDistance": 196.84999
         }
       ],
       "Children": [
