@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Interactions;
 using Sandcube.Items;
 
 namespace Sandcube.Players;
@@ -35,24 +36,38 @@ public class WorldInteractor : BaseComponent
 
         var traceResult = Trace();
 
+        ItemActionContext itemContext = new()
+        {
+            Player = Player,
+            Item = item!,
+            TraceResult = traceResult
+        };
+
         if(item is not null)
         {
-            var itemInteractionResult = attacking ? item.OnAttack(Player, traceResult) : item.OnUse(Player, traceResult);
+            var itemInteractionResult = attacking ? item.OnAttack(itemContext) : item.OnUse(itemContext);
             if(itemInteractionResult.ConsumesAction)
                 return;
         }
+
+        if(!traceResult.Hit)
+            return;
+
+        var gameObject = traceResult.Body.GameObject as GameObject;
+        if(gameObject is null || !gameObject.Tags.Has("world"))
+            return;
 
         var world = Player.World;
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
         var blockState = world.GetBlockState(blockPosition);
 
         var block = blockState.Block;
-        var blockInteractionResult = attacking ? block.OnAttack(world, blockPosition, blockState, Player) :
-            block.OnInteract(world, blockPosition, blockState, Player);
+        BlockActionContext blockContext = new(itemContext);
+        var blockInteractionResult = attacking ? block.OnAttack(blockContext) : block.OnInteract(blockContext);
         if(blockInteractionResult.ConsumesAction)
             return;
 
-        if(!blockState.IsAir())
-            world.SetBlockState(blockPosition, SandcubeGame.Instance!.Blocks.Air.GetStateForPlacement(world, blockPosition));
+        if(attacking && !blockState.IsAir())
+            blockState.Block.Break(blockContext);
     }
 }

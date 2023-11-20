@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Interactions;
 using Sandcube.Players;
 using Sandcube.Registries;
 
@@ -16,12 +17,10 @@ public class Item : IRegisterable
 
     public void OnRegistered() {}
 
-    public virtual InteractionResult OnAttack(SandcubePlayer player, PhysicsTraceResult traceResult)
+    public virtual InteractionResult OnAttack(ItemActionContext context)
     {
-        var world = player.World;
-        var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
-        var blockState = world.GetBlockState(blockPosition);
-        return blockState.Block.OnAttack(world, blockPosition, blockState, player);
+        BlockActionContext blockActionContext = new(context);
+        return blockActionContext.BlockState.Block.OnAttack(blockActionContext);
     }
-    public virtual InteractionResult OnUse(SandcubePlayer player, PhysicsTraceResult traceResult) => InteractionResult.Pass;
+    public virtual InteractionResult OnUse(ItemActionContext context) => InteractionResult.Pass;
 }
