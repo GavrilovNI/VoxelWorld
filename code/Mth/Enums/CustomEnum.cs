@@ -14,7 +14,7 @@ public abstract class CustomEnum
         Name = string.Empty;
     }
 
-    public CustomEnum(int ordinal, string name)
+    protected CustomEnum(int ordinal, string name)
     {
         Ordinal = ordinal;
         Name = name;
@@ -32,7 +32,7 @@ public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICusto
 
     }
 
-    public CustomEnum(int ordinal, string name) : base(ordinal, name)
+    protected CustomEnum(int ordinal, string name) : base(ordinal, name)
     {
     }
 
