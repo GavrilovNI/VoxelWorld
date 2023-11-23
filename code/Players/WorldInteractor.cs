@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Blocks.States;
 using Sandcube.Interactions;
 using Sandcube.Items;
 
@@ -21,25 +22,39 @@ public class WorldInteractor : BaseComponent
         if(!SandcubeGame.IsStarted)
             return;
 
-        var items = SandcubeGame.Instance!.Items;
-        Item? currentItem = items.StoneSlab;
-        Interact(currentItem);
-    }
-
-    protected void Interact(Item? item)
-    {
         bool attacking = Input.Pressed("attack1");
         bool usingItem = Input.Pressed("attack2");
 
         if(!attacking && !usingItem)
             return;
 
+        Interact(attacking);
+    }
+
+    protected virtual InteractionResult Interact(bool attacking)
+    {
         var traceResult = Trace();
+
+        var interactionResult = InteractWithItem(HandType.Main, traceResult, attacking);
+        if(interactionResult.ConsumesAction)
+            return interactionResult;
+
+        interactionResult = InteractWithItem(HandType.Secondary, traceResult, attacking);
+        if(interactionResult.ConsumesAction)
+            return interactionResult;
+
+        return InteractWithBlock(HandType.Secondary, traceResult, attacking);
+    }
+
+    protected virtual InteractionResult InteractWithItem(HandType handType, PhysicsTraceResult traceResult, bool attacking)
+    {
+        Item? item = Player.Inventory.GetHandItem(handType).Value;
 
         ItemActionContext itemContext = new()
         {
             Player = Player,
             Item = item!,
+            HandType = handType,
             TraceResult = traceResult
         };
 
@@ -47,27 +62,49 @@ public class WorldInteractor : BaseComponent
         {
             var itemInteractionResult = attacking ? item.OnAttack(itemContext) : item.OnUse(itemContext);
             if(itemInteractionResult.ConsumesAction)
-                return;
+                return itemInteractionResult;
         }
 
+        return InteractionResult.Pass;
+    }
+
+    protected virtual InteractionResult InteractWithBlock(HandType handType, PhysicsTraceResult traceResult, bool attacking)
+    {
         if(!traceResult.Hit)
-            return;
+            return InteractionResult.Pass;
 
         var gameObject = traceResult.Body.GameObject as GameObject;
         if(gameObject is null || !gameObject.Tags.Has("world"))
-            return;
+            return InteractionResult.Pass;
 
         var world = Player.World;
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
         var blockState = world.GetBlockState(blockPosition);
 
         var block = blockState.Block;
-        BlockActionContext blockContext = new(itemContext);
+
+        Item? item = Player.Inventory.GetHandItem(handType).Value;
+        BlockActionContext blockContext = new()
+        {
+            Player = Player,
+            Item = item,
+            HandType = handType,
+            TraceResult = traceResult,
+            World = world,
+            Position = blockPosition,
+            BlockState = blockState
+        };
         var blockInteractionResult = attacking ? block.OnAttack(blockContext) : block.OnInteract(blockContext);
         if(blockInteractionResult.ConsumesAction)
-            return;
+            return blockInteractionResult;
+
 
         if(attacking && !blockState.IsAir())
+        {
             blockState.Block.Break(blockContext);
+            return InteractionResult.Success;
+        }
+
+        return InteractionResult.Pass;
     }
 }

@@ -12,6 +12,7 @@ public record class BlockActionContext
 {
     public required SandcubePlayer Player { get; init; }
     public required Item? Item { get; init; }
+    public required HandType HandType { get; init; }
     public required PhysicsTraceResult TraceResult { get; init; }
 
     public required IWorldAccessor World { get; init; }
@@ -28,6 +29,7 @@ public record class BlockActionContext
     {
         Player = itemActionContext.Player;
         Item = itemActionContext.Item;
+        HandType = itemActionContext.HandType;
         TraceResult = itemActionContext.TraceResult;
 
         World = Player.World;
@@ -40,6 +42,7 @@ public record class BlockActionContext
     {
         Player = itemActionContext.Player;
         Item = itemActionContext.Item;
+        HandType = itemActionContext.HandType;
         TraceResult = itemActionContext.TraceResult;
 
         World = Player.World;
@@ -52,6 +55,7 @@ public record class BlockActionContext
     {
         Player = itemActionContext.Player;
         Item = itemActionContext.Item;
+        HandType = itemActionContext.HandType;
         TraceResult = itemActionContext.TraceResult;
 
         World = world;

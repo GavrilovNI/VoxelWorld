@@ -24,10 +24,6 @@ public class Item : IRegisterable, IStackValue
 
     public virtual int GetStackLimit() => StackLimit;
 
-    public virtual InteractionResult OnAttack(ItemActionContext context)
-    {
-        BlockActionContext blockActionContext = new(context);
-        return blockActionContext.BlockState.Block.OnAttack(blockActionContext);
-    }
+    public virtual InteractionResult OnAttack(ItemActionContext context) => InteractionResult.Pass;
     public virtual InteractionResult OnUse(ItemActionContext context) => InteractionResult.Pass;
 }

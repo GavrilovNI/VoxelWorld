@@ -8,6 +8,7 @@ public record class ItemActionContext
 {
     public required SandcubePlayer Player { get; init; }
     public required Item Item { get; init; }
+    public required HandType HandType { get; init; }
     public required PhysicsTraceResult TraceResult { get; init; }
 
     public ItemActionContext()
