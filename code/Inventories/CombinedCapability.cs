@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sandcube.Inventories;
 
-public class CombinedCapability<T> : Capability<T> where T : class, IStack<T>
+public class CombinedCapability<T> : ICapability<T> where T : class, IStack<T>
 {
     private readonly List<ICapability<T>> _capabilities = new();
 
@@ -25,34 +25,37 @@ public class CombinedCapability<T> : Capability<T> where T : class, IStack<T>
     public void AddCapability(ICapability<T> capability) => _capabilities.Add(capability);
     public bool RemoveCapability(ICapability<T> capability) => _capabilities.Remove(capability);
 
-
-    public override int InsertMax(T stack, int count, bool simulate = false)
+    public virtual int InsertMax(T stack, bool simulate = false)
     {
         int insertedCount = 0;
         foreach(var capability in _capabilities)
         {
-            var insertedCurrent = capability.InsertMax(stack, count, simulate);
+            var insertedCurrent = capability.InsertMax(stack, simulate);
             insertedCount += insertedCurrent;
-            count -= insertedCurrent;
-            if(count <= 0)
+            stack = stack.Sub(insertedCurrent);
+            if(stack.Count <= 0)
                 return insertedCount;
         }
         return insertedCount;
     }
 
-    public override int ExtractMax(T stack, int count, bool simulate = false)
+    public virtual int ExtractMax(T stack, bool simulate = false)
     {
         int extractedCount = 0;
         foreach(var capability in _capabilities)
         {
-            var extractedCurrent = capability.ExtractMax(stack, count, simulate);
+            var extractedCurrent = capability.ExtractMax(stack, simulate);
             extractedCount += extractedCurrent;
-            count -= extractedCurrent;
-            if(count <= 0)
+            stack = stack.Sub(extractedCount);
+            if(stack.Count <= 0)
                 return extractedCount;
         }
         return extractedCount;
     }
+
+    public IEnumerator<T> GetEnumerator() => new Enumerator<T>(_capabilities);
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
 
     internal struct Enumerator<E> : IEnumerator<E>, IEnumerator where E : class, IStack<E>
     {
@@ -102,6 +105,4 @@ public class CombinedCapability<T> : Capability<T> where T : class, IStack<T>
             _currentEnumerator = null;
         }
     }
-
-    public override IEnumerator<T> GetEnumerator() => new Enumerator<T>(_capabilities);
 }

@@ -4,30 +4,37 @@ namespace Sandcube.Inventories;
 
 public interface ICapability<T> : IEnumerable<T> where T : class, IStack<T>
 {
-    int InsertMax(T stack, int count, bool simulate = false);
-    int InsertMax(T stack, bool simulate = false) => InsertMax(stack, stack.Count, simulate);
+    int InsertMax(T stack, bool simulate = false);
+    int ExtractMax(T stack, bool simulate = false);
+}
 
-    bool TryInsert(T stack, int count, bool simulate = false)
+public static class ICapabilityExtensions
+{
+    public static bool CanInsert<T>(this ICapability<T> capability, T stack) where T : class, IStack<T>
     {
-        int maxCanInsert = InsertMax(stack, count, true);
-        bool canInsertEnough = maxCanInsert >= count;
-        if(canInsertEnough && !simulate)
-            InsertMax(stack, count, false);
-        return canInsertEnough;
+        var insertedCount = capability.InsertMax(stack, true);
+        return insertedCount == stack.Count;
     }
-    bool TryInsert(T stack, bool simulate = false) => TryInsert(stack, stack.Count, simulate);
 
-
-    int ExtractMax(T stack, int count, bool simulate = false);
-    int ExtractMax(T stack, bool simulate = false) => ExtractMax(stack, stack.Count, simulate);
-
-    bool TryExtract(T stack, int count, bool simulate = false)
+    public static bool TryInsert<T>(this ICapability<T> capability, T stack) where T : class, IStack<T>
     {
-        int maxCanExtract = ExtractMax(stack, count, true);
-        bool canExtractEnough = maxCanExtract >= count;
-        if(canExtractEnough && !simulate)
-            ExtractMax(stack, count, false);
-        return canExtractEnough;
+        bool canInsert = capability.CanInsert(stack);
+        if(canInsert)
+            capability.InsertMax(stack, false);
+        return canInsert;
     }
-    bool TryExtract(T stack, bool simulate = false) => TryExtract(stack, stack.Count, simulate);
+
+    public static bool CanExtract<T>(this ICapability<T> capability, T stack) where T : class, IStack<T>
+    {
+        var extractedCount = capability.ExtractMax(stack, true);
+        return extractedCount == stack.Count;
+    }
+
+    public static bool TryExtract<T>(this ICapability<T> capability, T stack) where T : class, IStack<T>
+    {
+        bool canExtract = capability.CanExtract(stack);
+        if(canExtract)
+            capability.ExtractMax(stack, false);
+        return canExtract;
+    }
 }

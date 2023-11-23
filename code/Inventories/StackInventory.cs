@@ -5,64 +5,64 @@ namespace Sandcube.Inventories;
 public abstract class StackInventory<T> : IndexedCapability<T> where T : class, IStack<T>
 {
     private readonly Dictionary<int, T> _stacks = new();
-    public override int Size { get; }
+
+    public override int Size { get; protected set; }
+
 
     public StackInventory(int size)
     {
         Size = size;
     }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-    public override T Get(int index) => _stacks.GetValueOrDefault(index, GetEmpty());
-#pragma warning restore CS0618 // Type or member is obsolete
-
-    protected override void Set(int index, T stack)
+    public override T Get(int index)
     {
-        if(stack.IsEmpty)
-            _stacks.Remove(index);
-        else
-            _stacks[index] = stack;
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        return _stacks.GetValueOrDefault(index, GetEmpty());
     }
 
-    public override void Remove(int index) => _stacks.Remove(index);
-
-    public override int InsertMax(T stack, int count, bool simulate)
+    public override int SetMax(int index, T stack, bool simulate = false)
     {
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        var limit = GetStackLimit(index, stack);
+        var maxCountToSet = Math.Min(limit, stack.Count);
+        if(!simulate)
+            _stacks[index] = stack.WithCount(maxCountToSet);
+
+        return maxCountToSet;
+    }
+
+    public override int InsertMax(T stack, bool simulate)
+    {
+        var stackToInsert = stack;
         int insertedCount = 0;
-        foreach(var currentStackIndex in _stacks.Keys)
+
+        foreach(var currentStackEntry in _stacks)
         {
-            var insertedCurrent = InsertMax(currentStackIndex, stack, count, simulate);
-            insertedCount += insertedCurrent;
-            count -= insertedCurrent;
-            if(count <= 0)
+            insertedCount += InsertMax(currentStackEntry.Key, stackToInsert, simulate);
+            stackToInsert = stackToInsert.Sub(insertedCount);
+            if(stackToInsert.IsEmpty)
                 return insertedCount;
         }
+
         for(int i = 0; i < Size; ++i)
         {
-            if(!Get(i).IsEmpty)
+            var currentStack = Get(i);
+            if(!currentStack.IsEmpty)
                 continue;
-            var insertedCurrent = InsertMax(i, stack, count, simulate);
-            insertedCount += insertedCurrent;
-            count -= insertedCurrent;
-            if(count <= 0)
+
+            insertedCount += InsertMax(i, stackToInsert, simulate);
+            stackToInsert = stackToInsert.Sub(insertedCount);
+            if(stackToInsert.IsEmpty)
                 return insertedCount;
         }
+
         return insertedCount;
     }
 
-    public override int ExtractMax(T stack, int count, bool simulate = false)
-    {
-        int extractedCount = 0;
-        foreach(var currentStackIndex in _stacks.Keys)
-        {
-            var extractedCurrent = ExtractMax(currentStackIndex, stack, count, simulate);
-            extractedCount += extractedCurrent.Count;
-            count -= extractedCurrent.Count;
-            if(count <= 0)
-                return extractedCount;
-        }
-        return extractedCount;
-    }
-
     public override IEnumerator<T> GetEnumerator() => _stacks.Values.GetEnumerator();
+
 }

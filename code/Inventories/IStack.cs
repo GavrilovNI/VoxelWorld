@@ -15,3 +15,16 @@ public interface IStack<T> where T : class, IStack<T>
 
     bool EqualsValue(T other);
 }
+
+public static class IStackExtensions
+{
+    public static T Sub<T>(this IStack<T> stack, int count) where T : class, IStack<T>
+    {
+        return stack.WithCount(stack.Count - count);
+    }
+
+    public static T Add<T>(this IStack<T> stack, int count) where T : class, IStack<T>
+    {
+        return stack.WithCount(stack.Count + count);
+    }
+}

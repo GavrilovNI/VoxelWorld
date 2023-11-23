@@ -7,187 +7,121 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
     int Size { get; }
 
     T Get(int index);
+    int SetMax(int index, T stack, bool simulate = false);
 
-    bool TrySet(int index, T stack);
-    bool TrySet(int index, T stack, int count) => TrySet(index, stack.WithCount(count));
-
-    // TODO: uncomment(make default) when access T.Empty will be whitelisted
-    void Remove(int index); // => TrySet(index, T.Empty);
-
-    int GetMaxCount(int index) => 64;
-    int GetMaxCount(int index, T stack) => GetMaxCount(index);
-
-    int SetMax(int index, T stack, int count)
+    int InsertMax(int index, T stack, bool simulate = false)
     {
         if(index < 0 || index >= Size)
             throw new ArgumentOutOfRangeException(nameof(index));
-
-        if(stack.IsEmpty || count <= 0)
-        {
-            Remove(index);
-            return 0;
-        }
-
-        var possibleCount = Math.Min(count, GetMaxCount(index, stack));
-        TrySet(index, stack, possibleCount);
-        return possibleCount;
-    }
-    int SetMax(int index, T stack) => SetMax(index, stack, stack.Count);
-
-
-    bool TryInsert(int index, T stack, int count, bool simulate = false)
-    {
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        var currentStack = Get(index);
-        if(!currentStack.EqualsValue(stack))
-            return false;
-
-        var newCount = currentStack.Count + count;
-        if(newCount > GetMaxCount(index, stack))
-            return false;
-
-        if(!simulate)
-            TrySet(index, currentStack, newCount);
-        return true;
-    }
-    bool TryInsert(int index, T stack, bool simulate = false) => TryInsert(index, stack, stack.Count, simulate);
-
-    int InsertMax(int index, T stack, int count, bool simulate = false)
-    {
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
 
         var currentStack = Get(index);
         if(!currentStack.EqualsValue(stack))
             return 0;
 
-        var maxCountCanInsert = Math.Min(count, GetMaxCount(index, stack) - currentStack.Count);
-        if(maxCountCanInsert <= 0)
-            return 0;
-
-        if(!simulate)
-        {
-            var newCount = currentStack.Count + maxCountCanInsert;
-            TrySet(index, currentStack, newCount);
-        }
-
-        return maxCountCanInsert;
+        return SetMax(index, currentStack.Add(stack.Count), simulate);
     }
-    int InsertMax(int index, T stack, bool simulate = false) => InsertMax(index, stack, stack.Count, simulate);
 
-    int ICapability<T>.InsertMax(T stack, int count, bool simulate)
+    T ExtractMax(int index, int count, bool simulate = false)
     {
-        int insertedCount = 0;
-        InsertToValid(i => !Get(i).IsEmpty);
-        if(count <= 0)
-            return insertedCount;
-        InsertToValid(i => Get(i).IsEmpty);
-
-        void InsertToValid(Func<int, bool> isValid)
-        {
-            for(int i = 0; i < Size; ++i)
-            {
-                if(!isValid(i))
-                    continue;
-                var insertedCurrent = InsertMax(i, stack, count, simulate);
-                insertedCount += insertedCurrent;
-                count -= insertedCurrent;
-                if(count <= 0)
-                    return;
-            }
-        }
-
-        return insertedCount;
-    }
-
-
-    T ExtractMax(int index, T? stackToExtract, int count, bool simulate = false);
-    // TODO: uncomment(make default) when access T.Empty will be whitelisted
-    /*{
         if(index < 0 || index >= Size)
             throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
 
-        bool limitedByStack = stackToExtract is not null;
-        if(limitedByStack && stackToExtract!.IsEmpty)
-            return T.Empty;
-
-        var stack = Get(index);
-        if(stack.IsEmpty || limitedByStack && !stackToExtract!.EqualsValue(stackToExtract))
-            return T.Empty;
-
-        if(stack.Count > count)
-        {
-            if(!simulate)
-            {
-                int leftCount = stack.Count - count;
-                TrySet(index, stack, leftCount);
-            }
-            return stack.WithCount(count);
-        }
-        else
-        {
-            if(!simulate)
-                Remove(index);
-
-            return stack;
-        }
-    }*/
-
-    T ExtractMax(int index, T stackToExtract, bool simulate = false) => ExtractMax(index, stackToExtract, Get(index).Count, simulate);
-
-    T Extract(int index, bool simulate = false)
-    {
         var stack = Get(index);
         if(stack.IsEmpty)
             return stack;
 
-        if(!simulate)
-            Remove(index);
+        var newStack = stack.Sub(count);
+        if(this.TrySet(index, newStack, simulate))
+            return stack.WithCount(count - newStack.Count);
 
-        return stack;
+        return stack.WithCount(0); // TODO: use T.Empty when will be whitelisted
     }
 
-    bool TryExtract(int index, T? stackToExtract, int count, out T stack, bool simulate = false);
-    // TODO: uncomment(make default) when access T.Empty will be whitelisted
-    /*{
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
 
-        stack = Get(index);
-        if(stack.Count < count)
-            return false;
+    int ICapability<T>.InsertMax(T stack, bool simulate)
+    {
+        var stackToInsert = stack;
+        var insertedCount = insertMaxValid(stackToInsert, s => !s.IsEmpty, out stackToInsert);
+        insertedCount += insertMaxValid(stackToInsert, s => s.IsEmpty, out _);
+        return insertedCount;
 
-        stack = ExtractMax(index, stackToExtract, count, simulate);
-        return true;
+        int insertMaxValid(T stack, Func<T, bool> validator, out T remainder)
+        {
+            remainder = stack;
+            if(stack.IsEmpty)
+                return 0;
+
+            for(int i = 0; i < Size; ++i)
+            {
+                var currentStack = Get(i);
+                if(!validator.Invoke(currentStack))
+                    continue;
+
+                var insertedCount = InsertMax(i, remainder, simulate);
+                remainder = remainder.Sub(insertedCount);
+                if(remainder.IsEmpty)
+                    break;
+            }
+            return stack.Count - remainder.Count;
+        }
     }
-    */
 
-    bool TryExtract(int index, int count, out T stack, bool simulate = false) => TryExtract(index, Get(index), count, out stack, simulate);
-    bool TryExtract(int index, T stackToExtract, out T stack, bool simulate = false) => TryExtract(index, stackToExtract, Get(index).Count, out stack, simulate);
-
-    int ICapability<T>.ExtractMax(T stack, int count, bool simulate)
+    int ICapability<T>.ExtractMax(T stack, bool simulate)
     {
         int extractedCount = 0;
+
         for(int i = 0; i < Size; ++i)
         {
-            if(Get(i).IsEmpty)
+            var currentStack = Get(i);
+            if(!currentStack.EqualsValue(stack))
                 continue;
-            var extractedCurrent = ExtractMax(i, stack, count, simulate);
-            extractedCount += extractedCurrent.Count;
-            count -= extractedCurrent.Count;
-            if(count <= 0)
-                return extractedCount;
+
+            extractedCount += ExtractMax(i, currentStack.Count, simulate).Count;
         }
+
         return extractedCount;
     }
+}
+
+public static class IIndexedCapabilityExtensions
+{
+    public static int ExtractMax<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate) where T : class, IStack<T>
+    {
+        var currentStack = capability.Get(index);
+        if(!currentStack.EqualsValue(stack))
+            return 0;
+
+        capability.SetMax(index, stack.WithCount(0), simulate); // TODO: use T.Empty when will be whitelisted
+        return currentStack.Count;
+    }
+
+    public static bool TrySet<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate = false) where T : class, IStack<T>
+    {
+        int maxCanSet = capability.SetMax(index, stack, true);
+        bool canSetEnough = maxCanSet >= stack.Count;
+        if(canSetEnough && !simulate)
+            capability.SetMax(index, stack, false);
+        return canSetEnough;
+    }
+
+    public static bool TryInsert<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate = false) where T : class, IStack<T>
+    {
+        int maxCanInsert = capability.InsertMax(index, stack, true);
+        bool canInsertEnough = maxCanInsert >= stack.Count;
+        if(canInsertEnough && !simulate)
+            capability.InsertMax(index, stack, false);
+        return canInsertEnough;
+    }
+
+    public static bool TryExtract<T>(this IIndexedCapability<T> capability, int index, int count, out T extracted, bool simulate = false) where T : class, IStack<T>
+    {
+        extracted = capability.ExtractMax(index, count, true);
+        bool canExtractEnough = extracted.Count >= count;
+        if(canExtractEnough && !simulate)
+            extracted = capability.ExtractMax(index, count, false);
+        return canExtractEnough;
+    }
+
+    public static T Extract<T>(this IIndexedCapability<T> capability, int index, bool simulate = false) where T : class, IStack<T> =>
+        capability.ExtractMax(index, int.MaxValue, simulate);
 }

@@ -1,221 +1,103 @@
-﻿
+﻿using Sandcube.Mth;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Sandcube.Inventories;
 
-public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T> where T : class, IStack<T>
+public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : class, IStack<T>
 {
-    // TODO: remove when access T.Empty will be whitelisted
+    public abstract int Size { get; protected set; }
+
     [Obsolete("to remove when access to T.Empty will be whitelisted")]
     protected abstract T GetEmpty();
 
-    public abstract int Size { get; }
+    public virtual int GetStackLimit(int index) => DefaultValues.ItemStackLimit;
+    public virtual int GetStackLimit(int index, T stack) => GetStackLimit(index);
 
     public abstract T Get(int index);
-    protected abstract void Set(int index, T stack);
-    protected void Set(int index, T stack, int count) => Set(index, stack.WithCount(count));
 
-    public bool TrySet(int index, T stack)
+    public abstract int SetMax(int index, T stack, bool simulate = false);
+
+    public virtual int InsertMax(int index, T stack, bool simulate = false)
     {
         if(index < 0 || index >= Size)
             throw new ArgumentOutOfRangeException(nameof(index));
 
+        var currentStack = Get(index);
+        if(!currentStack.EqualsValue(stack))
+            return 0;
+
+        return SetMax(index, currentStack.Add(stack.Count), simulate);
+    }
+
+    public virtual T ExtractMax(int index, int count, bool simulate = false)
+    {
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        var stack = Get(index);
         if(stack.IsEmpty)
-        {
-            Remove(index);
-            return true;
-        }
+            return stack;
 
-        if(stack.Count > GetMaxCount(index, stack))
-            return false;
+        var newStack = stack.Sub(count);
+        if(this.TrySet(index, newStack, simulate))
+            return stack.WithCount(count - newStack.Count);
 
-        Set(index, stack);
-        return true;
+        return GetEmpty();
     }
-    public virtual bool TrySet(int index, T stack, int count) => TrySet(index, stack.WithCount(count));
 
-#pragma warning disable CS0618 // Type or member is obsolete
-    public virtual void Remove(int index) => Set(index, GetEmpty());
-#pragma warning restore CS0618 // Type or member is obsolete
 
-    public virtual int GetMaxCount(int index) => 64;
-    public virtual int GetMaxCount(int index, T stack) => GetMaxCount(index);
-
-    public virtual int SetMax(int index, T stack, int count)
+    public virtual int InsertMax(T stack, bool simulate)
     {
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
+        var stackToInsert = stack;
+        var insertedCount = insertMaxValid(stackToInsert, s => !s.IsEmpty, out stackToInsert);
+        insertedCount += insertMaxValid(stackToInsert, s => s.IsEmpty, out _);
+        return insertedCount;
 
-        if(stack.IsEmpty || count <= 0)
+        int insertMaxValid(T stack, Func<T, bool> validator, out T remainder)
         {
-            Remove(index);
-            return 0;
-        }
+            remainder = stack;
+            if(stack.IsEmpty)
+                return 0;
 
-        var possibleCount = Math.Min(count, GetMaxCount(index, stack));
-        Set(index, stack, possibleCount);
-        return possibleCount;
-    }
-    public int SetMax(int index, T stack) => SetMax(index, stack, stack.Count);
-
-
-    public virtual bool TryInsert(int index, T stack, int count, bool simulate = false)
-    {
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        var currentStack = Get(index);
-        if(!currentStack.EqualsValue(stack))
-            return false;
-
-        var newCount = currentStack.Count + count;
-        if(newCount > GetMaxCount(index, stack))
-            return false;
-
-        if(!simulate)
-            Set(index, currentStack, newCount);
-        return true;
-    }
-    public bool TryInsert(int index, T stack, bool simulate = false) => TryInsert(index, stack, stack.Count, simulate);
-
-    public virtual int InsertMax(int index, T stack, int count, bool simulate = false)
-    {
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        var currentStack = Get(index);
-        if(!currentStack.EqualsValue(stack))
-            return 0;
-
-        var maxCountCanInsert = Math.Min(count, GetMaxCount(index, stack) - currentStack.Count);
-        if(maxCountCanInsert <= 0)
-            return 0;
-
-        if(!simulate)
-        {
-            var newCount = currentStack.Count + maxCountCanInsert;
-            Set(index, currentStack, newCount);
-        }
-
-        return maxCountCanInsert;
-    }
-    public int InsertMax(int index, T stack, bool simulate = false) => InsertMax(index, stack, stack.Count, simulate);
-
-    public override int InsertMax(T stack, int count, bool simulate = false)
-    {
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        int insertedCount = 0;
-        InsertToValid(i => !Get(i).IsEmpty);
-        if(count <= 0)
-            return insertedCount;
-        InsertToValid(i => Get(i).IsEmpty);
-
-        void InsertToValid(Func<int, bool> isValid)
-        {
             for(int i = 0; i < Size; ++i)
             {
-                if(!isValid(i))
+                var currentStack = Get(i);
+                if(!validator.Invoke(currentStack))
                     continue;
-                var insertedCurrent = InsertMax(i, stack, count, simulate);
-                insertedCount += insertedCurrent;
-                count -= insertedCurrent;
-                if(count <= 0)
-                    return;
+
+                var insertedCount = InsertMax(i, remainder, simulate);
+                remainder = remainder.Sub(insertedCount);
+                if(remainder.IsEmpty)
+                    break;
             }
-        }
-
-        return insertedCount;
-    }
-
-
-    public virtual T ExtractMax(int index, T? stackToExtract, int count, bool simulate = false)
-    {
-        bool limitedByStack = stackToExtract is not null;
-
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        if(limitedByStack && stackToExtract!.IsEmpty)
-#pragma warning disable CS0618 // Type or member is obsolete
-            return GetEmpty();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        var stack = Get(index);
-        if(stack.IsEmpty || limitedByStack && !stackToExtract!.EqualsValue(stackToExtract))
-#pragma warning disable CS0618 // Type or member is obsolete
-            return GetEmpty();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        if(stack.Count > count)
-        {
-            if(!simulate)
-            {
-                int leftCount = stack.Count - count;
-                Set(index, stack, leftCount);
-            }
-            return stack.WithCount(count);
-        }
-        else
-        {
-            if(!simulate)
-                Remove(index);
-
-            return stack;
+            return stack.Count - remainder.Count;
         }
     }
 
-    public T ExtractMax(int index, T stackToExtract, bool simulate = false) => ExtractMax(index, stackToExtract, Get(index).Count, simulate);
-
-    public virtual T Extract(int index, bool simulate = false)
-    {
-        var stack = Get(index);
-        if(stack.IsEmpty)
-            return stack;
-
-        if(!simulate)
-            Remove(index);
-
-        return stack;
-    }
-
-    public virtual bool TryExtract(int index, T? stackToExtract, int count, out T stack, bool simulate = false)
-    {
-        if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
-        if(count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        stack = Get(index);
-        if(stack.Count < count)
-            return false;
-
-        stack = ExtractMax(index, stackToExtract, count, simulate);
-        return true;
-    }
-
-    public bool TryExtract(int index, int count, out T stack, bool simulate = false) => TryExtract(index, Get(index), count, out stack, simulate);
-    public bool TryExtract(int index, T stackToExtract, out T stack, bool simulate = false) => TryExtract(index, stackToExtract, Get(index).Count, out stack, simulate);
-
-    public override int ExtractMax(T stack, int count, bool simulate = false)
+    public virtual int ExtractMax(T stack, bool simulate)
     {
         int extractedCount = 0;
+
         for(int i = 0; i < Size; ++i)
         {
-            if(Get(i).IsEmpty)
+            var currentStack = Get(i);
+            if(!currentStack.EqualsValue(stack))
                 continue;
-            var extractedCurrent = ExtractMax(i, stack, count, simulate);
-            extractedCount += extractedCurrent.Count;
-            count -= extractedCurrent.Count;
-            if(count <= 0)
-                return extractedCount;
+
+            extractedCount += ExtractMax(i, currentStack.Count, simulate).Count;
         }
+
         return extractedCount;
     }
+
+
+    private IEnumerator<T> DefaultEnumerator()
+    {
+        for (int i = 0; i < Size; ++i)
+            yield return Get(i);
+    }
+
+    public virtual IEnumerator<T> GetEnumerator() => DefaultEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
