@@ -20,7 +20,7 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
     int SetMax(int index, T stack, int count)
     {
         if(index < 0 || index >= Size)
-            return 0;
+            throw new ArgumentOutOfRangeException(nameof(index));
 
         if(stack.IsEmpty || count <= 0)
         {
@@ -37,8 +37,10 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
 
     bool TryInsert(int index, T stack, int count, bool simulate = false)
     {
-        if(count < 0 || index < 0 || index >= Size)
-            return false;
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
         var currentStack = Get(index);
         if(!currentStack.EqualsValue(stack))
@@ -56,8 +58,10 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
 
     int InsertMax(int index, T stack, int count, bool simulate = false)
     {
-        if(count <= 0 || index < 0 || index >= Size)
-            return 0;
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
         var currentStack = Get(index);
         if(!currentStack.EqualsValue(stack))
@@ -106,9 +110,13 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
     T ExtractMax(int index, T? stackToExtract, int count, bool simulate = false);
     // TODO: uncomment(make default) when access T.Empty will be whitelisted
     /*{
-        bool limitedByStack = stackToExtract is not null;
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
-        if(count <= 0 || index < 0 || index >= Size || limitedByStack && stackToExtract!.IsEmpty)
+        bool limitedByStack = stackToExtract is not null;
+        if(limitedByStack && stackToExtract!.IsEmpty)
             return T.Empty;
 
         var stack = Get(index);
@@ -150,11 +158,10 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
     bool TryExtract(int index, T? stackToExtract, int count, out T stack, bool simulate = false);
     // TODO: uncomment(make default) when access T.Empty will be whitelisted
     /*{
-        if(count < 0 || index < 0 || index >= Size)
-        {
-            stack = T.Empty;
-            return false;
-        }
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
         stack = Get(index);
         if(stack.Count < count)

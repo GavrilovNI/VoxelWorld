@@ -17,7 +17,7 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
     public bool TrySet(int index, T stack)
     {
         if(index < 0 || index >= Size)
-            return false;
+            throw new ArgumentOutOfRangeException(nameof(index));
 
         if(stack.IsEmpty)
         {
@@ -43,7 +43,7 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
     public virtual int SetMax(int index, T stack, int count)
     {
         if(index < 0 || index >= Size)
-            return 0;
+            throw new ArgumentOutOfRangeException(nameof(index));
 
         if(stack.IsEmpty || count <= 0)
         {
@@ -60,8 +60,10 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
 
     public virtual bool TryInsert(int index, T stack, int count, bool simulate = false)
     {
-        if(count < 0 || index < 0 || index >= Size)
-            return false;
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
         var currentStack = Get(index);
         if(!currentStack.EqualsValue(stack))
@@ -79,8 +81,10 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
 
     public virtual int InsertMax(int index, T stack, int count, bool simulate = false)
     {
-        if(count <= 0 || index < 0 || index >= Size)
-            return 0;
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
         var currentStack = Get(index);
         if(!currentStack.EqualsValue(stack))
@@ -102,6 +106,9 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
 
     public override int InsertMax(T stack, int count, bool simulate = false)
     {
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
+
         int insertedCount = 0;
         InsertToValid(i => !Get(i).IsEmpty);
         if(count <= 0)
@@ -130,7 +137,12 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
     {
         bool limitedByStack = stackToExtract is not null;
 
-        if(count <= 0 || index < 0 || index >= Size || limitedByStack && stackToExtract!.IsEmpty)
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
+
+        if(limitedByStack && stackToExtract!.IsEmpty)
 #pragma warning disable CS0618 // Type or member is obsolete
             return GetEmpty();
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -175,13 +187,10 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
 
     public virtual bool TryExtract(int index, T? stackToExtract, int count, out T stack, bool simulate = false)
     {
-        if(count < 0 || index < 0 || index >= Size)
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            stack = GetEmpty();
-#pragma warning restore CS0618 // Type or member is obsolete
-            return false;
-        }
+        if(index < 0 || index >= Size)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
 
         stack = Get(index);
         if(stack.Count < count)
