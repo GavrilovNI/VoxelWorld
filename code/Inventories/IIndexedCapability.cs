@@ -8,8 +8,8 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
 
     T Get(int index);
 
-    bool TrySet(int index, T stack, int count);
-    bool TrySet(int index, T stack) => TrySet(index, stack, stack.Count);
+    bool TrySet(int index, T stack);
+    bool TrySet(int index, T stack, int count) => TrySet(index, stack.WithCount(count));
 
     // TODO: uncomment(make default) when access T.Empty will be whitelisted
     void Remove(int index); // => TrySet(index, T.Empty);

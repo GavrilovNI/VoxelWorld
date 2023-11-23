@@ -14,7 +14,7 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
     protected abstract void Set(int index, T stack);
     protected void Set(int index, T stack, int count) => Set(index, stack.WithCount(count));
 
-    public virtual bool TrySet(int index, T stack, int count)
+    public bool TrySet(int index, T stack)
     {
         if(index < 0 || index >= Size)
             return false;
@@ -31,7 +31,7 @@ public abstract class IndexedCapability<T> : Capability<T>, IIndexedCapability<T
         Set(index, stack);
         return true;
     }
-    public bool TrySet(int index, T stack) => TrySet(index, stack, stack.Count);
+    public virtual bool TrySet(int index, T stack, int count) => TrySet(index, stack.WithCount(count));
 
 #pragma warning disable CS0618 // Type or member is obsolete
     public virtual void Remove(int index) => Set(index, GetEmpty());
