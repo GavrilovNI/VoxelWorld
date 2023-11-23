@@ -12,7 +12,7 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
     protected abstract T GetEmpty();
 
     public virtual int GetStackLimit(int index) => DefaultValues.ItemStackLimit;
-    public virtual int GetStackLimit(int index, T stack) => GetStackLimit(index);
+    public virtual int GetStackLimit(int index, T stack) => Math.Min(GetStackLimit(index), stack.ValueStackLimit);
 
     public abstract T Get(int index);
 

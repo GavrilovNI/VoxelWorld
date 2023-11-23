@@ -1,8 +1,8 @@
-﻿using Sandcube.Items;
+﻿
 
 namespace Sandcube.Inventories;
 
-public record class Stack<T> : IStack<Stack<T>> where T : class
+public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue
 {
 #pragma warning disable SB3000 // Hotloading not supported
     public static Stack<T> Empty { get; } = new(null!, 0);
@@ -10,6 +10,7 @@ public record class Stack<T> : IStack<Stack<T>> where T : class
 
     public T? Value { get; private init; }
     public int Count { get; private init; }
+    public int ValueStackLimit => Value?.StackLimit ?? 0;
 
     public bool IsEmpty => Count <= 0;
 
@@ -35,6 +36,6 @@ public record class Stack<T> : IStack<Stack<T>> where T : class
         if(other.IsEmpty)
             return false;
 
-        return Value == other.Value;
+        return Value!.Equals(other.Value);
     }
 }

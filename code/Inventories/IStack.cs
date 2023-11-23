@@ -10,6 +10,7 @@ public interface IStack<T> where T : class, IStack<T>
 
     int Count { get; }
     bool IsEmpty => Count <= 0;
+    int ValueStackLimit { get; }
 
     T WithCount(int count);
 
