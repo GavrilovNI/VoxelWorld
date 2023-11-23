@@ -15,7 +15,7 @@ public class Item : IRegisterable
         ModedId = id;
     }
 
-    public void OnRegistered() {}
+    public virtual void OnRegistered() { }
 
     public virtual InteractionResult OnAttack(ItemActionContext context)
     {
