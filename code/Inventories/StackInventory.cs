@@ -65,4 +65,5 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
 
     public override IEnumerator<T> GetEnumerator() => _stacks.Values.GetEnumerator();
 
+    public override int GetHashCode() => _stacks.GetHashCode();
 }

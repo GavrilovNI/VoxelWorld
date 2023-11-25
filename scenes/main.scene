@@ -279,6 +279,42 @@
           ]
         }
       ]
+    },
+    {
+      "Id": "d5bee545-75ce-40fe-a099-4e741326dbd2",
+      "Name": "Screen UI",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "ScreenPanel",
+          "__enabled": true,
+          "AutoScreenScale": true,
+          "Opacity": 1,
+          "Scale": 1,
+          "ZIndex": 100
+        }
+      ],
+      "Children": [
+        {
+          "Id": "e3ce74cf-1b34-45bd-9185-70bf5ec28220",
+          "Name": "Inventory",
+          "Enabled": true,
+          "Children": [
+            {
+              "Id": "db5119fc-9118-4da7-9cea-58f77011921d",
+              "Name": "Hotbar",
+              "Enabled": true,
+              "Components": [
+                {
+                  "__type": "HotbarUI",
+                  "__enabled": true,
+                  "PlayerInventory": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "SceneProperties": {

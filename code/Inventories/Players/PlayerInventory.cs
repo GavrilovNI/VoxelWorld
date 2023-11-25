@@ -6,17 +6,17 @@ namespace Sandcube.Inventories.Players;
 
 public class PlayerInventory : BaseComponent, IPlayerInventory
 {
-    protected readonly IIndexedCapability<Stack<Item>> _hotBar;
+    public IIndexedCapability<Stack<Item>> HotBar { get; }
     protected Stack<Item> _secondaryHand = Stack<Item>.Empty;
 
     protected int _mainHandIndex = 0;
     public virtual int MainHandIndex
     {
         get => _mainHandIndex;
-        set => _mainHandIndex = Math.Clamp(value, 0, _hotBar.Size - 1);
+        set => _mainHandIndex = Math.Clamp(value, 0, HotBar.Size - 1);
     }
 
-    public virtual int HotbarSize => _hotBar.Size;
+    public virtual int HotbarSize => HotBar.Size;
 
     public PlayerInventory() : this(9)
     {
@@ -27,20 +27,20 @@ public class PlayerInventory : BaseComponent, IPlayerInventory
         if(hotbarSize <= 0)
             throw new ArgumentOutOfRangeException(nameof(hotbarSize));
 
-        _hotBar = new ItemStackInventory(hotbarSize);
+        HotBar = new ItemStackInventory(hotbarSize);
     }
 
     public virtual int GetHotbarStackLimit(int index) => DefaultValues.ItemStackLimit;
     public virtual int GetHotbarStackLimit(int index, Stack<Item> stack) => Math.Min(GetHotbarStackLimit(index), stack.ValueStackLimit);
 
     public virtual bool CanSetHotbarItem(int index, Stack<Item> stack) => stack.Count <= GetHotbarStackLimit(index, stack);
-    public Stack<Item> GetHotbarItem(int index) => _hotBar.Get(index);
+    public Stack<Item> GetHotbarItem(int index) => HotBar.Get(index);
     public bool TrySetHotbarItem(int index, Stack<Item> stack)
     {
         if(!CanSetHotbarItem(index, stack))
             return false;
 
-        return _hotBar.TrySet(index, stack);
+        return HotBar.TrySet(index, stack);
     }
 
 
@@ -70,7 +70,7 @@ public class PlayerInventory : BaseComponent, IPlayerInventory
                 var mainHandIndex = MainHandIndex;
                 if(mainHandIndex < 0)
                     return Stack<Item>.Empty;
-                return _hotBar.Get(mainHandIndex);
+                return HotBar.Get(mainHandIndex);
             case HandType.Secondary:
                 return _secondaryHand;
             default:
@@ -89,7 +89,7 @@ public class PlayerInventory : BaseComponent, IPlayerInventory
                 var mainHandIndex = MainHandIndex;
                 if(mainHandIndex < 0)
                     return false;
-                return _hotBar.TrySet(mainHandIndex, stack);
+                return HotBar.TrySet(mainHandIndex, stack);
             case HandType.Secondary:
                 _secondaryHand = stack;
                 return true;
@@ -97,4 +97,6 @@ public class PlayerInventory : BaseComponent, IPlayerInventory
                 throw new ArgumentException($"{nameof(HandType)} {handType} not supported");
         }
     }
+
+    public override int GetHashCode() => HashCode.Combine(HotBar, _secondaryHand, _mainHandIndex);
 }

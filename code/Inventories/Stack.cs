@@ -38,4 +38,6 @@ public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue
 
         return Value!.Equals(other.Value);
     }
+
+    public override int GetHashCode() => HashCode.Combine(Value, Count);
 }

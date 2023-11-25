@@ -1,0 +1,75 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using Sandcube.Interactions;
+@using Sandcube.Inventories;
+@using Sandcube.Inventories.Players;
+@using Sandcube.Items;
+
+@namespace Sandcube.UI.Inventories.Players
+
+@inherits PanelComponent
+
+<root>
+	@if(PlayerInventory is not null)
+	{
+		Stack<Item> secondaryHandStack = GetSecondaryHandStack();
+		<div class="inner" style="aspect-ratio:@(PlayerInventory.HotbarSize)">
+			<div class="slots">
+				@for(int i = 0; i < PlayerInventory.HotbarSize; ++i)
+				{
+					Stack<Item> stack = PlayerInventory.GetHotbarItem(i);
+					bool selected = PlayerInventory.MainHandIndex == i;
+					<div class="slot main">
+						<Image class="background texture" Texture=@BackgroundTexture/>
+						@if(!stack.IsEmpty)
+						{
+							<Image class="item texture" Texture=@stack.Value.Texture/>
+						}
+						@if(selected)
+						{
+							<Image class="selector texture" Texture=@SelectorTexture 
+								style="width:@(SelectorScale.x)%; height:@(SelectorScale.y)%; left:@(SelectorOffset.x)%; top:@(SelectorOffset.y)%;"/>
+						}
+					</div>
+		
+				}
+
+				<div class="slot secondary">
+					<Image class="background texture" Texture=@BackgroundTexture/>
+					@if(!secondaryHandStack.IsEmpty)
+					{
+						<Image class="item texture" Texture=@secondaryHandStack.Value.Texture/>
+					}
+				</div>
+			</div>
+		</div>
+	}
+</root>
+
+@code
+{
+	[Property] public PlayerInventory PlayerInventory { get; set; } // TODO: change to IPlayerInventory
+
+	protected Texture BackgroundTexture;
+	protected Texture SelectorTexture;
+	protected Vector2 SelectorScale;
+	protected Vector2 SelectorOffset;
+
+	protected override int BuildHash() => PlayerInventory?.GetHashCode() ?? 0;
+
+	public override void OnAwake()
+	{
+		BackgroundTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot.png", true) ?? Texture.Invalid;
+		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
+		SelectorScale = SelectorTexture.Size / BackgroundTexture.Size * 100;
+		SelectorOffset = -((SelectorScale - 100f) / 2f);
+	}
+
+	public override void Update()
+	{
+		SelectorScale = SelectorTexture.Size / BackgroundTexture.Size * 100;
+		SelectorOffset = -((SelectorScale - 100f) / 2f);
+	}
+
+	protected Stack<Item> GetSecondaryHandStack() => PlayerInventory?.GetHandItem(HandType.Secondary) ?? Stack<Item>.Empty;
+}
