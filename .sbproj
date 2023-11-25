@@ -3,7 +3,7 @@
   "Type": "game",
   "Org": "local",
   "Ident": "sandcube",
-  "Tags": "game multiplayer sandbox",
+  "Tags": "game sandbox",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -14,9 +14,9 @@
   "PackageReferences": [],
   "EditorReferences": null,
   "Metadata": {
-    "MaxPlayers": 16,
+    "MaxPlayers": 1,
     "MinPlayers": 1,
-    "GameNetworkType": "Multiplayer",
+    "GameNetworkType": "Singleplayer",
     "MapSelect": "Unrestricted",
     "MapList": [
       "facepunch.square"
