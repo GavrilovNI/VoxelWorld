@@ -48,10 +48,18 @@ public class SandcubePlayer : BaseComponent
         if(Inventory is null)
             return;
 
-        for(int i = 0; i < Inventory.HotbarSize; ++i)
+        if(Inventory.HotbarSize != 0)
         {
-            if(Input.Pressed($"Slot{i + 1}"))
-                Inventory.MainHandIndex = i;
+            for(int i = 0; i < Inventory.HotbarSize; ++i)
+            {
+                if(Input.Pressed($"Slot{i + 1}"))
+                    Inventory.MainHandIndex = i;
+            }
+
+            int slotMoveDelta = (Input.Pressed("SlotPrev") ? -1 : 0) + (Input.Pressed("SlotNext") ? 1 : 0);
+            slotMoveDelta -= Input.MouseWheel;
+            var newIndex = Inventory.MainHandIndex + slotMoveDelta;
+            Inventory.MainHandIndex = (newIndex % Inventory.HotbarSize + Inventory.HotbarSize) % Inventory.HotbarSize;
         }
 
         if(Input.Pressed("HandSwap"))
