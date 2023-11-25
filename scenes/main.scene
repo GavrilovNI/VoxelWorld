@@ -86,8 +86,11 @@
         {
           "__type": "SandcubePlayer",
           "__enabled": true,
-          "Inventory": null,
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+        },
+        {
+          "__type": "PlayerInventory",
+          "__enabled": true
         },
         {
           "__type": "WorldAutoLoader",

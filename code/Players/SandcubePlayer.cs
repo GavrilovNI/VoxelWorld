@@ -8,7 +8,7 @@ namespace Sandcube.Players;
 public class SandcubePlayer : BaseComponent
 {
     [Property] public World World { get; private set; } = null!;
-    [Property] public IPlayerInventory Inventory { get; private set; } = null!;
+    public IPlayerInventory Inventory { get; private set; } = null!; // TODO: Make Property
 
     public override void OnEnabled()
     {
@@ -20,11 +20,15 @@ public class SandcubePlayer : BaseComponent
         Event.Unregister(this);
     }
 
+    public override void OnAwake()
+    {
+        Inventory ??= GetComponent<PlayerInventory>();
+    }
+
     [SandcubeEvent.Game.Start]
     protected virtual void OnGameStart()
     {
         var items = SandcubeGame.Instance!.Items;
-        Inventory = new PlayerInventory();
         Inventory.TrySetHotbarItem(0, new(items.Stone, 1));
         Inventory.TrySetHotbarItem(1, new(items.Dirt, 1));
         Inventory.TrySetHotbarItem(2, new(items.Cobblestone, 1));
