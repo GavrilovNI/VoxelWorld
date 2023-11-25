@@ -2,7 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
-using Sandcube.Scene.Extensions;
+using Sandcube.Scenes.Extensions;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
 

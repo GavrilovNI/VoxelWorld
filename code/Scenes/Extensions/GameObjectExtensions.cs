@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Scene.Extensions;
+namespace Sandcube.Scenes.Extensions;
 
 public static class GameObjectExtensions
 {
