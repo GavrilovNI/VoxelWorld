@@ -3,11 +3,8 @@
     {
       "Id": "e9aebd45-7f85-4fff-8f75-cfcb5ac9bb38",
       "Name": "Directional Light",
-      "Enabled": true,
-      "Position": "0,0,0",
       "Rotation": "0.4351622,0.4351622,-0.5573454,0.5573453",
-      "Scale": "1,1,1",
-      "Tags": "",
+      "Enabled": true,
       "Components": [
         {
           "__type": "DirectionalLightComponent",
@@ -22,10 +19,6 @@
       "Id": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
       "Name": "Sandcube Game",
       "Enabled": true,
-      "Position": "0,0,0",
-      "Rotation": "0,0,0,1",
-      "Scale": "1,1,1",
-      "Tags": "",
       "Components": [
         {
           "__type": "SandcubeGame",
@@ -37,11 +30,8 @@
     {
       "Id": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
       "Name": "World",
-      "Enabled": true,
-      "Position": "0,0,0",
-      "Rotation": "0,0,0,1",
-      "Scale": "1,1,1",
       "Tags": "world",
+      "Enabled": true,
       "Components": [
         {
           "__type": "World",
@@ -66,11 +56,8 @@
     {
       "Id": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
       "Name": "Player",
-      "Enabled": true,
       "Position": "0,0,450",
-      "Rotation": "0,0,0,1",
-      "Scale": "1,1,1",
-      "Tags": "",
+      "Enabled": true,
       "Components": [
         {
           "__type": "CitizenAnimation",
@@ -99,14 +86,13 @@
           "__enabled": true,
           "AnimationHelper": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
           "Body": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
-          "CameraDistance": 200,
-          "Eye": "edb447df-b691-4153-8652-070d2533e7c4",
-          "FirstPerson": true,
+          "Eye": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
           "Gravity": "0,0,800"
         },
         {
           "__type": "SandcubePlayer",
           "__enabled": true,
+          "Inventory": null,
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
         },
         {
@@ -121,11 +107,7 @@
         {
           "Id": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
           "Name": "Body",
-          "Enabled": false,
           "Position": "0,-0.66093,0",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
           "Components": [
             {
               "__type": "AnimatedModelComponent",
@@ -143,11 +125,9 @@
             {
               "Id": "975e3006-e7c3-46a5-9f30-c31a196c89f9",
               "Name": "Name Tag UI",
-              "Enabled": true,
               "Position": "-0.000001814945,0.1895752,80.7357",
               "Rotation": "-0.00000005960058,0.000000000000005518709,-0.9999317,0.01167414",
-              "Scale": "1,1,1",
-              "Tags": "",
+              "Enabled": true,
               "Components": [
                 {
                   "__type": "WorldPanel",
@@ -168,11 +148,8 @@
             {
               "Id": "258a1012-ff9e-49b5-bf1b-887d483bb0bf",
               "Name": "Hair",
-              "Enabled": true,
               "Position": "0,0.66093,0",
-              "Rotation": "0,0,0,1",
-              "Scale": "1,1,1",
-              "Tags": "",
+              "Enabled": true,
               "Components": [
                 {
                   "__type": "AnimatedModelComponent",
@@ -190,11 +167,8 @@
             {
               "Id": "f14d65a1-eea4-4fe5-89d7-a550ec6b8f11",
               "Name": "Hair",
-              "Enabled": true,
               "Position": "0,0.66093,0",
-              "Rotation": "0,0,0,1",
-              "Scale": "1,1,1",
-              "Tags": "",
+              "Enabled": true,
               "Components": [
                 {
                   "__type": "AnimatedModelComponent",
@@ -214,11 +188,8 @@
         {
           "Id": "7c163f9b-273d-41e8-91d6-9f096d02854b",
           "Name": "Camera",
-          "Enabled": true,
           "Position": "-200,0,64",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
+          "Enabled": true,
           "Components": [
             {
               "__type": "CameraComponent",
@@ -228,6 +199,8 @@
               "FieldOfView": 80,
               "Orthographic": false,
               "OrthographicHeight": 1204,
+              "RenderExcludeTags": "",
+              "RenderTags": "",
               "TargetEye": "None",
               "ZFar": 10000,
               "ZNear": 1
@@ -295,16 +268,24 @@
           ]
         },
         {
-          "Id": "edb447df-b691-4153-8652-070d2533e7c4",
+          "Id": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
           "Name": "EyePos",
-          "Enabled": true,
           "Position": "0,0,64",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": ""
+          "Enabled": true
         }
       ]
     }
   ],
+  "SceneProperties": {
+    "NetworkFrequency": 60,
+    "FixedUpdateFrequency": 50,
+    "Lerping": true,
+    "MaxFixedUpdates": 5,
+    "TimeScale": 1,
+    "ThreadedAnimation": true,
+    "UseFixedUpdate": true
+  },
+  "Title": "main",
+  "Description": "",
   "__references": []
 }
