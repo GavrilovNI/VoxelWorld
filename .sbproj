@@ -181,6 +181,11 @@
           "Name": "Chat",
           "KeyboardCode": "t",
           "GroupName": "Other"
+        },
+        {
+          "Name": "HandSwap",
+          "KeyboardCode": "f",
+          "GroupName": "Inventory"
         }
       ]
     }

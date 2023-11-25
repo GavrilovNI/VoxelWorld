@@ -1,5 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Events;
+using Sandcube.Interactions;
+using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
 using Sandcube.Worlds;
 
@@ -50,6 +52,19 @@ public class SandcubePlayer : BaseComponent
         {
             if(Input.Pressed($"Slot{i + 1}"))
                 Inventory.MainHandIndex = i;
+        }
+
+        if(Input.Pressed("HandSwap"))
+        {
+            var mainHandStack = Inventory.GetHandItem(HandType.Main);
+            var secondaryHandStack = Inventory.GetHandItem(HandType.Secondary);
+
+            if(Inventory.CanSetHandItem(HandType.Main, secondaryHandStack) &&
+                Inventory.CanSetHandItem(HandType.Secondary, mainHandStack))
+            {
+                Inventory.TrySetHandItem(HandType.Main, secondaryHandStack);
+                Inventory.TrySetHandItem(HandType.Secondary, mainHandStack);
+            }
         }
     }
 }
