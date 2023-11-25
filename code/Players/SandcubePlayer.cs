@@ -46,10 +46,10 @@ public class SandcubePlayer : BaseComponent
         if(Inventory is null)
             return;
 
-        for(int i = 1; i < Inventory.HotbarSize; ++i)
+        for(int i = 0; i < Inventory.HotbarSize; ++i)
         {
-            if(Input.Pressed($"Slot{i}"))
-                Inventory.MainHandIndex = i - 1;
+            if(Input.Pressed($"Slot{i + 1}"))
+                Inventory.MainHandIndex = i;
         }
     }
 }
