@@ -1,7 +1,7 @@
 {
   "Title": "Sandcube",
   "Type": "game",
-  "Org": "local",
+  "Org": "sandcube",
   "Ident": "sandcube",
   "Tags": "game sandbox",
   "Schema": 1,
