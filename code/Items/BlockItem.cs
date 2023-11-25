@@ -10,7 +10,8 @@ public class BlockItem : Item
 {
     public readonly Block Block;
 
-    public BlockItem(Block block) : base(block.ModedId)
+
+    public BlockItem(Block block, Texture texture) : base(block.ModedId, texture)
     {
         Block = block;
     }

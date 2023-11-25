@@ -1,4 +1,5 @@
-﻿using Sandcube.Blocks;
+﻿using Sandbox;
+using Sandcube.Blocks;
 using Sandcube.Items;
 using System.Text;
 
@@ -50,7 +51,9 @@ public class ModItems : ModRegisterables<Item>
             var propertyType = property.PropertyType;
             if(!propertyType.IsAssignableTo(typeof(BlockItem)) || propertyType == typeof(BlockItem))
             {
-                blockItem = new(block);
+                var id = block.ModedId;
+                var itemTexture = Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/items/{id.Name}.png", true) ?? Texture.Invalid;
+                blockItem = new(block, itemTexture);
             }
             else
             {
