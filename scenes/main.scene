@@ -66,12 +66,6 @@
           "Target": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
         },
         {
-          "__type": "WorldAutoLoader",
-          "__enabled": true,
-          "Distance": 2,
-          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
-        },
-        {
           "__type": "CharacterController",
           "__enabled": true,
           "Acceleration": 10,
@@ -82,17 +76,23 @@
           "StepHeight": 18
         },
         {
-          "__type": "PlayerController",
+          "__type": "SandcubePlayerController",
           "__enabled": true,
           "AnimationHelper": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
           "Body": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
-          "Eye": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
+          "CameraParent": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
           "Gravity": "0,0,800"
         },
         {
           "__type": "SandcubePlayer",
           "__enabled": true,
           "Inventory": null,
+          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+        },
+        {
+          "__type": "WorldAutoLoader",
+          "__enabled": true,
+          "Distance": 2,
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
         },
         {
@@ -186,92 +186,94 @@
           ]
         },
         {
-          "Id": "7c163f9b-273d-41e8-91d6-9f096d02854b",
-          "Name": "Camera",
-          "Position": "-200,0,64",
-          "Enabled": true,
-          "Components": [
-            {
-              "__type": "CameraComponent",
-              "__enabled": true,
-              "BackgroundColor": "0.25292,0.26086,0.29703,1",
-              "ClearFlags": "All",
-              "FieldOfView": 80,
-              "Orthographic": false,
-              "OrthographicHeight": 1204,
-              "RenderExcludeTags": "",
-              "RenderTags": "",
-              "TargetEye": "None",
-              "ZFar": 10000,
-              "ZNear": 1
-            },
-            {
-              "__type": "FilmGrain",
-              "__enabled": true,
-              "Intensity": 0.03,
-              "Response": 1
-            },
-            {
-              "__type": "Vignette",
-              "__enabled": true,
-              "Center": "0.5,0.5",
-              "Color": "0,0,0,0.38",
-              "Intensity": 1,
-              "Roundness": 0.5,
-              "Smoothness": 1
-            },
-            {
-              "__type": "ChromaticAberration",
-              "__enabled": true,
-              "Offset": "4,6,4.049999",
-              "Scale": 0.2
-            },
-            {
-              "__type": "Sharpen",
-              "__enabled": true,
-              "Scale": 1
-            },
-            {
-              "__type": "Highlight",
-              "__enabled": true
-            },
-            {
-              "__type": "Bloom",
-              "__enabled": true,
-              "BloomColor": {
-                "color": [
-                  {
-                    "c": "1,1,1,1"
-                  },
-                  {
-                    "t": 1,
-                    "c": "0.5,0.5,0.5,1"
-                  }
-                ],
-                "alpha": []
-              },
-              "BloomCurve": {
-                "rangey": "0,106.45",
-                "frames": [
-                  {},
-                  {
-                    "x": 1,
-                    "y": 1
-                  }
-                ]
-              },
-              "Mode": "Screen",
-              "Strength": 1,
-              "Threshold": 0.3,
-              "ThresholdWidth": 2
-            }
-          ]
-        },
-        {
           "Id": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
           "Name": "EyePos",
           "Position": "0,0,64",
-          "Enabled": true
+          "Enabled": true,
+          "Children": [
+            {
+              "Id": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+              "Name": "Camera",
+              "Position": "8,0,0",
+              "Enabled": true,
+              "Components": [
+                {
+                  "__type": "CameraComponent",
+                  "__enabled": true,
+                  "BackgroundColor": "0.25292,0.26086,0.29703,1",
+                  "ClearFlags": "All",
+                  "FieldOfView": 80,
+                  "Orthographic": false,
+                  "OrthographicHeight": 1204,
+                  "RenderExcludeTags": "",
+                  "RenderTags": "",
+                  "TargetEye": "None",
+                  "ZFar": 10000,
+                  "ZNear": 1
+                },
+                {
+                  "__type": "FilmGrain",
+                  "__enabled": true,
+                  "Intensity": 0.03,
+                  "Response": 1
+                },
+                {
+                  "__type": "Vignette",
+                  "__enabled": true,
+                  "Center": "0.5,0.5",
+                  "Color": "0,0,0,0.38",
+                  "Intensity": 1,
+                  "Roundness": 0.5,
+                  "Smoothness": 1
+                },
+                {
+                  "__type": "ChromaticAberration",
+                  "__enabled": true,
+                  "Offset": "4,6,4.049999",
+                  "Scale": 0.2
+                },
+                {
+                  "__type": "Sharpen",
+                  "__enabled": true,
+                  "Scale": 1
+                },
+                {
+                  "__type": "Highlight",
+                  "__enabled": true
+                },
+                {
+                  "__type": "Bloom",
+                  "__enabled": true,
+                  "BloomColor": {
+                    "color": [
+                      {
+                        "c": "1,1,1,1"
+                      },
+                      {
+                        "t": 1,
+                        "c": "0.5,0.5,0.5,1"
+                      }
+                    ],
+                    "alpha": []
+                  },
+                  "BloomCurve": {
+                    "rangey": "0,106.45",
+                    "frames": [
+                      {},
+                      {
+                        "x": 1,
+                        "y": 1
+                      }
+                    ]
+                  },
+                  "Mode": "Screen",
+                  "Strength": 1,
+                  "Threshold": 0.3,
+                  "ThresholdWidth": 2
+                }
+              ]
+            }
+          ]
         }
       ]
     }
