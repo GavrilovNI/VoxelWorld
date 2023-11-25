@@ -41,7 +41,7 @@ public class SimpleBlock : Block
         Texture = texture;
     }
 
-    public SimpleBlock(in ModedId id) : this(id, Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/blocks/{id.Name}.png", true))
+    public SimpleBlock(in ModedId id) : this(id, Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/blocks/{id.Name}.png", true) ?? Texture.Invalid)
     {
     }
 
