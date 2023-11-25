@@ -1,0 +1,22 @@
+@using Sandbox;
+@using Sandbox.UI;
+
+@namespace Sandcube.UI.Menus
+
+@inherits PanelComponent
+
+
+<root>
+	<div class="buttons">
+		<div id="start-game-button" class="button" onclick="@(StartGame)">Start Game</div>
+	</div>
+</root>
+
+
+@code
+{
+	protected void StartGame()
+	{
+		global::GameManager.ActiveScene.LoadFromFile("scenes/main.scene");
+	}
+}

@@ -313,6 +313,17 @@
               ]
             }
           ]
+        },
+        {
+          "Id": "5070d320-0590-4a21-a5de-cd3007668697",
+          "Name": "Menu",
+          "Enabled": true,
+          "Components": [
+            {
+              "__type": "InGameMenu",
+              "__enabled": true
+            }
+          ]
         }
       ]
     }

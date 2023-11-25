@@ -1,0 +1,34 @@
+@using Sandbox;
+@using Sandbox.UI;
+
+@namespace Sandcube.UI.Menus
+
+@inherits PanelComponent
+
+
+<root>
+	<div class="buttons">
+		<div id="leave-game-button" class="button" onclick="@(LeaveGame)">Leave to main menu</div>
+	</div>
+</root>
+
+
+@code
+{
+	public bool Opened
+	{
+		get => this.Panel.Class.Contains("opened");
+		set => this.Panel.SetClass("opened", value);
+	}
+
+	public override void Update()
+	{
+		if (Input.EscapePressed)
+			Opened = !Opened;
+	}
+
+	protected void LeaveGame()
+	{
+		global::GameManager.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
+	}
+}
