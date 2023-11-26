@@ -24,6 +24,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     protected readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
 
+    public BBox Bounds { get; protected set; }
+
     public Vector3Int BlockOffset => Position * Size;
 
     public Chunk()
@@ -68,6 +70,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
     {
         _blockStates.Clear();
         MeshRebuildRequired = true;
+        Bounds = default;
     }
 
     protected virtual bool IsInBounds(Vector3Int position) => !position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
@@ -169,8 +172,31 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         VoxelMeshBuilder transparentMeshBuilder = new();
         AddVoxelsToMeshBuilder(opaqueMeshBuilder, transparentMeshBuilder);
 
+        Bounds = opaqueMeshBuilder.Bounds;
+
         AddModel(opaqueMeshBuilder, _opaqueModelCollider);
         AddModel(transparentMeshBuilder, _transparentModelCollider);
+
+        RecalculateBounds(opaqueMeshBuilder, transparentMeshBuilder);
+    }
+
+    protected virtual void RecalculateBounds(params VoxelMeshBuilder[] meshBuilders)
+    {
+        BBox? bounds = null;
+        foreach(var builder in meshBuilders)
+        {
+            if(builder.IsEmpty())
+                continue;
+            if(bounds.HasValue)
+                bounds = bounds.Value.AddBBox(builder.Bounds);
+            else
+                bounds = builder.Bounds;
+        }
+
+        if(!bounds.HasValue)
+            bounds = new BBox();
+
+        Bounds = bounds.Value.Translate(Transform.Position);
     }
 
     protected virtual void AddModel(VoxelMeshBuilder builder, ModelCollider collider)
@@ -197,5 +223,11 @@ public class Chunk : BaseComponent, IBlockStateAccessor
             modelComponents[i].Model = modelBuilder.Create();
             modelComponents[i].SceneObject.Attributes.Set("color", SandcubeGame.Instance!.TextureMap.Texture);
         }
+    }
+
+    public override void DrawGizmos()
+    {
+        var bounds = Bounds.Translate(-Transform.Position).Expanded(1);
+        Gizmo.Hitbox.BBox(bounds);
     }
 }

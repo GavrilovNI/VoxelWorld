@@ -16,12 +16,28 @@ public class VoxelMeshBuilder
     protected List<Vertex>? _currentVertices = null;
     protected List<ushort>? _currentIndices = null;
 
-    public Vertex Default;
+    public BBox Bounds { get; protected set; }
 
+    public Vertex Default;
 
     public VoxelMeshBuilder()
     {
         Clear();
+    }
+
+    public bool IsEmpty()
+    {
+        foreach(var verteces in _vertices)
+        {
+            if(verteces.Count != 0)
+                return false;
+        }
+        foreach(var indices in _indices)
+        {
+            if(indices.Count != 0)
+                return false;
+        }
+        return true;
     }
 
     protected VoxelMeshBuilder AddNewDataList()
@@ -47,6 +63,7 @@ public class VoxelMeshBuilder
         _currentVertices = null;
         _currentIndices = null;
         Default = new() { Color = Color.White };
+        Bounds = default;
         return this;
     }
 
@@ -65,9 +82,27 @@ public class VoxelMeshBuilder
         return this;
     }
 
+    protected void ExpandBounds(Vector3 toAddVertexPosition)
+    {
+        bool isFirstVertex = _vertices.Count == 0 || (_vertices.Count == 1 && _vertices[0].Count == 0);
+        if(isFirstVertex)
+            Bounds = new(toAddVertexPosition, toAddVertexPosition);
+        else
+            Bounds = Bounds.AddPoint(toAddVertexPosition);
+    }
+
+    protected void ExpandBounds(BBox toAddVerticesBounds)
+    {
+        bool isFirstVertex = _vertices.Count == 0 || (_vertices.Count == 1 && _vertices[0].Count == 0);
+        if(isFirstVertex)
+            Bounds = toAddVerticesBounds;
+        else
+            Bounds = Bounds.AddBBox(toAddVerticesBounds);
+    }
 
     protected VoxelMeshBuilder AddVertex(Vertex vertex)
     {
+        ExpandBounds(vertex.Position);
         _currentVertices!.Add(vertex);
         return this;
     }
@@ -84,6 +119,10 @@ public class VoxelMeshBuilder
 
     public VoxelMeshBuilder AddMeshBuilder(VoxelMeshBuilder builder, Vector3 offset = default)
     {
+        if(builder.IsEmpty())
+            return this;
+
+        ExpandBounds(builder.Bounds.Translate(offset));
         for(int i = 0; i < builder._vertices.Count; ++i)
         {
             var vertices = builder._vertices[i];
