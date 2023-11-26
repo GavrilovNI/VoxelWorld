@@ -10,7 +10,6 @@ namespace Sandcube.Worlds;
 
 public class World : BaseComponent, IWorldAccessor
 {
-    [Property] public Vector3 VoxelSize { get; init; } = Vector3.One * 39.37f;
     [Property] public Vector3Int ChunkSize { get; init; } = 16;
     [Property] public Material VoxelsMaterial { get; set; } = null!;
     [Property] public WorldGenerator Generator { get; set; } = null!;
@@ -29,10 +28,10 @@ public class World : BaseComponent, IWorldAccessor
         var chunkGameObject = Scene.CreateObject();
         chunkGameObject.Name = $"Chunk {position}";
         chunkGameObject.Parent = this.GameObject;
-        chunkGameObject.Transform.Position = position * VoxelSize * ChunkSize;
+        chunkGameObject.Transform.Position = position * ChunkSize * MathV.InchesInMeter;
         chunkGameObject.Tags.Add("world");
 
-        var chunk = new Chunk(position, ChunkSize, VoxelSize)
+        var chunk = new Chunk(position, ChunkSize)
         {
             VoxelsMaterial = VoxelsMaterial
         };
@@ -58,7 +57,7 @@ public class World : BaseComponent, IWorldAccessor
     public virtual Vector3Int GetBlockPosition(Vector3 position, Vector3 hitNormal)
     {
         hitNormal = hitNormal.Normal;
-        var result = position.Divide(VoxelSize);
+        var result = position.Divide(MathV.InchesInMeter);
 
         foreach(var axis in Axis.All)
         {
@@ -78,9 +77,9 @@ public class World : BaseComponent, IWorldAccessor
 
         return result.Floor();
     }
-    public virtual Vector3Int GetBlockPosition(Vector3 position) => position.Divide(VoxelSize).Floor();
+    public virtual Vector3Int GetBlockPosition(Vector3 position) => position.Divide(MathV.InchesInMeter).Floor();
     public virtual Vector3Int GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
-    public virtual Vector3 GetBlockWorldPosition(Vector3Int position) => position * VoxelSize;
+    public virtual Vector3 GetBlockWorldPosition(Vector3Int position) => position * MathV.InchesInMeter;
 
     public virtual Vector3Int GetChunkPosition(Vector3Int blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
     public virtual Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;

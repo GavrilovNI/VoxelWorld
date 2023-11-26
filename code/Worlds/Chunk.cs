@@ -11,7 +11,6 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 {
     [Property] public Vector3Int Position { get; init; }
     [Property] public Vector3Int Size { get; init; } = 16;
-    [Property] public Vector3 VoxelSize { get; init; } = Vector3.One * 39.37f;
 
     [Property] public Material VoxelsMaterial { get; set; } = null!;
 
@@ -28,15 +27,10 @@ public class Chunk : BaseComponent, IBlockStateAccessor
     {
     }
 
-    public Chunk(Vector3Int position, Vector3Int size, Vector3 voxelSize)
+    public Chunk(Vector3Int position, Vector3Int size)
     {
         Position = position;
         Size = size;
-        VoxelSize = voxelSize;
-    }
-
-    public Chunk(Vector3Int position, Vector3Int size) : this(position, size, Vector3.One * 39.37f)
-    {
     }
 
     public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, SandcubeGame.Instance!.Blocks.Air.DefaultBlockState);
