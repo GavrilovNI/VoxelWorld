@@ -8,6 +8,7 @@ using Sandcube.Registries;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sandcube.Blocks;
 
@@ -24,14 +25,17 @@ public class SlabBlock : SimpleBlock
     public static BlockProperty<SlabType> SlabTypeProperty = new("type", SlabType.Bottom);
 
 
+    [SetsRequiredMembers]
     public SlabBlock(in ModedId id, in Rect textureRect) : base(id, textureRect)
     {
     }
 
+    [SetsRequiredMembers]
     public SlabBlock(in ModedId id, Texture texture) : base(id, texture)
     {
     }
 
+    [SetsRequiredMembers]
     public SlabBlock(in ModedId id) : base(id)
     {
     }

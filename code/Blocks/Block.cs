@@ -1,12 +1,11 @@
-﻿using Sandcube.Blocks.States;
+﻿using Sandcube.Blocks.Properties;
+using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
-using Sandcube.Mth;
-using Sandcube.Players;
 using Sandcube.Registries;
-using Sandcube.Worlds;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sandcube.Blocks;
 
@@ -15,12 +14,20 @@ public abstract class Block : IRegisterable
     public ModedId ModedId { get; }
     public readonly BlockState DefaultBlockState;
     public readonly BlockStateSet BlockStateSet;
+    public required BlockProperties Properties { get; init; }
 
-    public Block(in ModedId id)
+    [SetsRequiredMembers]
+    public Block(in ModedId id, in BlockProperties properties)
     {
         ModedId = id;
         BlockStateSet = new BlockStateSet(this, CombineProperties());
         DefaultBlockState = CreateDefaultBlockState(BlockStateSet.First());
+        Properties = properties;
+    }
+
+    [SetsRequiredMembers]
+    public Block(in ModedId id) : this(id, BlockProperties.Default)
+    {
     }
 
     public virtual void OnRegistered() { }
