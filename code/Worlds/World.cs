@@ -77,7 +77,7 @@ public class World : BaseComponent, IWorldAccessor
 
             if(hitAxis > 0)
             {
-                if(mod.AlmostEqual(0) || mod.AlmostEqual(-1))
+                if((mod.AlmostEqual(0) && mod >= 0) || mod.AlmostEqual(-1))
                     result = result.WithAxis(axis, result.GetAxis(axis) - 1);
             }
             else if(mod.AlmostEqual(1))
