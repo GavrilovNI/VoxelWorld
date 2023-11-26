@@ -19,7 +19,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
     protected bool _meshRebuildRequired = false;
 
     protected readonly List<ModelComponent> _modelComponents = new();
-    protected ModelCollider _modelCollider = null!;
+    protected ModelCollider _opaqueModelCollider = null!;
+    protected ModelCollider _transparentModelCollider = null!;
 
     protected readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
 
@@ -53,7 +54,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     public override void OnStart()
     {
-        _modelCollider = GameObject.AddComponent<ModelCollider>();
+        _opaqueModelCollider = GameObject.AddComponent<ModelCollider>();
+        _transparentModelCollider = GameObject.AddComponent<ModelCollider>();
     }
 
     public override void Update()
@@ -92,7 +94,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
             !neighborBlock.IsFullBlock(neighborBlockState);
     }
 
-    protected virtual void AddVoxelsToMeshBuilder(VoxelMeshBuilder meshBuilder)
+    protected virtual void AddVoxelsToMeshBuilder(VoxelMeshBuilder opaqueMeshBuilder, VoxelMeshBuilder transparentMeshBuilder)
     {
         HashSet<Direction> visibleFaces = new();
         var meshes = SandcubeGame.Instance!.BlockMeshes;
@@ -116,7 +118,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
                         else
                             visibleFaces.Remove(direction);
                     }
-                    meshes.BuildAt(meshBuilder, blockState, localPosition * MathV.InchesInMeter, visibleFaces);
+                    var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
+                    meshes.BuildAt(builder, blockState, localPosition * MathV.InchesInMeter, visibleFaces);
                 }
             }
         }
@@ -146,10 +149,12 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         _meshRebuildRequired = false;
         DestroyModelComponents();
 
-        VoxelMeshBuilder meshBuilder = new();
-        AddVoxelsToMeshBuilder(meshBuilder);
+        VoxelMeshBuilder opaqueMeshBuilder = new();
+        VoxelMeshBuilder transparentMeshBuilder = new();
+        AddVoxelsToMeshBuilder(opaqueMeshBuilder, transparentMeshBuilder);
 
-        AddModel(meshBuilder, _modelCollider);
+        AddModel(opaqueMeshBuilder, _opaqueModelCollider);
+        AddModel(transparentMeshBuilder, _transparentModelCollider);
     }
 
     protected virtual void AddModel(VoxelMeshBuilder builder, ModelCollider collider)

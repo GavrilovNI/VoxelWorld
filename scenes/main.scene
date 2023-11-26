@@ -44,7 +44,8 @@
             "Length": 27.712812
           },
           "Generator": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
-          "VoxelsMaterial": "materials/voxel_map.vmat"
+          "OpaqueVoxelsMaterial": "materials/voxels_map.vmat",
+          "TranslucentVoxelsMaterial": "materials/voxels_map.vmat"
         },
         {
           "__type": "WorldGenerator",
