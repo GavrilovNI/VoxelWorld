@@ -45,6 +45,7 @@ public class World : BaseComponent, IWorldAccessor
         var chunk = CreateChunk(position);
         Generator?.GenerateChunk(chunk);
         _chunks[position] = chunk;
+        UpdateNeighboringChunks(position);
         return chunk;
     }
 
@@ -136,6 +137,16 @@ public class World : BaseComponent, IWorldAccessor
             chunk?.OnNeighbouringChunkEdgeUpdated(direction.GetOpposite(), updatedBlockPosition, oldBlockState, newBlockState);
         }
         return true;
+    }
+
+    protected virtual void UpdateNeighboringChunks(Vector3Int chunkPosition)
+    {
+        foreach(Direction direction in Direction.All)
+        {
+            var chunk = GetChunk(chunkPosition + direction, false);
+            if(chunk is not null)
+                chunk.MeshRebuildRequired = true;
+        }    
     }
 
     public virtual BlockState GetBlockState(Vector3Int position)
