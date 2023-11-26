@@ -324,6 +324,17 @@
               "__enabled": true
             }
           ]
+        },
+        {
+          "Id": "b78083ea-7296-41cc-a8d9-bbc586956a98",
+          "Name": "Crosshair",
+          "Enabled": true,
+          "Components": [
+            {
+              "__type": "CrosshairUI",
+              "__enabled": true
+            }
+          ]
         }
       ]
     }

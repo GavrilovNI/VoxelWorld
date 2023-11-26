@@ -1,0 +1,12 @@
+CrosshairUI {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url(textures/sandcube/ui/crosshair.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    image-rendering: pixelated;
+    width: 5vh;
+    height: 5vh;
+}
