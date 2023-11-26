@@ -16,7 +16,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     protected readonly IWorldProvider? WorldProvider;
 
-    protected bool _meshRebuildRequired = false;
+    public bool MeshRebuildRequired { get; set; } = false;
 
     protected readonly List<ModelComponent> _modelComponents = new();
     protected ModelCollider _opaqueModelCollider = null!;
@@ -48,7 +48,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
             return;
 
         _blockStates[position] = blockState;
-        _meshRebuildRequired = true;
+        MeshRebuildRequired = true;
     }
 
 
@@ -60,14 +60,14 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     public override void Update()
     {
-        if(_meshRebuildRequired)
+        if(MeshRebuildRequired)
             UpdateModel();
     }
 
     public virtual void Clear()
     {
         _blockStates.Clear();
-        _meshRebuildRequired = true;
+        MeshRebuildRequired = true;
     }
 
     protected virtual bool IsInBounds(Vector3Int position) => !position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
@@ -157,12 +157,12 @@ public class Chunk : BaseComponent, IBlockStateAccessor
                 return;
         }
 
-        _meshRebuildRequired = true;
+        MeshRebuildRequired = true;
     }
 
     protected virtual void UpdateModel()
     {
-        _meshRebuildRequired = false;
+        MeshRebuildRequired = false;
         DestroyModelComponents();
 
         VoxelMeshBuilder opaqueMeshBuilder = new();
