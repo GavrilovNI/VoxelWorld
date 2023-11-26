@@ -57,7 +57,7 @@ public class SlabBlock : SimpleBlock
 
     protected virtual SlabType GetSlabPart(IWorldProvider world, Vector3Int blockPosition, PhysicsTraceResult traceResult, SlabType slabTypeAtCenter)
     {
-        var blockLocalYPosition = traceResult.HitPosition.z - world.GetBlockWorldPosition(blockPosition).z;
+        var blockLocalYPosition = traceResult.HitPosition.z - world.GetBlockGlobalPosition(blockPosition).z;
 
         const float halfBlockHeight = MathV.InchesInMeter / 2f;
 

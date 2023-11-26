@@ -79,10 +79,11 @@ public class World : BaseComponent, IWorldAccessor
     }
     public virtual Vector3Int GetBlockPosition(Vector3 position) => position.Divide(MathV.InchesInMeter).Floor();
     public virtual Vector3Int GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
-    public virtual Vector3 GetBlockWorldPosition(Vector3Int position) => position * MathV.InchesInMeter;
+    public virtual Vector3 GetBlockGlobalPosition(Vector3Int position) => position * MathV.InchesInMeter;
 
     public virtual Vector3Int GetChunkPosition(Vector3Int blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
     public virtual Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
+    public virtual Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => chunkPosition * ChunkSize + blockLocalPosition;
 
 
     public virtual void SetBlockState(Vector3Int position, BlockState blockState)
