@@ -35,6 +35,8 @@ public sealed class AxisDirection : CustomEnum<AxisDirection>, ICustomEnum<AxisD
 
     public static explicit operator AxisDirection(int ordinal) => All[ordinal];
 
+    public static AxisDirection operator -(AxisDirection axisDirection) => axisDirection.GetOpposite();
+
     public static bool operator ==(AxisDirection a, AxisDirection b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(AxisDirection a, AxisDirection b) => a.Ordinal != b.Ordinal;
 

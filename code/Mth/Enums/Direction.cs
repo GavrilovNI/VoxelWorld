@@ -80,9 +80,12 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
     }
     public static Direction ClosestTo(Vector3 direction) => ClosestTo(direction, Up);
 
+    public Direction GetOpposite() => Of(Axis, AxisDirection.GetOpposite());
+
     public static explicit operator Direction(int ordinal) => All[ordinal];
     public static implicit operator Vector3Int(Direction direction) => direction.Normal;
 
+    public static Direction operator -(Direction direction) => direction.GetOpposite();
     public static Vector3Int operator *(Direction direction, int value) => direction.Normal * value;
     public static Vector3Int operator *(int value, Direction direction) => direction.Normal * value;
     public static Vector3 operator *(Direction direction, float value) => direction.Normal * value;
