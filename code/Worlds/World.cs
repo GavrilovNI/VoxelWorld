@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
@@ -31,7 +32,7 @@ public class World : BaseComponent, IWorldAccessor
         chunkGameObject.Transform.Position = position * ChunkSize * MathV.InchesInMeter;
         chunkGameObject.Tags.Add("world");
 
-        var chunk = new Chunk(position, ChunkSize)
+        var chunk = new Chunk(position, ChunkSize, this)
         {
             VoxelsMaterial = VoxelsMaterial
         };
@@ -97,7 +98,9 @@ public class World : BaseComponent, IWorldAccessor
     public virtual BlockState GetBlockState(Vector3Int position)
     {
         var chunkPosition = GetChunkPosition(position);
-        var chunk = GetChunk(chunkPosition, true)!;
+        var chunk = GetChunk(chunkPosition, false)!;
+        if(chunk is null)
+            return BlockState.Air;
         position = GetBlockPositionInChunk(position);
         return chunk.GetBlockState(position);
     }

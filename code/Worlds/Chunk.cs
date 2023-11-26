@@ -14,6 +14,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     [Property] public Material VoxelsMaterial { get; set; } = null!;
 
+    protected readonly IWorldProvider? WorldProvider;
+
     protected bool _meshRebuildRequired = false;
 
     protected readonly List<ModelComponent> _modelComponents = new();
@@ -27,17 +29,18 @@ public class Chunk : BaseComponent, IBlockStateAccessor
     {
     }
 
-    public Chunk(Vector3Int position, Vector3Int size)
+    public Chunk(Vector3Int position, Vector3Int size, IWorldProvider? worldProvider = null)
     {
         Position = position;
         Size = size;
+        WorldProvider = worldProvider;
     }
 
     public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);
 
     public void SetBlockState(Vector3Int position, BlockState blockState)
     {
-        if(position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a)))
+        if(!IsInBounds(position))
             throw new ArgumentOutOfRangeException(nameof(position), position, "block position is out of chunk bounds");
 
         if(GetBlockState(position) == blockState)
@@ -50,8 +53,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
     public override void OnStart()
     {
-        if(!GameObject.TryGetComponent(out _modelCollider))
-            _modelCollider = GameObject.AddComponent<ModelCollider>();
+        _modelCollider = GameObject.AddComponent<ModelCollider>();
     }
 
     public override void Update()
@@ -66,6 +68,30 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         _meshRebuildRequired = true;
     }
 
+    protected virtual bool IsInBounds(Vector3Int position) => !position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
+
+    protected virtual BlockState GetExternalBlockState(Vector3Int localPosition)
+    {
+        if(IsInBounds(localPosition))
+            return GetBlockState(localPosition);
+
+        if(WorldProvider is null)
+            return BlockState.Air;
+
+        Vector3Int globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
+        return WorldProvider.GetBlockState(globalPosition);
+    }
+
+    protected virtual bool ShouldRenderFace(Vector3Int localPosition, BlockState blockState, Direction direction)
+    {
+        var neighborPosition = localPosition + direction;
+        var neighborBlockState = GetExternalBlockState(neighborPosition);
+        var neighborBlock = neighborBlockState.Block;
+
+        return neighborBlockState.IsAir() ||
+            !neighborBlock.IsFullBlock(neighborBlockState);
+    }
+
     protected virtual void AddVoxelsToMeshBuilder(VoxelMeshBuilder meshBuilder)
     {
         HashSet<Direction> visibleFaces = new();
@@ -77,62 +103,69 @@ public class Chunk : BaseComponent, IBlockStateAccessor
             {
                 for(int z = 0; z < Size.z; ++z)
                 {
-                    Vector3Int position = new(x, y, z);
-                    var blockState = GetBlockState(position);
+                    Vector3Int localPosition = new(x, y, z);
+                    var blockState = GetBlockState(localPosition);
                     if(blockState.IsAir())
                         continue;
 
                     foreach(var direction in Direction.All)
                     {
-                        var neighborBlockState = GetBlockState(position + direction);
-                        if(neighborBlockState.IsAir() || !neighborBlockState.Block.IsFullBlock(neighborBlockState))
+                        bool shouldRenderFace = ShouldRenderFace(localPosition, blockState, direction);
+                        if(shouldRenderFace)
                             visibleFaces.Add(direction);
                         else
                             visibleFaces.Remove(direction);
                     }
-                    meshes.BuildAt(meshBuilder, blockState, position * MathV.InchesInMeter, visibleFaces);
+                    meshes.BuildAt(meshBuilder, blockState, localPosition * MathV.InchesInMeter, visibleFaces);
                 }
             }
         }
     }
 
-    protected virtual void UpdateModelComponents(int requiredCount)
+    protected virtual void DestroyModelComponents()
     {
-        if(_modelComponents.Count < requiredCount)
+        foreach(var modelComponent in _modelComponents)
+            modelComponent.Destroy();
+        _modelComponents.Clear();
+    }
+
+    protected virtual List<ModelComponent> AddModelComponents(int count)
+    {
+        List<ModelComponent> result = new(count);
+        for(int i = 0; i < count; ++i)
         {
-            int countToAdd = requiredCount - _modelComponents.Count;
-            for(int i = 0; i < countToAdd; ++i)
-                _modelComponents.Add(GameObject.AddComponent<ModelComponent>());
+            var component = GameObject.AddComponent<ModelComponent>();
+            result.Add(component);
+            _modelComponents.Add(component);
         }
-        else if(_modelComponents.Count > requiredCount)
-        {
-            for(int i = _modelComponents.Count - 1; i >= requiredCount; --i)
-            {
-                GameObject.Components.Remove(_modelComponents[i]);
-                _modelComponents.RemoveAt(i);
-            }
-        }
+        return result;
     }
 
     protected virtual void UpdateModel()
     {
         _meshRebuildRequired = false;
-        VoxelMeshBuilder meshBuilder = new();
+        DestroyModelComponents();
 
+        VoxelMeshBuilder meshBuilder = new();
         AddVoxelsToMeshBuilder(meshBuilder);
 
-        var buffers = meshBuilder.ToVertexBuffers();
-        bool isEmpty = buffers.Count == 0;
-        _modelCollider.Enabled = !isEmpty;
-        UpdateModelComponents(buffers.Count);
+        AddModel(meshBuilder, _modelCollider);
+    }
 
+    protected virtual void AddModel(VoxelMeshBuilder builder, ModelCollider collider)
+    {
+        var buffers = builder.ToVertexBuffers();
+        bool isEmpty = buffers.Count == 0;
+        collider.Enabled = !isEmpty;
         if(isEmpty)
             return;
 
+        var modelComponents = AddModelComponents(buffers.Count);
+
         ModelBuilder physicsModelBuilder = new();
-        meshBuilder.AddAsCollisionMesh(physicsModelBuilder);
+        builder.AddAsCollisionMesh(physicsModelBuilder);
         var model = physicsModelBuilder.Create();
-        _modelCollider.Model = model;
+        collider.Model = model;
 
         for(int i = 0; i < buffers.Count; ++i)
         {
@@ -140,9 +173,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
             Mesh mesh = new(VoxelsMaterial);
             mesh.CreateBuffers(buffers[i]);
             modelBuilder.AddMesh(mesh);
-            _modelComponents[i].Model = modelBuilder.Create();
-
-            _modelComponents[i].SceneObject.Attributes.Set("color", SandcubeGame.Instance!.TextureMap.Texture);
+            modelComponents[i].Model = modelBuilder.Create();
+            modelComponents[i].SceneObject.Attributes.Set("color", SandcubeGame.Instance!.TextureMap.Texture);
         }
     }
 }
