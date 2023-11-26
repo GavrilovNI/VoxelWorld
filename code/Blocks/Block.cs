@@ -35,7 +35,7 @@ public abstract class Block : IRegisterable
 
     public virtual InteractionResult OnAttack(BlockActionContext context) => InteractionResult.Pass;
     public virtual InteractionResult OnInteract(BlockActionContext context) => InteractionResult.Pass;
-    public virtual void Break(BlockActionContext context) => context.World.SetBlockState(context.Position, SandcubeGame.Instance!.Blocks.Air.GetStateForPlacement(context));
+    public virtual void Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
 
 
     public abstract VoxelMesh CreateMesh(BlockState blockState);

@@ -33,7 +33,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         Size = size;
     }
 
-    public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, SandcubeGame.Instance!.Blocks.Air.DefaultBlockState);
+    public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);
 
     public void SetBlockState(Vector3Int position, BlockState blockState)
     {

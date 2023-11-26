@@ -7,6 +7,8 @@ namespace Sandcube.Blocks.States;
 
 public sealed class BlockState
 {
+    public static BlockState Air => SandcubeGame.Instance!.Blocks.Air.DefaultBlockState;
+
     internal readonly Dictionary<BlockProperty, CustomEnum> _properties;
     private readonly Dictionary<(BlockProperty, CustomEnum), BlockState> _neighbors;
     public readonly Block Block;
