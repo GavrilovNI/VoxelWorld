@@ -24,8 +24,11 @@ public class World : BaseComponent, IWorldAccessor
     }
 
 
-    protected virtual Chunk CreateChunk(Vector3Int position)
+    protected virtual Chunk AddChunk(Vector3Int position)
     {
+        if(_chunks.ContainsKey(position))
+            throw new InvalidOperationException($"{nameof(Chunk)} aready exists in position {position}");
+
         var chunkGameObject = Scene.CreateObject();
         chunkGameObject.Name = $"Chunk {position}";
         chunkGameObject.Parent = this.GameObject;
@@ -37,22 +40,28 @@ public class World : BaseComponent, IWorldAccessor
             VoxelsMaterial = VoxelsMaterial
         };
         chunkGameObject.AddComponent(chunk);
+
+        _chunks.Add(position, chunk);
         return chunk;
     }
 
-    public virtual Chunk GenerateChunk(Vector3Int position)
+    protected virtual void GenerateChunk(Chunk chunk)
     {
-        var chunk = CreateChunk(position);
-        Generator?.GenerateChunk(chunk);
-        _chunks[position] = chunk;
-        UpdateNeighboringChunks(position);
+        Generator!.GenerateChunk(chunk);
+        UpdateNeighboringChunks(chunk.Position);
+    }
+
+    protected virtual Chunk CreateChunk(Vector3Int position)
+    {
+        var chunk = AddChunk(position);
+        GenerateChunk(chunk);
         return chunk;
     }
 
     public virtual Chunk? GetChunk(Vector3Int position, bool forceLoad = false)
     {
         if(!_chunks.TryGetValue(position, out var chunk) && forceLoad)
-            chunk = GenerateChunk(position);
+            chunk = CreateChunk(position);
         return chunk;
     }
 
