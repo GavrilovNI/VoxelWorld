@@ -89,10 +89,53 @@ public class World : BaseComponent, IWorldAccessor
 
     public virtual void SetBlockState(Vector3Int position, BlockState blockState)
     {
+        var oldBlockState = GetBlockState(position);
+        if(oldBlockState == blockState)
+            return;
+
         var chunkPosition = GetChunkPosition(position);
         var chunk = GetChunk(chunkPosition, true)!;
-        position = GetBlockPositionInChunk(position);
-        chunk.SetBlockState(position, blockState);
+        var localPosition = GetBlockPositionInChunk(position);
+        chunk.SetBlockState(localPosition, blockState);
+
+        NotifyNeighboringChunksAboutEdgeUpdate(position, oldBlockState, blockState);
+    }
+
+    protected virtual List<Direction> GetNeighboringChunkDirections(Vector3Int localBlockPosition)
+    {
+        List<Direction> result = new();
+
+        if(localBlockPosition.x == 0)
+            result.Add(Direction.Backward);
+        if(localBlockPosition.x == ChunkSize.x - 1)
+            result.Add(Direction.Forward);
+        if(localBlockPosition.y == 0)
+            result.Add(Direction.Right);
+        if(localBlockPosition.y == ChunkSize.y - 1)
+            result.Add(Direction.Left);
+        if(localBlockPosition.z == 0)
+            result.Add(Direction.Down);
+        if(localBlockPosition.z == ChunkSize.z - 1)
+            result.Add(Direction.Up);
+
+        return result;
+    }
+
+    protected virtual bool NotifyNeighboringChunksAboutEdgeUpdate(Vector3Int updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
+    {
+        var localBlockPosition = GetBlockPositionInChunk(updatedBlockPosition);
+        List<Direction> neighboringChunkDirections = GetNeighboringChunkDirections(localBlockPosition);
+        if(neighboringChunkDirections.Count == 0)
+            return false;
+
+        foreach(Direction direction in neighboringChunkDirections)
+        {
+            var neighborBlockPosition = updatedBlockPosition + direction;
+            var chunkPosition = GetChunkPosition(neighborBlockPosition);
+            var chunk = GetChunk(chunkPosition, false);
+            chunk?.OnNeighbouringChunkEdgeUpdated(direction.GetOpposite(), updatedBlockPosition, oldBlockState, newBlockState);
+        }
+        return true;
     }
 
     public virtual BlockState GetBlockState(Vector3Int position)

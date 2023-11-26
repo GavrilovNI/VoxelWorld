@@ -145,6 +145,21 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         return result;
     }
 
+    public virtual void OnNeighbouringChunkEdgeUpdated(Direction directionToNeighbouringChunk,
+        Vector3Int updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
+    {
+        if(WorldProvider is not null)
+        {
+            var sidedBlockPosition = updatedBlockPosition - directionToNeighbouringChunk;
+            var sidedLocalBlockPosition = WorldProvider.GetBlockPositionInChunk(sidedBlockPosition);
+            var sidedBlockState = GetBlockState(sidedLocalBlockPosition);
+            if(sidedBlockState.IsAir())
+                return;
+        }
+
+        _meshRebuildRequired = true;
+    }
+
     protected virtual void UpdateModel()
     {
         _meshRebuildRequired = false;
