@@ -91,6 +91,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         var neighborBlock = neighborBlockState.Block;
 
         return neighborBlockState.IsAir() ||
+            neighborBlock.Properties.IsTransparent ||
             !neighborBlock.IsFullBlock(neighborBlockState);
     }
 
