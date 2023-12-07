@@ -21,7 +21,7 @@
 		set => this.Panel.SetClass("opened", value);
 	}
 
-	public override void Update()
+	protected override void OnUpdate()
 	{
 		if (Input.EscapePressed)
 			Opened = !Opened;

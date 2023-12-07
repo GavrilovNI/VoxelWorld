@@ -7,24 +7,24 @@ using Sandcube.Worlds;
 
 namespace Sandcube.Players;
 
-public class SandcubePlayer : BaseComponent
+public class SandcubePlayer : Component
 {
     [Property] public World World { get; private set; } = null!;
     public IPlayerInventory Inventory { get; private set; } = null!; // TODO: Make Property
 
-    public override void OnEnabled()
+    protected override void OnEnabled()
     {
         Event.Register(this);
     }
 
-    public override void OnDisabled()
+    protected override void OnDisabled()
     {
         Event.Unregister(this);
     }
 
-    public override void OnAwake()
+    protected override void OnAwake()
     {
-        Inventory ??= GetComponent<PlayerInventory>();
+        Inventory ??= Components.Get<PlayerInventory>();
     }
 
     [SandcubeEvent.Game.Start]
@@ -38,7 +38,7 @@ public class SandcubePlayer : BaseComponent
         Inventory.TrySetHotbarItem(4, new(items.Glass, 1));
     }
 
-    public override void Update()
+    protected override void OnUpdate()
     {
         UpdateHandSlot();
     }

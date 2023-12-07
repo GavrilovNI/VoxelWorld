@@ -1,10 +1,11 @@
-﻿using Sandcube.Interactions;
+﻿using Sandbox;
+using Sandcube.Interactions;
 using Sandcube.Items;
 using Sandcube.Mth;
 
 namespace Sandcube.Inventories.Players;
 
-public class PlayerInventory : BaseComponent, IPlayerInventory
+public class PlayerInventory : Component, IPlayerInventory
 {
     public IIndexedCapability<Stack<Item>> HotBar { get; }
     protected Stack<Item> _secondaryHand = Stack<Item>.Empty;

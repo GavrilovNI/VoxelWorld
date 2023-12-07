@@ -3,24 +3,25 @@ using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
-using Sandcube.Scenes.Extensions;
 using Sandcube.Worlds.Generation;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Sandcube.Worlds;
 
-public class World : BaseComponent, IWorldAccessor
+public class World : Component, IWorldAccessor
 {
     [Property] public Vector3Int ChunkSize { get; init; } = 16;
-    [Property] public Material VoxelsMaterial { get; set; } = null!;
+    [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
+    [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
     [Property] public WorldGenerator Generator { get; set; } = null!;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
 
-    public override void OnStart()
+    protected override void OnStart()
     {
         if(Generator is null)
-            Generator = GetComponent<WorldGenerator>();
+            Generator = Components.Get<WorldGenerator>();
     }
 
 
@@ -35,11 +36,9 @@ public class World : BaseComponent, IWorldAccessor
         chunkGameObject.Transform.Position = position * ChunkSize * MathV.InchesInMeter;
         chunkGameObject.Tags.Add("world");
 
-        var chunk = new Chunk(position, ChunkSize, this)
-        {
-            VoxelsMaterial = VoxelsMaterial
-        };
-        chunkGameObject.AddComponent(chunk);
+        var chunk = chunkGameObject.Components.Create<Chunk>(position, ChunkSize, this);
+        chunk.OpaqueVoxelsMaterial = OpaqueVoxelsMaterial;
+        chunk.TranslucentVoxelsMaterial = TranslucentVoxelsMaterial;
 
         _chunks.Add(position, chunk);
         return chunk;

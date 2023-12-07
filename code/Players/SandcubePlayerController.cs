@@ -1,8 +1,7 @@
 ﻿using Sandbox;
-using System.Drawing;
-using System.Runtime;
+using Sandcube.Animations;
 
-public class SandcubePlayerController : BaseComponent, INetworkSerializable
+public class SandcubePlayerController : Component, INetworkSerializable
 {
     [Property] public Vector3 Gravity { get; set; } = new Vector3(0, 0, 800);
 
@@ -16,7 +15,7 @@ public class SandcubePlayerController : BaseComponent, INetworkSerializable
     public Angles EyeAngles;
     public bool IsRunning;
 
-    public override void Update()
+    protected override void OnUpdate()
     {
         // Eye input
         if(!IsProxy)
@@ -31,7 +30,7 @@ public class SandcubePlayerController : BaseComponent, INetworkSerializable
             IsRunning = Input.Down("Run");
         }
 
-        var cc = GameObject.GetComponent<CharacterController>();
+        var cc = GameObject.Components.Get<CharacterController>();
         if(cc is null)
             return;
 
@@ -76,14 +75,14 @@ public class SandcubePlayerController : BaseComponent, INetworkSerializable
 
     float fJumps;
 
-    public override void FixedUpdate()
+    protected override void OnFixedUpdate()
     {
         if(IsProxy)
             return;
 
         BuildWishVelocity();
 
-        var cc = GameObject.GetComponent<CharacterController>();
+        var cc = GameObject.Components.Get<CharacterController>();
 
         if(cc.IsOnGround && Input.Down("Jump"))
         {

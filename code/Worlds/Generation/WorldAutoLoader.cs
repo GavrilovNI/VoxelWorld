@@ -3,12 +3,12 @@ using Sandcube.Mth;
 
 namespace Sandcube.Worlds.Generation;
 
-public class WorldAutoLoader : BaseComponent
+public class WorldAutoLoader : Component
 {
     [Property] public World? World { get; set; } = null;
     [Property] public int Distance { get; set; } = 2;
 
-    public override void Update()
+    protected override void OnUpdate()
     {
         if(!SandcubeGame.IsStarted || World is null)
             return;

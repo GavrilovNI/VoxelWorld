@@ -16,7 +16,7 @@ public sealed class BlockStateSet : IEnumerable<BlockState>
         Block = block;
         foreach(var property in properties)
         {
-            if(_properties.FirstOrDefault(p => p.Name == property.Name, null) is not null)
+            if(_properties.FirstOrDefault(p => p!.Name == property.Name, null) is not null)
                 throw new ArgumentException("Can't create difinition with 2 or more properties with same name", nameof(properties));
             _properties.Add(property);
         }

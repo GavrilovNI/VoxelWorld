@@ -1,8 +1,9 @@
-﻿using Sandcube.Mth;
+﻿using Sandbox;
+using Sandcube.Mth;
 
 namespace Sandcube.Worlds.Generation;
 
-public class WorldGenerator : BaseComponent
+public class WorldGenerator : Component
 {
     public void GenerateChunk(Chunk chunk)
     {

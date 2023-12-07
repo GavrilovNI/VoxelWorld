@@ -8,7 +8,7 @@ using Sandcube.Worlds.Generation;
 
 namespace Sandcube;
 
-public class SandcubeGame : BaseComponent, ISandcubeMod
+public class SandcubeGame : Component, ISandcubeMod
 {
     public const string ModName = "sandcube";
 
@@ -27,7 +27,7 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
     public SandcubeItems Items { get; private set; } = new();
     public BlockMeshMap BlockMeshes { get; private set; } = new();
 
-    public override void OnStart()
+    protected override void OnStart()
     {
         Event.Register(this);
         Instance = this;
@@ -37,7 +37,7 @@ public class SandcubeGame : BaseComponent, ISandcubeMod
         Event.Run(SandcubeEvent.Game.Start);
     }
 
-    public override void OnDestroy()
+    protected override void OnDestroy()
     {
         if(Instance == this)
         {

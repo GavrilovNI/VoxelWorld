@@ -57,7 +57,7 @@
 
 	protected override int BuildHash() => PlayerInventory?.GetHashCode() ?? 0;
 
-	public override void OnAwake()
+	protected override void OnAwake()
 	{
 		BackgroundTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot.png", true) ?? Texture.Invalid;
 		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
@@ -65,7 +65,7 @@
 		SelectorOffset = -((SelectorScale - 100f) / 2f);
 	}
 
-	public override void Update()
+	protected override void OnUpdate()
 	{
 		SelectorScale = SelectorTexture.Size / BackgroundTexture.Size * 100;
 		SelectorOffset = -((SelectorScale - 100f) / 2f);

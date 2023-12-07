@@ -4,42 +4,39 @@ using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Worlds.Generation;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Sandcube.Worlds;
 
-public class Chunk : BaseComponent, IBlockStateAccessor
+public class Chunk : Component, IBlockStateAccessor
 {
-    [Property] public Vector3Int Position { get; init; }
-    [Property] public Vector3Int Size { get; init; } = 16;
+    [Property] public Vector3Int Position { get; internal set; }
+    [Property] public Vector3Int Size { get; internal set; } = 16;
 
-    [Property] public Material VoxelsMaterial { get; set; } = null!;
+    [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
+    [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
 
-    protected readonly IWorldProvider? WorldProvider;
+    public IWorldProvider? WorldProvider { get; internal set; }
 
     public bool MeshRebuildRequired { get; set; } = false;
 
-    protected readonly List<ModelComponent> _modelComponents = new();
+    protected readonly List<ModelRenderer> _modelComponents = new();
     protected ModelCollider _opaqueModelCollider = null!;
     protected ModelCollider _transparentModelCollider = null!;
 
     protected readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
 
+
     public BBox Bounds { get; protected set; }
 
     public Vector3Int BlockOffset => Position * Size;
 
+    public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);
+
     public Chunk()
     {
-    }
 
-    public Chunk(Vector3Int position, Vector3Int size, IWorldProvider? worldProvider = null)
-    {
-        Position = position;
-        Size = size;
-        WorldProvider = worldProvider;
     }
-
-    public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);
 
     public void SetBlockState(Vector3Int position, BlockState blockState)
     {
@@ -54,13 +51,13 @@ public class Chunk : BaseComponent, IBlockStateAccessor
     }
 
 
-    public override void OnStart()
+    protected override void OnStart()
     {
-        _opaqueModelCollider = GameObject.AddComponent<ModelCollider>();
-        _transparentModelCollider = GameObject.AddComponent<ModelCollider>();
+        _opaqueModelCollider = GameObject.Components.Create<ModelCollider>();
+        _transparentModelCollider = GameObject.Components.Create<ModelCollider>();
     }
 
-    public override void Update()
+    protected override void OnUpdate()
     {
         if(MeshRebuildRequired)
             UpdateModel();
@@ -136,12 +133,12 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         _modelComponents.Clear();
     }
 
-    protected virtual List<ModelComponent> AddModelComponents(int count)
+    protected virtual List<ModelRenderer> AddModelComponents(int count)
     {
-        List<ModelComponent> result = new(count);
+        List<ModelRenderer> result = new(count);
         for(int i = 0; i < count; ++i)
         {
-            var component = GameObject.AddComponent<ModelComponent>();
+            var component = GameObject.Components.Create<ModelRenderer>();
             result.Add(component);
             _modelComponents.Add(component);
         }
@@ -174,8 +171,8 @@ public class Chunk : BaseComponent, IBlockStateAccessor
 
         Bounds = opaqueMeshBuilder.Bounds;
 
-        AddModel(opaqueMeshBuilder, _opaqueModelCollider);
-        AddModel(transparentMeshBuilder, _transparentModelCollider);
+        AddModel(opaqueMeshBuilder, _opaqueModelCollider, OpaqueVoxelsMaterial);
+        AddModel(transparentMeshBuilder, _transparentModelCollider, TranslucentVoxelsMaterial);
 
         RecalculateBounds(opaqueMeshBuilder, transparentMeshBuilder);
     }
@@ -199,7 +196,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         Bounds = bounds.Value.Translate(Transform.Position);
     }
 
-    protected virtual void AddModel(VoxelMeshBuilder builder, ModelCollider collider)
+    protected virtual void AddModel(VoxelMeshBuilder builder, ModelCollider collider, Material material)
     {
         var buffers = builder.ToVertexBuffers();
         bool isEmpty = buffers.Count == 0;
@@ -217,7 +214,7 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         for(int i = 0; i < buffers.Count; ++i)
         {
             ModelBuilder modelBuilder = new();
-            Mesh mesh = new(VoxelsMaterial);
+            Mesh mesh = new(material);
             mesh.CreateBuffers(buffers[i]);
             modelBuilder.AddMesh(mesh);
             modelComponents[i].Model = modelBuilder.Create();
@@ -225,9 +222,24 @@ public class Chunk : BaseComponent, IBlockStateAccessor
         }
     }
 
-    public override void DrawGizmos()
+    protected override void DrawGizmos()
     {
         var bounds = Bounds.Translate(-Transform.Position).Expanded(1);
         Gizmo.Hitbox.BBox(bounds);
+    }
+}
+
+public static class ComponentListChunkExtensions
+{
+    public static T Create<T>(this ComponentList components, Vector3Int position, Vector3Int size, IWorldProvider? worldProvider, bool startEnabled = true) where T : Chunk, new()
+    {
+        var chunk = components.Create<T>(false);
+
+        chunk.Position = position;
+        chunk.Size = size;
+        chunk.WorldProvider = worldProvider;
+        chunk.Enabled = startEnabled;
+
+        return chunk;
     }
 }

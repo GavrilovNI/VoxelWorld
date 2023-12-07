@@ -23,14 +23,3 @@ code/Properties/*
 *idea
 
 *.sln
-
-# Defualt scene stuff
-materials/default/
-materials/gizmo/
-materials/default.vmat
-materials/lightemit.vmat
-materials/shine.vmat
-scenes/Tests/
-surfaces/bouncy.surface
-code/Editor/Defaults/
-code/Defaults/

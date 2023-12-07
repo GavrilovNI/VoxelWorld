@@ -5,7 +5,7 @@ using Sandcube.Items;
 
 namespace Sandcube.Players;
 
-public class WorldInteractor : BaseComponent
+public class WorldInteractor : Component
 {
     [Property] public SandcubePlayer Player { get; set; } = null!;
     [Property] public GameObject Eye { get; set; } = null!;
@@ -17,7 +17,7 @@ public class WorldInteractor : BaseComponent
         return Scene.PhysicsWorld.Trace.Ray(ray, ReachDistance).Run();
     }
 
-    public override void Update()
+    protected override void OnUpdate()
     {
         if(!SandcubeGame.IsStarted)
             return;
