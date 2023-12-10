@@ -22,7 +22,7 @@ public class SlabBlock : SimpleBlock
         (FullCubeCorners[3] + FullCubeCorners[7]) / 2f,
     };
 
-    public static BlockProperty<SlabType> SlabTypeProperty = new("type", SlabType.Bottom);
+    public static readonly BlockProperty<SlabType> SlabTypeProperty = new("type", SlabType.Bottom);
 
 
     [SetsRequiredMembers]
