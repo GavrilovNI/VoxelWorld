@@ -188,6 +188,7 @@
           "GroupName": "Inventory"
         }
       ]
-    }
+    },
+    "StartupScene": "scenes/mainmenu.scene"
   }
 }

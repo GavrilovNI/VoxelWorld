@@ -1,5 +1,6 @@
 @using Sandbox;
 @using Sandbox.UI;
+@using System.Linq;
 
 @namespace Sandcube.UI.Menus
 
@@ -29,6 +30,6 @@
 
 	protected void LeaveGame()
 	{
-		global::GameManager.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
+		GameManager.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
 	}
 }

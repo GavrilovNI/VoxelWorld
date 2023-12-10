@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace Sandcube.Registries;
 
 public readonly record struct ModedId

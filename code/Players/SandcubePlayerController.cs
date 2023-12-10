@@ -67,7 +67,6 @@ public class SandcubePlayerController : Component, INetworkSerializable
         }
     }
 
-    [Broadcast]
     public void OnJump(float floatValue, string dataString, object[] objects, Vector3 position)
     {
         AnimationHelper?.TriggerJump();

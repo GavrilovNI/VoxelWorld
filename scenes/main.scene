@@ -7,7 +7,7 @@
       "Enabled": true,
       "Components": [
         {
-          "__type": "DirectionalLightComponent",
+          "__type": "DirectionalLight",
           "__enabled": true,
           "LightColor": "0.91373,0.98039,1,1",
           "Shadows": true,
@@ -44,8 +44,8 @@
             "Length": 27.712812
           },
           "Generator": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
-          "OpaqueVoxelsMaterial": "materials/voxels_map.vmat",
-          "TranslucentVoxelsMaterial": "materials/voxels_map.vmat"
+          "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
+          "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
         },
         {
           "__type": "WorldGenerator",
@@ -62,7 +62,13 @@
         {
           "__type": "CitizenAnimation",
           "__enabled": true,
+          "EyeSource": null,
           "Height": 1,
+          "IkLeftFoot": null,
+          "IkLeftHand": null,
+          "IkRightFoot": null,
+          "IkRightHand": null,
+          "LookAtObject": null,
           "Target": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
         },
         {
@@ -113,11 +119,11 @@
           "Position": "0,-0.66093,0",
           "Components": [
             {
-              "__type": "AnimatedModelComponent",
+              "__type": "SkinnedModelRenderer",
               "__enabled": true,
               "BodyGroups": 18446744073709551615,
+              "BoneMergeTarget": null,
               "CreateBoneObjects": false,
-              "MaterialGroup": null,
               "MaterialOverride": null,
               "Model": "models/citizen/citizen.vmdl",
               "ShouldCastShadows": true,
@@ -140,11 +146,6 @@
                   "PanelSize": "1024,256",
                   "RenderScale": 1,
                   "VerticalAlign": "Center"
-                },
-                {
-                  "__type": "NameTagPanel",
-                  "__enabled": true,
-                  "Name": "Prickly Pete"
                 }
               ]
             },
@@ -155,11 +156,11 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__type": "AnimatedModelComponent",
+                  "__type": "SkinnedModelRenderer",
                   "__enabled": true,
                   "BodyGroups": 18446744073709551615,
+                  "BoneMergeTarget": null,
                   "CreateBoneObjects": false,
-                  "MaterialGroup": null,
                   "MaterialOverride": null,
                   "Model": "models/citizen_clothes/hair/hair_fade/models/hair_fade.vmdl",
                   "ShouldCastShadows": true,
@@ -174,11 +175,11 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__type": "AnimatedModelComponent",
+                  "__type": "SkinnedModelRenderer",
                   "__enabled": true,
                   "BodyGroups": 18446744073709551615,
+                  "BoneMergeTarget": null,
                   "CreateBoneObjects": false,
-                  "MaterialGroup": null,
                   "MaterialOverride": null,
                   "Model": "models/citizen_clothes/shoes/boots/models/army_boots.vmdl",
                   "ShouldCastShadows": true,
@@ -340,13 +341,13 @@
     }
   ],
   "SceneProperties": {
-    "NetworkFrequency": 60,
-    "FixedUpdateFrequency": 50,
     "Lerping": true,
-    "MaxFixedUpdates": 5,
-    "TimeScale": 1,
+    "UseFixedUpdate": true,
     "ThreadedAnimation": true,
-    "UseFixedUpdate": true
+    "TimeScale": 1,
+    "MaxFixedUpdates": 5,
+    "FixedUpdateFrequency": 50,
+    "NetworkFrequency": 60
   },
   "Title": "main",
   "Description": "",

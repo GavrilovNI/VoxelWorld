@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace Sandcube.Inventories;
 
 public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue

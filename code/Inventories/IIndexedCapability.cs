@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace Sandcube.Inventories;
 
 public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<T>

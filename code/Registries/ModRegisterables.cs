@@ -1,4 +1,6 @@
-﻿namespace Sandcube.Registries;
+﻿using System.Linq;
+
+namespace Sandcube.Registries;
 
 public class ModRegisterables<T> where T : class, IRegisterable
 {
