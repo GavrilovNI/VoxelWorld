@@ -2,10 +2,12 @@ using Sandbox;
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
-using Sandcube.Worlds.Generation;
+using Sandcube.Worlds.Generation.Meshes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Reflection.Emit;
 
 namespace Sandcube.Worlds;
 
@@ -96,7 +98,7 @@ public class Chunk : Component, IBlockStateAccessor
             !neighborBlock.IsFullBlock(neighborBlockState);
     }
 
-    protected virtual void AddVoxelsToMeshBuilder(VoxelMeshBuilder opaqueMeshBuilder, VoxelMeshBuilder transparentMeshBuilder)
+    protected virtual void AddVoxelsToMeshBuilder(ComplexMeshBuilder opaqueMeshBuilder, ComplexMeshBuilder transparentMeshBuilder)
     {
         HashSet<Direction> visibleFaces = new();
         var meshes = SandcubeGame.Instance!.BlockMeshes;
@@ -121,7 +123,7 @@ public class Chunk : Component, IBlockStateAccessor
                             visibleFaces.Remove(direction);
                     }
                     var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
-                    meshes.BuildAt(builder, blockState, localPosition * MathV.InchesInMeter, visibleFaces);
+                    meshes.AddBlockStateMeshToBuilder(blockState, builder, localPosition * MathV.InchesInMeter, visibleFaces);
                 }
             }
         }
@@ -166,8 +168,8 @@ public class Chunk : Component, IBlockStateAccessor
         MeshRebuildRequired = false;
         DestroyModelComponents();
 
-        VoxelMeshBuilder opaqueMeshBuilder = new();
-        VoxelMeshBuilder transparentMeshBuilder = new();
+        ComplexMeshBuilder opaqueMeshBuilder = new();
+        ComplexMeshBuilder transparentMeshBuilder = new();
         AddVoxelsToMeshBuilder(opaqueMeshBuilder, transparentMeshBuilder);
 
         Bounds = opaqueMeshBuilder.Bounds;
@@ -178,7 +180,7 @@ public class Chunk : Component, IBlockStateAccessor
         RecalculateBounds(opaqueMeshBuilder, transparentMeshBuilder);
     }
 
-    protected virtual void RecalculateBounds(params VoxelMeshBuilder[] meshBuilders)
+    protected virtual void RecalculateBounds(params ComplexMeshBuilder[] meshBuilders)
     {
         BBox? bounds = null;
         foreach(var builder in meshBuilders)
@@ -197,7 +199,7 @@ public class Chunk : Component, IBlockStateAccessor
         Bounds = bounds.Value.Translate(Transform.Position);
     }
 
-    protected virtual void AddModel(VoxelMeshBuilder builder, ModelCollider collider, Material material)
+    protected virtual void AddModel(ComplexMeshBuilder builder, ModelCollider collider, Material material)
     {
         var buffers = builder.ToVertexBuffers();
         bool isEmpty = buffers.Count == 0;
@@ -208,7 +210,7 @@ public class Chunk : Component, IBlockStateAccessor
         var modelComponents = AddModelComponents(buffers.Count);
 
         ModelBuilder physicsModelBuilder = new();
-        builder.AddAsCollisionMesh(physicsModelBuilder);
+        physicsModelBuilder.AddCollisionMesh(builder.CombineVertices().Select(v => v.Position).ToArray(), builder.CombineIndices().ToArray());
         var model = physicsModelBuilder.Create();
         collider.Model = model;
 

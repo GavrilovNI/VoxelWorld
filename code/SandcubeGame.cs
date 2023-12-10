@@ -4,7 +4,7 @@ using Sandcube.Events;
 using Sandcube.Items;
 using Sandcube.Registries;
 using Sandcube.Worlds;
-using Sandcube.Worlds.Generation;
+using Sandcube.Worlds.Generation.Meshes;
 
 namespace Sandcube;
 

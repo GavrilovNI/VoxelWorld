@@ -3,7 +3,7 @@ using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
 using Sandcube.Registries;
-using Sandcube.Worlds.Generation;
+using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -46,7 +46,8 @@ public abstract class Block : IRegisterable
     public virtual void Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
 
 
-    public abstract VoxelMesh CreateMesh(BlockState blockState);
+    public abstract ISidedMeshPart<ComplexVertex> CreateMesh(BlockState blockState);
+    //public abstract ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState);
 
     public override string ToString() => $"{nameof(Block)}({ModedId})";
 

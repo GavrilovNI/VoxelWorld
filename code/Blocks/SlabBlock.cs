@@ -7,6 +7,7 @@ using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation;
+using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -95,7 +96,7 @@ public class SlabBlock : SimpleBlock
         context.World.SetBlockState(context.Position, DefaultBlockState.With(SlabTypeProperty, slabType.GetOpposite()));
     }
 
-    public override VoxelMesh CreateMesh(BlockState blockState)
+    public override ISidedMeshPart<ComplexVertex> CreateMesh(BlockState blockState)
     {
         var slabType = blockState.GetValue(SlabTypeProperty);
 
@@ -107,26 +108,26 @@ public class SlabBlock : SimpleBlock
         {
             var sideUv = new Rect(uv.Left, uv.Top + uv.Height / 2f, uv.Width, uv.Height / 2f);
 
-            VoxelMesh voxelMesh = new();
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(CenterPositions[3], FullCubeCorners[3], FullCubeCorners[0], CenterPositions[0], Vector3.Backward, VoxelMeshBuilder.TangentUp, sideUv), Direction.Backward);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(CenterPositions[1], FullCubeCorners[1], FullCubeCorners[2], CenterPositions[2], Vector3.Forward, VoxelMeshBuilder.TangentUp, sideUv), Direction.Forward);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(CenterPositions[2], FullCubeCorners[2], FullCubeCorners[3], CenterPositions[3], Vector3.Left, VoxelMeshBuilder.TangentUp, sideUv), Direction.Left);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(CenterPositions[0], FullCubeCorners[0], FullCubeCorners[1], CenterPositions[1], Vector3.Right, VoxelMeshBuilder.TangentUp, sideUv), Direction.Right);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(CenterPositions[2], CenterPositions[3], CenterPositions[0], CenterPositions[1], Vector3.Up, VoxelMeshBuilder.TangentForward, uv));
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[3], FullCubeCorners[2], FullCubeCorners[1], FullCubeCorners[0], Vector3.Down, VoxelMeshBuilder.TangentForward, uv), Direction.Down);
-            return voxelMesh;
+            SidedMesh<ComplexVertex>.Builder builder = new();
+            builder.Add(new ComplexMeshBuilder().AddQuad(CenterPositions[3], FullCubeCorners[3], FullCubeCorners[0], CenterPositions[0], Vector3.Backward, ComplexMeshBuilder.TangentUp, sideUv), Direction.Backward);
+            builder.Add(new ComplexMeshBuilder().AddQuad(CenterPositions[1], FullCubeCorners[1], FullCubeCorners[2], CenterPositions[2], Vector3.Forward, ComplexMeshBuilder.TangentUp, sideUv), Direction.Forward);
+            builder.Add(new ComplexMeshBuilder().AddQuad(CenterPositions[2], FullCubeCorners[2], FullCubeCorners[3], CenterPositions[3], Vector3.Left, ComplexMeshBuilder.TangentUp, sideUv), Direction.Left);
+            builder.Add(new ComplexMeshBuilder().AddQuad(CenterPositions[0], FullCubeCorners[0], FullCubeCorners[1], CenterPositions[1], Vector3.Right, ComplexMeshBuilder.TangentUp, sideUv), Direction.Right);
+            builder.Add(new ComplexMeshBuilder().AddQuad(CenterPositions[2], CenterPositions[3], CenterPositions[0], CenterPositions[1], Vector3.Up, ComplexMeshBuilder.TangentForward, uv));
+            builder.Add(new ComplexMeshBuilder().AddQuad(FullCubeCorners[3], FullCubeCorners[2], FullCubeCorners[1], FullCubeCorners[0], Vector3.Down, ComplexMeshBuilder.TangentForward, uv), Direction.Down);
+            return builder.Build();
         }
         else
         {
             var sideUv = new Rect(uv.Left, uv.Top, uv.Width, uv.Height / 2f);
-            VoxelMesh voxelMesh = new();
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[7], CenterPositions[3], CenterPositions[0], FullCubeCorners[4], Vector3.Backward, VoxelMeshBuilder.TangentUp, sideUv), Direction.Backward);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[5], CenterPositions[1], CenterPositions[2], FullCubeCorners[6], Vector3.Forward, VoxelMeshBuilder.TangentUp, sideUv), Direction.Forward);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[6], CenterPositions[2], CenterPositions[3], FullCubeCorners[7], Vector3.Left, VoxelMeshBuilder.TangentUp, sideUv), Direction.Left);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[4], CenterPositions[0], CenterPositions[1], FullCubeCorners[5], Vector3.Right, VoxelMeshBuilder.TangentUp, sideUv), Direction.Right);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(FullCubeCorners[6], FullCubeCorners[7], FullCubeCorners[4], FullCubeCorners[5], Vector3.Up, VoxelMeshBuilder.TangentForward, uv), Direction.Up);
-            voxelMesh.AddElement(new VoxelMeshBuilder().AddQuad(CenterPositions[3], CenterPositions[2], CenterPositions[1], CenterPositions[0], Vector3.Down, VoxelMeshBuilder.TangentForward, uv));
-            return voxelMesh;
+            SidedMesh<ComplexVertex>.Builder builder = new();
+            builder.Add(new ComplexMeshBuilder().AddQuad(FullCubeCorners[7], CenterPositions[3], CenterPositions[0], FullCubeCorners[4], Vector3.Backward, ComplexMeshBuilder.TangentUp, sideUv), Direction.Backward);
+            builder.Add(new ComplexMeshBuilder().AddQuad(FullCubeCorners[5], CenterPositions[1], CenterPositions[2], FullCubeCorners[6], Vector3.Forward, ComplexMeshBuilder.TangentUp, sideUv), Direction.Forward);
+            builder.Add(new ComplexMeshBuilder().AddQuad(FullCubeCorners[6], CenterPositions[2], CenterPositions[3], FullCubeCorners[7], Vector3.Left, ComplexMeshBuilder.TangentUp, sideUv), Direction.Left);
+            builder.Add(new ComplexMeshBuilder().AddQuad(FullCubeCorners[4], CenterPositions[0], CenterPositions[1], FullCubeCorners[5], Vector3.Right, ComplexMeshBuilder.TangentUp, sideUv), Direction.Right);
+            builder.Add(new ComplexMeshBuilder().AddQuad(FullCubeCorners[6], FullCubeCorners[7], FullCubeCorners[4], FullCubeCorners[5], Vector3.Up, ComplexMeshBuilder.TangentForward, uv), Direction.Up);
+            builder.Add(new ComplexMeshBuilder().AddQuad(CenterPositions[3], CenterPositions[2], CenterPositions[1], CenterPositions[0], Vector3.Down, ComplexMeshBuilder.TangentForward, uv));
+            return builder.Build();
         }
     }
 }
