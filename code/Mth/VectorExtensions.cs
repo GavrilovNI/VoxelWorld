@@ -1,6 +1,4 @@
-﻿
-
-using Sandcube.Mth.Enums;
+﻿using Sandcube.Mth.Enums;
 using System;
 
 namespace Sandcube.Mth;

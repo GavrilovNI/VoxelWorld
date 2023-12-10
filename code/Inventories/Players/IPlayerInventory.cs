@@ -1,6 +1,4 @@
-﻿
-
-using Sandcube.Items;
+﻿using Sandcube.Items;
 
 namespace Sandcube.Inventories.Players;
 
