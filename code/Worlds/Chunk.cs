@@ -5,9 +5,7 @@ using Sandcube.Mth.Enums;
 using Sandcube.Worlds.Generation.Meshes;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Reflection.Emit;
 
 namespace Sandcube.Worlds;
 
@@ -21,11 +19,10 @@ public class Chunk : Component, IBlockStateAccessor
 
     public IWorldProvider? WorldProvider { get; internal set; }
 
-    public bool MeshRebuildRequired { get; set; } = false;
+    public bool ModelsRebuildRequired { get; set; } = false;
 
-    protected readonly List<ModelRenderer> _modelComponents = new();
-    protected ModelCollider _opaqueModelCollider = null!;
-    protected ModelCollider _transparentModelCollider = null!;
+    protected readonly List<ModelRenderer> _modelRenderers = new();
+    protected ModelCollider _modelCollider = null!;
 
     protected readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
 
@@ -50,26 +47,25 @@ public class Chunk : Component, IBlockStateAccessor
             return;
 
         _blockStates[position] = blockState;
-        MeshRebuildRequired = true;
+        ModelsRebuildRequired = true;
     }
 
 
     protected override void OnStart()
     {
-        _opaqueModelCollider = GameObject.Components.Create<ModelCollider>();
-        _transparentModelCollider = GameObject.Components.Create<ModelCollider>();
+        _modelCollider = GameObject.Components.Create<ModelCollider>();
     }
 
     protected override void OnUpdate()
     {
-        if(MeshRebuildRequired)
+        if(ModelsRebuildRequired)
             UpdateModel();
     }
 
     public virtual void Clear()
     {
         _blockStates.Clear();
-        MeshRebuildRequired = true;
+        ModelsRebuildRequired = true;
         Bounds = default;
     }
 
@@ -98,11 +94,29 @@ public class Chunk : Component, IBlockStateAccessor
             !neighborBlock.IsFullBlock(neighborBlockState);
     }
 
-    protected virtual void AddVoxelsToMeshBuilder(ComplexMeshBuilder opaqueMeshBuilder, ComplexMeshBuilder transparentMeshBuilder)
+    protected virtual void AddVisualToMeshBuilder(ComplexMeshBuilder opaqueMeshBuilder, ComplexMeshBuilder transparentMeshBuilder)
+    {
+        var meshes = SandcubeGame.Instance!.BlockMeshes;
+        BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
+        {
+            var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
+            meshes.AddVisualToMeshBuilder(blockState, builder, localPosition * MathV.InchesInMeter, visibleFaces);
+        });
+    }
+
+    protected virtual void AddPhysicsToMeshBuilder(PositionOnlyMeshBuilder builder)
+    {
+        var meshes = SandcubeGame.Instance!.BlockMeshes;
+        BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
+        {
+            meshes.AddPhysicsToMeshBuilder(blockState, builder, localPosition * MathV.InchesInMeter, visibleFaces);
+        });
+    }
+
+    protected delegate void BuildMeshAction(Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces);
+    protected virtual void BuildMesh(BuildMeshAction action)
     {
         HashSet<Direction> visibleFaces = new();
-        var meshes = SandcubeGame.Instance!.BlockMeshes;
-
         for(int x = 0; x < Size.x; ++x)
         {
             for(int y = 0; y < Size.y; ++y)
@@ -122,28 +136,27 @@ public class Chunk : Component, IBlockStateAccessor
                         else
                             visibleFaces.Remove(direction);
                     }
-                    var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
-                    meshes.AddBlockStateMeshToBuilder(blockState, builder, localPosition * MathV.InchesInMeter, visibleFaces);
+                    action(localPosition, blockState, visibleFaces);
                 }
             }
         }
     }
 
-    protected virtual void DestroyModelComponents()
+    protected virtual void DestroyModelRenderers()
     {
-        foreach(var modelComponent in _modelComponents)
+        foreach(var modelComponent in _modelRenderers)
             modelComponent.Destroy();
-        _modelComponents.Clear();
+        _modelRenderers.Clear();
     }
 
-    protected virtual List<ModelRenderer> AddModelComponents(int count)
+    protected virtual List<ModelRenderer> AddModelRenders(int count)
     {
         List<ModelRenderer> result = new(count);
         for(int i = 0; i < count; ++i)
         {
             var component = GameObject.Components.Create<ModelRenderer>();
             result.Add(component);
-            _modelComponents.Add(component);
+            _modelRenderers.Add(component);
         }
         return result;
     }
@@ -160,37 +173,40 @@ public class Chunk : Component, IBlockStateAccessor
                 return;
         }
 
-        MeshRebuildRequired = true;
+        ModelsRebuildRequired = true;
     }
 
     protected virtual void UpdateModel()
     {
-        MeshRebuildRequired = false;
-        DestroyModelComponents();
+        ModelsRebuildRequired = false;
 
         ComplexMeshBuilder opaqueMeshBuilder = new();
         ComplexMeshBuilder transparentMeshBuilder = new();
-        AddVoxelsToMeshBuilder(opaqueMeshBuilder, transparentMeshBuilder);
+        AddVisualToMeshBuilder(opaqueMeshBuilder, transparentMeshBuilder);
+        DestroyModelRenderers();
+        AddRenderers(opaqueMeshBuilder, OpaqueVoxelsMaterial);
+        AddRenderers(transparentMeshBuilder, TranslucentVoxelsMaterial);
 
-        Bounds = opaqueMeshBuilder.Bounds;
+        PositionOnlyMeshBuilder physicsMeshBuilder = new();
+        AddPhysicsToMeshBuilder(physicsMeshBuilder);
+        UpdateCollider(physicsMeshBuilder);
 
-        AddModel(opaqueMeshBuilder, _opaqueModelCollider, OpaqueVoxelsMaterial);
-        AddModel(transparentMeshBuilder, _transparentModelCollider, TranslucentVoxelsMaterial);
-
-        RecalculateBounds(opaqueMeshBuilder, transparentMeshBuilder);
+        RecalculateBounds(opaqueMeshBuilder.IsEmpty() ? null : opaqueMeshBuilder,
+            transparentMeshBuilder.IsEmpty() ? null : transparentMeshBuilder,
+            physicsMeshBuilder.IsEmpty() ? null : physicsMeshBuilder);
     }
 
-    protected virtual void RecalculateBounds(params ComplexMeshBuilder[] meshBuilders)
+    protected virtual void RecalculateBounds(params IBounded?[] bounders)
     {
         BBox? bounds = null;
-        foreach(var builder in meshBuilders)
+        foreach(var currentBounder in bounders)
         {
-            if(builder.IsEmpty())
+            if(currentBounder is null)
                 continue;
             if(bounds.HasValue)
-                bounds = bounds.Value.AddBBox(builder.Bounds);
+                bounds = bounds.Value.AddBBox(currentBounder.Bounds);
             else
-                bounds = builder.Bounds;
+                bounds = currentBounder.Bounds;
         }
 
         if(!bounds.HasValue)
@@ -199,20 +215,14 @@ public class Chunk : Component, IBlockStateAccessor
         Bounds = bounds.Value.Translate(Transform.Position);
     }
 
-    protected virtual void AddModel(ComplexMeshBuilder builder, ModelCollider collider, Material material)
+    protected virtual void AddRenderers(ComplexMeshBuilder builder, Material material)
     {
         var buffers = builder.ToVertexBuffers();
         bool isEmpty = buffers.Count == 0;
-        collider.Enabled = !isEmpty;
         if(isEmpty)
             return;
 
-        var modelComponents = AddModelComponents(buffers.Count);
-
-        ModelBuilder physicsModelBuilder = new();
-        physicsModelBuilder.AddCollisionMesh(builder.CombineVertices().Select(v => v.Position).ToArray(), builder.CombineIndices().ToArray());
-        var model = physicsModelBuilder.Create();
-        collider.Model = model;
+        var modelComponents = AddModelRenders(buffers.Count);
 
         for(int i = 0; i < buffers.Count; ++i)
         {
@@ -223,6 +233,15 @@ public class Chunk : Component, IBlockStateAccessor
             modelComponents[i].Model = modelBuilder.Create();
             modelComponents[i].SceneObject.Attributes.Set("color", SandcubeGame.Instance!.TextureMap.Texture);
         }
+    }
+
+    protected virtual void UpdateCollider(PositionOnlyMeshBuilder builder)
+    {
+        ModelBuilder physicsModelBuilder = new();
+        physicsModelBuilder.AddCollisionMesh(builder.CombineVertices().Select(v => v.Position).ToArray(), builder.CombineIndices().ToArray());
+        var model = physicsModelBuilder.Create();
+        _modelCollider.Model = model;
+        _modelCollider.Enabled = !builder.IsEmpty();
     }
 
     protected override void DrawGizmos()

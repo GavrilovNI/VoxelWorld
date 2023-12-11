@@ -87,12 +87,12 @@ public class SlabBlock : SimpleBlock
         context.World.SetBlockState(context.Position, DefaultBlockState.With(SlabTypeProperty, slabType.GetOpposite()));
     }
 
-    public override ISidedMeshPart<ComplexVertex> CreateMesh(BlockState blockState)
+    public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
         var slabType = blockState.GetValue(SlabTypeProperty);
 
         if(slabType == SlabType.Double)
-            return base.CreateMesh(blockState);
+            return base.CreateVisualMesh(blockState);
 
         var uv = SandcubeGame.Instance!.TextureMap.GetUv(TextureRect);
         if(slabType == SlabType.Bottom)
@@ -105,5 +105,18 @@ public class SlabBlock : SimpleBlock
             var sideUv = new Rect(uv.Left, uv.Top, uv.Width, uv.Height / 2f);
             return VisualMeshes.TopSlab.Make(sideUv, uv);
         }
+    }
+
+    public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState)
+    {
+        var slabType = blockState.GetValue(SlabTypeProperty);
+
+        if(slabType == SlabType.Bottom)
+            return PhysicsMeshes.BottomSlab;
+
+        if(slabType == SlabType.Top)
+            return PhysicsMeshes.TopSlab;
+
+        return PhysicsMeshes.FullBlock;
     }
 }

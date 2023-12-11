@@ -46,8 +46,8 @@ public abstract class Block : IRegisterable
     public virtual void Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
 
 
-    public abstract ISidedMeshPart<ComplexVertex> CreateMesh(BlockState blockState);
-    //public abstract ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState);
+    public abstract ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState);
+    public abstract ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState);
 
     public override string ToString() => $"{nameof(Block)}({ModedId})";
 

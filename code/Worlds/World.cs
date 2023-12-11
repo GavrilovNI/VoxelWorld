@@ -152,7 +152,7 @@ public class World : Component, IWorldAccessor
         {
             var chunk = GetChunk(chunkPosition + direction, false);
             if(chunk is not null)
-                chunk.MeshRebuildRequired = true;
+                chunk.ModelsRebuildRequired = true;
         }    
     }
 

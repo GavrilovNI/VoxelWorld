@@ -1,4 +1,5 @@
-﻿using Sandcube.Mth.Enums;
+﻿using Sandcube.Mth;
+using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,7 +78,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         return result;
     }
 
-    public class Builder : IMeshPart<V>
+    public class Builder : IMeshPart<V>, IBounded
     {
         protected readonly UnlimitedMesh<V> Mesh = new();
 

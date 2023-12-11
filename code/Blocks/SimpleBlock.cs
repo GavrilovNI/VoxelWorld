@@ -37,9 +37,11 @@ public class SimpleBlock : Block
         }
     }
 
-    public override ISidedMeshPart<ComplexVertex> CreateMesh(BlockState blockState)
+    public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
         var uv = SandcubeGame.Instance!.TextureMap.GetUv(TextureRect);
         return VisualMeshes.FullBlock.Make(uv);
     }
+
+    public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState) => PhysicsMeshes.FullBlock;
 }
