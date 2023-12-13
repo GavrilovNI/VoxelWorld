@@ -53,7 +53,7 @@ public class SandcubeGame : Component, ISandcubeMod
 
     protected override void OnStart()
     {
-        Prepare();
+        OnInitialize();
         IsStarted = true;
         Started?.Invoke();
     }
@@ -75,7 +75,7 @@ public class SandcubeGame : Component, ISandcubeMod
         Instance = null;
     }
 
-    protected virtual void Prepare()
+    protected virtual void OnInitialize()
     {
         RegisterAllBlocks();
         RegisterAllItems();
