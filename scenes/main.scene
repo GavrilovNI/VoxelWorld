@@ -124,6 +124,7 @@
               "BodyGroups": 18446744073709551615,
               "BoneMergeTarget": null,
               "CreateBoneObjects": false,
+              "MaterialGroup": null,
               "MaterialOverride": null,
               "Model": "models/citizen/citizen.vmdl",
               "ShouldCastShadows": true,
@@ -161,6 +162,7 @@
                   "BodyGroups": 18446744073709551615,
                   "BoneMergeTarget": null,
                   "CreateBoneObjects": false,
+                  "MaterialGroup": null,
                   "MaterialOverride": null,
                   "Model": "models/citizen_clothes/hair/hair_fade/models/hair_fade.vmdl",
                   "ShouldCastShadows": true,
@@ -180,6 +182,7 @@
                   "BodyGroups": 18446744073709551615,
                   "BoneMergeTarget": null,
                   "CreateBoneObjects": false,
+                  "MaterialGroup": null,
                   "MaterialOverride": null,
                   "Model": "models/citizen_clothes/shoes/boots/models/army_boots.vmdl",
                   "ShouldCastShadows": true,
@@ -341,13 +344,13 @@
     }
   ],
   "SceneProperties": {
+    "FixedUpdateFrequency": 50,
     "Lerping": true,
-    "UseFixedUpdate": true,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 60,
     "ThreadedAnimation": true,
     "TimeScale": 1,
-    "MaxFixedUpdates": 5,
-    "FixedUpdateFrequency": 50,
-    "NetworkFrequency": 60
+    "UseFixedUpdate": true
   },
   "Title": "main",
   "Description": "",
