@@ -1,7 +1,5 @@
 ﻿using Sandbox;
-using Sandcube.Events;
 using Sandcube.Interactions;
-using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
 using Sandcube.Worlds;
 
@@ -14,12 +12,12 @@ public class SandcubePlayer : Component
 
     protected override void OnEnabled()
     {
-        Event.Register(this);
+        SandcubeGame.Started += OnGameStart;
     }
 
     protected override void OnDisabled()
     {
-        Event.Unregister(this);
+        SandcubeGame.Started -= OnGameStart;
     }
 
     protected override void OnAwake()
@@ -27,7 +25,6 @@ public class SandcubePlayer : Component
         Inventory ??= Components.Get<PlayerInventory>();
     }
 
-    [SandcubeEvent.Game.Start]
     protected virtual void OnGameStart()
     {
         var items = SandcubeGame.Instance!.Items;
