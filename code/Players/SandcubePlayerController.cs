@@ -1,5 +1,5 @@
 ﻿using Sandbox;
-using Sandcube.Animations;
+using Sandbox.Citizen;
 
 public class SandcubePlayerController : Component, INetworkSerializable
 {
@@ -10,7 +10,7 @@ public class SandcubePlayerController : Component, INetworkSerializable
     [Property] public GameObject CameraParent { get; set; } = null!;
     [Property] public GameObject Body { get; set; } = null!;
 
-    [Property] public CitizenAnimation AnimationHelper { get; set; } = null!;
+    [Property] public CitizenAnimationHelper AnimationHelper { get; set; } = null!;
 
     public Angles EyeAngles;
     public bool IsRunning;
@@ -63,7 +63,7 @@ public class SandcubePlayerController : Component, INetworkSerializable
             AnimationHelper.IsGrounded = cc.IsOnGround;
             AnimationHelper.FootShuffle = rotateDifference;
             AnimationHelper.WithLook(EyeAngles.Forward, 1, 1, 1.0f);
-            AnimationHelper.MoveStyle = IsRunning ? CitizenAnimation.MoveStyles.Run : CitizenAnimation.MoveStyles.Walk;
+            AnimationHelper.MoveStyle = IsRunning ? CitizenAnimationHelper.MoveStyles.Run : CitizenAnimationHelper.MoveStyles.Walk;
         }
     }
 

@@ -22,7 +22,7 @@ public class BlockItem : Item
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        var gameObject = traceResult.Body.GameObject as GameObject;
+        var gameObject = traceResult.Body.GetGameObject();
         if(gameObject is null || !gameObject.Tags.Has("world"))
             return InteractionResult.Pass;
 

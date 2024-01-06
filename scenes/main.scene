@@ -1,4 +1,5 @@
 {
+  "Id": "8c0250af-c367-4bb3-ab12-5cf36779a6ca",
   "GameObjects": [
     {
       "Id": "e9aebd45-7f85-4fff-8f75-cfcb5ac9bb38",
@@ -60,15 +61,19 @@
       "Enabled": true,
       "Components": [
         {
-          "__type": "CitizenAnimation",
+          "__type": "CitizenAnimationHelper",
           "__enabled": true,
+          "BodyWeight": 1,
           "EyeSource": null,
+          "EyesWeight": 1,
+          "HeadWeight": 1,
           "Height": 1,
           "IkLeftFoot": null,
           "IkLeftHand": null,
           "IkRightFoot": null,
           "IkRightHand": null,
-          "LookAtObject": null,
+          "LookAt": null,
+          "LookAtEnabled": false,
           "Target": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
         },
         {
@@ -127,7 +132,7 @@
               "MaterialGroup": null,
               "MaterialOverride": null,
               "Model": "models/citizen/citizen.vmdl",
-              "ShouldCastShadows": true,
+              "RenderType": "On",
               "Tint": "1,1,1,1"
             }
           ],
@@ -165,7 +170,7 @@
                   "MaterialGroup": null,
                   "MaterialOverride": null,
                   "Model": "models/citizen_clothes/hair/hair_fade/models/hair_fade.vmdl",
-                  "ShouldCastShadows": true,
+                  "RenderType": "On",
                   "Tint": "1,1,1,1"
                 }
               ]
@@ -185,7 +190,7 @@
                   "MaterialGroup": null,
                   "MaterialOverride": null,
                   "Model": "models/citizen_clothes/shoes/boots/models/army_boots.vmdl",
-                  "ShouldCastShadows": true,
+                  "RenderType": "On",
                   "Tint": "1,1,1,1"
                 }
               ]
@@ -210,11 +215,14 @@
                   "BackgroundColor": "0.25292,0.26086,0.29703,1",
                   "ClearFlags": "All",
                   "FieldOfView": 80,
+                  "IsMainCamera": true,
                   "Orthographic": false,
                   "OrthographicHeight": 1204,
+                  "Priority": 1,
                   "RenderExcludeTags": "",
                   "RenderTags": "",
                   "TargetEye": "None",
+                  "Viewport": "0,0,1,1",
                   "ZFar": 10000,
                   "ZNear": 1
                 },

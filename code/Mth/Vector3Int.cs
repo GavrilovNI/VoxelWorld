@@ -146,8 +146,8 @@ public struct Vector3Int
         return true;
     }
 
-    public static Vector3 CubicBeizer(Vector3 source, Vector3 target, Vector3 sourceTangent, Vector3 targetTangent, float t) =>
-        Vector3.CubicBeizer(source, target, sourceTangent, targetTangent, t);
+    public static Vector3 CubicBezier(Vector3 source, Vector3 target, Vector3 sourceTangent, Vector3 targetTangent, float t) =>
+        Vector3.CubicBezier(source, target, sourceTangent, targetTangent, t);
 
     public readonly Vector3Int SubtractDirection(Vector3Int direction, int strength = 1) => this - direction * Dot(direction) * strength;
     public readonly Vector3 SubtractDirection(Vector3 direction, float strength = 1f) => this - direction * Dot(direction) * strength;

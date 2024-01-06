@@ -54,7 +54,7 @@ public class SandcubePlayer : Component
             }
 
             int slotMoveDelta = (Input.Pressed("SlotPrev") ? -1 : 0) + (Input.Pressed("SlotNext") ? 1 : 0);
-            slotMoveDelta -= Input.MouseWheel;
+            slotMoveDelta -= (int)Input.MouseWheel.y;
             var newIndex = Inventory.MainHandIndex + slotMoveDelta;
             Inventory.MainHandIndex = (newIndex % Inventory.HotbarSize + Inventory.HotbarSize) % Inventory.HotbarSize;
         }
