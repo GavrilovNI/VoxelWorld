@@ -17,6 +17,8 @@ public class Chunk : Component, IBlockStateAccessor
     [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
 
+    public bool Initialized { get; private set; } = false;
+
     public IWorldProvider? WorldProvider { get; internal set; }
 
     public bool ModelsRebuildRequired { get; set; } = false;
@@ -33,9 +35,21 @@ public class Chunk : Component, IBlockStateAccessor
 
     public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);
 
-    public Chunk()
-    {
 
+    public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldProvider? worldProvider)
+    {
+        if(Initialized)
+            throw new InvalidOperationException($"{nameof(Chunk)} {this} was already initialized or enabled");
+        Initialized = true;
+
+        Position = position;
+        Size = size;
+        WorldProvider = worldProvider;
+    }
+
+    protected override void OnEnabled()
+    {
+        Initialized = true;
     }
 
     public void SetBlockState(Vector3Int position, BlockState blockState)
@@ -257,11 +271,8 @@ public static class ComponentListChunkExtensions
     {
         var chunk = components.Create<T>(false);
 
-        chunk.Position = position;
-        chunk.Size = size;
-        chunk.WorldProvider = worldProvider;
+        chunk.Initialize(position, size, worldProvider);
         chunk.Enabled = startEnabled;
-
         return chunk;
     }
 }
