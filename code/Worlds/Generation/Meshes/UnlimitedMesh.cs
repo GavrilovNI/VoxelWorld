@@ -18,6 +18,18 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
     public IReadOnlyList<V> GetVertices(int partIndex) => _vertices[partIndex].AsReadOnly();
     public IReadOnlyList<ushort> GetIndices(int partIndex) => _indices[partIndex].AsReadOnly();
 
+    public UnlimitedMesh()
+    {
+
+    }
+
+    public UnlimitedMesh(UnlimitedMesh<V> mesh)
+    {
+        _vertices = mesh._vertices.Select(l => new List<V>(l)).ToList();
+        _indices = mesh._indices.Select(l => new List<ushort>(l)).ToList();
+        Bounds = mesh.Bounds;
+    }
+
     public bool IsEmpty()
     {
         foreach(var vertices in _vertices)
@@ -349,6 +361,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             CurrentVertices!.Add(vertexToAdd);
             return this;
         }
+
+        public UnlimitedMesh<V> Build() => new(Mesh);
     }
 
     public class Builder<T> : Builder where T : Builder<T>
