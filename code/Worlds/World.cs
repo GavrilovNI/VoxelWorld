@@ -47,6 +47,10 @@ public class World : Component, IWorldAccessor
         chunk.OpaqueVoxelsMaterial = OpaqueVoxelsMaterial;
         chunk.TranslucentVoxelsMaterial = TranslucentVoxelsMaterial;
 
+        var proxies = chunkGameObject.Components.GetAll<WorldProxy>(FindMode.DisabledInSelfAndDescendants);
+        foreach(var proxy in proxies)
+            proxy.World = this;
+
         _chunks.Add(position, chunk);
 
         chunkGameObject.Enabled = true;

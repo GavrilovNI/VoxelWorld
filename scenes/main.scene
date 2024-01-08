@@ -83,7 +83,7 @@
           "Acceleration": 10,
           "GroundAngle": 45,
           "Height": 64,
-          "IgnoreLayers": "",
+          "IgnoreLayers": "interactable",
           "Radius": 16,
           "StepHeight": 18
         },
@@ -114,6 +114,7 @@
           "__type": "WorldInteractor",
           "__enabled": true,
           "Eye": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+          "InteractionTag": "interactable",
           "Player": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
           "ReachDistance": 196.84999
         }

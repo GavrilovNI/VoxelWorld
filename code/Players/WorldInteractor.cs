@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Interactions;
 using Sandcube.Items;
+using Sandcube.Worlds;
 
 namespace Sandcube.Players;
 
@@ -10,10 +11,12 @@ public class WorldInteractor : Component
     [Property] public GameObject Eye { get; set; } = null!;
     [Property] public float ReachDistance { get; set; } = 39.37f * 5;
 
+    [Property] public string InteractionTag { get; set; } = "interactable";
+
     protected virtual PhysicsTraceResult Trace()
     {
         var ray = new Ray(Eye.Transform.Position, Eye.Transform.Rotation.Forward);
-        return Scene.PhysicsWorld.Trace.Ray(ray, ReachDistance).Run();
+        return Scene.PhysicsWorld.Trace.Ray(ray, ReachDistance).WithTag(InteractionTag).Run();
     }
 
     protected override void OnUpdate()
@@ -72,11 +75,10 @@ public class WorldInteractor : Component
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        var gameObject = traceResult.Body.GetGameObject();
-        if(gameObject is null || !gameObject.Tags.Has("world"))
+        IWorldAccessor? world = traceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
+        if(world is null)
             return InteractionResult.Pass;
 
-        var world = Player.World;
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
         var blockState = world.GetBlockState(blockPosition);
 
@@ -96,7 +98,6 @@ public class WorldInteractor : Component
         var blockInteractionResult = attacking ? block.OnAttack(blockContext) : block.OnInteract(blockContext);
         if(blockInteractionResult.ConsumesAction)
             return blockInteractionResult;
-
 
         if(attacking && !blockState.IsAir())
         {

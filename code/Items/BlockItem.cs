@@ -9,7 +9,6 @@ public class BlockItem : Item
 {
     public readonly Block Block;
 
-
     public BlockItem(Block block, Texture texture) : base(block.ModedId, texture)
     {
         Block = block;
@@ -22,15 +21,14 @@ public class BlockItem : Item
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        var gameObject = traceResult.Body.GetGameObject();
-        if(gameObject is null || !gameObject.Tags.Has("world"))
+        if(!BlockActionContext.TryMakeFromItemActionContext(context, out var blockContext))
             return InteractionResult.Pass;
-
-        BlockActionContext blockContext = new(context);
 
         if(!TryPlace(blockContext))
         {
-            blockContext = new(context, blockContext.Position + Direction.ClosestTo(blockContext.TraceResult.Normal));
+            var position = blockContext.Position + Direction.ClosestTo(blockContext.TraceResult.Normal);
+            if(!BlockActionContext.TryMakeFromItemActionContext(context, position, out blockContext))
+                return InteractionResult.Fail;
 
             if(!TryPlace(blockContext))
                 return InteractionResult.Fail;

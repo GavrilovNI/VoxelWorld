@@ -34,7 +34,22 @@ public class SlabBlock : SimpleBlock
 
     public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { SlabTypeProperty };
 
-    public override bool IsFullBlock(BlockState blockState) => blockState.GetValue(SlabTypeProperty) == SlabType.Double;
+    public override bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
+    {
+        if(meshType == BlockMeshType.Visual && Properties.IsTransparent)
+            return false;
+
+        if(blockState.GetValue(SlabTypeProperty) == SlabType.Double)
+            return true;
+
+        if(directionToFace == Direction.Down)
+            return blockState.GetValue(SlabTypeProperty) == SlabType.Bottom;
+
+        if(directionToFace == Direction.Up)
+            return blockState.GetValue(SlabTypeProperty) == SlabType.Top;
+
+        return false;
+    }
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(SlabTypeProperty, SlabType.Bottom);
 
@@ -119,4 +134,6 @@ public class SlabBlock : SimpleBlock
 
         return PhysicsMeshes.FullBlock;
     }
+
+    public override ISidedMeshPart<Vector3Vertex> CreateInteractionMesh(BlockState blockState) => CreatePhysicsMesh(blockState);
 }

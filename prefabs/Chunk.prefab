@@ -19,6 +19,30 @@
         },
         "TranslucentVoxelsMaterial": null
       }
+    ],
+    "Children": [
+      {
+        "Id": "dd6fdd29-b055-491f-8ecf-28e86b120139",
+        "Name": "Interactable",
+        "Tags": "interactable",
+        "Enabled": true,
+        "Components": [
+          {
+            "__type": "WorldProxy",
+            "__enabled": true,
+            "DoNotEnableIfWorldIsNotValid": true,
+            "World": null
+          },
+          {
+            "__type": "ModelCollider",
+            "__enabled": true,
+            "IsTrigger": false,
+            "Model": null,
+            "Static": false,
+            "Surface": null
+          }
+        ]
+      }
     ]
   },
   "ShowInMenu": false,

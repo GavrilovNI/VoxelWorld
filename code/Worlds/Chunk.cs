@@ -16,6 +16,7 @@ public class Chunk : Component, IBlockStateAccessor
 
     [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
+    [Property] public ModelCollider InteractionCollider { get; set; } = null!;
 
     public bool Initialized { get; private set; } = false;
 
@@ -64,7 +65,6 @@ public class Chunk : Component, IBlockStateAccessor
         ModelsRebuildRequired = true;
     }
 
-
     protected override void OnStart()
     {
         _modelCollider = GameObject.Components.Create<ModelCollider>();
@@ -97,38 +97,45 @@ public class Chunk : Component, IBlockStateAccessor
         return WorldProvider.GetBlockState(globalPosition);
     }
 
-    protected virtual bool ShouldRenderFace(Vector3Int localPosition, BlockState blockState, Direction direction)
+    protected virtual bool ShouldAddFace(Vector3Int localPosition, BlockState blockState, BlockMeshType meshType, Direction direction)
     {
         var neighborPosition = localPosition + direction;
         var neighborBlockState = GetExternalBlockState(neighborPosition);
         var neighborBlock = neighborBlockState.Block;
 
-        return neighborBlockState.IsAir() ||
-            neighborBlock.Properties.IsTransparent ||
-            !neighborBlock.IsFullBlock(neighborBlockState);
+        return !neighborBlock.HidesNeighbourFace(neighborBlockState, meshType, direction.GetOpposite());
     }
 
-    protected virtual void AddVisualToMeshBuilder(ComplexMeshBuilder opaqueMeshBuilder, ComplexMeshBuilder transparentMeshBuilder)
+    protected virtual void AddVisualToMeshBuilder(UnlimitedMesh<ComplexVertex>.Builder opaqueMeshBuilder, UnlimitedMesh<ComplexVertex>.Builder transparentMeshBuilder)
     {
         var meshes = SandcubeGame.Instance!.BlockMeshes;
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
             var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
-            meshes.AddVisualToMeshBuilder(blockState, builder, localPosition * MathV.InchesInMeter, visibleFaces);
-        });
+            meshes.GetVisual(blockState)!.AddToBuilder(builder, localPosition * MathV.InchesInMeter, visibleFaces);
+        }, BlockMeshType.Visual);
     }
 
-    protected virtual void AddPhysicsToMeshBuilder(PositionOnlyMeshBuilder builder)
+    protected virtual void AddPhysicsToMeshBuilder(UnlimitedMesh<Vector3Vertex>.Builder builder)
     {
         var meshes = SandcubeGame.Instance!.BlockMeshes;
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
-            meshes.AddPhysicsToMeshBuilder(blockState, builder, localPosition * MathV.InchesInMeter, visibleFaces);
-        });
+            meshes.GetPhysics(blockState)!.AddToBuilder(builder, localPosition * MathV.InchesInMeter, visibleFaces);
+        }, BlockMeshType.Physics);
+    }
+
+    protected virtual void AddInteractionToMeshBuilder(UnlimitedMesh<Vector3Vertex>.Builder builder)
+    {
+        var meshes = SandcubeGame.Instance!.BlockMeshes;
+        BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
+        {
+            meshes.GetInteraction(blockState)!.AddToBuilder(builder, localPosition * MathV.InchesInMeter, visibleFaces);
+        }, BlockMeshType.Interaction);
     }
 
     protected delegate void BuildMeshAction(Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces);
-    protected virtual void BuildMesh(BuildMeshAction action)
+    protected virtual void BuildMesh(BuildMeshAction action, BlockMeshType meshType)
     {
         HashSet<Direction> visibleFaces = new();
         for(int x = 0; x < Size.x; ++x)
@@ -144,7 +151,7 @@ public class Chunk : Component, IBlockStateAccessor
 
                     foreach(var direction in Direction.All)
                     {
-                        bool shouldRenderFace = ShouldRenderFace(localPosition, blockState, direction);
+                        bool shouldRenderFace = ShouldAddFace(localPosition, blockState, meshType, direction);
                         if(shouldRenderFace)
                             visibleFaces.Add(direction);
                         else
@@ -203,7 +210,14 @@ public class Chunk : Component, IBlockStateAccessor
 
         PositionOnlyMeshBuilder physicsMeshBuilder = new();
         AddPhysicsToMeshBuilder(physicsMeshBuilder);
-        UpdateCollider(physicsMeshBuilder);
+        UpdateCollider(_modelCollider, physicsMeshBuilder);
+
+        if(InteractionCollider.IsValid())
+        {
+            PositionOnlyMeshBuilder interactionMeshBuilder = new();
+            AddInteractionToMeshBuilder(interactionMeshBuilder);
+            UpdateCollider(InteractionCollider, interactionMeshBuilder);
+        }
 
         RecalculateBounds(opaqueMeshBuilder.IsEmpty() ? null : opaqueMeshBuilder,
             transparentMeshBuilder.IsEmpty() ? null : transparentMeshBuilder,
@@ -249,13 +263,13 @@ public class Chunk : Component, IBlockStateAccessor
         }
     }
 
-    protected virtual void UpdateCollider(PositionOnlyMeshBuilder builder)
+    protected virtual void UpdateCollider(ModelCollider collider, PositionOnlyMeshBuilder builder)
     {
         ModelBuilder physicsModelBuilder = new();
         physicsModelBuilder.AddCollisionMesh(builder.CombineVertices().Select(v => v.Position).ToArray(), builder.CombineIndices().ToArray());
         var model = physicsModelBuilder.Create();
-        _modelCollider.Model = model;
-        _modelCollider.Enabled = !builder.IsEmpty();
+        collider.Model = model;
+        collider.Enabled = !builder.IsEmpty();
     }
 
     protected override void DrawGizmos()

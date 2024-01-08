@@ -25,32 +25,6 @@ public record class BlockActionContext
     }
 
     [SetsRequiredMembers]
-    public BlockActionContext(ItemActionContext itemActionContext)
-    {
-        Player = itemActionContext.Player;
-        Item = itemActionContext.Item;
-        HandType = itemActionContext.HandType;
-        TraceResult = itemActionContext.TraceResult;
-
-        World = Player.World;
-        Position = World.GetBlockPosition(TraceResult.EndPosition, TraceResult.Normal);
-        BlockState = World.GetBlockState(Position);
-    }
-
-    [SetsRequiredMembers]
-    public BlockActionContext(ItemActionContext itemActionContext, Vector3Int position)
-    {
-        Player = itemActionContext.Player;
-        Item = itemActionContext.Item;
-        HandType = itemActionContext.HandType;
-        TraceResult = itemActionContext.TraceResult;
-
-        World = Player.World;
-        Position = position;
-        BlockState = World.GetBlockState(Position);
-    }
-
-    [SetsRequiredMembers]
     public BlockActionContext(ItemActionContext itemActionContext, IWorldAccessor world, Vector3Int position, BlockState blockState)
     {
         Player = itemActionContext.Player;
@@ -61,5 +35,34 @@ public record class BlockActionContext
         World = world;
         Position = position;
         BlockState = blockState;
+    }
+
+    public static bool TryMakeFromItemActionContext(ItemActionContext itemActionContext, Vector3Int position, out BlockActionContext context)
+    {
+        var world = itemActionContext.TraceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
+        if(world == null)
+        {
+            context = null!;
+            return false;
+        }
+
+        var blockState = world.GetBlockState(position);
+        context = new BlockActionContext(itemActionContext, world, position, blockState);
+        return true;
+    }
+
+    public static bool TryMakeFromItemActionContext(ItemActionContext itemActionContext, out BlockActionContext context)
+    {
+        var world = itemActionContext.TraceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
+        if(world == null)
+        {
+            context = null!;
+            return false;
+        }
+
+        var position = world.GetBlockPosition(itemActionContext.TraceResult.EndPosition, itemActionContext.TraceResult.Normal);
+        var blockState = world.GetBlockState(position);
+        context = new BlockActionContext(itemActionContext, world, position, blockState);
+        return true;
     }
 }

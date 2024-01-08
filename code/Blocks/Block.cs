@@ -2,6 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
+using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
@@ -33,7 +34,14 @@ public abstract class Block : IRegisterable
 
     public virtual void OnRegistered() { }
 
-    public virtual bool IsFullBlock(BlockState blockState) => !blockState.IsAir();
+    public virtual bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
+    {
+        if(meshType == BlockMeshType.Visual && Properties.IsTransparent)
+            return false;
+
+        return !blockState.IsAir();
+    }
+
     public virtual IEnumerable<BlockProperty> CombineProperties() => Enumerable.Empty<BlockProperty>();
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
@@ -48,6 +56,7 @@ public abstract class Block : IRegisterable
 
     public abstract ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState);
     public abstract ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState);
+    public abstract ISidedMeshPart<Vector3Vertex> CreateInteractionMesh(BlockState blockState);
 
     public override string ToString() => $"{nameof(Block)}({ModedId})";
 
