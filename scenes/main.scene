@@ -37,6 +37,7 @@
         {
           "__type": "World",
           "__enabled": true,
+          "ChunkPrefab": "prefabs/chunk.prefab",
           "ChunkSize": {
             "x": 16,
             "y": 16,

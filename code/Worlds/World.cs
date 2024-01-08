@@ -15,7 +15,10 @@ public class World : Component, IWorldAccessor
     [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
     [Property] public WorldGenerator Generator { get; set; } = null!;
 
+    [Property] public PrefabFile ChunkPrefab { get; set; } = null!;
+
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
+
 
     protected override void OnStart()
     {
@@ -29,17 +32,24 @@ public class World : Component, IWorldAccessor
         if(_chunks.ContainsKey(position))
             throw new InvalidOperationException($"{nameof(Chunk)} aready exists in position {position}");
 
-        var chunkGameObject = Scene.CreateObject();
-        chunkGameObject.Name = $"Chunk {position}";
-        chunkGameObject.Parent = this.GameObject;
-        chunkGameObject.Transform.Position = position * ChunkSize * MathV.InchesInMeter;
-        chunkGameObject.Tags.Add("world");
+        var chunkGameObject = new GameObject(false, $"Chunk {position}");
+        chunkGameObject.SetPrefabSource(ChunkPrefab.ResourcePath);
+        chunkGameObject.UpdateFromPrefab();
+        chunkGameObject.BreakFromPrefab();
 
-        var chunk = chunkGameObject.Components.Create<Chunk>(position, ChunkSize, this);
+        chunkGameObject.Parent = this.GameObject;
+        chunkGameObject.Transform.LocalRotation = Rotation.Identity;
+        chunkGameObject.Transform.LocalPosition = position * ChunkSize * MathV.InchesInMeter;
+
+        var chunk = chunkGameObject.Components.Get<Chunk>(true);
+        chunk.Initialize(position, ChunkSize, this);
+
         chunk.OpaqueVoxelsMaterial = OpaqueVoxelsMaterial;
         chunk.TranslucentVoxelsMaterial = TranslucentVoxelsMaterial;
 
         _chunks.Add(position, chunk);
+
+        chunkGameObject.Enabled = true;
         return chunk;
     }
 

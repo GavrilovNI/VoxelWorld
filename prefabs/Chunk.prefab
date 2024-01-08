@@ -1,0 +1,28 @@
+{
+  "RootObject": {
+    "Id": "f908fb91-0c8d-46ce-a998-bba8ba3b09bd",
+    "Name": "chunk",
+    "Tags": "world",
+    "Components": [
+      {
+        "__type": "Chunk",
+        "__enabled": true,
+        "InteractionCollider": "dd6fdd29-b055-491f-8ecf-28e86b120139",
+        "OpaqueVoxelsMaterial": null,
+        "Position": {},
+        "Size": {
+          "x": 16,
+          "y": 16,
+          "z": 16,
+          "Normal": "0.5773503,0.5773503,0.5773503",
+          "Length": 27.712812
+        },
+        "TranslucentVoxelsMaterial": null
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "__references": []
+}
