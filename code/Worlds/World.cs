@@ -75,8 +75,8 @@ public class World : Component, IWorldAccessor
 
     public virtual Vector3Int GetBlockPosition(Vector3 position, Vector3 hitNormal)
     {
-        hitNormal = hitNormal.Normal;
-        var result = position.Divide(MathV.InchesInMeter);
+        hitNormal = Transform.World.NormalToLocal(hitNormal.Normal);
+        var result = Transform.World.PointToLocal(position).Divide(MathV.InchesInMeter);
 
         foreach(var axis in Axis.All)
         {
@@ -96,7 +96,8 @@ public class World : Component, IWorldAccessor
 
         return result.Floor();
     }
-    public virtual Vector3Int GetBlockPosition(Vector3 position) => position.Divide(MathV.InchesInMeter).Floor();
+    public virtual Vector3Int GetBlockPosition(Vector3 position) => Transform.World.PointToLocal(position).Divide(MathV.InchesInMeter).Floor();
+
     public virtual Vector3Int GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
     public virtual Vector3 GetBlockGlobalPosition(Vector3Int position) => position * MathV.InchesInMeter;
 
