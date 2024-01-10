@@ -5,6 +5,7 @@
     "Tags": "world",
     "Components": [
       {
+        "__version": 0,
         "__type": "Chunk",
         "__enabled": true,
         "InteractionCollider": "dd6fdd29-b055-491f-8ecf-28e86b120139",
@@ -28,12 +29,14 @@
         "Enabled": true,
         "Components": [
           {
+            "__version": 0,
             "__type": "WorldProxy",
             "__enabled": true,
             "DoNotEnableIfWorldIsNotValid": true,
             "World": null
           },
           {
+            "__version": 0,
             "__type": "ModelCollider",
             "__enabled": true,
             "IsTrigger": false,
