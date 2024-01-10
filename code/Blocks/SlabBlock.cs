@@ -135,5 +135,16 @@ public class SlabBlock : SimpleBlock
         return PhysicsMeshes.FullBlock;
     }
 
-    public override ISidedMeshPart<Vector3Vertex> CreateInteractionMesh(BlockState blockState) => CreatePhysicsMesh(blockState);
+    public override ISidedMeshPart<Vector3Vertex> CreateInteractionMesh(BlockState blockState)
+    {
+        var slabType = blockState.GetValue(SlabTypeProperty);
+
+        if(slabType == SlabType.Bottom)
+            return PhysicsMeshes.BottomSlab;
+
+        if(slabType == SlabType.Top)
+            return PhysicsMeshes.TopSlab;
+
+        return PhysicsMeshes.FullBlock;
+    }
 }
