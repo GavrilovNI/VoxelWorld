@@ -13,18 +13,11 @@ public class World : Component, IWorldAccessor
     [Property] public Vector3Int ChunkSize { get; init; } = 16;
     [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
-    [Property] public WorldGenerator Generator { get; set; } = null!;
+    [Property] public WorldGenerator? Generator { get; set; }
 
     [Property] public PrefabFile ChunkPrefab { get; set; } = null!;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
-
-
-    protected override void OnStart()
-    {
-        if(Generator is null)
-            Generator = Components.Get<WorldGenerator>();
-    }
 
 
     protected virtual Chunk AddChunk(Vector3Int position)
@@ -57,16 +50,20 @@ public class World : Component, IWorldAccessor
         return chunk;
     }
 
-    protected virtual void GenerateChunk(Chunk chunk)
+    protected virtual bool TryGenerateChunk(Chunk chunk)
     {
-        Generator!.GenerateChunk(chunk);
+        if(Generator is null)
+            return false;
+
+        Generator.GenerateChunk(chunk);
         UpdateNeighboringChunks(chunk.Position);
+        return true;
     }
 
     protected virtual Chunk CreateChunk(Vector3Int position)
     {
         var chunk = AddChunk(position);
-        GenerateChunk(chunk);
+        TryGenerateChunk(chunk);
         return chunk;
     }
 
