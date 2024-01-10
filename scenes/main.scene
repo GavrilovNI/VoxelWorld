@@ -26,6 +26,7 @@
           "__version": 0,
           "__type": "SandcubeGame",
           "__enabled": true,
+          "BlockPhotoMaker": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
           "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
         }
       ]
@@ -237,7 +238,7 @@
                   "Orthographic": false,
                   "OrthographicHeight": 1204,
                   "Priority": 1,
-                  "RenderExcludeTags": "",
+                  "RenderExcludeTags": "invisible",
                   "RenderTags": "",
                   "TargetEye": "None",
                   "Viewport": "0,0,1,1",
@@ -373,6 +374,92 @@
               "__version": 0,
               "__type": "CrosshairUI",
               "__enabled": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
+      "Name": "BlockPhotoMaker",
+      "Enabled": true,
+      "Components": [
+        {
+          "__version": 0,
+          "__type": "BlockPhotoMaker",
+          "__enabled": true,
+          "Camera": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
+          "Sun": null,
+          "World": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23"
+        }
+      ],
+      "Children": [
+        {
+          "Id": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
+          "Name": "Camera",
+          "Position": "100,100,100",
+          "Rotation": "0.2808902,0.1163481,-0.880145,0.3645665",
+          "Tags": "maincamera",
+          "Enabled": true,
+          "Components": [
+            {
+              "__version": 0,
+              "__type": "CameraComponent",
+              "__enabled": true,
+              "BackgroundColor": "0.33333,0.46275,0.52157,1",
+              "ClearFlags": "All",
+              "FieldOfView": 90,
+              "IsMainCamera": false,
+              "Orthographic": true,
+              "OrthographicHeight": 70,
+              "Priority": 1,
+              "RenderExcludeTags": "",
+              "RenderTags": "photomaker",
+              "TargetEye": "None",
+              "Viewport": "0,0,1,1",
+              "ZFar": 1000,
+              "ZNear": 1
+            }
+          ]
+        },
+        {
+          "Id": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+          "Name": "World",
+          "Tags": "photomaker,invisible",
+          "Enabled": true,
+          "Components": [
+            {
+              "__version": 0,
+              "__type": "World",
+              "__enabled": true,
+              "ChunkPrefab": "prefabs/visualonlychunk.prefab",
+              "ChunkSize": {
+                "x": 16,
+                "y": 16,
+                "z": 16,
+                "Normal": "0.5773503,0.5773503,0.5773503",
+                "Length": 27.712812
+              },
+              "Generator": null,
+              "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
+              "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
+            }
+          ]
+        },
+        {
+          "Id": "1e19d035-1f06-4264-9646-754a6f8f472b",
+          "Name": "Sun",
+          "Rotation": "0.4304596,0.4304594,-0.5609856,0.5609852",
+          "Tags": "photomaker,invisible",
+          "Enabled": true,
+          "Components": [
+            {
+              "__version": 0,
+              "__type": "DirectionalLight",
+              "__enabled": true,
+              "LightColor": "0.91373,0.98039,1,1",
+              "Shadows": false,
+              "SkyColor": "0.05882,0.07451,0.08235,1"
             }
           ]
         }

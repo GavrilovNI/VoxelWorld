@@ -1,0 +1,68 @@
+{
+  "RootObject": {
+    "Id": "f908fb91-0c8d-46ce-a998-bba8ba3b09bd",
+    "Name": "visualonlychunk",
+    "Tags": "world",
+    "Components": [
+      {
+        "__version": 0,
+        "__type": "Chunk",
+        "__enabled": true,
+        "InteractionCollider": "7aef0f76-39d1-4762-8aae-299fe7c5f3aa",
+        "InteractionEnabled": false,
+        "OpaqueVoxelsMaterial": null,
+        "PhysicsCollider": "f908fb91-0c8d-46ce-a998-bba8ba3b09bd",
+        "PhysicsEnabled": false,
+        "Position": {},
+        "RenderingEnabled": true,
+        "Size": {
+          "x": 16,
+          "y": 16,
+          "z": 16,
+          "Normal": "0.5773503,0.5773503,0.5773503",
+          "Length": 27.712812
+        },
+        "TranslucentVoxelsMaterial": null
+      },
+      {
+        "__version": 0,
+        "__type": "ModelCollider",
+        "__enabled": false,
+        "IsTrigger": false,
+        "Model": null,
+        "Static": false,
+        "Surface": null
+      }
+    ],
+    "Children": [
+      {
+        "Id": "7aef0f76-39d1-4762-8aae-299fe7c5f3aa",
+        "Name": "Interactable",
+        "Tags": "interactable",
+        "Enabled": true,
+        "Components": [
+          {
+            "__version": 0,
+            "__type": "WorldProxy",
+            "__enabled": true,
+            "DoNotEnableIfWorldIsNotValid": true,
+            "World": null
+          },
+          {
+            "__version": 0,
+            "__type": "ModelCollider",
+            "__enabled": false,
+            "IsTrigger": false,
+            "Model": null,
+            "Static": false,
+            "Surface": null
+          }
+        ]
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "__references": []
+}

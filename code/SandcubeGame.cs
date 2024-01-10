@@ -31,6 +31,8 @@ public class SandcubeGame : Component, ISandcubeMod
     public Id Id { get; private set; } = new(ModName);
 
     [Property] public World World { get; private set; } = null!;
+    [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
+
     public Registry<Block> BlocksRegistry { get; private set; } = new ();
     public Registry<Item> ItemsRegistry { get; private set; } = new ();
     public TextureMap TextureMap { get; private set; } = new ();
