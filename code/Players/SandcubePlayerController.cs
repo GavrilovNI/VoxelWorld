@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.Citizen;
 
-public class SandcubePlayerController : Component, INetworkSerializable
+public class SandcubePlayerController : Component
 {
     [Property] public Vector3 Gravity { get; set; } = new Vector3(0, 0, 800);
 
@@ -148,17 +148,5 @@ public class SandcubePlayerController : Component, INetworkSerializable
             WishVelocity *= 320.0f;
         else
             WishVelocity *= 110.0f;
-    }
-
-    public void Write(ref ByteStream stream)
-    {
-        stream.Write(IsRunning);
-        stream.Write(EyeAngles);
-    }
-
-    public void Read(ByteStream stream)
-    {
-        IsRunning = stream.Read<bool>();
-        EyeAngles = stream.Read<Angles>();
     }
 }
