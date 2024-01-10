@@ -212,16 +212,18 @@ public class Chunk : Component, IBlockStateAccessor
         AddPhysicsToMeshBuilder(physicsMeshBuilder);
         UpdateCollider(_modelCollider, physicsMeshBuilder);
 
+        PositionOnlyMeshBuilder? interactionMeshBuilder = null;
         if(InteractionCollider.IsValid())
         {
-            PositionOnlyMeshBuilder interactionMeshBuilder = new();
+            interactionMeshBuilder = new();
             AddInteractionToMeshBuilder(interactionMeshBuilder);
             UpdateCollider(InteractionCollider, interactionMeshBuilder);
         }
 
         RecalculateBounds(opaqueMeshBuilder.IsEmpty() ? null : opaqueMeshBuilder,
             transparentMeshBuilder.IsEmpty() ? null : transparentMeshBuilder,
-            physicsMeshBuilder.IsEmpty() ? null : physicsMeshBuilder);
+            physicsMeshBuilder.IsEmpty() ? null : physicsMeshBuilder,
+            interactionMeshBuilder?.IsEmpty() ?? true ? null : interactionMeshBuilder);
     }
 
     protected virtual void RecalculateBounds(params IBounded?[] bounders)
