@@ -9,8 +9,12 @@
         "__type": "Chunk",
         "__enabled": true,
         "InteractionCollider": "dd6fdd29-b055-491f-8ecf-28e86b120139",
+        "InteractionEnabled": true,
         "OpaqueVoxelsMaterial": null,
+        "PhysicsCollider": "f908fb91-0c8d-46ce-a998-bba8ba3b09bd",
+        "PhysicsEnabled": true,
         "Position": {},
+        "RenderingEnabled": true,
         "Size": {
           "x": 16,
           "y": 16,
@@ -19,6 +23,15 @@
           "Length": 27.712812
         },
         "TranslucentVoxelsMaterial": null
+      },
+      {
+        "__version": 0,
+        "__type": "ModelCollider",
+        "__enabled": true,
+        "IsTrigger": false,
+        "Model": null,
+        "Static": false,
+        "Surface": null
       }
     ],
     "Children": [

@@ -16,7 +16,44 @@ public class Chunk : Component, IBlockStateAccessor
 
     [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
+
+    [Property] protected ModelCollider PhysicsCollider { get; set; } = null!;
     [Property] public ModelCollider InteractionCollider { get; set; } = null!;
+
+
+    [Property]
+    public bool RenderingEnabled
+    {
+        get => _renderingEnabled;
+        set
+        {
+            _renderingEnabled = value;
+            foreach(var renderer in _modelRenderers)
+                renderer.Enabled = value;
+        }
+    }
+
+    [Property]
+    public bool PhysicsEnabled
+    {
+        get => PhysicsCollider?.Enabled ?? false;
+        set
+        {
+            if(PhysicsCollider.IsValid())
+                PhysicsCollider.Enabled = value;
+        }
+    }
+
+    [Property]
+    public bool InteractionEnabled
+    {
+        get => InteractionCollider?.Enabled ?? false;
+        set
+        {
+            if(InteractionCollider.IsValid())
+                InteractionCollider.Enabled = value;
+        }
+    }
 
     public bool Initialized { get; private set; } = false;
 
@@ -24,8 +61,8 @@ public class Chunk : Component, IBlockStateAccessor
 
     public bool ModelsRebuildRequired { get; set; } = false;
 
+    private bool _renderingEnabled = true;
     protected readonly List<ModelRenderer> _modelRenderers = new();
-    protected ModelCollider _modelCollider = null!;
 
     protected readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
 
@@ -63,11 +100,6 @@ public class Chunk : Component, IBlockStateAccessor
 
         _blockStates[position] = blockState;
         ModelsRebuildRequired = true;
-    }
-
-    protected override void OnStart()
-    {
-        _modelCollider = GameObject.Components.Create<ModelCollider>();
     }
 
     protected override void OnUpdate()
@@ -175,7 +207,7 @@ public class Chunk : Component, IBlockStateAccessor
         List<ModelRenderer> result = new(count);
         for(int i = 0; i < count; ++i)
         {
-            var component = GameObject.Components.Create<ModelRenderer>();
+            var component = GameObject.Components.Create<ModelRenderer>(RenderingEnabled);
             result.Add(component);
             _modelRenderers.Add(component);
         }
@@ -210,7 +242,7 @@ public class Chunk : Component, IBlockStateAccessor
 
         PositionOnlyMeshBuilder physicsMeshBuilder = new();
         AddPhysicsToMeshBuilder(physicsMeshBuilder);
-        UpdateCollider(_modelCollider, physicsMeshBuilder);
+        UpdateCollider(PhysicsCollider, physicsMeshBuilder);
 
         PositionOnlyMeshBuilder? interactionMeshBuilder = null;
         if(InteractionCollider.IsValid())
