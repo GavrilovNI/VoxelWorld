@@ -7,6 +7,8 @@ namespace Sandcube.Worlds.Generation.Meshes;
 
 public static class VisualMeshes
 {
+    public static readonly SidedMesh<ComplexVertex> Empty = new();
+
     public static readonly AllSidedMeshMaker FullBlock = new(
         (Rect backUv, Rect frontUv, Rect leftUv, Rect rightUv, Rect topUv, Rect bottomUv) =>
         {

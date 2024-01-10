@@ -5,6 +5,8 @@ namespace Sandcube.Worlds.Generation.Meshes;
 
 public class PhysicsMeshes
 {
+    public static readonly SidedMesh<Vector3Vertex> Empty = new();
+
     public static readonly SidedMesh<Vector3Vertex> FullBlock = new SidedMesh<Vector3Vertex>.Builder()
         .Add(new PositionOnlyMeshBuilder().AddQuad(MathV.MeterCubeCorners[7], MathV.MeterCubeCorners[3], MathV.MeterCubeCorners[0], MathV.MeterCubeCorners[4]), Direction.Backward)
         .Add(new PositionOnlyMeshBuilder().AddQuad(MathV.MeterCubeCorners[5], MathV.MeterCubeCorners[1], MathV.MeterCubeCorners[2], MathV.MeterCubeCorners[6]), Direction.Forward)
