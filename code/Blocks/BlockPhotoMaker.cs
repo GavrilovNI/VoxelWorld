@@ -2,7 +2,8 @@
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Worlds;
-using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
@@ -12,17 +13,14 @@ public class BlockPhotoMaker : Component
     [Property] public World World { get; set; } = null!;
     [Property] public DirectionalLight Sun { get; set; } = null!;
 
-    public bool TryRenderToTexture(Texture texture)
-    {
-        //return Graphics.RenderToTexture(/* get scene cam */, texture);
-        return false; // TODO
-    }
+    public bool TryRenderToTexture(Texture texture) => Camera.RenderToTexture(texture);
 
-    public bool TryMakePhoto(BlockState blockState, Texture output)
+    public async Task<bool> TryMakePhoto(BlockState blockState, Texture texture)
     {
         World.Clear();
-        World.SetBlockState(Vector3Int.Zero, blockState);
-        bool made = TryRenderToTexture(output);
+        await World.SetBlockState(Vector3Int.Zero, blockState);
+        await Task.Frame();
+        bool made = TryRenderToTexture(texture);
         World.Clear();
         return made;
     }

@@ -237,7 +237,7 @@
                   "IsMainCamera": true,
                   "Orthographic": false,
                   "OrthographicHeight": 1204,
-                  "Priority": 1,
+                  "Priority": 2,
                   "RenderExcludeTags": "invisible",
                   "RenderTags": "",
                   "TargetEye": "None",
@@ -389,7 +389,7 @@
           "__type": "BlockPhotoMaker",
           "__enabled": true,
           "Camera": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
-          "Sun": null,
+          "Sun": "1e19d035-1f06-4264-9646-754a6f8f472b",
           "World": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23"
         }
       ],
@@ -406,7 +406,7 @@
               "__version": 0,
               "__type": "CameraComponent",
               "__enabled": true,
-              "BackgroundColor": "0.33333,0.46275,0.52157,1",
+              "BackgroundColor": "0,0,0,0",
               "ClearFlags": "All",
               "FieldOfView": 90,
               "IsMainCamera": false,

@@ -59,7 +59,13 @@ public class ModItems : ModRegisterables<Item>
             if(!propertyType.IsAssignableTo(typeof(BlockItem)) || propertyType == typeof(BlockItem))
             {
                 var id = block.ModedId;
-                var itemTexture = Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/items/{id.Name}.png", true) ?? Texture.Invalid;
+                var itemTexture = Texture.CreateRenderTarget().WithWidth(BlockItemsTextureSize).WithHeight(BlockItemsTextureSize).Create();
+                bool made = await photoMaker.TryMakePhoto(block.DefaultBlockState, itemTexture);
+                if(!made)
+                {
+                    itemTexture = Texture.Invalid;
+                    Log.Warning($"Couldn't create texture for item {thisType.FullName}.{property.Name} of block with id '{blockModedId}'");
+                }
                 blockItem = new(block, itemTexture);
             }
             else
