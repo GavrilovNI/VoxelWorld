@@ -6,6 +6,7 @@ using Sandcube.Worlds.Generation.Meshes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
@@ -59,7 +60,8 @@ public class Chunk : Component, IBlockStateAccessor
 
     public IWorldProvider? WorldProvider { get; internal set; }
 
-    public bool ModelsRebuildRequired { get; set; } = false;
+    protected bool ModelUpdateRequired = false;
+    protected TaskCompletionSource ModelUpdateTaskSource = new();
 
     private bool _renderingEnabled = true;
     protected readonly List<ModelRenderer> _modelRenderers = new();
@@ -90,29 +92,38 @@ public class Chunk : Component, IBlockStateAccessor
         Initialized = true;
     }
 
-    public void SetBlockState(Vector3Int position, BlockState blockState)
+    public virtual Task RequireModelUpdate()
+    {
+        ModelUpdateRequired = true;
+        if(ModelUpdateTaskSource.Task.IsCompleted)
+            ModelUpdateTaskSource = new();
+        return ModelUpdateTaskSource.Task;
+    }
+
+    public Task SetBlockState(Vector3Int position, BlockState blockState)
     {
         if(!IsInBounds(position))
             throw new ArgumentOutOfRangeException(nameof(position), position, "block position is out of chunk bounds");
 
         if(GetBlockState(position) == blockState)
-            return;
+            return Task.CompletedTask;
 
         _blockStates[position] = blockState;
-        ModelsRebuildRequired = true;
+        return RequireModelUpdate();
     }
 
     protected override void OnUpdate()
     {
-        if(ModelsRebuildRequired)
+        if(ModelUpdateRequired)
             UpdateModel();
     }
+
+    public virtual Task ModelRebuilt() => ModelUpdateTaskSource.Task;
 
     public virtual void Clear()
     {
         _blockStates.Clear();
-        ModelsRebuildRequired = true;
-        Bounds = default;
+        RequireModelUpdate();
     }
 
     protected virtual bool IsInBounds(Vector3Int position) => !position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
@@ -226,12 +237,12 @@ public class Chunk : Component, IBlockStateAccessor
                 return;
         }
 
-        ModelsRebuildRequired = true;
+        RequireModelUpdate();
     }
 
     protected virtual void UpdateModel()
     {
-        ModelsRebuildRequired = false;
+        ModelUpdateRequired = false;
 
         ComplexMeshBuilder opaqueMeshBuilder = new();
         ComplexMeshBuilder transparentMeshBuilder = new();
@@ -256,6 +267,8 @@ public class Chunk : Component, IBlockStateAccessor
             transparentMeshBuilder.IsEmpty() ? null : transparentMeshBuilder,
             physicsMeshBuilder.IsEmpty() ? null : physicsMeshBuilder,
             interactionMeshBuilder?.IsEmpty() ?? true ? null : interactionMeshBuilder);
+
+        ModelUpdateTaskSource.SetResult();
     }
 
     protected virtual void RecalculateBounds(params IBounded?[] bounders)

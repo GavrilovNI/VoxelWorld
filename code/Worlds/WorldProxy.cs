@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
+using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
@@ -23,5 +24,5 @@ public class WorldProxy : Component, IWorldAccessor
     public Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => GetBlockWorldPosition(chunkPosition, blockLocalPosition);
     public Chunk? GetChunk(Vector3Int position, bool forceLoad = false) => World.GetChunk(position, forceLoad);
     public Vector3Int GetChunkPosition(Vector3Int blockPosition) => World.GetChunkPosition(blockPosition);
-    public void SetBlockState(Vector3Int position, BlockState blockState) => World.SetBlockState(position, blockState);
+    public Task SetBlockState(Vector3Int position, BlockState blockState) => World.SetBlockState(position, blockState);
 }

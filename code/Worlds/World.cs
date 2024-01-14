@@ -5,6 +5,7 @@ using Sandcube.Mth.Enums;
 using Sandcube.Worlds.Generation;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
@@ -107,18 +108,19 @@ public class World : Component, IWorldAccessor
     public virtual Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => chunkPosition * ChunkSize + blockLocalPosition;
 
 
-    public virtual void SetBlockState(Vector3Int position, BlockState blockState)
+    public virtual Task SetBlockState(Vector3Int position, BlockState blockState)
     {
         var oldBlockState = GetBlockState(position);
         if(oldBlockState == blockState)
-            return;
+            return Task.CompletedTask;
 
         var chunkPosition = GetChunkPosition(position);
         var chunk = GetChunk(chunkPosition, true)!;
         var localPosition = GetBlockPositionInChunk(position);
-        chunk.SetBlockState(localPosition, blockState);
+        var result = chunk.SetBlockState(localPosition, blockState);
 
         NotifyNeighboringChunksAboutEdgeUpdate(position, oldBlockState, blockState);
+        return result;
     }
 
     protected virtual List<Direction> GetNeighboringChunkDirections(Vector3Int localBlockPosition)
@@ -164,7 +166,7 @@ public class World : Component, IWorldAccessor
         {
             var chunk = GetChunk(chunkPosition + direction, false);
             if(chunk is not null)
-                chunk.ModelsRebuildRequired = true;
+                chunk.RequireModelUpdate();
         }    
     }
 
