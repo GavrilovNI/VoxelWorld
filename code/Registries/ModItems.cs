@@ -4,20 +4,25 @@ using Sandcube.Items;
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sandcube.Registries;
 
 public class ModItems : ModRegisterables<Item>
 {
+    public int BlockItemsTextureSize = 256;
+
     public ModItems()
     {
     }
 
-    protected virtual void AutoCreateBlockItems(Registry<Block> blocksRegistry)
+    protected virtual async Task AutoCreateBlockItems(Registry<Block> blocksRegistry)
     {
         var thisType = GetType();
         var autoBlockItemProperties = TypeLibrary.GetType(GetType()).Properties
             .Where(p => p.PropertyType.IsAssignableTo(typeof(Item)) && p.HasAttribute<AutoBlockItemAttribute>() && p.GetValue(this) is null);
+
+        var photoMaker = SandcubeGame.Instance!.BlockPhotoMaker;
 
         foreach(var property in autoBlockItemProperties)
         {
@@ -94,9 +99,9 @@ public class ModItems : ModRegisterables<Item>
         return builder.ToString();
     }
 
-    public override void Register(Registry<Item> registry)
+    public override async Task Register(Registry<Item> registry)
     {
-        AutoCreateBlockItems(SandcubeGame.Instance!.BlocksRegistry);
-        base.Register(registry);
+        await AutoCreateBlockItems(SandcubeGame.Instance!.BlocksRegistry);
+        await base.Register(registry);
     }
 }

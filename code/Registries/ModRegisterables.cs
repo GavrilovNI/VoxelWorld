@@ -1,10 +1,11 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sandcube.Registries;
 
 public class ModRegisterables<T> where T : class, IRegisterable
 {
-    public virtual void Register(Registry<T> registry)
+    public virtual Task Register(Registry<T> registry)
     {
         var properties = TypeLibrary.GetType(GetType()).Properties.Where(p => p.IsPublic && p.PropertyType.IsAssignableTo(typeof(T)));
 
@@ -19,5 +20,7 @@ public class ModRegisterables<T> where T : class, IRegisterable
             var value = (property.GetValue(this) as T)!;
             registry.Add(value);
         }
+
+        return Task.CompletedTask;
     }
 }

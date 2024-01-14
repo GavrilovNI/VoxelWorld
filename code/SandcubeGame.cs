@@ -5,6 +5,7 @@ using Sandcube.Registries;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System;
+using System.Threading.Tasks;
 
 namespace Sandcube;
 
@@ -14,7 +15,7 @@ public class SandcubeGame : Component, ISandcubeMod
 
     public static event Action? Started;
     public static event Action? Stopped;
-    public static bool IsStarted { get; private set; } = false;
+    public static bool IsStarted { get; protected set; } = false;
 
     private static SandcubeGame? _instance = null;
     public static SandcubeGame? Instance
@@ -33,9 +34,9 @@ public class SandcubeGame : Component, ISandcubeMod
     [Property] public World World { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
 
-    public Registry<Block> BlocksRegistry { get; private set; } = new ();
-    public Registry<Item> ItemsRegistry { get; private set; } = new ();
-    public TextureMap TextureMap { get; private set; } = new ();
+    public Registry<Block> BlocksRegistry { get; private set; } = new();
+    public Registry<Item> ItemsRegistry { get; private set; } = new();
+    public TextureMap TextureMap { get; private set; } = new();
     public SandcubeBlocks Blocks { get; private set; } = new();
     public SandcubeItems Items { get; private set; } = new();
     public BlockMeshMap BlockMeshes { get; private set; } = new();
@@ -53,16 +54,14 @@ public class SandcubeGame : Component, ISandcubeMod
             Instance = this;
     }
 
-    protected override void OnStart()
+    protected override void OnEnabled()
     {
-        OnInitialize();
-        IsStarted = true;
-        Started?.Invoke();
+        _ = OnInitialize();
     }
 
     protected override void OnDisabled()
     {
-        if(Instance != this)
+        if(Instance != this || !IsStarted)
             return;
 
         Stopped?.Invoke();
@@ -77,11 +76,17 @@ public class SandcubeGame : Component, ISandcubeMod
         Instance = null;
     }
 
-    protected virtual void OnInitialize()
+    protected virtual async Task OnInitialize()
     {
-        RegisterAllBlocks();
-        RegisterAllItems();
+        await RegisterAllBlocks();
         RebuildBlockMeshes();
+        await RegisterAllItems();
+
+        if(!Enabled || !this.IsValid())
+            return;
+
+        IsStarted = true;
+        Started?.Invoke();
     }
 
     private void RebuildBlockMeshes()
@@ -94,25 +99,25 @@ public class SandcubeGame : Component, ISandcubeMod
         }
     }
 
-    private void RegisterAllBlocks()
+    private async Task RegisterAllBlocks()
     {
         BlocksRegistry.Clear();
-        RegisterBlocks(BlocksRegistry);
+        await RegisterBlocks(BlocksRegistry);
     }
 
-    private void RegisterAllItems()
+    private async Task RegisterAllItems()
     {
         ItemsRegistry.Clear();
-        RegisterItems(ItemsRegistry);
+        await RegisterItems(ItemsRegistry);
     }
 
-    public void RegisterBlocks(Registry<Block> registry)
+    public async Task RegisterBlocks(Registry<Block> registry)
     {
-        Blocks.Register(registry);
+        await Blocks.Register(registry);
     }
 
-    public void RegisterItems(Registry<Item> registry)
+    public async Task RegisterItems(Registry<Item> registry)
     {
-        Items.Register(registry);
+        await Items.Register(registry);
     }
 }
