@@ -4,6 +4,7 @@
 @using Sandcube.Inventories;
 @using Sandcube.Inventories.Players;
 @using Sandcube.Items;
+@using System;
 
 @namespace Sandcube.UI.Inventories.Players
 
@@ -55,7 +56,19 @@
 	protected Vector2 SelectorScale;
 	protected Vector2 SelectorOffset;
 
-	protected override int BuildHash() => PlayerInventory?.GetHashCode() ?? 0;
+	protected virtual int BuildTexturesHash()
+	{
+		if (PlayerInventory is null)
+			return 0;
+		int result = GetSecondaryHandStack().Value?.Texture.GetHashCode() ?? 0;
+		foreach(var item in PlayerInventory.HotBar)
+		{
+			result = HashCode.Combine(result, item.Value?.Texture.GetHashCode() ?? 0);
+		}
+		return result;
+	}
+
+	protected override int BuildHash() => HashCode.Combine(PlayerInventory?.GetHashCode() ?? 0, BuildTexturesHash());
 
 	protected override void OnAwake()
 	{

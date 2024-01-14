@@ -17,4 +17,7 @@
     {
         this.Style.BackgroundImage = Texture ?? Texture.Invalid;
     }
+
+    protected override int BuildHash() => Texture is null ? 0 : Texture.GetHashCode();
+
 }
