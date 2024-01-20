@@ -151,23 +151,23 @@ public class World : ThreadHelpComponent, IWorldAccessor
 
 
     // Thread safe
-    public virtual Task SetBlockState(Vector3Int position, BlockState blockState)
+    public virtual async Task SetBlockState(Vector3Int position, BlockState blockState)
     {
-        var oldBlockState = GetBlockState(position);
-        if(oldBlockState == blockState)
-            return Task.CompletedTask;
-
         var chunkPosition = GetChunkPosition(position);
-        var chunk = GetChunk(chunkPosition);
-        if(chunk is null)
-            throw new InvalidOperationException($"{nameof(Chunk)} at position {chunkPosition} is not loaded");
+        var chunk = await GetChunkOrLoad(chunkPosition);
+
+        if(!chunk.IsValid())
+            throw new InvalidOperationException($"Couldn't load {nameof(Chunk)} at position {chunkPosition}");
 
         var localPosition = GetBlockPositionInChunk(position);
-        var result = chunk.SetBlockState(localPosition, blockState);
+
+        var oldBlockState = chunk.GetBlockState(localPosition);
+        if(oldBlockState == blockState)
+            return;
+
+        await chunk.SetBlockState(localPosition, blockState);
 
         NotifyNeighboringChunksAboutEdgeUpdate(position, oldBlockState, blockState);
-
-        return result;
     }
 
     protected virtual List<Direction> GetNeighboringChunkDirections(Vector3Int localBlockPosition)
