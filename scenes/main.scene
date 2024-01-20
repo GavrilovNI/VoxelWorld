@@ -440,17 +440,21 @@
               "__version": 0,
               "__type": "World",
               "__enabled": true,
-              "ChunkPrefab": "prefabs/visualonlychunk.prefab",
+              "ChunkLoader": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
               "ChunkSize": {
                 "x": 16,
                 "y": 16,
                 "z": 16,
                 "Normal": "0.5773503,0.5773503,0.5773503",
                 "Length": 27.712812
-              },
-              "Generator": null,
-              "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
-              "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
+              }
+            },
+            {
+              "__version": 0,
+              "__type": "ChunkLoader",
+              "__enabled": true,
+              "ChunkPrefab": "prefabs/visualonlychunk.prefab",
+              "Generator": null
             }
           ]
         },

@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "f908fb91-0c8d-46ce-a998-bba8ba3b09bd",
+    "Id": "0a23d256-acea-431e-8b85-dd736a55559e",
     "Name": "visualonlychunk",
     "Tags": "world",
     "Components": [
@@ -8,21 +8,28 @@
         "__version": 0,
         "__type": "Chunk",
         "__enabled": true,
-        "InteractionCollider": "7aef0f76-39d1-4762-8aae-299fe7c5f3aa",
-        "InteractionEnabled": false,
-        "OpaqueVoxelsMaterial": null,
-        "PhysicsCollider": "f908fb91-0c8d-46ce-a998-bba8ba3b09bd",
-        "PhysicsEnabled": false,
+        "ModelUpdater": "0a23d256-acea-431e-8b85-dd736a55559e",
         "Position": {},
-        "RenderingEnabled": true,
         "Size": {
           "x": 16,
           "y": 16,
           "z": 16,
           "Normal": "0.5773503,0.5773503,0.5773503",
           "Length": 27.712812
-        },
-        "TranslucentVoxelsMaterial": null
+        }
+      },
+      {
+        "__version": 0,
+        "__type": "ChunkModelUpdater",
+        "__enabled": true,
+        "Chunk": "0a23d256-acea-431e-8b85-dd736a55559e",
+        "InteractionCollider": "5a89abfc-d962-40de-b976-837180d80eeb",
+        "InteractionEnabled": false,
+        "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
+        "PhysicsCollider": "0a23d256-acea-431e-8b85-dd736a55559e",
+        "PhysicsEnabled": false,
+        "RenderingEnabled": true,
+        "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
       },
       {
         "__version": 0,
@@ -36,7 +43,7 @@
     ],
     "Children": [
       {
-        "Id": "7aef0f76-39d1-4762-8aae-299fe7c5f3aa",
+        "Id": "5a89abfc-d962-40de-b976-837180d80eeb",
         "Name": "Interactable",
         "Tags": "interactable",
         "Enabled": true,
