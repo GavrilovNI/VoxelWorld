@@ -469,6 +469,8 @@
               "__version": 0,
               "__type": "DirectionalLight",
               "__enabled": true,
+              "FogMode": "Enabled",
+              "FogStrength": 1,
               "LightColor": "0.91373,0.98039,1,1",
               "Shadows": false,
               "SkyColor": "0.05882,0.07451,0.08235,1"
