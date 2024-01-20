@@ -125,7 +125,16 @@ public class ChunkModelUpdater : ThreadHelpComponent
         lock(ModelUpdateLock)
         {
             if(ModelUpdateState == ModelUpdateStates.Required)
-                UpdateModels();
+                _ = UpdateModels();
+        }
+    }
+
+    protected override void OnDestroyInner()
+    {
+        lock(ModelUpdateLock)
+        {
+            CancelModelUpdate();
+            ModelUpdateTaskSource.TrySetCanceled();
         }
     }
 
@@ -168,7 +177,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
     }
 
     // Call only in game thread
-    protected virtual void UpdateModels(bool force = false)
+    protected virtual Task UpdateModels(bool force = false)
     {
         CancellationToken cancellationToken;
         TaskCompletionSource oldModelUpdateTaskSource;
@@ -192,10 +201,10 @@ public class ChunkModelUpdater : ThreadHelpComponent
             await GenerateMeshes(builders, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
-            await RunInGameThread(ct =>
+            await RunInGameThread(async ct =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                ApplyMeshes(builders, cancellationToken);
+                await ApplyMeshes(builders, cancellationToken);
 
                 lock(ModelUpdateLock)
                 {
@@ -205,14 +214,15 @@ public class ChunkModelUpdater : ThreadHelpComponent
 
                     ModelUpdateState = ModelUpdateStates.Updated;
                     if(!oldModelUpdateTaskSource.TrySetResult())
-                        return;
+                    {
+                        ModelUpdateState = ModelUpdateStates.Required;
+                        throw new InvalidOperationException($"Can't finish model update task on chunk {Chunk.Position}");
+                    }
                 }
             }, cancellationToken);
-        }).ContinueWith(t =>
-        {
-            if(!t.IsCompletedSuccessfully)
-                oldModelUpdateTaskSource.TrySetCanceled();
         });
+
+        return oldModelUpdateTaskSource.Task;
     }
 
 
@@ -238,18 +248,20 @@ public class ChunkModelUpdater : ThreadHelpComponent
     }
 
     // Thread safe
-    protected virtual void UpdateModelRenderers(ComplexMeshBuilder opaqueBuilder, ComplexMeshBuilder translucentBuilder, CancellationToken cancellationToken)
+    protected virtual Task UpdateModelRenderers(ComplexMeshBuilder opaqueBuilder, ComplexMeshBuilder translucentBuilder, CancellationToken cancellationToken)
     {
         bool isEmpty = opaqueBuilder.PartsCount == 0 && translucentBuilder.PartsCount == 0;
         if(isEmpty)
-            return;
+            return Task.CompletedTask;
 
-        _ = Task.RunInThreadAsync(async () =>
+        return Task.RunInThreadAsync(async () =>
         {
             cancellationToken.ThrowIfCancellationRequested();
             var opaqueTask = CreateRenderModels(opaqueBuilder, OpaqueVoxelsMaterial);
             var translucentTask = CreateRenderModels(translucentBuilder, TranslucentVoxelsMaterial);
+
             await Task.WhenAll(opaqueTask, translucentTask);
+
             Model[] opaqueModels = opaqueTask.Result;
             Model[] translucentModels = translucentTask.Result;
 
@@ -298,9 +310,9 @@ public class ChunkModelUpdater : ThreadHelpComponent
     }
 
     // Thread safe
-    protected virtual void UpdateCollider(ModelCollider collider, PositionOnlyMeshBuilder builder, CancellationToken cancellationToken)
+    protected virtual Task UpdateCollider(ModelCollider collider, PositionOnlyMeshBuilder builder, CancellationToken cancellationToken)
     {
-        _ = Task.RunInThreadAsync(async () =>
+        return Task.RunInThreadAsync(async () =>
         {
             cancellationToken.ThrowIfCancellationRequested();
             ModelBuilder physicsModelBuilder = new();
@@ -348,19 +360,18 @@ public class ChunkModelUpdater : ThreadHelpComponent
     }
 
     // Call only in game thread
-    protected virtual void ApplyMeshes(MeshBuilders builders, CancellationToken cancellationToken)
+    protected virtual async Task ApplyMeshes(MeshBuilders builders, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        UpdateModelRenderers(builders.Opaque, builders.Translucent, cancellationToken);
+        var rendererTask = UpdateModelRenderers(builders.Opaque, builders.Translucent, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
-        UpdateCollider(PhysicsCollider, builders.Physics, cancellationToken);
+        var physicsTask = UpdateCollider(PhysicsCollider, builders.Physics, cancellationToken);
 
-        if(builders.Interaction is not null && InteractionCollider.IsValid())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            UpdateCollider(InteractionCollider, builders.Interaction, cancellationToken);
-        }
+        cancellationToken.ThrowIfCancellationRequested();
+        var interactionTask = UpdateCollider(InteractionCollider, builders.Interaction, cancellationToken);
+
+        await Task.WhenAll(rendererTask, physicsTask, interactionTask);
 
         cancellationToken.ThrowIfCancellationRequested();
         RecalculateBounds(builders.Opaque.IsEmpty() ? null : builders.Opaque,
