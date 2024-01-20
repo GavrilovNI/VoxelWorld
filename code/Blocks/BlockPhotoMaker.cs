@@ -2,7 +2,6 @@
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Worlds;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
@@ -19,7 +18,6 @@ public class BlockPhotoMaker : Component
     {
         World.Clear();
         await World.SetBlockState(Vector3Int.Zero, blockState);
-        await Task.Frame();
         bool made = TryRenderToTexture(texture);
         World.Clear();
         return made;
