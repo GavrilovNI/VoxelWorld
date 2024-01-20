@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
+using Sandcube.Data;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
@@ -17,35 +18,7 @@ public class World : ThreadHelpComponent, IWorldAccessor
     [Property] protected ChunkLoader ChunkLoader { get; set; } = null!;
 
 
-    protected record class ChunkUnion
-    {
-        public Chunk? Chunk { get; private set; }
-        public Task<Chunk>? Task { get; private set; }
-
-        public bool IsLoaded => Chunk is not null;
-
-        public ChunkUnion(Chunk chunk)
-        {
-            Chunk = chunk;
-        }
-
-        public ChunkUnion(Task<Chunk> task)
-        {
-            Task = task;
-        }
-
-        public async ValueTask<Chunk> GetChunkAsync()
-        {
-            if(Chunk is not null)
-                return Chunk;
-            return await Task!;
-        }
-
-        public static implicit operator ChunkUnion(Chunk chunk) => new(chunk);
-        public static implicit operator ChunkUnion(Task<Chunk> task) => /*task.IsCompletedSuccessfully ? new(task.Result) :*/ new(task);
-        public static implicit operator ChunkUnion(ValueTask<Chunk> task) => /*task.IsCompletedSuccessfully ? new(task.Result) :*/ new(task.AsTask());
-    }
-    protected readonly Dictionary<Vector3Int, ChunkUnion> Chunks = new();
+    protected readonly Dictionary<Vector3Int, OneOf<Chunk, Task<Chunk>>> Chunks = new();
     protected CancellationTokenSource ChunkLoadCancellationTokenSource = new();
 
     protected override void OnDestroyInner()
@@ -60,7 +33,11 @@ public class World : ThreadHelpComponent, IWorldAccessor
         lock(Chunks)
         {
             if(Chunks.TryGetValue(position, out var chunkUnion))
-                return chunkUnion.GetChunkAsync().AsTask();
+            {
+                if(chunkUnion.Is<Chunk>(out var chunk))
+                    return Task.FromResult(chunk);
+                return chunkUnion.As<Task<Chunk>>()!;
+            }
 
             ChunkCreationData creationData = new()
             {
@@ -111,8 +88,8 @@ public class World : ThreadHelpComponent, IWorldAccessor
     {
         lock(Chunks)
         {
-            if(Chunks.TryGetValue(position, out var chunkUnion) && chunkUnion.IsLoaded)
-                return chunkUnion.Chunk;
+            if(Chunks.TryGetValue(position, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk))
+                return chunk;
         }
         return null;
     }
@@ -238,7 +215,7 @@ public class World : ThreadHelpComponent, IWorldAccessor
             ChunkLoadCancellationTokenSource = new();
 
             foreach(var chunkUnion in Chunks.Values)
-                chunkUnion.Chunk?.GameObject.Destroy();
+                chunkUnion.As<Chunk>()?.GameObject.Destroy();
 
             Chunks.Clear();
         }
