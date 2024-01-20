@@ -42,7 +42,7 @@ public class SandcubeGame : Component, ISandcubeMod
     public BlockMeshMap BlockMeshes { get; } = new();
 
 
-    protected override void OnStart()
+    protected override void OnEnabled()
     {
         if(Instance.IsValid() && Instance != this)
         {
@@ -53,9 +53,13 @@ public class SandcubeGame : Component, ISandcubeMod
 
         if(!Scene.IsEditor)
             Instance = this;
+    }
 
-    protected override void OnEnabled()
+    protected override void OnStart()
     {
+        if(Instance != this)
+            return;
+
         _ = OnInitialize();
     }
 
