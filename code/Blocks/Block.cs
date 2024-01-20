@@ -34,7 +34,8 @@ public abstract class Block : IRegisterable
 
     public virtual void OnRegistered() { }
 
-    public virtual bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
+	// Thread safe
+	public virtual bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
     {
         if(meshType == BlockMeshType.Visual && Properties.IsTransparent)
             return false;
@@ -54,8 +55,11 @@ public abstract class Block : IRegisterable
     public virtual void Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
 
 
+    // Thread safe
     public abstract ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState);
+    // Thread safe
     public abstract ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState);
+    // Thread safe
     public abstract ISidedMeshPart<Vector3Vertex> CreateInteractionMesh(BlockState blockState);
 
     public override string ToString() => $"{nameof(Block)}({ModedId})";

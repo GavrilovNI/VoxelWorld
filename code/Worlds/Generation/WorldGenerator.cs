@@ -1,31 +1,36 @@
 ﻿using Sandbox;
+using Sandcube.Blocks.States;
 using Sandcube.Mth;
+using System.Threading.Tasks;
 
 namespace Sandcube.Worlds.Generation;
 
 public class WorldGenerator : Component
 {
-    public void GenerateChunk(Chunk chunk)
+    public BlockState Generate(Vector3Int position)
     {
-        chunk.Clear();
-        Vector3Int blockOffset = chunk.BlockOffset;
+        if(position.z > 10)
+            return BlockState.Air;
 
-        for(int x = 0; x < chunk.Size.x; ++x)
+        return SandcubeGame.Instance!.Blocks.Stone.DefaultBlockState;
+    }
+
+    public BlockState[,,] Generate(Vector3Int position, Vector3Int size)
+    {
+        BlockState[,,] result = new BlockState[size.x, size.y, size.z];
+
+        for(int x = 0; x < size.x; ++x)
         {
-            for(int y = 0; y < chunk.Size.y; ++y)
+            for(int y = 0; y < size.y; ++y)
             {
-                for(int z = 0; z < chunk.Size.z; ++z)
+                for(int z = 0; z < size.z; ++z)
                 {
-                    Vector3Int localBlockPosition = new(x, y, z);
-                    Vector3Int globalBlockPosition = localBlockPosition + blockOffset;
-
-                    if(globalBlockPosition.z > 10)
-                        continue;
-
-                    var block = SandcubeGame.Instance!.Blocks.Stone.DefaultBlockState;
-                    chunk.SetBlockState(localBlockPosition, block);
+                    Vector3Int globalBlockPosition = new Vector3Int(x, y, z) + position;
+                    result[x, y, z] = Generate(globalBlockPosition);
                 }
             }
         }
+
+        return result;
     }
 }

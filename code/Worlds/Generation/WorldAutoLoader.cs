@@ -22,7 +22,7 @@ public class WorldAutoLoader : Component
                 for(int z = centralChunkPositrion.z - Distance; z <= centralChunkPositrion.z + Distance; ++z)
                 {
                     var chunkPosition = new Vector3Int(x, y, z);
-                    World.GetChunk(chunkPosition, true);
+                    _ = World.GetChunkOrLoad(chunkPosition);
                 }
             }
         }

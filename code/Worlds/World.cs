@@ -2,77 +2,119 @@
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
-using Sandcube.Worlds.Generation;
+using Sandcube.Threading;
+using Sandcube.Worlds.Loading;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class World : Component, IWorldAccessor
+public class World : ThreadHelpComponent, IWorldAccessor
 {
     [Property] public Vector3Int ChunkSize { get; init; } = 16;
-    [Property] public Material OpaqueVoxelsMaterial { get; set; } = null!;
-    [Property] public Material TranslucentVoxelsMaterial { get; set; } = null!;
-    [Property] public WorldGenerator? Generator { get; set; }
-
-    [Property] public PrefabFile ChunkPrefab { get; set; } = null!;
-
-    private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
+    [Property] protected ChunkLoader ChunkLoader { get; set; } = null!;
 
 
-    protected virtual Chunk AddChunk(Vector3Int position)
+    protected record class ChunkUnion
     {
-        if(_chunks.ContainsKey(position))
-            throw new InvalidOperationException($"{nameof(Chunk)} aready exists in position {position}");
+        public Chunk? Chunk { get; private set; }
+        public Task<Chunk>? Task { get; private set; }
 
-        var chunkGameObject = new GameObject(false, $"Chunk {position}");
-        chunkGameObject.SetPrefabSource(ChunkPrefab.ResourcePath);
-        chunkGameObject.UpdateFromPrefab();
-        chunkGameObject.BreakFromPrefab();
+        public bool IsLoaded => Chunk is not null;
 
-        chunkGameObject.Parent = this.GameObject;
-        chunkGameObject.Transform.LocalRotation = Rotation.Identity;
-        chunkGameObject.Transform.LocalPosition = position * ChunkSize * MathV.InchesInMeter;
+        public ChunkUnion(Chunk chunk)
+        {
+            Chunk = chunk;
+        }
 
-        var chunk = chunkGameObject.Components.Get<Chunk>(true);
-        chunk.Initialize(position, ChunkSize, this);
+        public ChunkUnion(Task<Chunk> task)
+        {
+            Task = task;
+        }
 
-        chunk.OpaqueVoxelsMaterial = OpaqueVoxelsMaterial;
-        chunk.TranslucentVoxelsMaterial = TranslucentVoxelsMaterial;
+        public async ValueTask<Chunk> GetChunkAsync()
+        {
+            if(Chunk is not null)
+                return Chunk;
+            return await Task!;
+        }
 
-        var proxies = chunkGameObject.Components.GetAll<WorldProxy>(FindMode.DisabledInSelfAndDescendants);
-        foreach(var proxy in proxies)
-            proxy.World = this;
+        public static implicit operator ChunkUnion(Chunk chunk) => new(chunk);
+        public static implicit operator ChunkUnion(Task<Chunk> task) => /*task.IsCompletedSuccessfully ? new(task.Result) :*/ new(task);
+        public static implicit operator ChunkUnion(ValueTask<Chunk> task) => /*task.IsCompletedSuccessfully ? new(task.Result) :*/ new(task.AsTask());
+    }
+    protected readonly Dictionary<Vector3Int, ChunkUnion> Chunks = new();
+    protected CancellationTokenSource ChunkLoadCancellationTokenSource = new();
 
-        _chunks.Add(position, chunk);
-
-        chunkGameObject.Enabled = true;
-        return chunk;
+    protected override void OnDestroyInner()
+    {
+        base.OnDestroyInner();
+        Clear();
     }
 
-    protected virtual bool TryGenerateChunk(Chunk chunk)
+    // Thread safe
+    public virtual Task<Chunk> GetChunkOrLoad(Vector3Int position)
     {
-        if(Generator is null)
-            return false;
+        lock(Chunks)
+        {
+            if(Chunks.TryGetValue(position, out var chunkUnion))
+                return chunkUnion.GetChunkAsync().AsTask();
 
-        Generator.GenerateChunk(chunk);
+            ChunkCreationData creationData = new()
+            {
+                Position = position,
+                Size = ChunkSize,
+                EnableOnCreate = false,
+                World = this
+            };
+
+            var loadingTask = ChunkLoader.LoadChunk(creationData, ChunkLoadCancellationTokenSource.Token);
+            Chunks[position] = loadingTask;
+            _ = loadingTask.ContinueWith(t =>
+            {
+                if(!IsValid)
+                    return;
+                lock(Chunks)
+                {
+                    if(t.IsCompletedSuccessfully)
+                    {
+                        var chunk = t.Result;
+                        Chunks[position] = chunk;
+
+                        _ = RunInGameThread(ct =>
+                        {
+                            chunk.GameObject.Enabled = true;
+                            OnChunkLoaded(chunk);
+                        });
+                    }
+                    else
+                    {
+                        Chunks.Remove(position);
+                    }
+                }
+            });
+
+            return loadingTask;
+        }
+    }
+
+    // Call only in game thread
+    protected virtual void OnChunkLoaded(Chunk chunk)
+    {
         UpdateNeighboringChunks(chunk.Position);
-        return true;
     }
 
-    protected virtual Chunk CreateChunk(Vector3Int position)
+    // Thread safe
+    public virtual Chunk? GetChunk(Vector3Int position)
     {
-        var chunk = AddChunk(position);
-        TryGenerateChunk(chunk);
-        return chunk;
-    }
-
-    public virtual Chunk? GetChunk(Vector3Int position, bool forceLoad = false)
-    {
-        if(!_chunks.TryGetValue(position, out var chunk) && forceLoad)
-            chunk = CreateChunk(position);
-        return chunk;
+        lock(Chunks)
+        {
+            if(Chunks.TryGetValue(position, out var chunkUnion) && chunkUnion.IsLoaded)
+                return chunkUnion.Chunk;
+        }
+        return null;
     }
 
     public virtual Vector3Int GetBlockPosition(Vector3 position, Vector3 hitNormal)
@@ -108,6 +150,7 @@ public class World : Component, IWorldAccessor
     public virtual Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => chunkPosition * ChunkSize + blockLocalPosition;
 
 
+    // Thread safe
     public virtual Task SetBlockState(Vector3Int position, BlockState blockState)
     {
         var oldBlockState = GetBlockState(position);
@@ -115,11 +158,15 @@ public class World : Component, IWorldAccessor
             return Task.CompletedTask;
 
         var chunkPosition = GetChunkPosition(position);
-        var chunk = GetChunk(chunkPosition, true)!;
+        var chunk = GetChunk(chunkPosition);
+        if(chunk is null)
+            throw new InvalidOperationException($"{nameof(Chunk)} at position {chunkPosition} is not loaded");
+
         var localPosition = GetBlockPositionInChunk(position);
         var result = chunk.SetBlockState(localPosition, blockState);
 
         NotifyNeighboringChunksAboutEdgeUpdate(position, oldBlockState, blockState);
+
         return result;
     }
 
@@ -154,7 +201,7 @@ public class World : Component, IWorldAccessor
         {
             var neighborBlockPosition = updatedBlockPosition + direction;
             var chunkPosition = GetChunkPosition(neighborBlockPosition);
-            var chunk = GetChunk(chunkPosition, false);
+            var chunk = GetChunk(chunkPosition);
             chunk?.OnNeighbouringChunkEdgeUpdated(direction.GetOpposite(), updatedBlockPosition, oldBlockState, newBlockState);
         }
         return true;
@@ -164,26 +211,36 @@ public class World : Component, IWorldAccessor
     {
         foreach(Direction direction in Direction.All)
         {
-            var chunk = GetChunk(chunkPosition + direction, false);
-            if(chunk is not null)
-                chunk.RequireModelUpdate();
+            var neighboringChunkPosition = chunkPosition + direction;
+            var chunk = GetChunk(neighboringChunkPosition);
+            chunk?.RequireModelUpdate();
         }    
     }
 
+    // Thread safe
     public virtual BlockState GetBlockState(Vector3Int position)
     {
         var chunkPosition = GetChunkPosition(position);
-        var chunk = GetChunk(chunkPosition, false)!;
+        var chunk = GetChunk(chunkPosition);
         if(chunk is null)
             return BlockState.Air;
         position = GetBlockPositionInChunk(position);
         return chunk.GetBlockState(position);
     }
 
+    // Thread safe
     public virtual void Clear()
     {
-        foreach(var chunk in _chunks)
-            chunk.Value.GameObject.Destroy();
-        _chunks.Clear();
+        lock(Chunks)
+        {
+            ChunkLoadCancellationTokenSource.Cancel();
+            ChunkLoadCancellationTokenSource.Dispose();
+            ChunkLoadCancellationTokenSource = new();
+
+            foreach(var chunkUnion in Chunks.Values)
+                chunkUnion.Chunk?.GameObject.Destroy();
+
+            Chunks.Clear();
+        }
     }
 }

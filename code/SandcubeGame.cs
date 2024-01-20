@@ -39,9 +39,10 @@ public class SandcubeGame : Component, ISandcubeMod
     public TextureMap TextureMap { get; private set; } = new();
     public SandcubeBlocks Blocks { get; private set; } = new();
     public SandcubeItems Items { get; private set; } = new();
-    public BlockMeshMap BlockMeshes { get; private set; } = new();
+    public BlockMeshMap BlockMeshes { get; } = new();
 
-    protected override void OnAwake()
+
+    protected override void OnStart()
     {
         if(Instance.IsValid() && Instance != this)
         {
@@ -52,7 +53,6 @@ public class SandcubeGame : Component, ISandcubeMod
 
         if(!Scene.IsEditor)
             Instance = this;
-    }
 
     protected override void OnEnabled()
     {

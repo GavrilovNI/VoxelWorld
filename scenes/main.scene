@@ -11,6 +11,8 @@
           "__version": 0,
           "__type": "DirectionalLight",
           "__enabled": true,
+          "FogMode": "Enabled",
+          "FogStrength": 1,
           "LightColor": "0.91373,0.98039,1,1",
           "Shadows": true,
           "SkyColor": "0.05882,0.07451,0.08235,1"
@@ -39,19 +41,25 @@
       "Components": [
         {
           "__version": 0,
+          "__type": "LimitedChunkLoader",
+          "__enabled": true,
+          "ActiveLoadingChunks": 0,
+          "ChunkPrefab": "prefabs/chunk.prefab",
+          "Generator": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "MaxChunksToLoadAtTime": 15
+        },
+        {
+          "__version": 0,
           "__type": "World",
           "__enabled": true,
-          "ChunkPrefab": "prefabs/chunk.prefab",
+          "ChunkLoader": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
           "ChunkSize": {
             "x": 16,
             "y": 16,
             "z": 16,
             "Normal": "0.5773503,0.5773503,0.5773503",
             "Length": 27.712812
-          },
-          "Generator": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
-          "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
-          "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
+          }
         },
         {
           "__version": 0,
@@ -97,7 +105,7 @@
         {
           "__version": 0,
           "__type": "SandcubePlayerController",
-          "__enabled": true,
+          "__enabled": false,
           "AnimationHelper": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
           "Body": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
           "CameraParent": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
@@ -107,7 +115,7 @@
           "__version": 0,
           "__type": "SandcubePlayer",
           "__enabled": true,
-          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+          "World": null
         },
         {
           "__version": 0,

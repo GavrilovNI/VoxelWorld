@@ -104,6 +104,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
         public V Default;
 
+        public int PartsCount => Mesh.PartsCount;
+
 
         public virtual bool IsEmpty() => Mesh.IsEmpty();
 

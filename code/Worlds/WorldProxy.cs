@@ -22,7 +22,7 @@ public class WorldProxy : Component, IWorldAccessor
     public Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => World.GetBlockPositionInChunk(blockPosition);
     public BlockState GetBlockState(Vector3Int position) => World.GetBlockState(position);
     public Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => GetBlockWorldPosition(chunkPosition, blockLocalPosition);
-    public Chunk? GetChunk(Vector3Int position, bool forceLoad = false) => World.GetChunk(position, forceLoad);
+    public Chunk? GetChunk(Vector3Int position) => World.GetChunk(position);
     public Vector3Int GetChunkPosition(Vector3Int blockPosition) => World.GetChunkPosition(blockPosition);
     public Task SetBlockState(Vector3Int position, BlockState blockState) => World.SetBlockState(position, blockState);
 }

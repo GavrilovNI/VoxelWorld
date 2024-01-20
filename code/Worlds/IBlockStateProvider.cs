@@ -5,5 +5,6 @@ namespace Sandcube.Worlds;
 
 public interface IBlockStateProvider
 {
+    // Thread safe
     BlockState GetBlockState(Vector3Int position);
 }
