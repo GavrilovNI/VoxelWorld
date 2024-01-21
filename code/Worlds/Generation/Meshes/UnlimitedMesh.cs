@@ -18,6 +18,13 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
     public IReadOnlyList<V> GetVertices(int partIndex) => _vertices[partIndex].AsReadOnly();
     public IReadOnlyList<ushort> GetIndices(int partIndex) => _indices[partIndex].AsReadOnly();
 
+    private UnlimitedMesh(List<List<V>> vertices, List<List<ushort>> indices, BBox bounds)
+    {
+        _vertices = vertices;
+        _indices = indices;
+        Bounds = bounds;
+    }
+
     public UnlimitedMesh()
     {
 
@@ -28,6 +35,23 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         _vertices = mesh._vertices.Select(l => new List<V>(l)).ToList();
         _indices = mesh._indices.Select(l => new List<ushort>(l)).ToList();
         Bounds = mesh.Bounds;
+    }
+
+    public UnlimitedMesh<V> RotateAround(Vector3 center, Rotation rotation)
+    {
+        var indices = _indices.Select(l => new List<ushort>(l)).ToList();
+
+        BBox bounds = IsEmpty() ? default : BBox.FromPositionAndSize(_vertices.First(v => v.Count > 0)[0].GetPosition(), 0f);
+        var vertices = _vertices.Select(l => new List<V>(l.Select(v =>
+        {
+            var result = v;
+            var newPosition = (result.GetPosition() - center) * rotation + center;
+            result.SetPosition(newPosition);
+            bounds = bounds.AddPoint(newPosition);
+            return result;
+        }))).ToList();
+
+        return new(vertices, indices, bounds);
     }
 
     public bool IsEmpty()
@@ -92,7 +116,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
     public class Builder : IMeshPart<V>, IBounded
     {
-        protected readonly UnlimitedMesh<V> Mesh = new();
+        protected UnlimitedMesh<V> Mesh { get; private set; } = new();
 
         protected List<List<V>> Vertices => Mesh._vertices;
         protected List<List<ushort>> Indices => Mesh._indices;
@@ -116,6 +140,14 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             CurrentVertices = null;
             CurrentIndices = null;
             Bounds = default;
+            return this;
+        }
+
+        public virtual Builder RotateAround(Vector3 center, Rotation rotation)
+        {
+            Mesh = Mesh.RotateAround(center, rotation);
+            CurrentVertices = Vertices.Count == 0 ? null : Vertices[^1];
+            CurrentIndices = Indices.Count == 0 ? null : Indices[^1];
             return this;
         }
 
