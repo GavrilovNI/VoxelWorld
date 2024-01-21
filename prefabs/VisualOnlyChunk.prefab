@@ -37,7 +37,7 @@
         "__enabled": false,
         "IsTrigger": false,
         "Model": null,
-        "Static": false,
+        "Static": true,
         "Surface": null
       }
     ],
@@ -61,7 +61,7 @@
             "__enabled": false,
             "IsTrigger": false,
             "Model": null,
-            "Static": false,
+            "Static": true,
             "Surface": null
           }
         ]
