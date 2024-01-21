@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using System;
 
-namespace Sandcube.Worlds;
+namespace Sandcube.Texturing;
 
 public class TextureMap
 {
@@ -28,7 +28,7 @@ public class TextureMap
 
     public Rect GetUv(Rect textureRect) => new Rect(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
 
-    public Rect AddTexture(Texture texture)
+    public TextureMapPart AddTexture(Texture texture)
     {
         var textureSize = texture.Size;
         if(!Nodes.TryTakeSpace(textureSize, out Rect rect))
@@ -46,7 +46,7 @@ public class TextureMap
         }
 
         Texture.Update(texture.GetPixels(), (int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
-        return rect;
+        return new(this, rect);
     }
 
     protected void Expand(Vector2 delta)

@@ -2,6 +2,7 @@
 using Sandcube.Blocks;
 using Sandcube.Items;
 using Sandcube.Registries;
+using Sandcube.Texturing;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System;
@@ -37,8 +38,8 @@ public class SandcubeGame : Component, ISandcubeMod
     public Registry<Block> BlocksRegistry { get; private set; } = new();
     public Registry<Item> ItemsRegistry { get; private set; } = new();
     public TextureMap TextureMap { get; private set; } = new();
-    public SandcubeBlocks Blocks { get; private set; } = new();
-    public SandcubeItems Items { get; private set; } = new();
+    public SandcubeBlocks Blocks { get; private set; } = null!;
+    public SandcubeItems Items { get; private set; } = null!;
     public BlockMeshMap BlockMeshes { get; } = new();
 
 
@@ -117,11 +118,13 @@ public class SandcubeGame : Component, ISandcubeMod
 
     public async Task RegisterBlocks(Registry<Block> registry)
     {
+        Blocks = new();
         await Blocks.Register(registry);
     }
 
     public async Task RegisterItems(Registry<Item> registry)
     {
+        Items = new();
         await Items.Register(registry);
     }
 }

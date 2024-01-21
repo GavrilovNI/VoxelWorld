@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
 using Sandcube.Registries;
+using Sandcube.Texturing;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Diagnostics.CodeAnalysis;
 
@@ -8,19 +9,24 @@ namespace Sandcube.Blocks;
 
 public class SimpleBlock : Block
 {
-    private Texture? Texture { get; set; }
-    protected Rect TextureRect { get; set; }
+    public required TextureMapPart TexturePart { get; init; }
+
+    [SetsRequiredMembers]
+    public SimpleBlock(in ModedId id, in TextureMapPart texturePart) : base(id)
+    {
+        TexturePart = texturePart;
+    }
 
     [SetsRequiredMembers]
     public SimpleBlock(in ModedId id, in Rect textureRect) : base(id)
     {
-        TextureRect = textureRect;
+        TexturePart = new(SandcubeGame.Instance!.TextureMap, textureRect);
     }
 
     [SetsRequiredMembers]
     public SimpleBlock(in ModedId id, Texture texture) : base(id)
     {
-        Texture = texture;
+        TexturePart = SandcubeGame.Instance!.TextureMap.AddTexture(texture);
     }
 
     [SetsRequiredMembers]
@@ -28,19 +34,9 @@ public class SimpleBlock : Block
     {
     }
 
-    public override void OnRegistered()
-    {
-        if(Texture is not null)
-        {
-            TextureRect = SandcubeGame.Instance!.TextureMap.AddTexture(Texture);
-            Texture = null;
-        }
-    }
-
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
-        var uv = SandcubeGame.Instance!.TextureMap.GetUv(TextureRect);
-        return VisualMeshes.FullBlock.Make(uv);
+        return VisualMeshes.FullBlock.Make(TexturePart.Uv);
     }
 
     public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState) => PhysicsMeshes.FullBlock;

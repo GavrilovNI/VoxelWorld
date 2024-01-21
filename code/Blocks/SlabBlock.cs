@@ -109,7 +109,7 @@ public class SlabBlock : SimpleBlock
         if(slabType == SlabType.Double)
             return base.CreateVisualMesh(blockState);
 
-        var uv = SandcubeGame.Instance!.TextureMap.GetUv(TextureRect);
+        var uv = TexturePart.Uv;
         if(slabType == SlabType.Bottom)
         {
             var sideUv = new Rect(uv.Left, uv.Top + uv.Height / 2f, uv.Width, uv.Height / 2f);
