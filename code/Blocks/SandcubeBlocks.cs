@@ -27,4 +27,8 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
             IsTransparent = true,
         }
     };
+
+    public PillarBlock WoodLog { get; } = new(MakeId("wood_log"),
+        Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/wood_log_side.png", true),
+        Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/wood_log_top.png", true));
 }
