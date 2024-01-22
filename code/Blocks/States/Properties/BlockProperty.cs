@@ -1,10 +1,11 @@
 ﻿using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sandcube.Blocks.States.Properties;
 
-public abstract class BlockProperty
+public class BlockProperty
 {
     public readonly string Name;
     public readonly Type PropertyType;
@@ -12,15 +13,17 @@ public abstract class BlockProperty
 
     public BlockProperty(string name, Type propertyType, CustomEnum defaultValue)
     {
-        if(defaultValue.GetType() != propertyType)
-            throw new ArgumentException($"{nameof(defaultValue)} should be type of ${propertyType}");
-
         Name = name;
         PropertyType = propertyType;
         DefaultValue = defaultValue;
+
+        if(!IsValidValue(DefaultValue))
+            throw new ArgumentException($"{defaultValue} is not valid for this {nameof(BlockProperty)}", nameof(defaultValue));
     }
 
-    public abstract IEnumerable<CustomEnum> GetAllValues();
+    public virtual IEnumerable<CustomEnum> GetAllValues() => DefaultValue.GetAll();
+
+    public bool IsValidValue(CustomEnum customEnum) => customEnum.GetType() == PropertyType && GetAllValues().Contains(customEnum);
 
     public static bool operator ==(BlockProperty a, BlockProperty b) => a.PropertyType == b.PropertyType && a.Name == b.Name;
     public static bool operator !=(BlockProperty a, BlockProperty b) => a.PropertyType != b.PropertyType || a.Name != b.Name;
@@ -36,7 +39,4 @@ public class BlockProperty<T> : BlockProperty where T : CustomEnum<T>, ICustomEn
     public BlockProperty(string name, T defaultValue) : base(name, typeof(T), defaultValue)
     {
     }
-
-    public override IEnumerable<CustomEnum> GetAllValues() => DefaultValue.GetAll();
-
 }

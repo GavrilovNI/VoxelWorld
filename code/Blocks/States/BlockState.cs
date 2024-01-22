@@ -1,5 +1,6 @@
 ﻿using Sandcube.Blocks.States.Properties;
 using Sandcube.Mth.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,8 +23,14 @@ public sealed class BlockState
 
     public bool IsAir() => Block.IsAir();
 
+    [Obsolete("Try using With<T>")]
     public BlockState With(BlockProperty property, CustomEnum value)
     {
+        if(!_properties.ContainsKey(property))
+            throw new ArgumentException($"{nameof(BlockProperty)} {property} is not registered in this {nameof(BlockState)}. this: {this}", nameof(property));
+        if(!property.IsValidValue(value))
+            throw new ArgumentException($"{value} is not valid type for {property}", nameof(value));
+
         var key = (property, value);
         if(!_neighbors.TryGetValue(key, out var state))
         {
@@ -37,6 +44,9 @@ public sealed class BlockState
 
         return state;
     }
+
+    public BlockState With<T>(BlockProperty<T> property, T value) where T : CustomEnum<T>, ICustomEnum<T> =>
+        With(property, (CustomEnum)value);
 
     public CustomEnum GetValue(BlockProperty blockProperty) => _properties[blockProperty];
 
