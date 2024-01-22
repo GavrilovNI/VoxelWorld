@@ -50,7 +50,7 @@ public class ChunkLoader : ThreadHelpComponent
     {
         Transform cloneTransform = new(Transform.Position + creationData.Position * creationData.Size * MathV.InchesInMeter, Transform.Rotation);
         var chunkGameObject = ChunkPrefab.Clone(cloneTransform, GameObject, false, $"Chunk {creationData.Position}");
-        chunkGameObject.BreakFromPrefab(); // TODO: fix, this shit takes 10ms
+        chunkGameObject.BreakFromPrefab();
 
         var chunk = chunkGameObject.Components.Get<Chunk>(true);
         chunk.Initialize(creationData.Position, creationData.Size, creationData.World);
