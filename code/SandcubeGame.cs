@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace Sandcube;
 
-public class SandcubeGame : Component
+public sealed class SandcubeGame : Component
 {
     public static event Action? Started;
     public static event Action? Stopped;
-    public static bool IsStarted { get; protected set; } = false;
+    public static bool IsStarted { get; private set; } = false;
 
     private static SandcubeGame? _instance = null;
     public static SandcubeGame? Instance
@@ -38,9 +38,9 @@ public class SandcubeGame : Component
     public TextureMap TextureMap { get; } = new();
     public BlockMeshMap BlockMeshes { get; } = new();
 
-    public SandcubeBaseMod BaseMod { get; protected set; } = null!;
+    public SandcubeBaseMod BaseMod { get; private set; } = null!;
 
-    protected readonly Dictionary<Id, ISandcubeMod> Mods = new();
+    private readonly Dictionary<Id, ISandcubeMod> _mods = new();
 
     protected override void OnEnabled()
     {
@@ -80,7 +80,7 @@ public class SandcubeGame : Component
         Instance = null;
     }
 
-    protected virtual async Task OnInitialize()
+    private async Task OnInitialize()
     {
         await LoadAllMods();
 
@@ -101,21 +101,21 @@ public class SandcubeGame : Component
         }
     }
 
-    protected virtual async Task LoadAllMods()
+    private async Task LoadAllMods()
     {
         BaseMod = new();
         List<ISandcubeMod> modsToLoad = new() { BaseMod };
         await LoadMods(modsToLoad);
     }
 
-    public virtual async Task LoadMods(IEnumerable<ISandcubeMod> mods)
+    public async Task LoadMods(IEnumerable<ISandcubeMod> mods)
     {
         List<Task> blocksRegisteringTasks = new();
         foreach(var mod in mods)
         {
-            if(Mods.ContainsKey(mod.Id))
+            if(_mods.ContainsKey(mod.Id))
                 throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
-            Mods[mod.Id] = mod;
+            _mods[mod.Id] = mod;
 
             blocksRegisteringTasks.Add(mod.RegisterBlocks(BlocksRegistry));
         }
@@ -132,11 +132,11 @@ public class SandcubeGame : Component
             mod.OnLoaded();
     }
 
-    public virtual async Task LoadMod(ISandcubeMod mod)
+    public async Task LoadMod(ISandcubeMod mod)
     {
-        if(Mods.ContainsKey(mod.Id))
+        if(_mods.ContainsKey(mod.Id))
             throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
-        Mods[mod.Id] = mod;
+        _mods[mod.Id] = mod;
 
         await mod.RegisterBlocks(BlocksRegistry);
         RebuildBlockMeshes();
@@ -144,6 +144,6 @@ public class SandcubeGame : Component
         mod.OnLoaded();
     }
 
-    public virtual ISandcubeMod? GetMod(Id id) => Mods!.GetValueOrDefault(id, null);
-    public virtual bool IsModLoaded(Id id) => Mods.ContainsKey(id);
+    public ISandcubeMod? GetMod(Id id) => _mods!.GetValueOrDefault(id, null);
+    public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 }
