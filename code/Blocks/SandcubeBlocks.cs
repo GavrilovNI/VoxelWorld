@@ -17,7 +17,7 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
     };
 
     public SimpleBlock Stone { get; } = new(MakeId("stone"));
-    public SlabBlock StoneSlab { get; } = new(MakeId("stone_slab"), Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/stone.png", true));
+    public SlabBlock StoneSlab { get; } = new(MakeId("stone_slab"), Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/stone.png", true) ?? Texture.Invalid);
     public SimpleBlock Dirt { get; } = new(MakeId("dirt"));
     public SimpleBlock Cobblestone { get; } = new(MakeId("cobblestone"));
     public SimpleBlock Glass { get; } = new(MakeId("glass"))
