@@ -1,6 +1,8 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.Properties;
+using Sandcube.Mth.Enums;
 using Sandcube.Registries;
+using System.Collections.Generic;
 
 namespace Sandcube.Blocks;
 
@@ -31,4 +33,15 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
     public PillarBlock WoodLog { get; } = new(MakeId("wood_log"),
         Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/wood_log_side.png", true),
         Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/wood_log_top.png", true));
+
+
+    public HorizontalDirectionalBlock Furnace { get; } = new(MakeId("furnace"), new Dictionary<Direction, Texture>()
+    {
+        { Direction.Forward, Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/furnace_front.png", true) ?? Texture.Invalid },
+        { Direction.Up, Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/furnace_top.png", true) ?? Texture.Invalid},
+        { Direction.Down, Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/furnace_top.png", true) ?? Texture.Invalid},
+        { Direction.Left, Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/furnace_side.png", true) ?? Texture.Invalid},
+        { Direction.Right, Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/furnace_side.png", true) ?? Texture.Invalid},
+        { Direction.Backward, Texture.Load(FileSystem.Mounted, $"textures/{SandcubeGame.ModName}/blocks/furnace_side.png", true) ?? Texture.Invalid},
+    });
 }

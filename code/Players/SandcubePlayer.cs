@@ -34,6 +34,7 @@ public class SandcubePlayer : Component
         Inventory.TrySetHotbarItem(3, new(items.StoneSlab, 1));
         Inventory.TrySetHotbarItem(4, new(items.Glass, 1));
         Inventory.TrySetHotbarItem(5, new(items.WoodLog, 1));
+        Inventory.TrySetHotbarItem(6, new(items.Furnace, 1));
     }
 
     protected override void OnUpdate()

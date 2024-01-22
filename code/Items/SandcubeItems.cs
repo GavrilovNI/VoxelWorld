@@ -23,4 +23,7 @@ public sealed class SandcubeItems : ModItems
 
     [AutoBlockItem(SandcubeGame.ModName)]
     public BlockItem WoodLog { get; private set; } = null!;
+
+    [AutoBlockItem(SandcubeGame.ModName)]
+    public BlockItem Furnace { get; private set; } = null!;
 }
