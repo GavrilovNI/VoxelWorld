@@ -14,7 +14,7 @@ namespace Sandcube.Blocks;
 
 public class PillarBlock : Block
 {
-    public static readonly BlockProperty<Axis> AxisProperty = new("axis", Axis.Z);
+    public static readonly BlockProperty<Axis> AxisProperty = new("axis");
 
     public required TextureMapPart SideTexturePart { get; init; }
     public required TextureMapPart TopTexturePart { get; init; }

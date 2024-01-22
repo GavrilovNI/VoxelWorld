@@ -14,7 +14,7 @@ namespace Sandcube.Blocks;
 
 public class SlabBlock : SimpleBlock
 {
-    public static readonly BlockProperty<SlabType> SlabTypeProperty = new("type", SlabType.Bottom);
+    public static readonly BlockProperty<SlabType> SlabTypeProperty = new("type");
 
 
     [SetsRequiredMembers]

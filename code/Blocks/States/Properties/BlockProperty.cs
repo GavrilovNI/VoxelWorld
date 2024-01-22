@@ -9,19 +9,14 @@ public class BlockProperty
 {
     public readonly string Name;
     public readonly Type PropertyType;
-    public readonly CustomEnum DefaultValue;
 
-    public BlockProperty(string name, Type propertyType, CustomEnum defaultValue)
+    internal BlockProperty(string name, Type propertyType)
     {
         Name = name;
         PropertyType = propertyType;
-        DefaultValue = defaultValue;
-
-        if(!IsValidValue(DefaultValue))
-            throw new ArgumentException($"{defaultValue} is not valid for this {nameof(BlockProperty)}", nameof(defaultValue));
     }
 
-    public virtual IEnumerable<CustomEnum> GetAllValues() => DefaultValue.GetAll();
+    public virtual IEnumerable<CustomEnum> GetAllValues() => CustomEnum.GetValues(PropertyType);
 
     public bool IsValidValue(CustomEnum customEnum) => customEnum.GetType() == PropertyType && GetAllValues().Contains(customEnum);
 
@@ -36,7 +31,7 @@ public class BlockProperty
 
 public class BlockProperty<T> : BlockProperty where T : CustomEnum<T>, ICustomEnum<T>
 {
-    public BlockProperty(string name, T defaultValue) : base(name, typeof(T), defaultValue)
+    public BlockProperty(string name) : base(name, typeof(T))
     {
     }
 }

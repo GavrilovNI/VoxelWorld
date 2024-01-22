@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sandcube.Mth.Enums;
 
@@ -22,6 +23,14 @@ public abstract class CustomEnum
     }
 
     // TODO: remove. its workaround of whitelist error when calling interface static member
+    public static IEnumerable<CustomEnum> GetValues(Type t)
+    {
+        if(!t.IsAssignableTo(typeof(CustomEnum)))
+            throw new ArgumentException($"{t} is not assignable to {nameof(CustomEnum)}");
+        return TypeLibrary.GetType(t).Create<CustomEnum>().GetAll();
+    }
+
+    // TODO: remove. its workaround of whitelist error when calling interface static member
     public abstract IEnumerable<CustomEnum> GetAll();
 }
 
@@ -36,6 +45,9 @@ public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICusto
     protected CustomEnum(int ordinal, string name) : base(ordinal, name)
     {
     }
+
+    // TODO: remove. its workaround of whitelist error when calling interface static member
+    public static IEnumerable<T> GetValues() => CustomEnum.GetValues(typeof(T)).Cast<T>();
 
     protected static bool TryParse(IReadOnlyList<T> all, string name, out T value)
     {

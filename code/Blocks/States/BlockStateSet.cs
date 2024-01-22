@@ -60,7 +60,11 @@ public sealed class BlockStateSet : IEnumerable<BlockState>
 
         Dictionary<BlockProperty, CustomEnum> defaultStateProperties = new();
         foreach(var property in _properties)
-            defaultStateProperties.Add(property, property.DefaultValue);
+        {
+            var allValues = property.GetAllValues();
+            if(allValues.Any())
+                defaultStateProperties.Add(property, allValues.First());
+        }
 
         List<Dictionary<BlockProperty, CustomEnum>> allStateProperties = new();
         allStateProperties.Add(defaultStateProperties);
