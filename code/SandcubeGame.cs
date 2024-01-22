@@ -1,19 +1,19 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Items;
+using Sandcube.Mods;
 using Sandcube.Registries;
 using Sandcube.Texturing;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sandcube;
 
-public class SandcubeGame : Component, ISandcubeMod
+public class SandcubeGame : Component
 {
-    public const string ModName = "sandcube";
-
     public static event Action? Started;
     public static event Action? Stopped;
     public static bool IsStarted { get; protected set; } = false;
@@ -30,18 +30,17 @@ public class SandcubeGame : Component, ISandcubeMod
         private set => _instance = value;
     }
 
-    public Id Id { get; private set; } = new(ModName);
-
     [Property] public World World { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
 
-    public Registry<Block> BlocksRegistry { get; private set; } = new();
-    public Registry<Item> ItemsRegistry { get; private set; } = new();
-    public TextureMap TextureMap { get; private set; } = new();
-    public SandcubeBlocks Blocks { get; private set; } = null!;
-    public SandcubeItems Items { get; private set; } = null!;
+    public Registry<Block> BlocksRegistry { get; } = new();
+    public Registry<Item> ItemsRegistry { get; } = new();
+    public TextureMap TextureMap { get; } = new();
     public BlockMeshMap BlockMeshes { get; } = new();
 
+    public SandcubeBaseMod BaseMod { get; protected set; } = null!;
+
+    protected readonly Dictionary<Id, ISandcubeMod> Mods = new();
 
     protected override void OnEnabled()
     {
@@ -83,9 +82,7 @@ public class SandcubeGame : Component, ISandcubeMod
 
     protected virtual async Task OnInitialize()
     {
-        await RegisterAllBlocks();
-        RebuildBlockMeshes();
-        await RegisterAllItems();
+        await LoadAllMods();
 
         if(!Enabled || !this.IsValid())
             return;
@@ -104,27 +101,49 @@ public class SandcubeGame : Component, ISandcubeMod
         }
     }
 
-    private async Task RegisterAllBlocks()
+    protected virtual async Task LoadAllMods()
     {
-        BlocksRegistry.Clear();
-        await RegisterBlocks(BlocksRegistry);
+        BaseMod = new();
+        List<ISandcubeMod> modsToLoad = new() { BaseMod };
+        await LoadMods(modsToLoad);
     }
 
-    private async Task RegisterAllItems()
+    public virtual async Task LoadMods(IEnumerable<ISandcubeMod> mods)
     {
-        ItemsRegistry.Clear();
-        await RegisterItems(ItemsRegistry);
+        List<Task> blocksRegisteringTasks = new();
+        foreach(var mod in mods)
+        {
+            if(Mods.ContainsKey(mod.Id))
+                throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
+            Mods[mod.Id] = mod;
+
+            blocksRegisteringTasks.Add(mod.RegisterBlocks(BlocksRegistry));
+        }
+        await Task.WhenAll(blocksRegisteringTasks);
+
+        RebuildBlockMeshes();
+
+        List<Task> itemsRegisteringTasks = new();
+        foreach(var mod in mods)
+            itemsRegisteringTasks.Add(mod.RegisterItems(ItemsRegistry));
+        await Task.WhenAll(itemsRegisteringTasks);
+
+        foreach(var mod in mods)
+            mod.OnLoaded();
     }
 
-    public async Task RegisterBlocks(Registry<Block> registry)
+    public virtual async Task LoadMod(ISandcubeMod mod)
     {
-        Blocks = new();
-        await Blocks.Register(registry);
+        if(Mods.ContainsKey(mod.Id))
+            throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
+        Mods[mod.Id] = mod;
+
+        await mod.RegisterBlocks(BlocksRegistry);
+        RebuildBlockMeshes();
+        await mod.RegisterItems(ItemsRegistry);
+        mod.OnLoaded();
     }
 
-    public async Task RegisterItems(Registry<Item> registry)
-    {
-        Items = new();
-        await Items.Register(registry);
-    }
+    public virtual ISandcubeMod? GetMod(Id id) => Mods!.GetValueOrDefault(id, null);
+    public virtual bool IsModLoaded(Id id) => Mods.ContainsKey(id);
 }

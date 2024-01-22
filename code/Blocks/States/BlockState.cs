@@ -1,4 +1,5 @@
 ﻿using Sandcube.Blocks.States.Properties;
+using Sandcube.Mods;
 using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Sandcube.Blocks.States;
 
 public sealed class BlockState
 {
-    public static BlockState Air => SandcubeGame.Instance!.Blocks.Air.DefaultBlockState;
+    public static BlockState Air => SandcubeBaseMod.Instance!.Blocks.Air.DefaultBlockState;
 
     internal readonly Dictionary<BlockProperty, CustomEnum> _properties;
     private readonly Dictionary<(BlockProperty, CustomEnum), BlockState> _neighbors;

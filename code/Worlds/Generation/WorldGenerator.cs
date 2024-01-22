@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
+using Sandcube.Mods;
 using Sandcube.Mth;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ public class WorldGenerator : Component
         if(position.z > 10)
             return BlockState.Air;
 
-        return SandcubeGame.Instance!.Blocks.Stone.DefaultBlockState;
+        return SandcubeBaseMod.Instance!.Blocks.Stone.DefaultBlockState;
     }
 
     public BlockState[,,] Generate(Vector3Int position, Vector3Int size)

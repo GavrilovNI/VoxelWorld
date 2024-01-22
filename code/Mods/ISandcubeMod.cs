@@ -3,7 +3,7 @@ using Sandcube.Items;
 using Sandcube.Registries;
 using System.Threading.Tasks;
 
-namespace Sandcube;
+namespace Sandcube.Mods;
 
 public interface ISandcubeMod
 {
@@ -11,4 +11,6 @@ public interface ISandcubeMod
 
     public Task RegisterBlocks(Registry<Block> registry);
     public Task RegisterItems(Registry<Item> registry);
+
+    public void OnLoaded();
 }

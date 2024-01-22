@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sandcube.Mods;
+using System;
 
 namespace Sandcube.Registries;
 
@@ -24,7 +25,7 @@ public readonly record struct ModedId
         string name;
         if(ids.Length == 1)
         {
-            modId = SandcubeGame.Instance!.Id;
+            modId = SandcubeBaseMod.Instance!.Id;
             name = ids[0];
         }
         else if(ids.Length == 2)

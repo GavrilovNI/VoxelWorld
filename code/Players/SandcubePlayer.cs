@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Interactions;
 using Sandcube.Inventories.Players;
+using Sandcube.Mods;
 using Sandcube.Worlds;
 
 namespace Sandcube.Players;
@@ -27,7 +28,7 @@ public class SandcubePlayer : Component
 
     protected virtual void OnGameStart()
     {
-        var items = SandcubeGame.Instance!.Items;
+        var items = SandcubeBaseMod.Instance!.Items;
         Inventory.TrySetHotbarItem(0, new(items.Stone, 1));
         Inventory.TrySetHotbarItem(1, new(items.Dirt, 1));
         Inventory.TrySetHotbarItem(2, new(items.Cobblestone, 1));

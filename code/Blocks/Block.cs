@@ -2,6 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
+using Sandcube.Mods;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Worlds.Generation.Meshes;
@@ -46,7 +47,7 @@ public abstract class Block : IRegisterable
     public virtual IEnumerable<BlockProperty> CombineProperties() => Enumerable.Empty<BlockProperty>();
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
-    public bool IsAir() => this == SandcubeGame.Instance!.Blocks.Air;
+    public bool IsAir() => this == SandcubeBaseMod.Instance!.Blocks.Air;
     public virtual bool CanBeReplaced(BlockActionContext context, BlockState placingBlockState) => IsAir();
     public virtual BlockState GetStateForPlacement(BlockActionContext context) => DefaultBlockState;
 
