@@ -84,6 +84,15 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
 
     public Direction GetOpposite() => Of(Axis, AxisDirection.GetOpposite());
 
+    public Direction Rotate(RightAngle rotation90, Direction lookDirection) // TODO: optimize
+    {
+        if(this.Axis == lookDirection.Axis)
+            return this;
+
+        var rotation = Rotation.FromAxis(lookDirection.Axis.PositiveNormal, rotation90.Angle * lookDirection.AxisDirection.Normal);
+        return Direction.ClosestTo(Normal * rotation);
+    }
+
     public static explicit operator Direction(int ordinal) => All[ordinal];
     public static implicit operator Vector3Int(Direction direction) => direction.Normal;
 

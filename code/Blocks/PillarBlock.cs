@@ -61,9 +61,9 @@ public class PillarBlock : Block
         var axis = blockState.GetValue(AxisProperty);
         var result = VisualMeshes.FullBlock.Make(SideTexturePart.Uv, TopTexturePart.Uv, BottomTexturePart.Uv);
         if(axis == Axis.X)
-            result = result.Rotate90ClockwiseAround(MathV.InchesInMeter / 2f, Direction.Left);
+            result = result.RotateAround(RightAngle.Angle90, Direction.Left, MathV.InchesInMeter / 2f);
         if(axis == Axis.Y)
-            result = result.Rotate90ClockwiseAround(MathV.InchesInMeter / 2f, Direction.Forward);
+            result = result.RotateAround(RightAngle.Angle90, Direction.Forward, MathV.InchesInMeter / 2f);
         return result;
     }
 

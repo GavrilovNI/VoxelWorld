@@ -20,9 +20,12 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         _notSidedElements = new UnlimitedMesh<V>.Builder().Add(notSidedElements);
     }
 
-    private SidedMesh<V> RotateAroundSavingSides(Vector3 center, Direction direction, float degrees)
+    public SidedMesh<V> RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
     {
-        var rotation = Rotation.FromAxis(direction.Axis.PositiveNormal, degrees * direction.AxisDirection.Normal);
+        if(rightAngleRotation == RightAngle.Angle0)
+            return this;
+
+        var rotation = Rotation.FromAxis(lookDirection.Axis.PositiveNormal, rightAngleRotation.Angle * lookDirection.AxisDirection.Normal);
         var notSidedElements = _notSidedElements.RotateAround(center, rotation);
         Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements = new();
         foreach(var (oldDirection, oldBuilder) in _sidedElements)
@@ -33,11 +36,6 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         }
         return new(sidedElements, notSidedElements);
     }
-
-    public SidedMesh<V> Rotate180Around(Vector3 center, Direction lookingDirection) => RotateAroundSavingSides(center, lookingDirection, 180);
-    public SidedMesh<V> Rotate90ClockwiseAround(Vector3 center, Direction lookingDirection) => RotateAroundSavingSides(center, lookingDirection, 90);
-    public SidedMesh<V> Rotate90CounterclockwiseAround(Vector3 center, Direction lookingDirection) => RotateAroundSavingSides(center, lookingDirection, -90);
-
 
     public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position, IReadOnlySet<Direction> visibleFaces)
     {
