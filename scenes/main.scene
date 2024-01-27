@@ -8,9 +8,7 @@
       "Enabled": true,
       "Components": [
         {
-          "__version": 0,
           "__type": "DirectionalLight",
-          "__enabled": true,
           "FogMode": "Enabled",
           "FogStrength": 1,
           "LightColor": "0.91373,0.98039,1,1",
@@ -25,11 +23,17 @@
       "Enabled": true,
       "Components": [
         {
-          "__version": 0,
           "__type": "SandcubeGame",
-          "__enabled": true,
-          "BlockPhotoMaker": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
-          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+          "BlockPhotoMaker": {
+            "_type": "component",
+            "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
+            "component_type": "BlockPhotoMaker"
+          },
+          "World": {
+            "_type": "component",
+            "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+            "component_type": "World"
+          }
         }
       ]
     },
@@ -40,19 +44,23 @@
       "Enabled": true,
       "Components": [
         {
-          "__version": 0,
           "__type": "LimitedChunkLoader",
-          "__enabled": true,
           "ActiveLoadingChunks": 0,
           "ChunkPrefab": "prefabs/chunk.prefab",
-          "Generator": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "Generator": {
+            "_type": "component",
+            "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+            "component_type": "WorldGenerator"
+          },
           "MaxChunksToLoadAtTime": 15
         },
         {
-          "__version": 0,
           "__type": "World",
-          "__enabled": true,
-          "ChunkLoader": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "ChunkLoader": {
+            "_type": "component",
+            "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+            "component_type": "LimitedChunkLoader"
+          },
           "ChunkSize": {
             "x": 16,
             "y": 16,
@@ -62,9 +70,7 @@
           }
         },
         {
-          "__version": 0,
-          "__type": "WorldGenerator",
-          "__enabled": true
+          "__type": "WorldGenerator"
         }
       ]
     },
@@ -75,9 +81,7 @@
       "Enabled": true,
       "Components": [
         {
-          "__version": 0,
           "__type": "CitizenAnimationHelper",
-          "__enabled": true,
           "BodyWeight": 1,
           "EyeSource": null,
           "EyesWeight": 1,
@@ -89,12 +93,14 @@
           "IkRightHand": null,
           "LookAt": null,
           "LookAtEnabled": false,
-          "Target": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
+          "Target": {
+            "_type": "component",
+            "go": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
+            "component_type": "SkinnedModelRenderer"
+          }
         },
         {
-          "__version": 0,
           "__type": "CharacterController",
-          "__enabled": true,
           "Acceleration": 10,
           "GroundAngle": 45,
           "Height": 64,
@@ -103,39 +109,42 @@
           "StepHeight": 18
         },
         {
-          "__version": 0,
           "__type": "SandcubePlayerController",
           "__enabled": false,
-          "AnimationHelper": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+          "AnimationHelper": {
+            "_type": "component",
+            "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+            "component_type": "CitizenAnimationHelper"
+          },
           "Body": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
           "CameraParent": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
           "Gravity": "0,0,800"
         },
         {
-          "__version": 0,
           "__type": "SandcubePlayer",
-          "__enabled": true,
           "World": null
         },
         {
-          "__version": 0,
-          "__type": "PlayerInventory",
-          "__enabled": true
+          "__type": "PlayerInventory"
         },
         {
-          "__version": 0,
           "__type": "WorldAutoLoader",
-          "__enabled": true,
           "Distance": 2,
-          "World": "80c6ed29-307c-404c-bd7d-4c168ac9555b"
+          "World": {
+            "_type": "component",
+            "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+            "component_type": "World"
+          }
         },
         {
-          "__version": 0,
           "__type": "WorldInteractor",
-          "__enabled": true,
           "Eye": "7c163f9b-273d-41e8-91d6-9f096d02854b",
           "InteractionTag": "interactable",
-          "Player": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+          "Player": {
+            "_type": "component",
+            "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+            "component_type": "SandcubePlayer"
+          },
           "ReachDistance": 196.84999
         }
       ],
@@ -146,9 +155,7 @@
           "Position": "0,-0.66093,0",
           "Components": [
             {
-              "__version": 0,
               "__type": "SkinnedModelRenderer",
-              "__enabled": true,
               "BodyGroups": 18446744073709551615,
               "BoneMergeTarget": null,
               "CreateBoneObjects": false,
@@ -168,9 +175,7 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__version": 0,
                   "__type": "WorldPanel",
-                  "__enabled": true,
                   "HorizontalAlign": "Center",
                   "LookAtCamera": true,
                   "PanelSize": "1024,256",
@@ -186,9 +191,7 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__version": 0,
                   "__type": "SkinnedModelRenderer",
-                  "__enabled": true,
                   "BodyGroups": 18446744073709551615,
                   "BoneMergeTarget": null,
                   "CreateBoneObjects": false,
@@ -207,9 +210,7 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__version": 0,
                   "__type": "SkinnedModelRenderer",
-                  "__enabled": true,
                   "BodyGroups": 18446744073709551615,
                   "BoneMergeTarget": null,
                   "CreateBoneObjects": false,
@@ -236,9 +237,7 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__version": 0,
                   "__type": "CameraComponent",
-                  "__enabled": true,
                   "BackgroundColor": "0.25292,0.26086,0.29703,1",
                   "ClearFlags": "All",
                   "FieldOfView": 80,
@@ -254,16 +253,12 @@
                   "ZNear": 1
                 },
                 {
-                  "__version": 0,
                   "__type": "FilmGrain",
-                  "__enabled": true,
                   "Intensity": 0.03,
                   "Response": 1
                 },
                 {
-                  "__version": 0,
                   "__type": "Vignette",
-                  "__enabled": true,
                   "Center": "0.5,0.5",
                   "Color": "0,0,0,0.38",
                   "Intensity": 1,
@@ -271,27 +266,19 @@
                   "Smoothness": 1
                 },
                 {
-                  "__version": 0,
                   "__type": "ChromaticAberration",
-                  "__enabled": true,
                   "Offset": "4,6,4.049999",
                   "Scale": 0.2
                 },
                 {
-                  "__version": 0,
                   "__type": "Sharpen",
-                  "__enabled": true,
                   "Scale": 1
                 },
                 {
-                  "__version": 0,
-                  "__type": "Highlight",
-                  "__enabled": true
+                  "__type": "Highlight"
                 },
                 {
-                  "__version": 0,
                   "__type": "Bloom",
-                  "__enabled": true,
                   "BloomColor": {
                     "color": [
                       {
@@ -331,9 +318,7 @@
       "Enabled": true,
       "Components": [
         {
-          "__version": 0,
           "__type": "ScreenPanel",
-          "__enabled": true,
           "AutoScreenScale": true,
           "Opacity": 1,
           "Scale": 1,
@@ -352,10 +337,12 @@
               "Enabled": true,
               "Components": [
                 {
-                  "__version": 0,
                   "__type": "HotbarUI",
-                  "__enabled": true,
-                  "PlayerInventory": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8"
+                  "PlayerInventory": {
+                    "_type": "component",
+                    "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+                    "component_type": "PlayerInventory"
+                  }
                 }
               ]
             }
@@ -367,9 +354,7 @@
           "Enabled": true,
           "Components": [
             {
-              "__version": 0,
-              "__type": "InGameMenu",
-              "__enabled": true
+              "__type": "InGameMenu"
             }
           ]
         },
@@ -379,9 +364,7 @@
           "Enabled": true,
           "Components": [
             {
-              "__version": 0,
-              "__type": "CrosshairUI",
-              "__enabled": true
+              "__type": "CrosshairUI"
             }
           ]
         }
@@ -393,12 +376,22 @@
       "Enabled": true,
       "Components": [
         {
-          "__version": 0,
           "__type": "BlockPhotoMaker",
-          "__enabled": true,
-          "Camera": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
-          "Sun": "1e19d035-1f06-4264-9646-754a6f8f472b",
-          "World": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23"
+          "Camera": {
+            "_type": "component",
+            "go": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
+            "component_type": "CameraComponent"
+          },
+          "Sun": {
+            "_type": "component",
+            "go": "1e19d035-1f06-4264-9646-754a6f8f472b",
+            "component_type": "DirectionalLight"
+          },
+          "World": {
+            "_type": "component",
+            "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+            "component_type": "World"
+          }
         }
       ],
       "Children": [
@@ -411,9 +404,7 @@
           "Enabled": true,
           "Components": [
             {
-              "__version": 0,
               "__type": "CameraComponent",
-              "__enabled": true,
               "BackgroundColor": "0,0,0,0",
               "ClearFlags": "All",
               "FieldOfView": 90,
@@ -437,10 +428,12 @@
           "Enabled": true,
           "Components": [
             {
-              "__version": 0,
               "__type": "World",
-              "__enabled": true,
-              "ChunkLoader": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+              "ChunkLoader": {
+                "_type": "component",
+                "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+                "component_type": "ChunkLoader"
+              },
               "ChunkSize": {
                 "x": 16,
                 "y": 16,
@@ -450,9 +443,7 @@
               }
             },
             {
-              "__version": 0,
               "__type": "ChunkLoader",
-              "__enabled": true,
               "ChunkPrefab": "prefabs/visualonlychunk.prefab",
               "Generator": null
             }
@@ -466,9 +457,7 @@
           "Enabled": true,
           "Components": [
             {
-              "__version": 0,
               "__type": "DirectionalLight",
-              "__enabled": true,
               "FogMode": "Enabled",
               "FogStrength": 1,
               "LightColor": "0.91373,0.98039,1,1",

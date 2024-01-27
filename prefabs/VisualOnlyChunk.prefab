@@ -1,14 +1,16 @@
 {
   "RootObject": {
-    "Id": "0a23d256-acea-431e-8b85-dd736a55559e",
+    "Id": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
     "Name": "visualonlychunk",
     "Tags": "world",
     "Components": [
       {
-        "__version": 0,
         "__type": "Chunk",
-        "__enabled": true,
-        "ModelUpdater": "0a23d256-acea-431e-8b85-dd736a55559e",
+        "ModelUpdater": {
+          "_type": "component",
+          "go": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+          "component_type": "ChunkModelUpdater"
+        },
         "Position": {},
         "Size": {
           "x": 16,
@@ -19,20 +21,29 @@
         }
       },
       {
-        "__version": 0,
         "__type": "ChunkModelUpdater",
-        "__enabled": true,
-        "Chunk": "0a23d256-acea-431e-8b85-dd736a55559e",
-        "InteractionCollider": "5a89abfc-d962-40de-b976-837180d80eeb",
+        "Chunk": {
+          "_type": "component",
+          "go": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+          "component_type": "Chunk"
+        },
+        "InteractionCollider": {
+          "_type": "component",
+          "go": "73415605-8b34-4d84-8dc5-1fd097957567",
+          "component_type": "ModelCollider"
+        },
         "InteractionEnabled": false,
         "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
-        "PhysicsCollider": "0a23d256-acea-431e-8b85-dd736a55559e",
+        "PhysicsCollider": {
+          "_type": "component",
+          "go": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+          "component_type": "ModelCollider"
+        },
         "PhysicsEnabled": false,
         "RenderingEnabled": true,
         "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
       },
       {
-        "__version": 0,
         "__type": "ModelCollider",
         "__enabled": false,
         "IsTrigger": false,
@@ -43,20 +54,17 @@
     ],
     "Children": [
       {
-        "Id": "5a89abfc-d962-40de-b976-837180d80eeb",
+        "Id": "73415605-8b34-4d84-8dc5-1fd097957567",
         "Name": "Interactable",
         "Tags": "interactable",
         "Enabled": true,
         "Components": [
           {
-            "__version": 0,
             "__type": "WorldProxy",
-            "__enabled": true,
             "DoNotEnableIfWorldIsNotValid": true,
             "World": null
           },
           {
-            "__version": 0,
             "__type": "ModelCollider",
             "__enabled": false,
             "IsTrigger": false,
