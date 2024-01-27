@@ -10,7 +10,6 @@ using Sandcube.Registries;
 using System.Diagnostics.CodeAnalysis;
 using Sandcube.Texturing;
 using System.Linq;
-using Sandbox;
 
 namespace Sandcube.Blocks;
 
@@ -18,18 +17,27 @@ public class DirectionalBlock : Block
 {
     public static readonly BlockProperty<Direction> DirectionProperty = new("direction");
 
-    public IReadOnlyDictionary<Direction, TextureMapPart> TextureParts { get; private set; }
+    public IReadOnlyDictionary<Direction, IUvProvider> UvProviders { get; private set; }
 
     [SetsRequiredMembers]
-    public DirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, TextureMapPart> textureParts) : base(id)
+    public DirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id)
     {
-        TextureParts = new Dictionary<Direction, TextureMapPart>(textureParts);
+        UvProviders = new Dictionary<Direction, IUvProvider>(uvProviders);
     }
 
     [SetsRequiredMembers]
-    public DirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, Texture> textures) :
-        this(id, textures.ToDictionary(p => p.Key, p => SandcubeGame.Instance!.TextureMap.AddTexture(p.Value)))
+    public DirectionalBlock(in ModedId id, string textureExtension = "png") : base(id)
     {
+        var textureMap = SandcubeGame.Instance!.BlocksTextureMap;
+        UvProviders = new Dictionary<Direction, IUvProvider>()
+        {
+            { Direction.Forward, textureMap.GetOrLoadTexture($"{BlockPathPart}_front.{textureExtension}") },
+            { Direction.Backward, textureMap.GetOrLoadTexture($"{BlockPathPart}_back.{textureExtension}") },
+            { Direction.Left, textureMap.GetOrLoadTexture($"{BlockPathPart}_left.{textureExtension}") },
+            { Direction.Right, textureMap.GetOrLoadTexture($"{BlockPathPart}_right.{textureExtension}") },
+            { Direction.Up, textureMap.GetOrLoadTexture($"{BlockPathPart}_top.{textureExtension}") },
+            { Direction.Down, textureMap.GetOrLoadTexture($"{BlockPathPart}_bottom.{textureExtension}") }
+        };
     }
 
     public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { DirectionProperty };
@@ -45,7 +53,7 @@ public class DirectionalBlock : Block
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
         var direction = blockState.GetValue(DirectionProperty);
-        var result = VisualMeshes.FullBlock.Make(TextureParts.ToDictionary(p => p.Key, p => p.Value.Uv));
+        var result = VisualMeshes.FullBlock.Make(UvProviders.ToDictionary(p => p.Key, p => p.Value.Uv));
 
         var lookDirection = direction.Axis == Axis.Z ? Direction.Left : Direction.Down;
         var angle = RightAngle.FromTo(Direction.Forward, direction, lookDirection);

@@ -271,16 +271,17 @@ public class ChunkModelUpdater : ThreadHelpComponent
                 var opaqueRenderers = AddModelRenderers(opaqueModels.Length);
                 var translucentRenderers = AddModelRenderers(translucentModels.Length);
 
+                var blocksTexture = SandcubeGame.Instance!.BlocksTextureMap.Texture;
                 for(int i = 0; i < opaqueModels.Length; ++i)
                 {
                     opaqueRenderers[i].Model = opaqueModels[i];
-                    opaqueRenderers[i].SceneObject.Attributes.Set("color", SandcubeGame.Instance!.TextureMap.Texture);
+                    opaqueRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
                 }
 
                 for(int i = 0; i < translucentModels.Length; ++i)
                 {
                     translucentRenderers[i].Model = translucentModels[i];
-                    translucentRenderers[i].SceneObject.Attributes.Set("color", SandcubeGame.Instance!.TextureMap.Texture);
+                    translucentRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
                 }
             }, cancellationToken);
 

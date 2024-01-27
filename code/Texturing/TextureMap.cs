@@ -10,6 +10,7 @@ public class TextureMap
     protected TextureMapNode Nodes;
     protected Vector2 MultipleOfExpand;
 
+    public Vector2 Size => Texture.Size;
 
     public TextureMap(Vector2 initialSize, Vector2 multipleOfExpand)
     {
@@ -27,6 +28,14 @@ public class TextureMap
     }
 
     public Rect GetUv(Rect textureRect) => new Rect(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
+    public Texture GetTexture(Rect textureRect)
+    {
+        var result = Texture.Create((int)textureRect.Width, (int)textureRect.Height).Finish();
+        Color32[] data = new Color32[(int)textureRect.Width * (int)textureRect.Height];
+        Texture.GetPixels<Color32>(((int)textureRect.Left, (int)textureRect.Top, (int)textureRect.Width, (int)textureRect.Height), 0, 0, data, ImageFormat.RGBA8888);
+        result.Update(data, 0, 0, (int)textureRect.Width, (int)textureRect.Height);
+        return result;
+    }
 
     public TextureMapPart AddTexture(Texture texture)
     {

@@ -5,6 +5,7 @@ using Sandcube.Interactions;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
+using Sandcube.Texturing;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
@@ -18,17 +19,17 @@ public class SlabBlock : SimpleBlock
 
 
     [SetsRequiredMembers]
-    public SlabBlock(in ModedId id, in Rect textureRect) : base(id, textureRect)
-    {
-    }
-
-    [SetsRequiredMembers]
-    public SlabBlock(in ModedId id, Texture texture) : base(id, texture)
+    public SlabBlock(in ModedId id, in IUvProvider uvProvider) : base(id, uvProvider)
     {
     }
 
     [SetsRequiredMembers]
     public SlabBlock(in ModedId id) : base(id)
+    {
+    }
+
+    [SetsRequiredMembers]
+    public SlabBlock(in ModedId id, string textureExtension = "png") : base(id, textureExtension)
     {
     }
 
@@ -109,7 +110,7 @@ public class SlabBlock : SimpleBlock
         if(slabType == SlabType.Double)
             return base.CreateVisualMesh(blockState);
 
-        var uv = TexturePart.Uv;
+        var uv = UvProvider.Uv;
         if(slabType == SlabType.Bottom)
         {
             var sideUv = new Rect(uv.Left, uv.Top + uv.Height / 2f, uv.Width, uv.Height / 2f);

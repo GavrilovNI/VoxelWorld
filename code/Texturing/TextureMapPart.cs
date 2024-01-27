@@ -2,27 +2,13 @@
 
 namespace Sandcube.Texturing;
 
-public readonly record struct TextureMapPart
+public readonly record struct TextureMapPart(TextureMap TextureMap, Rect TextureRect) : IUvProvider
 {
-    public TextureMap TextureMap { get; }
-    public Rect TextureRect { get; }
+    private static readonly TextureMap _internalMap = new();
+    public static readonly TextureMapPart Invalid = _internalMap.AddTexture(Texture.Invalid);
+    public static readonly TextureMapPart White = _internalMap.AddTexture(Texture.White);
+    public static readonly TextureMapPart Transparent = _internalMap.AddTexture(Texture.Transparent);
 
-    public Rect Uv => TextureMap.GetUv(TextureRect);
-    public Texture Texture
-    {
-        get
-        {
-            var result = Texture.Create((int)TextureRect.Width, (int)TextureRect.Height).Finish();
-            Color32[] data = new Color32[(int)TextureRect.Width * (int)TextureRect.Height];
-            TextureMap.Texture.GetPixels<Color32>(((int)TextureRect.Left, (int)TextureRect.Top, (int)TextureRect.Width, (int)TextureRect.Height), 0, 0, data, ImageFormat.RGBA8888);
-            result.Update(data, 0, 0, (int)TextureRect.Width, (int)TextureRect.Height);
-            return result;
-        }
-    }
-
-    public TextureMapPart(TextureMap textureMap, Rect textureRect)
-    {
-        TextureMap = textureMap;
-        TextureRect = textureRect;
-    }
+    public Rect Uv => new(TextureRect.TopLeft / TextureMap.Size, TextureRect.Size / TextureMap.Size);
+    public Texture Texture => TextureMap.GetTexture(TextureRect);
 }

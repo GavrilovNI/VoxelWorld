@@ -35,7 +35,7 @@ public sealed class SandcubeGame : Component
 
     public Registry<Block> BlocksRegistry { get; } = new();
     public Registry<Item> ItemsRegistry { get; } = new();
-    public TextureMap TextureMap { get; } = new();
+    public PathedTextureMap BlocksTextureMap { get; } = new("textures/");
     public BlockMeshMap BlockMeshes { get; } = new();
 
     public SandcubeBaseMod BaseMod { get; private set; } = null!;

@@ -9,34 +9,23 @@ namespace Sandcube.Blocks;
 
 public class SimpleBlock : Block
 {
-    public required TextureMapPart TexturePart { get; init; }
+    public required IUvProvider UvProvider { get; init; }
 
     [SetsRequiredMembers]
-    public SimpleBlock(in ModedId id, in TextureMapPart texturePart) : base(id)
+    public SimpleBlock(in ModedId id, in IUvProvider uvProvider) : base(id)
     {
-        TexturePart = texturePart;
+        UvProvider = uvProvider;
     }
 
     [SetsRequiredMembers]
-    public SimpleBlock(in ModedId id, in Rect textureRect) : base(id)
+    public SimpleBlock(in ModedId id, string textureExtension = "png") : base(id)
     {
-        TexturePart = new(SandcubeGame.Instance!.TextureMap, textureRect);
-    }
-
-    [SetsRequiredMembers]
-    public SimpleBlock(in ModedId id, Texture texture) : base(id)
-    {
-        TexturePart = SandcubeGame.Instance!.TextureMap.AddTexture(texture);
-    }
-
-    [SetsRequiredMembers]
-    public SimpleBlock(in ModedId id) : this(id, Texture.Load(FileSystem.Mounted, $"textures/{id.ModId}/blocks/{id.Name}.png", true) ?? Texture.Invalid)
-    {
+        UvProvider = SandcubeGame.Instance!.BlocksTextureMap.GetOrLoadTexture($"{BlockPathPart}.{textureExtension}");
     }
 
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
-        return VisualMeshes.FullBlock.Make(TexturePart.Uv);
+        return VisualMeshes.FullBlock.Make(UvProvider.Uv);
     }
 
     public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState) => PhysicsMeshes.FullBlock;

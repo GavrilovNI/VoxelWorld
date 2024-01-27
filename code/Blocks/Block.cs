@@ -19,19 +19,24 @@ public abstract class Block : IRegisterable
     public readonly BlockStateSet BlockStateSet;
     public required BlockProperties Properties { get; init; }
 
-    [SetsRequiredMembers]
+	public string BlockPathPart { get; }
+
+	[SetsRequiredMembers]
     public Block(in ModedId id, in BlockProperties properties)
     {
         ModedId = id;
         BlockStateSet = new BlockStateSet(this, CombineProperties());
         DefaultBlockState = CreateDefaultBlockState(BlockStateSet.First());
         Properties = properties;
+        BlockPathPart = GetBlockPathPart(id);
     }
 
     [SetsRequiredMembers]
     public Block(in ModedId id) : this(id, BlockProperties.Default)
     {
     }
+
+    public static string GetBlockPathPart(ModedId blockId) => $"{blockId.ModId}/blocks/{blockId.Name}";
 
     public virtual void OnRegistered() { }
 

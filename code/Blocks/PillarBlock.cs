@@ -16,37 +16,32 @@ public class PillarBlock : Block
 {
     public static readonly BlockProperty<Axis> AxisProperty = new("axis");
 
-    public required TextureMapPart SideTexturePart { get; init; }
-    public required TextureMapPart TopTexturePart { get; init; }
-    public required TextureMapPart BottomTexturePart { get; init; }
+    public required IUvProvider SideUvProvider { get; init; }
+    public required IUvProvider TopUvProvider { get; init; }
+    public required IUvProvider BottomUvProvider { get; init; }
 
     [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, Texture sideTexture, Texture topTexture, Texture bottomTexture) :
-        this(id, SandcubeGame.Instance!.TextureMap.AddTexture(sideTexture),
-            SandcubeGame.Instance!.TextureMap.AddTexture(topTexture),
-            SandcubeGame.Instance!.TextureMap.AddTexture(bottomTexture))
+    public PillarBlock(in ModedId id, IUvProvider sideUvProvider, IUvProvider topUvProvider, IUvProvider bottomUvProvider) : base(id)
+    {
+        SideUvProvider = sideUvProvider;
+        TopUvProvider = topUvProvider;
+        BottomUvProvider = bottomUvProvider;
+    }
+
+    [SetsRequiredMembers]
+    public PillarBlock(in ModedId id, IUvProvider sideUvProvider, IUvProvider topBottomUvProvider) :
+        this(id, sideUvProvider, sideUvProvider, topBottomUvProvider)
     {
     }
 
     [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, Texture sideTexture, Texture topBottomTexture) :
-        this(id, SandcubeGame.Instance!.TextureMap.AddTexture(sideTexture),
-            SandcubeGame.Instance!.TextureMap.AddTexture(topBottomTexture))
+    public PillarBlock(in ModedId id, bool useTopTextureForBottom = false, string textureExtension = "png") : base(id)
     {
-    }
-
-    [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, TextureMapPart sideTexturePart, TextureMapPart topTexturePart, TextureMapPart bottomTexturePart) : base(id)
-    {
-        SideTexturePart = sideTexturePart;
-        TopTexturePart = topTexturePart;
-        BottomTexturePart = bottomTexturePart;
-    }
-
-    [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, TextureMapPart sideTexturePart, TextureMapPart topBottomTexturePart) :
-        this(id, sideTexturePart, topBottomTexturePart, topBottomTexturePart)
-    {
+        var textureMap = SandcubeGame.Instance!.BlocksTextureMap;
+        SideUvProvider = textureMap.GetOrLoadTexture($"{BlockPathPart}_side.{textureExtension}");
+        TopUvProvider = textureMap.GetOrLoadTexture($"{BlockPathPart}_top.{textureExtension}");
+        BottomUvProvider = useTopTextureForBottom ? TopUvProvider :
+            textureMap.GetOrLoadTexture($"{BlockPathPart}_bottom.{textureExtension}");
     }
 
     public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[]{ AxisProperty };
@@ -59,7 +54,7 @@ public class PillarBlock : Block
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
         var axis = blockState.GetValue(AxisProperty);
-        var result = VisualMeshes.FullBlock.Make(SideTexturePart.Uv, TopTexturePart.Uv, BottomTexturePart.Uv);
+        var result = VisualMeshes.FullBlock.Make(SideUvProvider.Uv, TopUvProvider.Uv, BottomUvProvider.Uv);
         if(axis == Axis.X)
             result = result.RotateAround(RightAngle.Angle90, Direction.Left, MathV.UnitsInMeter / 2f);
         if(axis == Axis.Y)
