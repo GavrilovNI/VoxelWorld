@@ -19,16 +19,13 @@ public abstract class Block : IRegisterable
     public readonly BlockStateSet BlockStateSet;
     public required BlockProperties Properties { get; init; }
 
-	public string BlockPathPart { get; }
-
-	[SetsRequiredMembers]
+    [SetsRequiredMembers]
     public Block(in ModedId id, in BlockProperties properties)
     {
         ModedId = id;
         BlockStateSet = new BlockStateSet(this, CombineProperties());
         DefaultBlockState = CreateDefaultBlockState(BlockStateSet.First());
         Properties = properties;
-        BlockPathPart = GetBlockPathPart(id);
     }
 
     [SetsRequiredMembers]
@@ -36,12 +33,10 @@ public abstract class Block : IRegisterable
     {
     }
 
-    public static string GetBlockPathPart(ModedId blockId) => $"{blockId.ModId}/blocks/{blockId.Name}";
-
     public virtual void OnRegistered() { }
 
-	// Thread safe
-	public virtual bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
+    // Thread safe
+    public virtual bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
     {
         if(meshType == BlockMeshType.Visual && Properties.IsTransparent)
             return false;

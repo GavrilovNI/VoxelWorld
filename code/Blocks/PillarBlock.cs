@@ -9,39 +9,17 @@ using Sandcube.Texturing;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Sandcube.Blocks;
 
-public class PillarBlock : Block
+public class PillarBlock : SimpleBlock
 {
     public static readonly BlockProperty<Axis> AxisProperty = new("axis");
 
-    public required IUvProvider SideUvProvider { get; init; }
-    public required IUvProvider TopUvProvider { get; init; }
-    public required IUvProvider BottomUvProvider { get; init; }
-
     [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, IUvProvider sideUvProvider, IUvProvider topUvProvider, IUvProvider bottomUvProvider) : base(id)
+    public PillarBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
-        SideUvProvider = sideUvProvider;
-        TopUvProvider = topUvProvider;
-        BottomUvProvider = bottomUvProvider;
-    }
-
-    [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, IUvProvider sideUvProvider, IUvProvider topBottomUvProvider) :
-        this(id, sideUvProvider, sideUvProvider, topBottomUvProvider)
-    {
-    }
-
-    [SetsRequiredMembers]
-    public PillarBlock(in ModedId id, bool useTopTextureForBottom = false, string textureExtension = "png") : base(id)
-    {
-        var textureMap = SandcubeGame.Instance!.BlocksTextureMap;
-        SideUvProvider = textureMap.GetOrLoadTexture($"{BlockPathPart}_side.{textureExtension}");
-        TopUvProvider = textureMap.GetOrLoadTexture($"{BlockPathPart}_top.{textureExtension}");
-        BottomUvProvider = useTopTextureForBottom ? TopUvProvider :
-            textureMap.GetOrLoadTexture($"{BlockPathPart}_bottom.{textureExtension}");
     }
 
     public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[]{ AxisProperty };
@@ -54,7 +32,7 @@ public class PillarBlock : Block
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
         var axis = blockState.GetValue(AxisProperty);
-        var result = VisualMeshes.FullBlock.Make(SideUvProvider.Uv, TopUvProvider.Uv, BottomUvProvider.Uv);
+        var result = VisualMeshes.FullBlock.Make(UvProviders.ToDictionary(p => p.Key, p => p.Value.Uv));
         if(axis == Axis.X)
             result = result.RotateAround(RightAngle.Angle90, Direction.Left, MathV.UnitsInMeter / 2f);
         if(axis == Axis.Y)

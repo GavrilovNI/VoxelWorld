@@ -65,6 +65,10 @@ public static class VisualMeshes
         public SidedMesh<ComplexVertex> Make(Rect backUv, Rect frontUv, Rect leftUv, Rect rightUv, Rect topUv, Rect bottomUv) =>
             _maker(backUv, frontUv, leftUv, rightUv, topUv, bottomUv);
 
+        public SidedMesh<ComplexVertex> Make(IReadOnlyDictionary<Direction, Rect> uvs) =>
+            _maker(uvs[Direction.Backward], uvs[Direction.Forward], uvs[Direction.Left],
+                uvs[Direction.Right], uvs[Direction.Up], uvs[Direction.Down]);
+
         public SidedMesh<ComplexVertex> Make(Rect uv) => Make(uv, uv, uv, uv, uv, uv);
 
         public SidedMesh<ComplexVertex> Make(Rect sideUv, Rect topUv, Rect bottomUv) =>

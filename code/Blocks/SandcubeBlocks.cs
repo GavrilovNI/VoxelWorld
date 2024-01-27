@@ -1,16 +1,16 @@
-﻿using Sandbox;
-using Sandcube.Blocks.Properties;
+﻿using Sandcube.Blocks.Properties;
 using Sandcube.Mods;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Texturing;
-using System.Collections.Generic;
 
 namespace Sandcube.Blocks;
 
 public sealed class SandcubeBlocks : ModRegisterables<Block>
 {
-    private static PathedTextureMap _textureMap = SandcubeGame.Instance!.BlocksTextureMap;
+    private static readonly PathedTextureMap _textureMap = SandcubeGame.Instance!.BlocksTextureMap;
+
+    private static string GetBlockPathPart(string blockId) => $"{SandcubeBaseMod.ModName}/blocks/{blockId}";
 
     private static ModedId MakeId(string blockId) => new(SandcubeBaseMod.ModName, blockId);
 
@@ -22,11 +22,11 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
         }
     };
 
-    public SimpleBlock Stone { get; } = new(MakeId("stone"));
-    public SlabBlock StoneSlab { get; } = new(MakeId("stone_slab"), _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("stone"))}.png"));
-    public SimpleBlock Dirt { get; } = new(MakeId("dirt"));
-    public SimpleBlock Cobblestone { get; } = new(MakeId("cobblestone"));
-    public SimpleBlock Glass { get; } = new(MakeId("glass"))
+    public SimpleBlock Stone { get; } = new(MakeId("stone"), _textureMap.GetOrLoadTexture($"{GetBlockPathPart("stone")}.png"));
+    public SlabBlock StoneSlab { get; } = new(MakeId("stone_slab"), _textureMap.GetOrLoadTexture($"{GetBlockPathPart("stone")}.png"));
+    public SimpleBlock Dirt { get; } = new(MakeId("dirt"), _textureMap.GetOrLoadTexture($"{GetBlockPathPart("dirt")}.png"));
+    public SimpleBlock Cobblestone { get; } = new(MakeId("cobblestone"), _textureMap.GetOrLoadTexture($"{GetBlockPathPart("cobblestone")}.png"));
+    public SimpleBlock Glass { get; } = new(MakeId("glass"), _textureMap.GetOrLoadTexture($"{GetBlockPathPart("glass")}.png"))
     {
         Properties = BlockProperties.Default with
         {
@@ -34,15 +34,10 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
         }
     };
 
-    public PillarBlock WoodLog { get; } = new(MakeId("wood_log"), true);
+    public PillarBlock WoodLog { get; } = new(MakeId("wood_log"),
+        BlockTexturesLoader.SimplePillar.LoadTextureUvs(_textureMap, GetBlockPathPart("wood_log")));
 
-    public HorizontalDirectionalBlock Furnace { get; } = new(MakeId("furnace"), new Dictionary<Direction, TextureMapPart>()
-    {
-        { Direction.Forward, _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("furnace"))}_front.png") },
-        { Direction.Backward, _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("furnace"))}_side.png") },
-        { Direction.Left, _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("furnace"))}_side.png") },
-        { Direction.Right, _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("furnace"))}_side.png") },
-        { Direction.Up, _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("furnace"))}_top.png") },
-        { Direction.Down, _textureMap.GetOrLoadTexture($"{Block.GetBlockPathPart(MakeId("furnace"))}_top.png") }
-    });
+    public HorizontalDirectionalBlock Furnace { get; } = new(MakeId("furnace"),
+        BlockTexturesLoader.SimplePillar.With(Direction.Forward, BlockTexturesLoader.FrontSuffix)
+        .LoadTextureUvs(_textureMap, GetBlockPathPart("furnace")));
 }
