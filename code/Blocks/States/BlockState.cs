@@ -46,8 +46,10 @@ public sealed class BlockState
         return state;
     }
 
+#pragma warning disable CS0618 // Type or member is obsolete
     public BlockState With<T>(BlockProperty<T> property, T value) where T : CustomEnum<T>, ICustomEnum<T> =>
         With(property, (CustomEnum)value);
+#pragma warning restore CS0618 // Type or member is obsolete
 
     public CustomEnum GetValue(BlockProperty blockProperty) => _properties[blockProperty];
 
