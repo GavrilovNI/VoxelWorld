@@ -50,7 +50,7 @@ public class DirectionalBlock : Block
         var lookDirection = direction.Axis == Axis.Z ? Direction.Left : Direction.Down;
         var angle = RightAngle.FromTo(Direction.Forward, direction, lookDirection);
 
-        return result.RotateAround(angle, lookDirection, MathV.InchesInMeter / 2f);
+        return result.RotateAround(angle, lookDirection, MathV.UnitsInMeter / 2f);
     }
 
     public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState) => PhysicsMeshes.FullBlock;

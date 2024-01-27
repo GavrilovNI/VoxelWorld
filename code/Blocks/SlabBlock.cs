@@ -70,7 +70,7 @@ public class SlabBlock : SimpleBlock
     {
         var blockLocalYPosition = traceResult.HitPosition.z - world.GetBlockGlobalPosition(blockPosition).z;
 
-        const float halfBlockHeight = MathV.InchesInMeter / 2f;
+        const float halfBlockHeight = MathV.UnitsInMeter / 2f;
 
         if(blockLocalYPosition.AlmostEqual(halfBlockHeight, 0.1f))
             return slabTypeAtCenter;

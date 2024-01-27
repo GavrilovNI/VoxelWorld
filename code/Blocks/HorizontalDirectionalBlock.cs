@@ -62,7 +62,7 @@ public class HorizontalDirectionalBlock : Block
 
         var lookDirection = Direction.Down;
         var angle = RightAngle.FromTo(Direction.Forward, direction, lookDirection);
-        return result.RotateAround(angle, lookDirection, MathV.InchesInMeter / 2f);
+        return result.RotateAround(angle, lookDirection, MathV.UnitsInMeter / 2f);
     }
 
     public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState) => PhysicsMeshes.FullBlock;

@@ -411,7 +411,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
             var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
-            BlockMeshMap.GetVisual(blockState)!.AddToBuilder(builder, localPosition * MathV.InchesInMeter, visibleFaces);
+            BlockMeshMap.GetVisual(blockState)!.AddToBuilder(builder, localPosition * MathV.UnitsInMeter, visibleFaces);
         }, BlockMeshType.Visual);
     }
 
@@ -420,7 +420,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
     {
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
-            BlockMeshMap.GetPhysics(blockState)!.AddToBuilder(builder, localPosition * MathV.InchesInMeter, visibleFaces);
+            BlockMeshMap.GetPhysics(blockState)!.AddToBuilder(builder, localPosition * MathV.UnitsInMeter, visibleFaces);
         }, BlockMeshType.Physics);
     }
 
@@ -429,7 +429,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
     {
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
-            BlockMeshMap.GetInteraction(blockState)!.AddToBuilder(builder, localPosition * MathV.InchesInMeter, visibleFaces);
+            BlockMeshMap.GetInteraction(blockState)!.AddToBuilder(builder, localPosition * MathV.UnitsInMeter, visibleFaces);
         }, BlockMeshType.Interaction);
     }
 

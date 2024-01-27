@@ -48,7 +48,7 @@ public class ChunkLoader : ThreadHelpComponent
     // Call only in game thread
     protected virtual Chunk CreateChunk(ChunkCreationData creationData)
     {
-        Transform cloneTransform = new(Transform.Position + creationData.Position * creationData.Size * MathV.InchesInMeter, Transform.Rotation);
+        Transform cloneTransform = new(Transform.Position + creationData.Position * creationData.Size * MathV.UnitsInMeter, Transform.Rotation);
         var chunkGameObject = ChunkPrefab.Clone(cloneTransform, GameObject, false, $"Chunk {creationData.Position}");
         chunkGameObject.BreakFromPrefab();
 

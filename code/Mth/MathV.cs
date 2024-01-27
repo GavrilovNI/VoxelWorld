@@ -4,7 +4,7 @@ namespace Sandcube.Mth;
 
 public static class MathV
 {
-    public const float InchesInMeter = 39.3700787402f;
+    public const float UnitsInMeter = 39.3700787402f;
 
     //        6_______5
     //       /|      /|
@@ -14,8 +14,8 @@ public static class MathV
     //      | /     | /          | /
     //      |/______|/        y__|/
     //      3 front 0 
-    public static readonly Vector3[] InchCubeCorners = GetCubeCorners(1);
-    public static readonly Vector3[] MeterCubeCorners = GetCubeCorners(InchesInMeter);
+    public static readonly Vector3[] UnitCubeCorners = GetCubeCorners(1);
+    public static readonly Vector3[] MeterCubeCorners = GetCubeCorners(UnitsInMeter);
 
     public static readonly Vector3[] MeterCubeTopDownCenters = new Vector3[4]
     {
