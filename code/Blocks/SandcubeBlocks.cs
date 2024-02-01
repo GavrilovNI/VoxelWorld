@@ -12,7 +12,7 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
 
     private static ModedId MakeId(string blockId) => new(SandcubeBaseMod.ModName, blockId);
 
-    public SimpleBlock Air { get; } = new(MakeId("air"), TextureMapPart.Transparent)
+    public SimpleBlock Air { get; } = new(MakeId("air"), SandcubeGame.Instance!.BlocksTextureMap.Transparent)
     {
         Properties = BlockProperties.Default with
         {

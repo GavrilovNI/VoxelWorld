@@ -13,11 +13,23 @@ public class PathedTextureMap
 
     public readonly string LoadPathPrefix;
 
+    public TextureMapPart Invalid { get; protected set; }
+    public TextureMapPart Transparent { get; protected set; }
+    public TextureMapPart White { get; protected set; }
+
     protected Dictionary<string, TextureMapPart> PartsByPath = new();
 
     public PathedTextureMap(string loadPathPrefix = "")
     {
         LoadPathPrefix = loadPathPrefix;
+        SetupDefaultTextures();
+    }
+
+    protected void SetupDefaultTextures()
+    {
+        Invalid = TextureMap.AddTexture(Texture.Invalid);
+        Transparent = TextureMap.AddTexture(Texture.Transparent);
+        White = TextureMap.AddTexture(Texture.White);
     }
 
     public Texture GetTexture(Rect textureRect) => TextureMap.GetTexture(textureRect);
@@ -62,7 +74,7 @@ public class PathedTextureMap
 
         var texture = Texture.Load(fileSystem, LoadPathPrefix + path, warnOnMissing);
         if(texture is null)
-            return TextureMapPart.Invalid;
+            return SandcubeGame.Instance!.BlocksTextureMap.Invalid;
         return AddTexture(path, texture);
     }
 }
