@@ -46,7 +46,11 @@
         {
           "__type": "LimitedChunkLoader",
           "ActiveLoadingChunks": 0,
-          "ChunkPrefab": "prefabs/chunk.prefab",
+          "ChunkPrefab": {
+            "_type": "gameobject",
+            "go": "12905c7d-cd7f-4ba5-8dc6-5424cbd16aab",
+            "prefab": "prefabs/chunk.prefab"
+          },
           "Generator": {
             "_type": "component",
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
@@ -116,8 +120,14 @@
             "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
             "component_type": "CitizenAnimationHelper"
           },
-          "Body": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
-          "CameraParent": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
+          "Body": {
+            "_type": "gameobject",
+            "go": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
+          },
+          "CameraParent": {
+            "_type": "gameobject",
+            "go": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61"
+          },
           "Gravity": "0,0,800"
         },
         {
@@ -138,7 +148,10 @@
         },
         {
           "__type": "WorldInteractor",
-          "Eye": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+          "Eye": {
+            "_type": "gameobject",
+            "go": "7c163f9b-273d-41e8-91d6-9f096d02854b"
+          },
           "InteractionTag": "interactable",
           "Player": {
             "_type": "component",
@@ -444,7 +457,11 @@
             },
             {
               "__type": "ChunkLoader",
-              "ChunkPrefab": "prefabs/visualonlychunk.prefab",
+              "ChunkPrefab": {
+                "_type": "gameobject",
+                "go": "3d93214a-a54d-4e78-968f-636a3875a5b2",
+                "prefab": "prefabs/visualonlychunk.prefab"
+              },
               "Generator": null
             }
           ]
@@ -480,5 +497,6 @@
   },
   "Title": "main",
   "Description": "",
+  "LastSaved": "2024-02-01T23:50:55.3752049\u002B01:00",
   "__references": []
 }
