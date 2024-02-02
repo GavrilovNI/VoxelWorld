@@ -248,9 +248,9 @@ public struct Vector3Int
     public static Vector3Int operator *(int value, Vector3Int vector) => new(vector.x * value, vector.y * value, vector.z * value);
     public static Vector3 operator *(Vector3Int vector, float value) => new(vector.x * value, vector.y * value, vector.z * value);
     public static Vector3 operator *(float value, Vector3Int vector) => new(vector.x * value, vector.y * value, vector.z * value);
-    public static Vector3Int operator *(Vector3Int a, Vector3Int b) => new(a.x * b.x, a.y * b.y, a.z * b.x);
-    public static Vector3 operator *(Vector3Int a, Vector3 b) => new(a.x * b.x, a.y * b.y, a.z * b.x);
-    public static Vector3 operator *(Vector3 a, Vector3Int b) => new(a.x * b.x, a.y * b.y, a.z * b.x);
+    public static Vector3Int operator *(Vector3Int a, Vector3Int b) => new(a.x * b.x, a.y * b.y, a.z * b.z);
+    public static Vector3 operator *(Vector3Int a, Vector3 b) => new(a.x * b.x, a.y * b.y, a.z * b.z);
+    public static Vector3 operator *(Vector3 a, Vector3Int b) => new(a.x * b.x, a.y * b.y, a.z * b.z);
     public static Vector3 operator *(Vector3Int vector, Rotation value) => System.Numerics.Vector3.Transform(vector, value);
     public static Vector3 operator /(Vector3Int vector, float value) => new(vector.x / value, vector.y / value, vector.z / value);
     public static Vector3Int operator /(Vector3Int a, Vector3Int b) => new(a.x / b.x, a.y / b.y, a.z / b.z);
