@@ -7,6 +7,7 @@ namespace Sandcube.Inventories.Players;
 
 public class PlayerInventory : Component, IPlayerInventory
 {
+    public IIndexedCapability<Stack<Item>> Main { get; }
     public IIndexedCapability<Stack<Item>> Hotbar { get; }
 
     public IIndexedCapability<Stack<Item>> SecondaryHand { get; }
@@ -21,6 +22,7 @@ public class PlayerInventory : Component, IPlayerInventory
     public PlayerInventory()
     {
         Hotbar = new ItemStackInventory(9);
+        Main = new ItemStackInventory(9 * 3);
         SecondaryHand = new ItemStackInventory(1);
     }
 
