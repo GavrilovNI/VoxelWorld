@@ -109,10 +109,17 @@ public class SlabBlock : SimpleBlock
             return base.CreateVisualMesh(blockState);
 
         Func<Rect, Rect> uvSideModifier;
+        VisualMeshes.AllSidedMeshMaker meshMaker;
         if(slabType == SlabType.Bottom)
+        {
             uvSideModifier = uv => new Rect(uv.Left, uv.Top + uv.Height / 2f, uv.Width, uv.Height / 2f);
+            meshMaker = VisualMeshes.BottomSlab;
+        }
         else
+        {
             uvSideModifier = uv => new Rect(uv.Left, uv.Top, uv.Width, uv.Height / 2f);
+            meshMaker = VisualMeshes.TopSlab;
+        }
 
         Dictionary<Direction, Rect> uvs = UvProviders.ToDictionary(e => e.Key, e =>
         {
@@ -122,7 +129,7 @@ public class SlabBlock : SimpleBlock
             return uv;
         });
 
-        return VisualMeshes.BottomSlab.Make(uvs);
+        return meshMaker.Make(uvs);
     }
 
     public override ISidedMeshPart<Vector3Vertex> CreatePhysicsMesh(BlockState blockState)
