@@ -124,4 +124,29 @@ public static class IIndexedCapabilityExtensions
 
     public static T Extract<T>(this IIndexedCapability<T> capability, int index, bool simulate = false) where T : class, IStack<T> =>
         capability.ExtractMax(index, int.MaxValue, simulate);
+
+    public static bool TryChange<T>(this IIndexedCapability<T> capability, int index, T stack, out T changedStack, bool simulate = false) where T : class, IStack<T>
+    {
+        var currentStack = capability.Get(index);
+        var extracted = capability.Extract(index, true);
+        if(extracted.Count != currentStack.Count)
+        {
+            changedStack = stack;
+            return false;
+        }
+
+        if(!simulate)
+            extracted = capability.Extract(index, false);
+
+        if(!capability.TryInsert(index, stack, simulate))
+        {
+            if(!simulate && !capability.TrySet(index, extracted))
+                Log.Warning($"Couldn't return stack {extracted} to capability {capability} when failed to change with {stack}");
+            changedStack = stack;
+            return false;
+        }
+
+        changedStack = extracted;
+        return true;
+    }
 }
