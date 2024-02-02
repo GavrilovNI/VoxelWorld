@@ -5,10 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Sandcube.Mth;
 
+[JsonConverter(typeof(Vector3IntJsonConverter))]
 public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
 {
     public static readonly Vector3Int One = new(1);
@@ -285,7 +287,7 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
     public override readonly int GetHashCode() => HashCode.Combine(x, y, z);
 
 
-    public static Vector3Int Parse(string str, IFormatProvider? _ = null)
+    public static Vector3Int Parse(string? str, IFormatProvider? _ = null)
     {
         if(TryParse(str, CultureInfo.InvariantCulture, out var result))
             return result;
@@ -339,5 +341,65 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
         defaultInterpolatedStringHandler.AppendLiteral(",");
         defaultInterpolatedStringHandler.AppendFormatted(z, valueFormat);
         return defaultInterpolatedStringHandler.ToStringAndClear();
+    }
+
+    public class Vector3IntJsonConverter : JsonConverter<Vector3Int>
+    {
+        public override Vector3Int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if(reader.TokenType == JsonTokenType.Null)
+            {
+                return default;
+            }
+
+            if(reader.TokenType == JsonTokenType.String)
+            {
+                return Vector3Int.Parse(reader.GetString());
+            }
+
+            if(reader.TokenType == JsonTokenType.StartArray)
+            {
+                reader.Read();
+                Vector3Int result = default;
+                if(reader.TokenType == JsonTokenType.Number)
+                {
+                    result.x = reader.GetInt32();
+                    reader.Read();
+                }
+
+                if(reader.TokenType == JsonTokenType.Number)
+                {
+                    result.y = reader.GetInt32();
+                    reader.Read();
+                }
+
+                if(reader.TokenType == JsonTokenType.Number)
+                {
+                    result.z = reader.GetInt32();
+                    reader.Read();
+                }
+
+                while(reader.TokenType != JsonTokenType.EndArray)
+                {
+                    reader.Read();
+                }
+
+                return result;
+            }
+
+            Log.Warning($"Vector3IntFromJson - unable to read from {reader.TokenType}");
+            return default;
+        }
+
+        public override void Write(Utf8JsonWriter writer, Vector3Int val, JsonSerializerOptions options)
+        {
+            DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new(2, 3);
+            defaultInterpolatedStringHandler.AppendFormatted(val.x);
+            defaultInterpolatedStringHandler.AppendLiteral(",");
+            defaultInterpolatedStringHandler.AppendFormatted(val.y);
+            defaultInterpolatedStringHandler.AppendLiteral(",");
+            defaultInterpolatedStringHandler.AppendFormatted(val.z);
+            writer.WriteStringValue(defaultInterpolatedStringHandler.ToStringAndClear());
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+    "Id": "faa05274-45f8-4747-b98a-6132ac09b0e5",
     "Name": "visualonlychunk",
     "Tags": "world",
     "Components": [
@@ -8,35 +8,29 @@
         "__type": "Chunk",
         "ModelUpdater": {
           "_type": "component",
-          "go": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+          "go": "faa05274-45f8-4747-b98a-6132ac09b0e5",
           "component_type": "ChunkModelUpdater"
         },
-        "Position": {},
-        "Size": {
-          "x": 16,
-          "y": 16,
-          "z": 16,
-          "Normal": "0.5773503,0.5773503,0.5773503",
-          "Length": 27.712812
-        }
+        "Position": "0,0,0",
+        "Size": "16,16,16"
       },
       {
         "__type": "ChunkModelUpdater",
         "Chunk": {
           "_type": "component",
-          "go": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+          "go": "faa05274-45f8-4747-b98a-6132ac09b0e5",
           "component_type": "Chunk"
         },
         "InteractionCollider": {
           "_type": "component",
-          "go": "73415605-8b34-4d84-8dc5-1fd097957567",
+          "go": "e88c20de-05ce-426f-ac46-2372854bfbe8",
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": false,
         "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
         "PhysicsCollider": {
           "_type": "component",
-          "go": "2c6a4762-5b41-42a5-9fed-0790244c9cd9",
+          "go": "faa05274-45f8-4747-b98a-6132ac09b0e5",
           "component_type": "ModelCollider"
         },
         "PhysicsEnabled": false,
@@ -54,7 +48,7 @@
     ],
     "Children": [
       {
-        "Id": "73415605-8b34-4d84-8dc5-1fd097957567",
+        "Id": "e88c20de-05ce-426f-ac46-2372854bfbe8",
         "Name": "Interactable",
         "Tags": "interactable",
         "Enabled": true,
