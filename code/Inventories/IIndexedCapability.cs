@@ -15,10 +15,10 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
             throw new ArgumentOutOfRangeException(nameof(index));
 
         var currentStack = Get(index);
-        if(!currentStack.EqualsValue(stack))
+        if(!currentStack.IsEmpty && !currentStack.EqualsValue(stack))
             return 0;
 
-        return SetMax(index, currentStack.Add(stack.Count), simulate);
+        return SetMax(index, stack.Add(currentStack.Count), simulate);
     }
 
     T ExtractMax(int index, int count, bool simulate = false)
@@ -32,7 +32,7 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
 
         var newStack = stack.Sub(count);
         if(this.TrySet(index, newStack, simulate))
-            return stack.WithCount(count - newStack.Count);
+            return stack.WithCount(stack.Count - newStack.Count);
 
         return stack.WithCount(0); // TODO: use T.Empty when will be whitelisted
     }

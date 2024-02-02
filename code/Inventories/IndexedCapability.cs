@@ -25,10 +25,10 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
             throw new ArgumentOutOfRangeException(nameof(index));
 
         var currentStack = Get(index);
-        if(!currentStack.EqualsValue(stack))
+        if(!currentStack.IsEmpty && !currentStack.EqualsValue(stack))
             return 0;
 
-        return SetMax(index, currentStack.Add(stack.Count), simulate);
+        return SetMax(index, stack.Add(currentStack.Count), simulate);
     }
 
     public virtual T ExtractMax(int index, int count, bool simulate = false)
@@ -42,7 +42,7 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
 
         var newStack = stack.Sub(count);
         if(this.TrySet(index, newStack, simulate))
-            return stack.WithCount(count - newStack.Count);
+            return stack.WithCount(stack.Count - newStack.Count);
 
         return GetEmpty();
     }
