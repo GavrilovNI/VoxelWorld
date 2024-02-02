@@ -13,9 +13,9 @@ public class Registry<T> where T : class, IRegisterable
 
     public void Add(T value)
     {
-        if(_blocks.ContainsKey(value.ModedId))
-            throw new InvalidOperationException($"{typeof(T).Name} with {nameof(ModedId)} '{value.ModedId}' already registered!");
-        _blocks.Add(value.ModedId, value);
+        if(_blocks.ContainsKey(value.Id))
+            throw new InvalidOperationException($"{typeof(T).Name} with {nameof(ModedId)} '{value.Id}' already registered!");
+        _blocks.Add(value.Id, value);
         value.OnRegistered();
     }
 

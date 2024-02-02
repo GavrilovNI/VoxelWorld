@@ -9,13 +9,13 @@ namespace Sandcube.Items;
 
 public class Item : IRegisterable, IStackValue
 {
-    public ModedId ModedId { get; }
+    public ModedId Id { get; }
     public Texture Texture { get; }
     public int StackLimit { get; }
 
     public Item(in ModedId id, Texture texture, int stackLimit)
     {
-        ModedId = id;
+        Id = id;
         Texture = texture;
         StackLimit = stackLimit;
     }
@@ -31,5 +31,5 @@ public class Item : IRegisterable, IStackValue
     public virtual InteractionResult OnAttack(ItemActionContext context) => InteractionResult.Pass;
     public virtual InteractionResult OnUse(ItemActionContext context) => InteractionResult.Pass;
 
-    public override int GetHashCode() => HashCode.Combine(ModedId, StackLimit);
+    public override int GetHashCode() => HashCode.Combine(Id, StackLimit);
 }

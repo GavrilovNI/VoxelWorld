@@ -58,7 +58,7 @@ public class ModItems : ModRegisterables<Item>
             var propertyType = property.PropertyType;
             if(!propertyType.IsAssignableTo(typeof(BlockItem)) || propertyType == typeof(BlockItem))
             {
-                var id = block.ModedId;
+                var id = block.Id;
                 var itemTexture = Texture.CreateRenderTarget().WithWidth(BlockItemsTextureSize).WithHeight(BlockItemsTextureSize).Create();
                 bool made = await photoMaker.TryMakePhoto(block.DefaultBlockState, itemTexture);
                 if(!made)

@@ -14,7 +14,7 @@ namespace Sandcube.Blocks;
 
 public abstract class Block : IRegisterable
 {
-    public ModedId ModedId { get; }
+    public ModedId Id { get; }
     public readonly BlockState DefaultBlockState;
     public readonly BlockStateSet BlockStateSet;
     public required BlockProperties Properties { get; init; }
@@ -22,7 +22,7 @@ public abstract class Block : IRegisterable
     [SetsRequiredMembers]
     public Block(in ModedId id, in BlockProperties properties)
     {
-        ModedId = id;
+        Id = id;
         BlockStateSet = new BlockStateSet(this, CombineProperties());
         DefaultBlockState = CreateDefaultBlockState(BlockStateSet.First());
         Properties = properties;
@@ -63,7 +63,7 @@ public abstract class Block : IRegisterable
     // Thread safe
     public abstract ISidedMeshPart<Vector3Vertex> CreateInteractionMesh(BlockState blockState);
 
-    public override string ToString() => $"{nameof(Block)}({ModedId})";
+    public override string ToString() => $"{nameof(Block)}({Id})";
 
-    public override int GetHashCode() => ModedId.GetHashCode();
+    public override int GetHashCode() => Id.GetHashCode();
 }

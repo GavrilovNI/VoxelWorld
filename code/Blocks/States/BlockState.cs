@@ -58,7 +58,7 @@ public sealed class BlockState
 
     public override string ToString()
     {
-        StringBuilder builder = new($"Block: \"{Block.ModedId}\"");
+        StringBuilder builder = new($"Block: \"{Block.Id}\"");
 
         if(_properties.Count > 0)
         {
