@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.UI;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System.Collections.Generic;
@@ -50,6 +51,14 @@ public static class VisualMeshes
                 .Build();
         }
     );
+
+    public static SidedMesh<ComplexVertex> XShaped(Rect uv) =>
+        new SidedMesh<ComplexVertex>.Builder()
+                .Add(new ComplexMeshBuilder().AddQuad(MathV.MeterCubeCorners[6], MathV.MeterCubeCorners[2], MathV.MeterCubeCorners[0], MathV.MeterCubeCorners[4], new Vector3(-1, 1).Normal, ComplexMeshBuilder.TangentUp, uv))
+                .Add(new ComplexMeshBuilder().AddQuad(MathV.MeterCubeCorners[4], MathV.MeterCubeCorners[0], MathV.MeterCubeCorners[2], MathV.MeterCubeCorners[6], new Vector3(1, -1).Normal, ComplexMeshBuilder.TangentUp, uv))
+                .Add(new ComplexMeshBuilder().AddQuad(MathV.MeterCubeCorners[7], MathV.MeterCubeCorners[3], MathV.MeterCubeCorners[1], MathV.MeterCubeCorners[5], new Vector3(-1, -1).Normal, ComplexMeshBuilder.TangentUp, uv))
+                .Add(new ComplexMeshBuilder().AddQuad(MathV.MeterCubeCorners[5], MathV.MeterCubeCorners[1], MathV.MeterCubeCorners[3], MathV.MeterCubeCorners[7], new Vector3(1, 1).Normal, ComplexMeshBuilder.TangentUp, uv))
+                .Build();
 
 
     public class AllSidedMeshMaker
