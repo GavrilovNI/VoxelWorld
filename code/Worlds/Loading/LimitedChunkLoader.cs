@@ -45,6 +45,8 @@ public class LimitedChunkLoader : ChunkLoader
     // Call only in game thread
     protected virtual void LoadQueuedChunks()
     {
+        ThreadSafe.AssertIsMainThread();
+
         int loadingChunksCount = ActiveLoadingChunkCount;
         while(loadingChunksCount < MaxChunksToLoadAtTime &&
             ChunksToLoad.TryDequeue(out var chunkPositionToLoad))
@@ -57,6 +59,8 @@ public class LimitedChunkLoader : ChunkLoader
     // Call only in game thread
     protected virtual Task<Chunk> LoadChunk(ChunkLoadingData loadingData)
     {
+        ThreadSafe.AssertIsMainThread();
+
         Interlocked.Increment(ref ActiveLoadingChunkCount);
 
         var position = loadingData.CreationData.Position;

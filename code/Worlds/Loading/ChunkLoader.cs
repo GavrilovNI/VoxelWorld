@@ -16,6 +16,8 @@ public class ChunkLoader : ThreadHelpComponent
     // Call only in game thread
     public virtual Task<Chunk> LoadChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
     {
+        ThreadSafe.AssertIsMainThread();
+
         cancellationToken.ThrowIfCancellationRequested();
         var chunk = CreateChunk(creationData with { EnableOnCreate = false });
 
@@ -48,6 +50,8 @@ public class ChunkLoader : ThreadHelpComponent
     // Call only in game thread
     protected virtual Chunk CreateChunk(ChunkCreationData creationData)
     {
+        ThreadSafe.AssertIsMainThread();
+
         Transform cloneTransform = new(Transform.Position + creationData.Position * creationData.Size * MathV.UnitsInMeter, Transform.Rotation);
         var chunkGameObject = ChunkPrefab.Clone(cloneTransform, GameObject, false, $"Chunk {creationData.Position}");
         chunkGameObject.BreakFromPrefab();

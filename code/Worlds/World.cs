@@ -92,6 +92,7 @@ public class World : ThreadHelpComponent, IWorldAccessor
     // Call only in game thread
     protected virtual void OnChunkLoaded(Chunk chunk)
     {
+        ThreadSafe.AssertIsMainThread();
         UpdateNeighboringChunks(chunk.Position);
     }
 

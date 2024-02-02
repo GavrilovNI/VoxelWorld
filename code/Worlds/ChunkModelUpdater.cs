@@ -184,6 +184,8 @@ public class ChunkModelUpdater : ThreadHelpComponent
     // Call only in game thread
     protected virtual Task UpdateModels(bool force = false)
     {
+        ThreadSafe.AssertIsMainThread();
+
         CancellationToken cancellationToken;
         TaskCompletionSource oldModelUpdateTaskSource;
 
@@ -234,6 +236,8 @@ public class ChunkModelUpdater : ThreadHelpComponent
     // Call only in game thread
     protected virtual void DestroyModelRenderers()
     {
+        ThreadSafe.AssertIsMainThread();
+
         foreach(var modelComponent in ModelRenderers)
             modelComponent.Destroy();
         ModelRenderers.Clear();
@@ -242,6 +246,8 @@ public class ChunkModelUpdater : ThreadHelpComponent
     // Call only in game thread
     protected virtual List<ModelRenderer> AddModelRenderers(int count)
     {
+        ThreadSafe.AssertIsMainThread();
+
         List<ModelRenderer> result = new(count);
         for(int i = 0; i < count; ++i)
         {
@@ -368,6 +374,8 @@ public class ChunkModelUpdater : ThreadHelpComponent
     // Call only in game thread
     protected virtual async Task ApplyMeshes(MeshBuilders builders, CancellationToken cancellationToken)
     {
+        ThreadSafe.AssertIsMainThread();
+
         cancellationToken.ThrowIfCancellationRequested();
         var rendererTask = UpdateModelRenderers(builders.Opaque, builders.Translucent, cancellationToken);
 
@@ -392,6 +400,8 @@ public class ChunkModelUpdater : ThreadHelpComponent
     // Call only in game thread
     protected virtual void RecalculateBounds(params IBounded?[] bounders)
     {
+        ThreadSafe.AssertIsMainThread();
+
         BBox? bounds = null;
         foreach(var currentBounder in bounders)
         {

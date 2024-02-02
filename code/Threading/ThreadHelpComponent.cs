@@ -33,6 +33,8 @@ public class ThreadHelpComponent : Component
         // Call only in game thread
         public override void Run()
         {
+            ThreadSafe.AssertIsMainThread();
+
             if(CancellationTokenSource.IsCancellationRequested)
             {
                 Cancel();
@@ -76,6 +78,8 @@ public class ThreadHelpComponent : Component
         // Call only in game thread
         public override void Run()
         {
+            ThreadSafe.AssertIsMainThread();
+
             if(CancellationTokenSource.IsCancellationRequested)
             {
                 Cancel();
