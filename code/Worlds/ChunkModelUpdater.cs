@@ -105,6 +105,11 @@ public class ChunkModelUpdater : ThreadHelpComponent
         }
     }
 
+    public virtual void UpdateTexture(Texture texture)
+    {
+        foreach(var modelRenderer in ModelRenderers)
+            modelRenderer.SceneObject.Attributes.Set("color", texture);
+    }
 
     protected override void OnStart()
     {

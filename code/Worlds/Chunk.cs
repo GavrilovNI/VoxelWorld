@@ -46,6 +46,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
 
     public virtual Task RequireModelUpdate() => ModelUpdater.RequireModelUpdate();
 
+    public virtual void UpdateTexture(Texture texture) => ModelUpdater.UpdateTexture(texture);
+
 
     // Thread safe
     public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);

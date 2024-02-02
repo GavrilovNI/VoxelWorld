@@ -1,6 +1,8 @@
 ﻿using Sandbox;
 using Sandcube.Mth;
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Sandcube.Texturing;
 
@@ -12,6 +14,9 @@ public class TextureMap
     protected Vector2Int MultipleOfExpand;
 
     public Vector2Int Size => (Vector2Int)Texture.Size;
+
+    protected List<(TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture)> AnimatedTextures = new();
+    protected float AnimatedTime = 0;
 
     public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand)
     {
@@ -28,15 +33,8 @@ public class TextureMap
     {
     }
 
-    public Rect GetUv(Rect textureRect) => new Rect(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
-    public Texture GetTexture(Rect textureRect)
-    {
-        var result = Texture.Create((int)textureRect.Width, (int)textureRect.Height).Finish();
-        Color32[] data = new Color32[(int)textureRect.Width * (int)textureRect.Height];
-        Texture.GetPixels<Color32>(((int)textureRect.Left, (int)textureRect.Top, (int)textureRect.Width, (int)textureRect.Height), 0, 0, data, ImageFormat.RGBA8888);
-        result.Update(data, 0, 0, (int)textureRect.Width, (int)textureRect.Height);
-        return result;
-    }
+    public Rect GetUv(Rect textureRect) => new(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
+    public Texture GetTexture(Rect textureRect) => Texture.GetPart(textureRect);
 
     public TextureMapPart AddTexture(Texture texture)
     {
@@ -54,6 +52,34 @@ public class TextureMap
 
         Texture.Update(texture.GetPixels(), (int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
         return new(this, rect);
+    }
+
+    public TextureMapPart AddAnimatedTexture(AnimatedTexture animatedTexture)
+    {
+        var texture = animatedTexture.GetFrameTexture(0);
+        var textureMapPart = AddTexture(texture);
+        AnimatedTextures.Add((textureMapPart, 0, animatedTexture));
+        return textureMapPart;
+    }
+
+    public bool UpdateAnimatedTextures() => UpdateAnimatedTextures(Time.Delta);
+    public bool UpdateAnimatedTextures(float deltaTime)
+    {
+        bool updated = false;
+        AnimatedTime += deltaTime;
+        for(int i = 0; i < AnimatedTextures.Count; ++i)
+        {
+            (TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture) = AnimatedTextures[i];
+
+            var nextFrame = animatedTexture.GetFrameIndex(AnimatedTime);
+            if(nextFrame != frame)
+            {
+                Texture.Update(animatedTexture.GetFrameTexture(nextFrame).GetPixels(), textureMapPart.TextureRect);
+                AnimatedTextures[i] = (textureMapPart, nextFrame, animatedTexture);
+                updated = true;
+            }
+        }
+        return updated;
     }
 
     protected void Expand(Vector2Int delta)

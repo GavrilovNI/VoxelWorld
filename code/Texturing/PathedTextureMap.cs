@@ -1,16 +1,12 @@
 ﻿using Sandbox;
+using Sandcube.Mth;
 using System;
 using System.Collections.Generic;
 
 namespace Sandcube.Texturing;
 
-public class PathedTextureMap
+public class PathedTextureMap : TextureMap
 {
-    protected TextureMap TextureMap = new();
-
-    public Texture Texture => TextureMap.Texture;
-    public Vector2 Size => TextureMap.Size;
-
     public readonly string LoadPathPrefix;
 
     public TextureMapPart Invalid { get; protected set; }
@@ -19,20 +15,29 @@ public class PathedTextureMap
 
     protected Dictionary<string, TextureMapPart> PartsByPath = new();
 
-    public PathedTextureMap(string loadPathPrefix = "")
+    public PathedTextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, string loadPathPrefix = "") :
+        base(initialSize, multipleOfExpand)
     {
         LoadPathPrefix = loadPathPrefix;
         SetupDefaultTextures();
     }
 
-    protected void SetupDefaultTextures()
+    public PathedTextureMap(Vector2Int initialSize, string loadPathPrefix = "") :
+        this(initialSize, new Vector2Int(256, 256), loadPathPrefix)
     {
-        Invalid = TextureMap.AddTexture(Texture.Invalid);
-        Transparent = TextureMap.AddTexture(Texture.Transparent);
-        White = TextureMap.AddTexture(Texture.White);
     }
 
-    public Texture GetTexture(Rect textureRect) => TextureMap.GetTexture(textureRect);
+    public PathedTextureMap(string loadPathPrefix = "") :
+        this(new Vector2Int(256, 256), loadPathPrefix)
+    {
+    }
+
+    protected void SetupDefaultTextures()
+    {
+        Invalid = AddTexture(Texture.Invalid);
+        Transparent = AddTexture(Texture.Transparent);
+        White = AddTexture(Texture.White);
+    }
 
 
     public TextureMapPart AddTexture(string path, Texture texture)
@@ -40,8 +45,31 @@ public class PathedTextureMap
         if(PartsByPath.ContainsKey(path))
             throw new InvalidOperationException($"Texture by key {path} was already in a map");
 
-        var textureMapPart = TextureMap.AddTexture(texture);
+        var textureMapPart = AddTexture(texture);
         PartsByPath.Add(path, textureMapPart);
+        return textureMapPart;
+    }
+
+    public TextureMapPart AddAnimatedTexture(string path, AnimatedTexture animatedTexture)
+    {
+        if(PartsByPath.ContainsKey(path))
+            throw new InvalidOperationException($"Texture by key {path} was already in a map");
+
+        var textureMapPart = AddAnimatedTexture(animatedTexture);
+        PartsByPath.Add(path, textureMapPart);
+        return textureMapPart;
+    }
+
+    public TextureMapPart UpdateTexture(string path, Texture texture)
+    {
+        if(!PartsByPath.TryGetValue(path, out var textureMapPart))
+            throw new InvalidOperationException($"Texture by key {path} was not presented in a map");
+
+        var rect = textureMapPart.TextureRect;
+        if(rect.Size != texture.Size)
+            throw new InvalidOperationException($"can't update texture with texture of different size");
+
+        Texture.Update(texture.GetPixels(), (int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
         return textureMapPart;
     }
 
@@ -75,6 +103,25 @@ public class PathedTextureMap
         var texture = Texture.Load(fileSystem, LoadPathPrefix + path, warnOnMissing);
         if(texture is null)
             return SandcubeGame.Instance!.BlocksTextureMap.Invalid;
+
         return AddTexture(path, texture);
+    }
+
+    public TextureMapPart GetOrLoadAnimatedTexture(string path, Vector2Int atlasSize, float[] framesLength, bool warnOnMissing = true) =>
+        GetOrLoadAnimatedTexture(FileSystem.Mounted, path, atlasSize, framesLength, warnOnMissing);
+
+    //TODO: load atlasSize and framesLength from data file
+    public TextureMapPart GetOrLoadAnimatedTexture(BaseFileSystem fileSystem, string path, Vector2Int atlasSize, float[] framesLength, bool warnOnMissing = true)
+    {
+        if(HasTexture(path))
+            return GetTexture(path);
+
+        var texture = Texture.Load(fileSystem, LoadPathPrefix + path, warnOnMissing);
+        if(texture is null)
+            return SandcubeGame.Instance!.BlocksTextureMap.Invalid;
+
+        AnimatedTexture animatedTexture = new(texture, atlasSize, framesLength);
+        var textureMapPart = AddAnimatedTexture(path, animatedTexture);
+        return textureMapPart;
     }
 }

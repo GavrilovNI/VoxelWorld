@@ -27,6 +27,18 @@ public class World : ThreadHelpComponent, IWorldAccessor
         Clear();
     }
 
+    public virtual void UpdateTexture(Texture texture)
+    {
+        lock(Chunks)
+        {
+            foreach(var chunkUnion in Chunks.Values)
+            {
+                if(chunkUnion.Is<Chunk>(out var chunk))
+                    chunk.UpdateTexture(texture);
+            }
+        }
+    }
+
     // Thread safe
     public virtual Task<Chunk> GetChunkOrLoad(Vector3Int position)
     {

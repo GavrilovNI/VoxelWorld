@@ -32,6 +32,7 @@ public sealed class SandcubeGame : Component
 
     [Property] public World World { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
+    [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
 
     public Registry<Block> BlocksRegistry { get; } = new();
     public Registry<Item> ItemsRegistry { get; } = new();
@@ -89,6 +90,21 @@ public sealed class SandcubeGame : Component
 
         IsStarted = true;
         Started?.Invoke();
+    }
+
+    protected override void OnUpdate()
+    {
+        if(!IsStarted)
+            return;
+
+        if(ShouldAnimateBlockTextures)
+            AnimateBlockTextures();
+    }
+
+    private void AnimateBlockTextures()
+    {
+        if(BlocksTextureMap.UpdateAnimatedTextures())
+            World.UpdateTexture(BlocksTextureMap.Texture);
     }
 
     private void RebuildBlockMeshes()
