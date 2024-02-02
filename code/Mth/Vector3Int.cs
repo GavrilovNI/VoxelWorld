@@ -49,6 +49,7 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
     }
 
 
+    [JsonIgnore]
     public readonly Vector3 Normal
     {
         get
