@@ -29,6 +29,7 @@
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
+          "ShouldAnimateBlockTextures": true,
           "World": {
             "_type": "component",
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
@@ -493,6 +494,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-01T23:50:55.3752049\u002B01:00",
+  "LastSaved": "2024-02-02T04:12:40.7768309\u002B01:00",
   "__references": []
 }
