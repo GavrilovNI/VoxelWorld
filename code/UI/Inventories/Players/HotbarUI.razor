@@ -14,11 +14,12 @@
 <root>
 	@if(PlayerInventory is not null)
 	{
-		<div class="inner" style="aspect-ratio:@(PlayerInventory.HotbarSize)">
+		var hotbar = PlayerInventory.Hotbar;
+		<div class="inner" style="aspect-ratio:@(hotbar.Size)">
 			<div class="slots">
-				@for(int i = 0; i < PlayerInventory.HotbarSize; ++i)
+				@for(int i = 0; i < hotbar.Size; ++i)
 				{
-					Stack<Item> stack = PlayerInventory.GetHotbarItem(i);
+					Stack<Item> stack = hotbar.Get(i);
 					bool selected = PlayerInventory.MainHandIndex == i;
 
 					<div class="item-slot @(selected ? "selected" : string.Empty)">
@@ -47,5 +48,5 @@
 		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
 	}
 
-	protected override int BuildHash() => PlayerInventory?.GetHashCode() ?? 0;
+	protected override int BuildHash() => HashCode.Combine(PlayerInventory?.Hotbar, PlayerInventory?.MainHandIndex);
 }
