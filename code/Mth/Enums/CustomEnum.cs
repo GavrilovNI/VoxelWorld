@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Sandcube.Mth.Enums;
+
 
 public abstract class CustomEnum
 {
@@ -71,4 +75,28 @@ public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICusto
     public sealed override int GetHashCode() => Ordinal;
 
     public override string ToString() => Name;
+
+    public class CustomEnumJsonConverter : JsonConverter<T>
+    {
+        public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if(reader.TokenType == JsonTokenType.String)
+            {
+                var name = reader.GetString();
+                var result = GetValues().FirstOrDefault(v => v!.Name == name, null);
+                if(result is not null)
+                    return result;
+            }
+
+            Log.Warning($"Vector2IntFromJson - unable to read from {reader.TokenType}");
+            return null!;
+        }
+
+        public override void Write(Utf8JsonWriter writer, T val, JsonSerializerOptions options)
+        {
+            DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new(2, 3);
+            defaultInterpolatedStringHandler.AppendLiteral(val.Name);
+            writer.WriteStringValue(defaultInterpolatedStringHandler.ToStringAndClear());
+        }
+    }
 }

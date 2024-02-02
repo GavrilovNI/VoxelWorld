@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Sandcube.Interactions;
+using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Sandcube.Mth.Enums;
 
 #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 #pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+[JsonConverter(typeof(CustomEnumJsonConverter))]
 public class SlabType : CustomEnum<SlabType>, ICustomEnum<SlabType>
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)

@@ -49,7 +49,7 @@
           "ActiveLoadingChunks": 0,
           "ChunkPrefab": {
             "_type": "gameobject",
-            "go": "12905c7d-cd7f-4ba5-8dc6-5424cbd16aab",
+            "go": "e1765501-5659-4c60-8363-cc3e3bc3392d",
             "prefab": "prefabs/chunk.prefab"
           },
           "Generator": {
@@ -448,7 +448,7 @@
               "__type": "ChunkLoader",
               "ChunkPrefab": {
                 "_type": "gameobject",
-                "go": "3d93214a-a54d-4e78-968f-636a3875a5b2",
+                "go": "c1bdfbc3-4221-4daa-9fa0-5361b326c3c9",
                 "prefab": "prefabs/visualonlychunk.prefab"
               },
               "Generator": null
@@ -486,6 +486,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-02T04:22:29.4702282\u002B01:00",
+  "LastSaved": "2024-02-02T04:51:57.3474689\u002B01:00",
   "__references": []
 }
