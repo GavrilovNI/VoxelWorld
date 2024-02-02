@@ -7,6 +7,21 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
 {
     private readonly Dictionary<int, T> _stacks = new();
 
+    private int? _stacksHashCode = null;
+    protected int StacksHashCode
+    {
+        get
+        {
+            if(_stacksHashCode == null)
+            {
+                _stacksHashCode = _stacks.Count;
+                foreach(var (index, stack) in _stacks)
+                    _stacksHashCode = HashCode.Combine(_stacksHashCode, index, stack);
+            }
+            return _stacksHashCode.Value;
+        }
+    }
+
     public override int Size { get; protected set; }
 
 
@@ -31,7 +46,10 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
         var limit = GetStackLimit(index, stack);
         var maxCountToSet = Math.Min(limit, stack.Count);
         if(!simulate)
+        {
             _stacks[index] = stack.WithCount(maxCountToSet);
+            _stacksHashCode = null;
+        }
 
         return maxCountToSet;
     }
@@ -66,5 +84,5 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
 
     public override IEnumerator<T> GetEnumerator() => _stacks.Values.GetEnumerator();
 
-    public override int GetHashCode() => _stacks.GetHashCode();
+    public override int GetHashCode() => StacksHashCode;
 }
