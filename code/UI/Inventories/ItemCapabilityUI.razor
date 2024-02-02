@@ -1,0 +1,40 @@
+@using Sandbox
+@using Sandbox.UI
+@using Sandcube.Inventories
+@using Sandcube.Items
+@using System
+
+@namespace Sandcube.UI.Inventories
+@attribute [StyleSheet]
+@inherits Panel
+
+<root style="aspect-ratio:@AspectRatio">
+	@if(Capability is not null)
+	{
+		int index = 0;
+		var height = Height;
+
+		@for(int y = 0; y < height; ++y)
+		{
+			var currentWidth = Math.Min(Width, Capability.Size - index);
+			<div class="slots-row" style="aspect-ratio:@currentWidth; width: @(100f * currentWidth / Width)%">
+				@for (int x = 0; x < Width && index < Capability.Size; ++x)
+				{
+					Stack<Item> stack = Capability.Get(index++);
+					<ItemSlotUI class="item-slot" Stack=@stack/>
+				}
+			</div>
+		}
+	}
+</root>
+
+
+@code
+{
+	public IIndexedCapability<Stack<Item>>? Capability { get; set; }
+	public int Width { get; set; } = 9;
+	public int Height => (Capability.Size / Width) + (Capability.Size % Width == 0 ? 0 : 1);
+	public float AspectRatio => Capability is null ? 1 : 1f * Width / Height;
+
+	protected override int BuildHash() => Capability?.GetHashCode() ?? 0;
+}

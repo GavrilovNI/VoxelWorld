@@ -1,0 +1,50 @@
+@using Sandbox
+@using Sandbox.UI
+@using Sandcube.Interactions
+@using Sandcube.Inventories
+@using Sandcube.Inventories.Players
+@using Sandcube.Items
+@using Sandcube.UI.Inventories
+@using Sandcube.UI.Menus
+@using System
+@using System.Linq
+
+@namespace Sandcube.UI.Inventories.Players
+@attribute [StyleSheet]
+@inherits PanelComponent
+@implements IMenu
+
+<root>
+	@if(PlayerInventory is not null)
+	{
+		var hotbar = PlayerInventory.Hotbar;
+		<div class="capabilities">
+			<ItemCapabilityUI class="capability secondary-hand" Capability=@PlayerInventory.SecondaryHand Width=@hotbar.Size/>
+			<ItemCapabilityUI class="capability main" Capability=@PlayerInventory.Main Width=@hotbar.Size/>
+			<ItemCapabilityUI class="capability hotbar" Capability=@hotbar Width=@hotbar.Size/>
+		</div>
+	}
+</root>
+
+@code
+{
+	[Property] public PlayerInventory PlayerInventory { get; set; } // TODO: change to IPlayerInventory
+
+	public bool Opened
+	{
+		get => this.Panel.Class.Contains("opened");
+		set => this.Panel.SetClass("opened", value);
+	}
+
+	public virtual void Open()
+	{
+		Opened = true;
+	}
+
+	public virtual void Close()
+	{
+		Opened = false;
+	}
+
+	protected override int BuildHash() => PlayerInventory?.GetHashCode() ?? 0;
+}

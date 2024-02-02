@@ -74,6 +74,27 @@
       ]
     },
     {
+      "Id": "469be248-ea6f-4c93-9911-876487c5a0fa",
+      "Name": "MenuController",
+      "Position": "183.3966,-105.2604,-145.7659",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "MenuController",
+          "EscapeMenu": {
+            "_type": "component",
+            "go": "5070d320-0590-4a21-a5de-cd3007668697",
+            "component_type": "EscapeMenu"
+          },
+          "PlayerInventoryUI": {
+            "_type": "component",
+            "go": "c7b48166-b8b0-4c51-a530-ff018db87ef4",
+            "component_type": "PlayerInventoryUI"
+          }
+        }
+      ]
+    },
+    {
       "Id": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
       "Name": "Player",
       "Position": "0,0,1000",
@@ -353,6 +374,21 @@
                   }
                 }
               ]
+            },
+            {
+              "Id": "c7b48166-b8b0-4c51-a530-ff018db87ef4",
+              "Name": "PlayerInventory",
+              "Enabled": true,
+              "Components": [
+                {
+                  "__type": "PlayerInventoryUI",
+                  "PlayerInventory": {
+                    "_type": "component",
+                    "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+                    "component_type": "PlayerInventory"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -362,7 +398,7 @@
           "Enabled": true,
           "Components": [
             {
-              "__type": "InGameMenu"
+              "__type": "EscapeMenu"
             }
           ]
         },
@@ -498,6 +534,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-02T19:07:02.777301\u002B01:00",
+  "LastSaved": "2024-02-02T21:31:42.1828319\u002B01:00",
   "__references": []
 }

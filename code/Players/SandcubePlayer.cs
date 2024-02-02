@@ -3,6 +3,7 @@ using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
 using Sandcube.Mods;
+using Sandcube.UI.Menus;
 using Sandcube.Worlds;
 
 namespace Sandcube.Players;
@@ -43,7 +44,8 @@ public class SandcubePlayer : Component
 
     protected override void OnUpdate()
     {
-        UpdateHandSlot();
+        if(!(MenuController.Instance?.IsAnyOpened ?? false))
+            UpdateHandSlot();
     }
 
     protected virtual void UpdateHandSlot()

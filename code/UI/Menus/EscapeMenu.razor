@@ -1,11 +1,11 @@
-@using Sandbox;
-@using Sandbox.UI;
-@using System.Linq;
+@using Sandbox
+@using Sandbox.UI
+@using System.Linq
 
 @namespace Sandcube.UI.Menus
-
+@attribute [StyleSheet]
 @inherits PanelComponent
-
+@implements IMenu
 
 <root>
 	<div class="buttons">
@@ -22,10 +22,14 @@
 		set => this.Panel.SetClass("opened", value);
 	}
 
-	protected override void OnUpdate()
+	public virtual void Open()
 	{
-		if (Input.EscapePressed)
-			Opened = !Opened;
+		Opened = true;
+	}
+
+	public virtual void Close()
+	{
+		Opened = false;
 	}
 
 	protected void LeaveGame()
