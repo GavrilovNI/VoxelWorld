@@ -6,6 +6,7 @@ namespace Sandcube.Inventories;
 public abstract class StackInventory<T> : IndexedCapability<T> where T : class, IStack<T>
 {
     private readonly Dictionary<int, T> _stacks = new();
+    public readonly int SlotLimit;
 
     private int? _stacksHashCode = null;
     protected int StacksHashCode
@@ -14,7 +15,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
         {
             if(_stacksHashCode == null)
             {
-                _stacksHashCode = _stacks.Count;
+                _stacksHashCode = HashCode.Combine(SlotLimit, _stacks.Count);
                 foreach(var (index, stack) in _stacks)
                     _stacksHashCode = HashCode.Combine(_stacksHashCode, index, stack);
             }
@@ -25,9 +26,10 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
     public override int Size { get; protected set; }
 
 
-    public StackInventory(int size)
+    public StackInventory(int size, int slotLimit = int.MaxValue)
     {
         Size = size;
+        SlotLimit = slotLimit;
     }
 
     public override T Get(int index)
@@ -37,6 +39,8 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
 
         return _stacks.GetValueOrDefault(index, GetEmpty());
     }
+
+    public override int GetSlotLimit(int index) => SlotLimit;
 
     public override int SetMax(int index, T stack, bool simulate = false)
     {

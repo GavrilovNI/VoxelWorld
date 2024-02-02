@@ -7,7 +7,7 @@ namespace Sandcube.Inventories;
 [Obsolete("to remove when access T.Empty (Stack<Item>.Empty) will be whitelisted")]
 internal class ItemStackInventory : StackInventory<Stack<Item>>
 {
-    public ItemStackInventory(int size) : base(size)
+    public ItemStackInventory(int size, int slotLimit = int.MaxValue) : base(size, slotLimit)
     {
     }
 
