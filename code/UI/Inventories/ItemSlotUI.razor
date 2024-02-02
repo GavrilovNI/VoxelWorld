@@ -15,6 +15,10 @@
 	@if(!Stack.IsEmpty)
 	{
 		<Image class="item" Texture=@Stack.Value.Texture/>
+		@if(Stack.Count > 1)
+		{
+			<AdaptiveLabel class="count" FontSize=40%>@Stack.Count</AdaptiveLabel>
+		}
 	}
 </root>
 

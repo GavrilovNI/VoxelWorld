@@ -1,0 +1,42 @@
+@using Sandbox;
+@using Sandbox.UI;
+
+
+@namespace Sandcube.UI
+@inherits Panel
+
+<root>
+@(Text?.ToString() ?? string.Empty)
+</root>
+
+@code
+{
+    public object Text { get; set; }
+    public string FontSize { get; set; }
+
+    public override void SetContent(string value) => Text = value;
+    public override void OnLayout(ref Rect layoutRect) => UpdateStyle();
+    protected override void OnParametersSet() => UpdateStyle();
+
+    protected virtual void UpdateStyle()
+    {
+        var fontSize = string.IsNullOrWhiteSpace(FontSize) ? Length.Undefined : Length.Parse(FontSize);
+        if(!fontSize.HasValue)
+        {
+            Log.Warning($"Couldn't parse {FontSize} for {nameof(AdaptiveLabel)}");
+            return;
+        }
+
+        if(fontSize.Value.Unit == LengthUnit.Percentage)
+        {
+            var neededSize = fontSize.Value.Value / 100f * Parent.Box.Rect.Height;
+            Style.FontSize = Length.Pixels(neededSize);
+        }
+        else if(fontSize.Value.Unit != LengthUnit.Undefined)
+        {
+            Style.FontSize = fontSize;
+        }
+    }
+
+    protected override int BuildHash() => Text?.GetHashCode() ?? 0;
+}

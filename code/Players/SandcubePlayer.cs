@@ -29,14 +29,14 @@ public class SandcubePlayer : Component
     protected virtual void OnGameStart()
     {
         var items = SandcubeBaseMod.Instance!.Items;
-        Inventory.TrySetHotbarItem(0, new(items.Stone, 1));
+        Inventory.TrySetHotbarItem(0, new(items.Stone));
         Inventory.TrySetHotbarItem(1, new(items.Dirt, 1));
-        Inventory.TrySetHotbarItem(2, new(items.Cobblestone, 1));
-        Inventory.TrySetHotbarItem(3, new(items.StoneSlab, 1));
-        Inventory.TrySetHotbarItem(4, new(items.Glass, 1));
-        Inventory.TrySetHotbarItem(5, new(items.WoodLog, 1));
-        Inventory.TrySetHotbarItem(6, new(items.Furnace, 1));
-        Inventory.TrySetHotbarItem(7, new(items.TallGrass, 1));
+        Inventory.TrySetHotbarItem(2, new(items.Cobblestone, 2));
+        Inventory.TrySetHotbarItem(3, new(items.StoneSlab, 9));
+        Inventory.TrySetHotbarItem(4, new(items.Glass, 10));
+        Inventory.TrySetHotbarItem(5, new(items.WoodLog, 32));
+        Inventory.TrySetHotbarItem(6, new(items.Furnace, 63));
+        Inventory.TrySetHotbarItem(7, new(items.TallGrass, 64));
     }
 
     protected override void OnUpdate()
