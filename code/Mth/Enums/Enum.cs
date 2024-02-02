@@ -29,8 +29,8 @@ public sealed class Enum<T> : CustomEnum<Enum<T>>, ICustomEnum<Enum<T>> where T 
     public static bool TryParse(string name, out Enum<T> value) => TryParse(All, name, out value);
 
     public static explicit operator Enum<T>(int ordinal) => All[ordinal];
-    public static explicit operator Enum<T>(T value) => All.First(v => v.Value.CompareTo(value) == 0);
-    public static explicit operator T(Enum<T> property) => property.Value;
+    public static implicit operator Enum<T>(T value) => All.First(v => v.Value.CompareTo(value) == 0);
+    public static implicit operator T(Enum<T> property) => property.Value;
     public static bool operator ==(Enum<T> a, Enum<T> b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(Enum<T> a, Enum<T> b) => a.Ordinal != b.Ordinal;
 
