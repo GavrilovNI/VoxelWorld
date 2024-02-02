@@ -14,7 +14,7 @@ public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue
 
     public bool IsEmpty => Count <= 0;
 
-    public Stack(T value, int count)
+    public Stack(T value, int count = 1)
     {
         Value = value;
         Count = Value is null ? 0 : Math.Max(0, count);
