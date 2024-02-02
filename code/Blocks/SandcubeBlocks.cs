@@ -41,4 +41,13 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
     public HorizontalDirectionalBlock Furnace { get; } = new(MakeId("furnace"),
         BlockTexturesLoader.SimplePillar.With(Direction.Forward, BlockTexturesLoader.FrontSuffix)
         .LoadTextureUvs(TextureMap, GetBlockPathPart("furnace")));
+
+    public XShapedBlock TallGrass { get; } = new(MakeId("tall_grass"),
+        TextureMap.GetOrLoadAnimatedTexture($"{GetBlockPathPart("tall_grass")}.png", new Mth.Vector2Int(2, 1), new float[2] { 1f, 1f }))
+    {
+        Properties = BlockProperties.Default with
+        {
+            IsTransparent = true,
+        }
+    };
 }
