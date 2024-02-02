@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Mth;
 using System;
 
 namespace Sandcube.Texturing;
@@ -8,22 +9,22 @@ public class TextureMap
     public Texture Texture { get; private set; } = Texture.Create(1, 1).Finish();
 
     protected TextureMapNode Nodes;
-    protected Vector2 MultipleOfExpand;
+    protected Vector2Int MultipleOfExpand;
 
-    public Vector2 Size => Texture.Size;
+    public Vector2Int Size => (Vector2Int)Texture.Size;
 
-    public TextureMap(Vector2 initialSize, Vector2 multipleOfExpand)
+    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand)
     {
-        Texture = Texture.Create((int)initialSize.x, (int)initialSize.y).Finish();
+        Texture = Texture.Create(initialSize.x, initialSize.y).Finish();
         Nodes = new TextureMapNode(new Rect(0, 0, initialSize.x, initialSize.y));
         MultipleOfExpand = multipleOfExpand;
     }
 
-    public TextureMap(Vector2 initialSize) : this(initialSize, new Vector2(256, 256))
+    public TextureMap(Vector2Int initialSize) : this(initialSize, new Vector2Int(256, 256))
     {
     }
 
-    public TextureMap() : this(new Vector2(256, 256))
+    public TextureMap() : this(new Vector2Int(256, 256))
     {
     }
 
@@ -39,15 +40,12 @@ public class TextureMap
 
     public TextureMapPart AddTexture(Texture texture)
     {
-        var textureSize = texture.Size;
+        var textureSize = (Vector2Int)texture.Size;
         if(!Nodes.TryTakeSpace(textureSize, out Rect rect))
         {
-            var currentSize = new Vector2(Texture.Width, Texture.Height);
-            var newSize = new Vector2(Math.Max(Texture.Width, texture.Width), Texture.Height + texture.Height);
-            var expandDelta = newSize - currentSize;
-
-            expandDelta.x = (int)(MathF.Ceiling(1f * expandDelta.x / MultipleOfExpand.x) * MultipleOfExpand.x);
-            expandDelta.y = (int)(MathF.Ceiling(1f * expandDelta.y / MultipleOfExpand.y) * MultipleOfExpand.y);
+            var newSize = new Vector2Int(Math.Max(Texture.Width, texture.Width), Texture.Height + texture.Height);
+            var expandDelta = newSize - Size;
+            expandDelta = (1f * expandDelta / MultipleOfExpand).Ceiling() * MultipleOfExpand;
 
             Expand(expandDelta);
             if(!Nodes.TryTakeSpace(textureSize, out rect))
@@ -58,16 +56,16 @@ public class TextureMap
         return new(this, rect);
     }
 
-    protected void Expand(Vector2 delta)
+    protected void Expand(Vector2Int delta)
     {
         if(delta.x < 0 || delta.y < 0)
             throw new ArgumentOutOfRangeException(nameof(delta), delta, "expand size can't be negative");
 
-        var newTexture = Texture.Create((int)(Texture.Width + delta.x), (int)(Texture.Height + delta.y)).Finish();
+        var newTexture = Texture.Create(Texture.Width + delta.x, Texture.Height + delta.y).Finish();
         newTexture.Update(Texture.GetPixels(), 0, 0, Texture.Width, Texture.Height);
         Texture = newTexture;
 
-        Nodes.Expand(new Vector2(delta.x, delta.y));
+        Nodes.Expand(delta);
     }
 
 
@@ -81,10 +79,10 @@ public class TextureMap
 
         public TextureMapNode(Rect rect)
         {
-            Rect = rect;
+            Rect = new Rect(rect.Left, rect.Top, (int)rect.Width, (int)rect.Height);
         }
 
-        public bool TryTakeSpace(Vector2 size, out Rect rect)
+        public bool TryTakeSpace(Vector2Int size, out Rect rect)
         {
             if(IsFull || size.x > Rect.Width || size.y > Rect.Height)
             {
@@ -123,7 +121,7 @@ public class TextureMap
             return false;
         }
 
-        public void Expand(Vector2 size)
+        public void Expand(Vector2Int size)
         {
             if(size.x <= 0 && size.y <= 0)
                 return;
