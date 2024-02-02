@@ -3,7 +3,7 @@ using System;
 
 namespace Sandcube.Mth;
 
-public static class VectorExtensions
+public static class Vector3Extensions
 {
     public static Vector3Int Floor(this Vector3 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y), (int)MathF.Floor(vector.z));
     public static Vector3Int Ceiling(this Vector3 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y), (int)MathF.Ceiling(vector.z));

@@ -16,6 +16,8 @@ public sealed class Axis : CustomEnum<Axis>, ICustomEnum<Axis>
 
     public static IReadOnlyList<Axis> All { get; } = new List<Axis>() { X, Y, Z }.AsReadOnly();
     public static readonly IReadOnlySet<Axis> AllSet = All.ToHashSet();
+    public static IReadOnlyList<Axis> XY { get; } = new List<Axis>() { X, Y }.AsReadOnly();
+    public static readonly IReadOnlySet<Axis> XYSet = XY.ToHashSet();
 
     public Vector3Int PositiveNormal { get; init; }
 
