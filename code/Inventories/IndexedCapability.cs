@@ -12,8 +12,8 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
     [Obsolete("to remove when access to T.Empty will be whitelisted")]
     protected abstract T GetEmpty();
 
-    public virtual int GetStackLimit(int index) => DefaultValues.ItemStackLimit;
-    public virtual int GetStackLimit(int index, T stack) => Math.Min(GetStackLimit(index), stack.ValueStackLimit);
+    public virtual int GetSlotLimit(int index) => DefaultValues.ItemStackLimit;
+    public virtual int GetSlotLimit(int index, T stack) => Math.Min(GetSlotLimit(index), stack.ValueStackLimit);
 
     public abstract T Get(int index);
 

@@ -43,7 +43,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
         if(index < 0 || index >= Size)
             throw new ArgumentOutOfRangeException(nameof(index));
 
-        var limit = GetStackLimit(index, stack);
+        var limit = GetSlotLimit(index, stack);
         var maxCountToSet = Math.Min(limit, stack.Count);
         if(!simulate)
         {
