@@ -30,4 +30,17 @@ PlayerInventoryUI {
             top: 1%;
         }
     }
+
+    .stack {
+        width: 90%;
+
+        &.taken {
+            position: absolute;
+            width: 7%; // calculated (capabilities.width(%) / hotbar.size * stack.width(%))
+        }
+
+        &.hidden {
+            opacity: 0;
+        }
+    }
 }

@@ -11,15 +11,19 @@
 @inherits Panel
 
 <root>
-	<Image class="background" Texture=@BackgroundTexture/>
-	<ItemStackUI class="stack" Stack=@Stack/>
+	@if(!Stack.IsEmpty)
+	{
+		<Image class="item" Texture=@Stack.Value.Texture/>
+		@if(Stack.Count > 1)
+		{
+			<AdaptiveLabel class="count" FontSize=50%>@Stack.Count</AdaptiveLabel>
+		}
+	}
 </root>
 
 
 @code
 {
 	public Stack<Item> Stack { get; set; } = Stack<Item>.Empty;
-	public Texture BackgroundTexture { get; set; } = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/item_slot_background.png", true) ?? Texture.Invalid;
-
 	protected override int BuildHash() => HashCode.Combine(Stack.GetHashCode(), Stack.Value?.Texture.GetHashCode());
 }

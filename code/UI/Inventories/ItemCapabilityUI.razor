@@ -20,8 +20,14 @@
 			<div class="slots-row" style="aspect-ratio:@currentWidth; width: @(100f * currentWidth / Width)%">
 				@for (int x = 0; x < Width && index < Capability.Size; ++x)
 				{
-					Stack<Item> stack = Capability.Get(index++);
-					<ItemSlotUI class="item-slot" Stack=@stack/>
+					var currentIndex = index++;
+					Stack<Item> stack = Capability.Get(currentIndex);
+					<ItemSlotUI class="item-slot" Stack=@stack
+						onclick=@(() => OnMouseClickedOnSlot(currentIndex, MouseButtons.Left))
+						onmiddleclick=@(() => OnMouseClickedOnSlot(currentIndex, MouseButtons.Middle))
+						onrightclick=@(() => OnMouseClickedOnSlot(currentIndex, MouseButtons.Right))
+						onmousedown=@(e => OnMouseDownOnSlot(currentIndex, e as MousePanelEvent))
+						onmouseup=@(e => OnMouseUpOnSlot(currentIndex, e as MousePanelEvent))/>
 				}
 			</div>
 		}
@@ -32,9 +38,47 @@
 @code
 {
 	public IIndexedCapability<Stack<Item>>? Capability { get; set; }
+	public ISlotMouseEventListener? MouseEventListener { get; set; }
 	public int Width { get; set; } = 9;
+
 	public int Height => (Capability.Size / Width) + (Capability.Size % Width == 0 ? 0 : 1);
 	public float AspectRatio => Capability is null ? 1 : 1f * Width / Height;
 
 	protected override int BuildHash() => Capability?.GetHashCode() ?? 0;
+
+	protected override void OnAfterTreeRender(bool firstTime)
+	{
+	}
+
+	protected void OnMouseClickedOnSlot(int slotIndex, MouseButtons mouseButton)
+	{
+		MouseEventListener?.OnMouseClickedOnSlot(Capability, slotIndex, mouseButton);
+	}
+
+	protected void OnMouseDownOnSlot(int slotIndex, MousePanelEvent mousePanelEvent)
+	{
+		var mouseButton = GetMouseButton(mousePanelEvent);
+		if(mouseButton == MouseButtons.None)
+			return;
+		MouseEventListener?.OnMouseDownOnSlot(Capability, slotIndex, mouseButton);
+	}
+
+	protected void OnMouseUpOnSlot(int slotIndex, MousePanelEvent mousePanelEvent)
+	{
+		var mouseButton = GetMouseButton(mousePanelEvent);
+		if(mouseButton == MouseButtons.None)
+			return;
+		MouseEventListener?.OnMouseUpOnSlot(Capability, slotIndex, mouseButton);
+	}
+
+	protected MouseButtons GetMouseButton(MousePanelEvent mousePanelEvent)
+	{
+		return mousePanelEvent.Button switch
+		{
+			"mouseleft" => MouseButtons.Left,
+			"mousemiddle" => MouseButtons.Middle,
+			"mouseright" => MouseButtons.Right,
+			_ => MouseButtons.None
+		};
+	}
 }
