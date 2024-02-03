@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Players;
 using Sandcube.UI.Inventories.Players;
 
 namespace Sandcube.UI.Menus;
@@ -16,6 +17,7 @@ public class MenuController : Component
         }
         private set => _instance = value;
     }
+    [Property] public SandcubePlayer Player { get; set; } = null!;
     [Property] public EscapeMenu EscapeMenu { get; set; } = null!;
     [Property] public InventoryUI PlayerInventoryUI { get; set; } = null!;
 
@@ -52,6 +54,9 @@ public class MenuController : Component
             else if(CurrentMenu == PlayerInventoryUI)
                 CloseMenu();
         }
+
+        if(CurrentMenu.IsValid() && !CurrentMenu.StillValid(Player))
+            CloseMenu();
     }
 
     protected virtual void CloseMenu()

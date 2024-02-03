@@ -1,5 +1,6 @@
 @using Sandbox
 @using Sandbox.UI
+@using Sandcube.Players
 @using System.Linq
 
 @namespace Sandcube.UI.Menus
@@ -31,6 +32,8 @@
 	{
 		Opened = false;
 	}
+
+	public virtual bool StillValid(SandcubePlayer player) => true;
 
 	protected void LeaveGame()
 	{

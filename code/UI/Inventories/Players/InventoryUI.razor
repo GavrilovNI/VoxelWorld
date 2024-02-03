@@ -3,6 +3,7 @@
 @using Sandcube.Interactions
 @using Sandcube.Inventories
 @using Sandcube.Items
+@using Sandcube.Players
 @using Sandcube.UI.Inventories
 @using Sandcube.UI.Menus
 @using System
@@ -57,6 +58,10 @@
         Opened = false;
         ReturnTakenStack();
     }
+
+    public virtual bool StillValid(SandcubePlayer player) => true;
+
+
     protected override void OnDisabled() => Close();
 
     protected virtual void MoveTakenStack()

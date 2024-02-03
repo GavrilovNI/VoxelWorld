@@ -85,6 +85,11 @@
             "go": "5070d320-0590-4a21-a5de-cd3007668697",
             "component_type": "EscapeMenu"
           },
+          "Player": {
+            "_type": "component",
+            "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+            "component_type": "SandcubePlayer"
+          },
           "PlayerInventoryUI": {
             "_type": "component",
             "go": "8ceced34-9c1d-417e-b608-ec3ed2b5c517",
@@ -547,6 +552,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-03T04:35:05.7322355\u002B01:00",
+  "LastSaved": "2024-02-03T04:56:10.542402\u002B01:00",
   "__references": []
 }
