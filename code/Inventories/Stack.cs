@@ -22,7 +22,10 @@ public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue
 
     public Stack<T> WithCount(int count)
     {
-        if(count == Count || count < 0 && Count == 0 || Value is null)
+        if(count <= 0 || Value is null)
+            return Empty;
+
+        if(count == Count)
             return this;
 
         return new Stack<T>(Value, count);
