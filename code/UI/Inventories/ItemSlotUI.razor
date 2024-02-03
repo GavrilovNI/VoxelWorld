@@ -12,14 +12,16 @@
 
 <root>
 	<Image class="background" Texture=@BackgroundTexture/>
-	<ItemStackUI class="stack" Stack=@Stack/>
+	<ItemStackUI class="stack" Stack=@Stack HideCount=@HideCount/>
 </root>
 
 
 @code
 {
+	public bool HideCount { get; set; } = false;
+
 	public Stack<Item> Stack { get; set; } = Stack<Item>.Empty;
 	public Texture BackgroundTexture { get; set; } = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/item_slot_background.png", true) ?? Texture.Invalid;
 
-	protected override int BuildHash() => HashCode.Combine(Stack.GetHashCode(), Stack.Value?.Texture.GetHashCode());
+	protected override int BuildHash() => HashCode.Combine(Stack, Stack.Value?.Texture, HideCount);
 }

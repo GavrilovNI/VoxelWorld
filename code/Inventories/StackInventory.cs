@@ -23,7 +23,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
         }
     }
 
-    public override int Size { get; protected set; }
+    public override int Size { get; }
 
 
     public StackInventory(int size, int slotLimit = int.MaxValue)

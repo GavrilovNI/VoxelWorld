@@ -1,0 +1,171 @@
+@using Sandbox
+@using Sandbox.UI
+@using Sandcube.Interactions
+@using Sandcube.Inventories
+@using Sandcube.Items
+@using Sandcube.UI.Inventories
+@using Sandcube.UI.Menus
+@using System
+@using System.Linq
+
+@namespace Sandcube.UI.Inventories.Players
+@attribute [StyleSheet]
+@inherits PanelComponent
+@implements IMenu
+@implements ISlotMouseEventListener
+
+<root class="inventory-ui">
+    @if(Capabilities is not null)
+    {
+        <div class="capabilities">
+            @foreach(var capability in Capabilities)
+            {
+                <ItemCapabilityUI class="capability" Capability=@capability Width=@Width MouseEventListener=@this/>
+            }
+        </div>
+    }
+    <ItemStackUI class="stack taken @(TakenStack.IsEmpty ? "hidden" : string.Empty)" Stack=@TakenStack @ref=TakenStackUI/>
+</root>
+
+@code
+{
+    protected virtual System.Collections.Generic.IEnumerable<IIndexedCapability<Stack<Item>>> Capabilities =>
+        Enumerable.Empty<IIndexedCapability<Stack<Item>>>();
+    protected virtual int Width => 9;
+
+    protected ItemStackUI TakenStackUI { get; set; }
+    protected Stack<Item> TakenStack = Stack<Item>.Empty;
+    protected IIndexedCapability<Stack<Item>>? CapabilityTakenFrom = null;
+    protected int IndexTakenFrom = -1;
+
+    protected readonly System.Collections.Generic.HashSet<MouseButtons> WaitingMouseUps = new();
+
+    public virtual bool Opened
+    {
+        get => this.Panel.Class.Contains("opened");
+        set => this.Panel.SetClass("opened", value);
+    }
+
+    public virtual void Open()
+    {
+        Opened = true;
+        WaitingMouseUps.Clear();
+    }
+
+    public virtual void Close()
+    {
+        Opened = false;
+        ReturnTakenStack();
+    }
+    protected override void OnDisabled() => Close();
+
+    protected virtual void MoveTakenStack()
+    {
+        if (!TakenStackUI.IsValid())
+            return;
+        var positionByPersent = Mouse.Position / Screen.Size * 100;
+        TakenStackUI.Style.Left = Length.Percent(positionByPersent.x);
+        TakenStackUI.Style.Top = Length.Percent(positionByPersent.y);
+    }
+
+    protected override void OnUpdate()
+    {
+        if(!Opened)
+            return;
+        MoveTakenStack();
+    }
+
+    protected virtual void DropTakenStack()
+    {
+        Log.Info($"Drop: {TakenStack}");
+        TakenStack = TakenStack.WithCount(0); // TODO: change to T.Empty
+                                              //TODO:
+    }
+
+    protected virtual void ReturnTakenStack()
+    {
+        if(!TakenStack.IsEmpty)
+        {
+            var inserted = CapabilityTakenFrom.InsertMax(IndexTakenFrom, TakenStack);
+            TakenStack = TakenStack.Subtract(inserted);
+
+            if(!TakenStack.IsEmpty)
+            {
+                var capabilityToInsert = new CombinedCapability<Stack<Item>>(Capabilities);
+                Log.Info(Capabilities.Count());
+                inserted = capabilityToInsert.InsertMax(TakenStack);
+                TakenStack = TakenStack.Subtract(inserted);
+                if (!TakenStack.IsEmpty)
+                    DropTakenStack();
+            }
+        }
+
+        CapabilityTakenFrom = null;
+        IndexTakenFrom = -1;
+    }
+
+    public virtual void OnMouseDownOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
+    {
+        if (!TakenStack.IsEmpty)
+            return;
+
+        var clickedStack = capability.Get(slotIndex);
+        if (clickedStack.IsEmpty)
+            return;
+
+        int countToExtract = 0;
+
+        if (mouseButton == MouseButtons.Left)
+            countToExtract = clickedStack.Count;
+        else if (mouseButton == MouseButtons.Right)
+            countToExtract = clickedStack.Count / 2 + clickedStack.Count % 2;
+
+        if(countToExtract > 0)
+        {
+            TakenStack = capability.ExtractMax(slotIndex, countToExtract);
+            CapabilityTakenFrom = capability;
+            IndexTakenFrom = slotIndex;
+            WaitingMouseUps.Add(mouseButton);
+        }
+    }
+
+    public virtual void OnMouseUpOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
+    {
+        if(WaitingMouseUps.Remove(mouseButton))
+            return;
+
+        if(TakenStack.IsEmpty)
+            return;
+
+        var clickedStack = capability.Get(slotIndex);
+
+        if(clickedStack.IsEmpty || clickedStack.EqualsValue(TakenStack))
+        {
+
+            int countToInsert = 0;
+
+            if(mouseButton == MouseButtons.Left)
+                countToInsert = TakenStack.Count;
+            else if(mouseButton == MouseButtons.Right)
+                countToInsert = 1;
+
+            if(countToInsert > 0)
+            {
+                var inserted = capability.InsertMax(slotIndex, TakenStack.WithCount(countToInsert));
+                TakenStack = TakenStack.Subtract(inserted);
+            }
+        }
+        else
+        {
+            capability.TryChange(slotIndex, TakenStack, out TakenStack);
+        }
+    }
+
+    protected override int BuildHash()
+    {
+        var hashCode = HashCode.Combine(TakenStack, Width);
+        foreach(var capability in Capabilities)
+            hashCode = HashCode.Combine(hashCode, capability);
+        return hashCode;
+    }
+}

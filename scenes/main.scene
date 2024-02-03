@@ -87,8 +87,8 @@
           },
           "PlayerInventoryUI": {
             "_type": "component",
-            "go": "c7b48166-b8b0-4c51-a530-ff018db87ef4",
-            "component_type": "PlayerInventoryUI"
+            "go": "8ceced34-9c1d-417e-b608-ec3ed2b5c517",
+            "component_type": "CreativePlayerInventoryUI"
           }
         }
       ]
@@ -388,6 +388,21 @@
                   }
                 }
               ]
+            },
+            {
+              "Id": "8ceced34-9c1d-417e-b608-ec3ed2b5c517",
+              "Name": "CreativePlayerInventory",
+              "Enabled": true,
+              "Components": [
+                {
+                  "__type": "CreativePlayerInventoryUI",
+                  "PlayerInventory": {
+                    "_type": "component",
+                    "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+                    "component_type": "PlayerInventory"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -532,6 +547,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-02T21:40:20.2341662\u002B01:00",
+  "LastSaved": "2024-02-03T04:35:05.7322355\u002B01:00",
   "__references": []
 }

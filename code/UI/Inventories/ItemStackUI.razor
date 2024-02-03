@@ -14,7 +14,7 @@
 	@if(!Stack.IsEmpty)
 	{
 		<Image class="item" Texture=@Stack.Value.Texture/>
-		@if(Stack.Count > 1)
+		@if(Stack.Count > 1 && !HideCount)
 		{
 			<AdaptiveLabel class="count" FontSize=50%>@Stack.Count</AdaptiveLabel>
 		}
@@ -24,6 +24,8 @@
 
 @code
 {
+	public bool HideCount { get; set; } = false;
+
 	public Stack<Item> Stack { get; set; } = Stack<Item>.Empty;
-	protected override int BuildHash() => HashCode.Combine(Stack.GetHashCode(), Stack.Value?.Texture.GetHashCode());
+	protected override int BuildHash() => HashCode.Combine(Stack, Stack.Value?.Texture, HideCount);
 }

@@ -17,7 +17,7 @@ public class MenuController : Component
         private set => _instance = value;
     }
     [Property] public EscapeMenu EscapeMenu { get; set; } = null!;
-    [Property] public PlayerInventoryUI PlayerInventoryUI { get; set; } = null!;
+    [Property] public InventoryUI PlayerInventoryUI { get; set; } = null!;
 
     public bool IsAnyOpened => CurrentMenu.IsValid();
     public IMenu? CurrentMenu { get; private set; }

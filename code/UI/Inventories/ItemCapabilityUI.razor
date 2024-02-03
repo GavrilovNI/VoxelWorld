@@ -11,18 +11,19 @@
 <root style="aspect-ratio:@AspectRatio">
 	@if(Capability is not null)
 	{
-		int index = 0;
 		var height = Height;
+		int index = Math.Max(0, StartIndex);
+		int lastIndex = Math.Min(Capability.Size, CountToShow.HasValue ? StartIndex + CountToShow.Value : Capability.Size);
 
-		@for(int y = 0; y < height; ++y)
+		@for(int y = 0; y < height && index < lastIndex; ++y)
 		{
 			var currentWidth = Math.Min(Width, Capability.Size - index);
 			<div class="slots-row" style="aspect-ratio:@currentWidth; width: @(100f * currentWidth / Width)%">
-				@for (int x = 0; x < Width && index < Capability.Size; ++x)
+				@for(int x = 0; x < Width && index < lastIndex; ++x)
 				{
 					var currentIndex = index++;
 					Stack<Item> stack = Capability.Get(currentIndex);
-					<ItemSlotUI class="item-slot" Stack=@stack
+					<ItemSlotUI class="item-slot" Stack=@stack HideCount=@HideItemCount
 						onclick=@(() => OnMouseClickedOnSlot(currentIndex, MouseButtons.Left))
 						onmiddleclick=@(() => OnMouseClickedOnSlot(currentIndex, MouseButtons.Middle))
 						onrightclick=@(() => OnMouseClickedOnSlot(currentIndex, MouseButtons.Right))
@@ -40,11 +41,18 @@
 	public IIndexedCapability<Stack<Item>>? Capability { get; set; }
 	public ISlotMouseEventListener? MouseEventListener { get; set; }
 	public int Width { get; set; } = 9;
+	public int StartIndex { get; set; } = 0;
+	public int? CountToShow { get; set; } = null;
+	public bool HideItemCount { get; set; } = false;
 
-	public int Height => (Capability.Size / Width) + (Capability.Size % Width == 0 ? 0 : 1);
-	public float AspectRatio => Capability is null ? 1 : 1f * Width / Height;
+	public int SlotsCount => Math.Clamp(
+	CountToShow.HasValue ? Math.Min(CountToShow.Value, Capability.Size - StartIndex) : Capability.Size - StartIndex,
+		0, Capability.Size);
 
-	protected override int BuildHash() => Capability?.GetHashCode() ?? 0;
+	public int Height => (SlotsCount / Width) + (SlotsCount % Width == 0 ? 0 : 1);
+	public float AspectRatio => Capability is null || Height == 0 ? 1 : 1f * Width / Height;
+
+	protected override int BuildHash() => HashCode.Combine(Capability, StartIndex, CountToShow, HideItemCount);
 
 	protected override void OnAfterTreeRender(bool firstTime)
 	{

@@ -7,7 +7,7 @@ namespace Sandcube.Inventories;
 
 public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : class, IStack<T>
 {
-    public abstract int Size { get; protected set; }
+    public abstract int Size { get; }
 
     [Obsolete("to remove when access to T.Empty will be whitelisted")]
     protected abstract T GetEmpty();

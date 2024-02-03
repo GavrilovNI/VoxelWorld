@@ -10,19 +10,17 @@
 @using System.Linq
 
 @namespace Sandcube.UI.Inventories.Players
-@attribute [StyleSheet]
-@inherits PanelComponent
-@implements IMenu
-@implements ISlotMouseEventListener
+@attribute [StyleSheet] // TODO: reuse stylesheet of parent class
+@inherits InventoryUI
 
-<root>
-    @if(PlayerInventory is not null)
+<root class="inventory-ui">
+    @if(Capabilities is not null)
     {
-        var hotbar = PlayerInventory.Hotbar;
         <div class="capabilities">
-            <ItemCapabilityUI class="capability secondary-hand" Capability=@PlayerInventory.SecondaryHand Width=@hotbar.Size MouseEventListener=@this/>
-            <ItemCapabilityUI class="capability main" Capability=@PlayerInventory.Main Width=@hotbar.Size MouseEventListener=@this/>
-            <ItemCapabilityUI class="capability hotbar" Capability=@hotbar Width=@hotbar.Size MouseEventListener=@this/>
+            @foreach(var capability in Enumerable.Reverse(Capabilities))
+            {
+                <ItemCapabilityUI class="capability" Capability=@capability Width=@Width MouseEventListener=@this/>
+            }
         </div>
         <ItemStackUI class="stack taken @(TakenStack.IsEmpty ? "hidden" : string.Empty)" Stack=@TakenStack @ref=TakenStackUI/>
     }
@@ -32,128 +30,12 @@
 {
     [Property] public PlayerInventory PlayerInventory { get; set; } // TODO: change to IPlayerInventory
 
-    protected ItemStackUI TakenStackUI { get; set; }
-    protected Stack<Item> TakenStack = Stack<Item>.Empty;
-    protected IIndexedCapability<Stack<Item>>? CapabilityTakenFrom = null;
-    protected int IndexTakenFrom = -1;
-
-    protected readonly System.Collections.Generic.HashSet<MouseButtons> WaitingMouseUps = new();
-
-    public bool Opened
-    {
-        get => this.Panel.Class.Contains("opened");
-        set => this.Panel.SetClass("opened", value);
-    }
-
-    public virtual void Open()
-    {
-        Opened = true;
-        WaitingMouseUps.Clear();
-    }
-
-    public virtual void Close()
-    {
-        Opened = false;
-        ReturnTakenStack();
-    }
-    protected override void OnDisabled() => Close();
-
-    protected void MoveTakenStack()
-    {
-        var positionByPersent = Mouse.Position / Screen.Size * 100;
-        TakenStackUI.Style.Left = Length.Percent(positionByPersent.x);
-        TakenStackUI.Style.Top = Length.Percent(positionByPersent.y);
-    }
-
-    protected override void OnUpdate()
-    {
-        MoveTakenStack();
-    }
-
-    protected void DropTakenStack()
-    {
-        Log.Info($"Drop: {TakenStack}");
-        TakenStack = TakenStack.WithCount(0); // TODO: change to T.Empty
-        //TODO:
-    }
-
-    protected void ReturnTakenStack()
-    {
-        if(!TakenStack.IsEmpty)
-        {
-            var inserted = CapabilityTakenFrom.InsertMax(IndexTakenFrom, TakenStack);
-            TakenStack = TakenStack.Subtract(inserted);
-
-            if(!TakenStack.IsEmpty)
-            {
-                var capabilityToInsert = new CombinedCapability<Stack<Item>>(PlayerInventory.Hotbar, PlayerInventory.Main, PlayerInventory.SecondaryHand);
-                inserted = capabilityToInsert.InsertMax(TakenStack);
-                TakenStack = TakenStack.Subtract(inserted);
-                if (!TakenStack.IsEmpty)
-                    DropTakenStack();
-            }
-        }
-
-        CapabilityTakenFrom = null;
-        IndexTakenFrom = -1;
-    }
-
-    public void OnMouseDownOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
-    {
-        if (!TakenStack.IsEmpty)
-            return;
-
-        var clickedStack = capability.Get(slotIndex);
-        if (clickedStack.IsEmpty)
-            return;
-
-        int countToExtract = 0;
-
-        if (mouseButton == MouseButtons.Left)
-            countToExtract = clickedStack.Count;
-        else if (mouseButton == MouseButtons.Right)
-            countToExtract = clickedStack.Count / 2 + clickedStack.Count % 2;
-
-        if(countToExtract > 0)
-        {
-            TakenStack = capability.ExtractMax(slotIndex, countToExtract);
-            CapabilityTakenFrom = capability;
-            IndexTakenFrom = slotIndex;
-            WaitingMouseUps.Add(mouseButton);
-        }
-    }
-
-    public void OnMouseUpOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
-    {
-        if(WaitingMouseUps.Remove(mouseButton))
-            return;
-
-        if(TakenStack.IsEmpty)
-            return;
-
-        var clickedStack = capability.Get(slotIndex);
-
-        if(clickedStack.IsEmpty || clickedStack.EqualsValue(TakenStack))
-        {
-
-            int countToInsert = 0;
-
-            if(mouseButton == MouseButtons.Left)
-                countToInsert = TakenStack.Count;
-            else if(mouseButton == MouseButtons.Right)
-                countToInsert = 1;
-
-            if(countToInsert > 0)
-            {
-                var inserted = capability.InsertMax(slotIndex, TakenStack.WithCount(countToInsert));
-                TakenStack = TakenStack.Subtract(inserted);
-            }
-        }
-        else
-        {
-            capability.TryChange(slotIndex, TakenStack, out TakenStack);
-        }
-    }
-
-    protected override int BuildHash() => HashCode.Combine(PlayerInventory, TakenStack);
+    protected override System.Collections.Generic.IEnumerable<IIndexedCapability<Stack<Item>>> Capabilities
+        => PlayerInventory is null ? Enumerable.Empty<IIndexedCapability<Stack<Item>>>() :
+        new System.Collections.Generic.List<IIndexedCapability<Stack<Item>>>() {
+            PlayerInventory.Hotbar,
+            PlayerInventory.Main,
+            PlayerInventory.SecondaryHand,
+        };
+    protected override int Width => PlayerInventory?.Hotbar.Size ?? 9;
 }
