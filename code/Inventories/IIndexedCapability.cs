@@ -30,7 +30,7 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
         if(stack.IsEmpty)
             return stack;
 
-        var newStack = stack.Sub(count);
+        var newStack = stack.Subtract(count);
         if(this.TrySet(index, newStack, simulate))
             return stack.WithCount(stack.Count - newStack.Count);
 
@@ -58,7 +58,7 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
                     continue;
 
                 var insertedCount = InsertMax(i, remainder, simulate);
-                remainder = remainder.Sub(insertedCount);
+                remainder = remainder.Subtract(insertedCount);
                 if(remainder.IsEmpty)
                     break;
             }

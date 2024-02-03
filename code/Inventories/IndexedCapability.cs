@@ -40,7 +40,7 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
         if(stack.IsEmpty)
             return stack;
 
-        var newStack = stack.Sub(count);
+        var newStack = stack.Subtract(count);
         if(this.TrySet(index, newStack, simulate))
             return stack.WithCount(stack.Count - newStack.Count);
 
@@ -68,7 +68,7 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
                     continue;
 
                 var insertedCount = InsertMax(i, remainder, simulate);
-                remainder = remainder.Sub(insertedCount);
+                remainder = remainder.Subtract(insertedCount);
                 if(remainder.IsEmpty)
                     break;
             }

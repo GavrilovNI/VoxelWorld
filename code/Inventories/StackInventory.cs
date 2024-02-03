@@ -66,7 +66,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
         foreach(var currentStackEntry in _stacks)
         {
             insertedCount += InsertMax(currentStackEntry.Key, stackToInsert, simulate);
-            stackToInsert = stackToInsert.Sub(insertedCount);
+            stackToInsert = stackToInsert.Subtract(insertedCount);
             if(stackToInsert.IsEmpty)
                 return insertedCount;
         }
@@ -78,7 +78,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
                 continue;
 
             insertedCount += InsertMax(i, stackToInsert, simulate);
-            stackToInsert = stackToInsert.Sub(insertedCount);
+            stackToInsert = stackToInsert.Subtract(insertedCount);
             if(stackToInsert.IsEmpty)
                 return insertedCount;
         }

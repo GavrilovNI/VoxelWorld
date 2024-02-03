@@ -33,7 +33,7 @@ public class CombinedCapability<T> : ICapability<T> where T : class, IStack<T>
         {
             var insertedCurrent = capability.InsertMax(stack, simulate);
             insertedCount += insertedCurrent;
-            stack = stack.Sub(insertedCurrent);
+            stack = stack.Subtract(insertedCurrent);
             if(stack.Count <= 0)
                 return insertedCount;
         }
@@ -47,7 +47,7 @@ public class CombinedCapability<T> : ICapability<T> where T : class, IStack<T>
         {
             var extractedCurrent = capability.ExtractMax(stack, simulate);
             extractedCount += extractedCurrent;
-            stack = stack.Sub(extractedCount);
+            stack = stack.Subtract(extractedCount);
             if(stack.Count <= 0)
                 return extractedCount;
         }

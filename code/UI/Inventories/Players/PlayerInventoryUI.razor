@@ -82,13 +82,13 @@
         if(!TakenStack.IsEmpty)
         {
             var inserted = CapabilityTakenFrom.InsertMax(IndexTakenFrom, TakenStack);
-            TakenStack = TakenStack.Sub(inserted);
+            TakenStack = TakenStack.Subtract(inserted);
 
             if(!TakenStack.IsEmpty)
             {
                 var capabilityToInsert = new CombinedCapability<Stack<Item>>(PlayerInventory.Hotbar, PlayerInventory.Main, PlayerInventory.SecondaryHand);
                 inserted = capabilityToInsert.InsertMax(TakenStack);
-                TakenStack = TakenStack.Sub(inserted);
+                TakenStack = TakenStack.Subtract(inserted);
                 if (!TakenStack.IsEmpty)
                     DropTakenStack();
             }
@@ -146,7 +146,7 @@
             if(countToInsert > 0)
             {
                 var inserted = capability.InsertMax(slotIndex, TakenStack.WithCount(countToInsert));
-                TakenStack = TakenStack.Sub(inserted);
+                TakenStack = TakenStack.Subtract(inserted);
             }
         }
         else

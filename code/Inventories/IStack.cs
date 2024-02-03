@@ -19,7 +19,7 @@ public interface IStack<T> where T : class, IStack<T>
 
 public static class IStackExtensions
 {
-    public static T Sub<T>(this IStack<T> stack, int count) where T : class, IStack<T>
+    public static T Subtract<T>(this IStack<T> stack, int count) where T : class, IStack<T>
     {
         return stack.WithCount(stack.Count - count);
     }
