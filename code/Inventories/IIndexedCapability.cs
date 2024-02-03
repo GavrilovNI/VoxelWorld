@@ -18,7 +18,7 @@ public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<
         if(!currentStack.IsEmpty && !currentStack.EqualsValue(stack))
             return 0;
 
-        return SetMax(index, stack.Add(currentStack.Count), simulate);
+        return SetMax(index, stack.Add(currentStack.Count), simulate) - currentStack.Count;
     }
 
     T ExtractMax(int index, int count, bool simulate = false)
