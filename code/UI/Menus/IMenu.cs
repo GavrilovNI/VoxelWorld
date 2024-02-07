@@ -5,6 +5,8 @@ namespace Sandcube.UI.Menus;
 
 public interface IMenu : IValid
 {
+    bool IsOpened { get; }
+
     void Open();
     void Close();
 

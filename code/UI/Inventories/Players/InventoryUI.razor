@@ -41,7 +41,7 @@
 
     protected readonly System.Collections.Generic.HashSet<MouseButtons> WaitingMouseUps = new();
 
-    public virtual bool Opened
+    public virtual bool IsOpened
     {
         get => this.Panel.Class.Contains("opened");
         set => this.Panel.SetClass("opened", value);
@@ -49,13 +49,13 @@
 
     public virtual void Open()
     {
-        Opened = true;
+        IsOpened = true;
         WaitingMouseUps.Clear();
     }
 
     public virtual void Close()
     {
-        Opened = false;
+        IsOpened = false;
         ReturnTakenStack();
     }
 
@@ -75,7 +75,7 @@
 
     protected override void OnUpdate()
     {
-        if(!Opened)
+        if(!IsOpened)
             return;
         MoveTakenStack();
     }

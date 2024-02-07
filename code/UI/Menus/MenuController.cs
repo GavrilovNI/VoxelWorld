@@ -21,7 +21,7 @@ public class MenuController : Component
     [Property] public EscapeMenu EscapeMenu { get; set; } = null!;
     [Property] public InventoryUI PlayerInventoryUI { get; set; } = null!;
 
-    public bool IsAnyOpened => CurrentMenu.IsValid();
+    public bool IsAnyOpened => CurrentMenu.IsValid() && CurrentMenu.IsOpened;
     public IMenu? CurrentMenu { get; private set; }
 
 
@@ -42,26 +42,26 @@ public class MenuController : Component
     {
         if(Input.EscapePressed)
         {
-            if(CurrentMenu.IsValid())
-                CloseMenu();
+            if(IsAnyOpened)
+                CloseCurrentMenu();
             else
                 OpenMenu(EscapeMenu);
         }
         else if(Input.Pressed("Inventory"))
         {
-            if(!CurrentMenu.IsValid())
+            if(!IsAnyOpened)
                 OpenMenu(PlayerInventoryUI);
             else if(CurrentMenu == PlayerInventoryUI)
-                CloseMenu();
+                CloseCurrentMenu();
         }
 
-        if(CurrentMenu.IsValid() && !CurrentMenu.StillValid(Player))
-            CloseMenu();
+        if(CurrentMenu.IsValid() && CurrentMenu.IsOpened && !CurrentMenu.StillValid(Player))
+            CloseCurrentMenu();
     }
 
-    protected virtual void CloseMenu()
+    protected virtual void CloseCurrentMenu()
     {
-        if(CurrentMenu.IsValid())
+        if(CurrentMenu.IsValid() && CurrentMenu.IsOpened)
         {
             CurrentMenu.Close();
             CurrentMenu = null;
@@ -70,7 +70,8 @@ public class MenuController : Component
 
     protected virtual void OpenMenu(IMenu menu)
     {
-        if(menu.IsValid())
+        CloseCurrentMenu();
+        if(menu.IsValid() && !menu.IsOpened)
         {
             CurrentMenu = menu;
             CurrentMenu.Open();

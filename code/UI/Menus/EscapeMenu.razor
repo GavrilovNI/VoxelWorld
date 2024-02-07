@@ -17,7 +17,7 @@
 
 @code
 {
-	public bool Opened
+	public bool IsOpened
 	{
 		get => this.Panel.Class.Contains("opened");
 		set => this.Panel.SetClass("opened", value);
@@ -25,12 +25,12 @@
 
 	public virtual void Open()
 	{
-		Opened = true;
+		IsOpened = true;
 	}
 
 	public virtual void Close()
 	{
-		Opened = false;
+		IsOpened = false;
 	}
 
 	public virtual bool StillValid(SandcubePlayer player) => true;
