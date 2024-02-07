@@ -101,6 +101,7 @@
         {
           "__type": "CharacterController",
           "Acceleration": 10,
+          "Bounciness": 0.3,
           "GroundAngle": 45,
           "Height": 64,
           "IgnoreLayers": "interactable",
