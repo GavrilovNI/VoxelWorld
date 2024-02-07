@@ -2,6 +2,7 @@ using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
+using Sandcube.Interfaces;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider
+public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable
 {
     [Property] public Vector3Int Position { get; internal set; }
     [Property] public Vector3Int Size { get; internal set; } = 16;
@@ -55,6 +56,26 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public virtual void UpdateTexture(Texture texture) => ModelUpdater.UpdateTexture(texture);
 
+
+    public virtual void Tick()
+    {
+        TickBlockEntities();
+    }
+
+    // Call only im main thread
+    protected virtual void TickBlockEntities()
+    {
+        ThreadSafe.AssertIsMainThread();
+
+        lock(BlocksLock)
+        {
+            foreach(var (_, blockEntity) in BlockEntities)
+            {
+                if(blockEntity is ITickable tickable)
+                    tickable.Tick();
+            }
+        }
+    }
 
     // Thread safe
     public BlockState GetBlockState(Vector3Int position)

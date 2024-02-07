@@ -65,7 +65,8 @@
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
             "component_type": "LimitedChunkLoader"
           },
-          "ChunkSize": "16,16,16"
+          "ChunkSize": "16,16,16",
+          "TickByItself": true
         },
         {
           "__type": "WorldGenerator"
@@ -497,7 +498,8 @@
                 "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
                 "component_type": "ChunkLoader"
               },
-              "ChunkSize": "16,16,16"
+              "ChunkSize": "16,16,16",
+              "TickByItself": true
             },
             {
               "__type": "ChunkLoader",

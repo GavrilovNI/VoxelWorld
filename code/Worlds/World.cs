@@ -2,6 +2,7 @@
 using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
+using Sandcube.Interfaces;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
@@ -13,19 +14,44 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class World : ThreadHelpComponent, IWorldAccessor
+public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 {
     [Property] public Vector3Int ChunkSize { get; init; } = 16;
     [Property] protected ChunkLoader ChunkLoader { get; set; } = null!;
+    [Property] protected bool TickByItself { get; set; } = true;
 
 
-    protected readonly Dictionary<Vector3Int, OneOf<Chunk, Task<Chunk>>> Chunks = new();
+    protected readonly SortedDictionary<Vector3Int, OneOf<Chunk, Task<Chunk>>> Chunks = new(Vector3Int.XYZIterationComparer);
     protected CancellationTokenSource ChunkLoadCancellationTokenSource = new();
 
     protected override void OnDestroyInner()
     {
         base.OnDestroyInner();
         Clear();
+    }
+
+    protected override void OnUpdateInner()
+    {
+        if(TickByItself)
+            TickInternal();
+    }
+
+    public virtual void Tick()
+    {
+        if(!TickByItself)
+            TickInternal();
+    }
+
+    protected virtual void TickInternal()
+    {
+        lock(Chunks)
+        {
+            foreach(var (_, chunkUnion) in Chunks)
+            {
+                if(chunkUnion.Is<Chunk>(out var chunk))
+                    chunk.Tick();
+            }
+        }
     }
 
     public virtual void UpdateTexture(Texture texture)
