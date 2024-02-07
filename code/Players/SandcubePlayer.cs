@@ -5,14 +5,14 @@ using Sandcube.Inventories.Players;
 using Sandcube.Items;
 using Sandcube.Menus;
 using Sandcube.Mods;
-using Sandcube.Worlds;
 using System.Collections.Generic;
 
 namespace Sandcube.Players;
 
 public class SandcubePlayer : Component
 {
-    [Property] public World World { get; private set; } = null!;
+    [Property] public bool IsCreative { get; private set; } = false;
+
     public IPlayerInventory Inventory { get; private set; } = null!; // TODO: Make Property
 
     protected override void OnEnabled()
@@ -52,12 +52,22 @@ public class SandcubePlayer : Component
 
     public IMenu CreateInventoryMenu()
     {
-        return new ItemCapabilitiesMenu(new List<IIndexedCapability<Inventories.Stack<Item>>>()
+        if(IsCreative)
         {
-            Inventory.SecondaryHand,
-            Inventory.Main,
-            Inventory.Hotbar
-        });
+            return new CreativeInventoryMenu(new List<IIndexedCapability<Inventories.Stack<Item>>>()
+            {
+                Inventory.Hotbar
+            });
+        }
+        else
+        {
+            return new ItemCapabilitiesMenu(new List<IIndexedCapability<Inventories.Stack<Item>>>()
+            {
+                Inventory.SecondaryHand,
+                Inventory.Main,
+                Inventory.Hotbar
+            });
+        }
     }
 
     protected virtual void UpdateHandSlot()

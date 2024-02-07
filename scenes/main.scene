@@ -128,7 +128,7 @@
         },
         {
           "__type": "SandcubePlayer",
-          "World": null
+          "IsCreative": true
         },
         {
           "__type": "PlayerInventory"
@@ -504,6 +504,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-07T20:56:46.3044689\u002B01:00",
+  "LastSaved": "2024-02-07T22:11:51.0443671\u002B01:00",
   "__references": []
 }
