@@ -58,7 +58,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     {
         lock(Chunks)
         {
-            foreach(var chunkUnion in Chunks.Values)
+            foreach(var (_, chunkUnion) in Chunks)
             {
                 if(chunkUnion.Is<Chunk>(out var chunk))
                     chunk.UpdateTexture(texture);
@@ -265,7 +265,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             ChunkLoadCancellationTokenSource.Dispose();
             ChunkLoadCancellationTokenSource = new();
 
-            foreach(var chunkUnion in Chunks.Values)
+            foreach(var (_, chunkUnion) in Chunks)
                 chunkUnion.As<Chunk>()?.GameObject.Destroy();
 
             Chunks.Clear();
