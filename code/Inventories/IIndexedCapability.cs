@@ -2,11 +2,8 @@
 
 namespace Sandcube.Inventories;
 
-public interface IIndexedCapability<T> : ICapability<T> where T : class, IStack<T>
+public interface IIndexedCapability<T> : ICapability<T>, IReadOnlyIndexedCapability<T> where T : class, IStack<T>
 {
-    int Size { get; }
-
-    T Get(int index);
     int SetMax(int index, T stack, bool simulate = false);
 
     int InsertMax(int index, T stack, bool simulate = false)

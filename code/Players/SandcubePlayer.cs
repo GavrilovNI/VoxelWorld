@@ -2,9 +2,11 @@
 using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
+using Sandcube.Items;
+using Sandcube.Menus;
 using Sandcube.Mods;
-using Sandcube.UI.Menus;
 using Sandcube.Worlds;
+using System.Collections.Generic;
 
 namespace Sandcube.Players;
 
@@ -46,6 +48,16 @@ public class SandcubePlayer : Component
     {
         if(!(MenuController.Instance?.IsAnyOpened ?? false))
             UpdateHandSlot();
+    }
+
+    public IMenu CreateInventoryMenu()
+    {
+        return new ItemCapabilitiesMenu(new List<IIndexedCapability<Inventories.Stack<Item>>>()
+        {
+            Inventory.SecondaryHand,
+            Inventory.Main,
+            Inventory.Hotbar
+        });
     }
 
     protected virtual void UpdateHandSlot()

@@ -6,7 +6,7 @@ namespace Sandcube.UI.Inventories;
 
 public interface ISlotMouseEventListener
 {
-    void OnMouseClickedOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton) { }
-    void OnMouseDownOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton) { }
-    void OnMouseUpOnSlot(IIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton) { }
+    void OnMouseClickedOnSlot(IReadOnlyIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton) { }
+    void OnMouseDownOnSlot(IReadOnlyIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton) { }
+    void OnMouseUpOnSlot(IReadOnlyIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton) { }
 }

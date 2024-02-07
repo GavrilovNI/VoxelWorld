@@ -2,6 +2,7 @@
 @using Sandbox.UI
 @using Sandcube.Inventories
 @using Sandcube.Items
+@using Sandcube.UI.Extensions
 @using System
 
 @namespace Sandcube.UI.Inventories
@@ -38,7 +39,7 @@
 
 @code
 {
-	public IIndexedCapability<Stack<Item>>? Capability { get; set; }
+	public IReadOnlyIndexedCapability<Stack<Item>>? Capability { get; set; }
 	public ISlotMouseEventListener? MouseEventListener { get; set; }
 	public int Width { get; set; } = 9;
 	public int StartIndex { get; set; } = 0;
@@ -65,7 +66,7 @@
 
 	protected void OnMouseDownOnSlot(int slotIndex, MousePanelEvent mousePanelEvent)
 	{
-		var mouseButton = GetMouseButton(mousePanelEvent);
+		var mouseButton = mousePanelEvent.GetMouseButton();
 		if(mouseButton == MouseButtons.None)
 			return;
 		MouseEventListener?.OnMouseDownOnSlot(Capability, slotIndex, mouseButton);
@@ -73,20 +74,9 @@
 
 	protected void OnMouseUpOnSlot(int slotIndex, MousePanelEvent mousePanelEvent)
 	{
-		var mouseButton = GetMouseButton(mousePanelEvent);
+		var mouseButton = mousePanelEvent.GetMouseButton();
 		if(mouseButton == MouseButtons.None)
 			return;
 		MouseEventListener?.OnMouseUpOnSlot(Capability, slotIndex, mouseButton);
-	}
-
-	protected MouseButtons GetMouseButton(MousePanelEvent mousePanelEvent)
-	{
-		return mousePanelEvent.Button switch
-		{
-			"mouseleft" => MouseButtons.Left,
-			"mousemiddle" => MouseButtons.Middle,
-			"mouseright" => MouseButtons.Right,
-			_ => MouseButtons.None
-		};
 	}
 }

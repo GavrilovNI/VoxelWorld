@@ -1,12 +1,12 @@
 @using Sandbox
 @using Sandbox.UI
+@using Sandcube.Menus
 @using Sandcube.Players
 @using System.Linq
 
-@namespace Sandcube.UI.Menus
+@namespace Sandcube.UI.Screens
 @attribute [StyleSheet]
 @inherits PanelComponent
-@implements IMenu
 
 <root>
 	<div class="buttons">
@@ -17,24 +17,6 @@
 
 @code
 {
-	public bool IsOpened
-	{
-		get => this.Panel.Class.Contains("opened");
-		set => this.Panel.SetClass("opened", value);
-	}
-
-	public virtual void Open()
-	{
-		IsOpened = true;
-	}
-
-	public virtual void Close()
-	{
-		IsOpened = false;
-	}
-
-	public virtual bool StillValid(SandcubePlayer player) => true;
-
 	protected void LeaveGame()
 	{
 		GameManager.ActiveScene.LoadFromFile("scenes/mainmenu.scene");

@@ -15,6 +15,7 @@ ItemSlotUI {
     }
 
     .stack {
+        pointer-events: none;
         position: absolute;
         top: 5%;
         left: 5%;

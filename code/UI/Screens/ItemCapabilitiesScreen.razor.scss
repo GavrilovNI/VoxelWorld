@@ -1,19 +1,14 @@
-.inventory-ui {
+ItemCapabilitiesScreen {
     position: absolute;
     height: 100%;
     width: 100%;
     backdrop-filter: blur(3px);
-    opacity: 0;
-    pointer-events: none;
+    opacity: 1;
+    pointer-events: all;
     z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: center;
-
-    &.opened {
-        opacity: 1;
-        pointer-events: all;
-    }
 
     .capabilities {
         position: absolute;

@@ -9,7 +9,6 @@ public class PlayerInventory : Component, IPlayerInventory
 {
     public IIndexedCapability<Stack<Item>> Main { get; }
     public IIndexedCapability<Stack<Item>> Hotbar { get; }
-
     public IIndexedCapability<Stack<Item>> SecondaryHand { get; }
 
     protected int _mainHandIndex = 0;
