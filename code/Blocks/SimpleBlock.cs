@@ -34,14 +34,6 @@ public class SimpleBlock : Block
         UvProviders = uvProviders;
     }
 
-    [SetsRequiredMembers]
-    public SimpleBlock(in ModedId id, string texturePathPrefix, BlockTexturesLoader uvBlockLoadMode,
-        PathedTextureMap textureMap, string textureExtension = "png") : base(id)
-    {
-        UvProviders = uvBlockLoadMode.LoadTextures(textureMap, texturePathPrefix, textureExtension, true)
-            .ToDictionary(e => e.Key, e => (IUvProvider)e.Value);
-    }
-
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
     {
         return VisualMeshes.FullBlock.Make(UvProviders.ToDictionary(p => p.Key, p => p.Value.Uv));
