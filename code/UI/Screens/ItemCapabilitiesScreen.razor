@@ -16,7 +16,7 @@
 @inherits PanelComponent
 @implements ISlotMouseEventListener
 
-<root>
+<root onmousedown=@(e => OnMouseDown(e as MousePanelEvent))>
     @if(Menu is not null)
     {
         <div class="capabilities">
@@ -34,6 +34,8 @@
 {
     public ItemCapabilitiesMenu Menu { get; set; }
     public int Width { get; set; } = 9;
+
+    protected bool JustMousedDownSlot { get; set; } = false;
 
     protected ItemStackUI TakenStackUI { get; set; }
     protected Stack<Item> TakenStack => Menu.TakenStack;
@@ -58,8 +60,31 @@
 
     protected virtual void ReturnTakenStack() => Menu.ReturnTakenStack();
 
+    public virtual void OnMouseDown(MousePanelEvent mousePanelEvent)
+    {
+        if(JustMousedDownSlot)
+        {
+            JustMousedDownSlot = false;
+            return;
+        }
+        JustMousedDownSlot = false;
+
+        var mouseButton = mousePanelEvent.GetMouseButton();
+        if(mouseButton == MouseButtons.None)
+            return;
+
+        int countToDrop = 0;
+        if(mouseButton == MouseButtons.Left)
+            countToDrop = TakenStack.Count;
+        else if(mouseButton == MouseButtons.Right)
+            countToDrop = 1;
+
+        DropTakenStack(countToDrop);
+    }
+
     public virtual void OnMouseDownOnSlot(IReadOnlyIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
     {
+        JustMousedDownSlot = true;
         var clickedStack = capability.Get(slotIndex);
 
         int countToExtract = 0;
