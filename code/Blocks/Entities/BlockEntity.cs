@@ -12,7 +12,7 @@ public abstract class BlockEntity
     public BlockState BlockState => World.GetBlockState(Position);
 
 
-    public BlockEntity(Vector3Int position, IWorldProvider world)
+    public BlockEntity(IWorldProvider world, Vector3Int position)
     {
         Position = position;
         World = world;
