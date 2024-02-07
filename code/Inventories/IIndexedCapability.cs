@@ -125,25 +125,22 @@ public static class IIndexedCapabilityExtensions
     public static bool TryChange<T>(this IIndexedCapability<T> capability, int index, T stack, out T changedStack, bool simulate = false) where T : class, IStack<T>
     {
         var currentStack = capability.Get(index);
-        var extracted = capability.Extract(index, true);
-        if(extracted.Count != currentStack.Count)
+
+        if(!capability.TryExtract(index, currentStack.Count, out var extracted, false))
         {
             changedStack = stack;
             return false;
         }
 
-        if(!simulate)
-            extracted = capability.Extract(index, false);
-
-        if(!capability.TryInsert(index, stack, simulate))
+        bool inserted = capability.TryInsert(index, stack, simulate);
+        if(!inserted || simulate)
         {
-            if(!simulate && !capability.TrySet(index, extracted))
-                Log.Warning($"Couldn't return stack {extracted} to capability {capability} when failed to change with {stack}");
-            changedStack = stack;
-            return false;
+            if(!capability.TrySet(index, extracted))
+                Log.Warning($"Couldn't return stack {extracted} to capability {capability} at index {index} when failed to change with {stack}");
+
         }
 
-        changedStack = extracted;
-        return true;
+        changedStack = inserted ? extracted : stack;
+        return inserted;
     }
 }
