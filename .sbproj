@@ -186,6 +186,11 @@
           "Name": "HandSwap",
           "KeyboardCode": "f",
           "GroupName": "Inventory"
+        },
+        {
+          "Name": "SelectBlock",
+          "KeyboardCode": "MOUSE3",
+          "GroupName": "Inventory"
         }
       ]
     },

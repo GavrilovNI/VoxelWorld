@@ -1,7 +1,11 @@
 ﻿using Sandbox;
 using Sandcube.Interactions;
+using Sandcube.Inventories;
+using Sandcube.Inventories.Players;
 using Sandcube.Items;
 using Sandcube.Worlds;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sandcube.Players;
 
@@ -26,11 +30,83 @@ public class WorldInteractor : Component
 
         bool attacking = Input.Pressed("attack1");
         bool usingItem = Input.Pressed("attack2");
+        bool selectingBlock = Input.Pressed("selectblock");
 
         if(!attacking && !usingItem)
+        {
+            if(selectingBlock)
+                SelectBlock();
             return;
+        }
 
         Interact(attacking);
+    }
+
+    protected virtual InteractionResult SelectBlock()
+    {
+        var traceResult = Trace();
+
+        if(!traceResult.Hit)
+            return InteractionResult.Pass;
+
+        IWorldAccessor? world = traceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
+        if(world is null)
+            return InteractionResult.Pass;
+
+        var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
+        var blockState = world.GetBlockState(blockPosition);
+        var block = blockState.Block;
+        if(block.IsAir())
+            return InteractionResult.Pass;
+
+        var invenory = Player.Inventory;
+        var hotbar = invenory.Hotbar;
+
+        int foundIndexInHotbar = hotbar.IndexOf(stack => !stack.IsEmpty && stack.Value is BlockItem blockItem && blockItem.Block == block);
+        if(foundIndexInHotbar >= 0)
+        {
+            invenory.MainHandIndex = foundIndexInHotbar;
+            return InteractionResult.Success;
+        }
+
+        int emptySlotIndex = invenory.MainHandIndex;
+        if(!invenory.GetHandItem(HandType.Main).IsEmpty)
+        {
+            emptySlotIndex = hotbar.IndexOf(stack => stack.IsEmpty);
+            if(emptySlotIndex < 0)
+                emptySlotIndex = invenory.MainHandIndex;
+        }
+
+        if(Player.IsCreative)
+        {
+            var item = SandcubeGame.Instance!.ItemsRegistry.FirstOrDefault(i => i is BlockItem blockItem && blockItem.Block == block, null);
+            if(item is null)
+                return InteractionResult.Fail;
+
+            var oldMainHandIndex = invenory.MainHandIndex;
+            invenory.MainHandIndex = emptySlotIndex;
+            bool set = invenory.TrySetHandItem(HandType.Main, new Inventories.Stack<Item>(item));
+            if(!set)
+                invenory.MainHandIndex = oldMainHandIndex;
+            return set ? InteractionResult.Success : InteractionResult.Fail;
+        }
+
+        var combinedCapability = new CombinedIndexedCapability<Inventories.Stack<Item>>(invenory.Main, invenory.SecondaryHand);
+
+        int index = 0;
+        foreach(var itemStack in combinedCapability)
+        {
+            if(!itemStack.IsEmpty && itemStack.Value is BlockItem blockItem && blockItem.Block == block)
+            {
+                if(combinedCapability.TryChange(index, hotbar, emptySlotIndex, false))
+                {
+                    invenory.MainHandIndex = emptySlotIndex;
+                    return InteractionResult.Success;
+                }
+            }
+            ++index;
+        }
+        return InteractionResult.Fail;
     }
 
     protected virtual InteractionResult Interact(bool attacking)

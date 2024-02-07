@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Sandcube.Registries;
 
-public class Registry<T> where T : class, IRegisterable
+public class Registry<T> : IEnumerable<T> where T : class, IRegisterable
 {
     private readonly Dictionary<ModedId, T> _blocks = new();
     public ReadOnlyDictionary<ModedId, T> All => _blocks.AsReadOnly();
@@ -20,4 +21,7 @@ public class Registry<T> where T : class, IRegisterable
     }
 
     public T? Get(ModedId id) => _blocks!.GetValueOrDefault(id, null);
+
+    public IEnumerator<T> GetEnumerator() => _blocks.Values.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

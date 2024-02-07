@@ -143,4 +143,36 @@ public static class IIndexedCapabilityExtensions
         changedStack = inserted ? extracted : stack;
         return inserted;
     }
+
+    public static bool TryChange<T>(this IIndexedCapability<T> @this, int thisIndex, IIndexedCapability<T> anotherCapability, int anotherIndex, bool simulate = false) where T : class, IStack<T>
+    {
+        var thisStack = @this.Get(thisIndex);
+        var anotherStack = anotherCapability.Get(anotherIndex);
+
+        if(@this.TryChange(thisIndex, anotherStack, out var _, true) && anotherCapability.TryChange(anotherIndex, thisStack, out var _, true))
+        {
+            if(!simulate)
+            {
+                if(!@this.TrySet(thisIndex, anotherStack))
+                    Log.Warning($"Couldn't set stack {anotherStack} to capability {@this} when failed to changing with another capability");
+                if(!anotherCapability.TrySet(anotherIndex, thisStack))
+                    Log.Warning($"Couldn't set stack {thisStack} to capability {anotherCapability} when failed to changing with another capability");
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public static int IndexOf<T>(this IIndexedCapability<T> capability, Func<T, bool> predicate) where T : class, IStack<T>
+    {
+        for(int i = 0; i < capability.Size; ++i)
+        {
+            var stack = capability.Get(i);
+            if(predicate(stack))
+                return i;
+        }
+        return -1;
+    }
 }
