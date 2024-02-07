@@ -1,16 +1,17 @@
 using Sandbox;
+using Sandcube.Blocks;
+using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class Chunk : ThreadHelpComponent, IBlockStateAccessor
+public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider
 {
     [Property] public Vector3Int Position { get; internal set; }
     [Property] public Vector3Int Size { get; internal set; } = 16;
@@ -19,19 +20,24 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
 
     public bool Initialized { get; private set; } = false;
 
-    public IWorldProvider? WorldProvider { get; internal set; }
-
-    protected readonly ConcurrentDictionary<Vector3Int, BlockState> _blockStates = new();
-
+    public IWorldProvider WorldProvider { get; internal set; } = null!;
 
     public BBox Bounds => ModelUpdater.Bounds;
 
     public Vector3Int BlockOffset => Position * Size;
 
-    public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldProvider? worldProvider)
+
+    protected readonly object BlocksLock = new();
+    protected readonly Dictionary<Vector3Int, BlockState> BlockStates = new();
+    protected readonly SortedDictionary<Vector3Int, BlockEntity> BlockEntities = new(Vector3Int.XYZIterationComparer);
+
+
+    public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldProvider worldProvider)
     {
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Chunk)} {this} was already initialized or enabled");
+        ArgumentNullException.ThrowIfNull(worldProvider);
+
         Initialized = true;
 
         Position = position;
@@ -45,12 +51,58 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
     }
 
     public virtual Task RequireModelUpdate() => ModelUpdater.RequireModelUpdate();
+    public virtual Task GetModelUpdateTask() => ModelUpdater.GetModelUpdateTask();
 
     public virtual void UpdateTexture(Texture texture) => ModelUpdater.UpdateTexture(texture);
 
 
     // Thread safe
-    public BlockState GetBlockState(Vector3Int position) => _blockStates.GetValueOrDefault(position, BlockState.Air);
+    public BlockState GetBlockState(Vector3Int position)
+    {
+        lock(BlocksLock)
+        {
+            return BlockStates.GetValueOrDefault(position, BlockState.Air);
+        }
+    }
+
+    // Thread safe
+    public BlockEntity? GetBlockEntity(Vector3Int position)
+    {
+        lock(BlocksLock)
+        {
+            return BlockEntities!.GetValueOrDefault(position, null);
+        }
+    }
+
+
+    protected bool SetBlockStateInternal(Vector3Int localPosition, BlockState blockState)
+    {
+        lock(BlocksLock)
+        {
+            if(BlockStates.TryGetValue(localPosition, out var currentState) && currentState == blockState)
+                return false;
+
+            if(BlockEntities.Remove(localPosition, out var oldBlockEntity))
+                oldBlockEntity.OnDestroyed();
+
+            BlockStates[localPosition] = blockState;
+
+            if(blockState.Block is IEntityBlock entityBlock)
+            {
+                var globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
+                if(!entityBlock.HasEntity(WorldProvider, globalPosition, blockState))
+                    return true;
+
+                var blockEntity = entityBlock.CreateEntity(WorldProvider, globalPosition, blockState);
+                if(blockEntity is null)
+                    throw new InvalidOperationException($"Couldn't create {typeof(BlockEntity)} for {blockState}");
+
+                BlockEntities[localPosition] = blockEntity;
+                blockEntity.OnCreated();
+            }
+            return true;
+        }
+    }
 
     // Thread safe
     public Task SetBlockState(Vector3Int localPosition, BlockState blockState)
@@ -61,8 +113,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
         if(GetBlockState(localPosition) == blockState)
             return Task.CompletedTask;
 
-        _blockStates[localPosition] = blockState;
-        return RequireModelUpdate();
+        bool modified = SetBlockStateInternal(localPosition, blockState);
+        return modified ? RequireModelUpdate() : GetModelUpdateTask();
     }
 
     public Task SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates)
@@ -75,22 +127,29 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
         if(!IsInBounds(localPosition) || !IsInBounds(lastPosition))
             throw new InvalidOperationException($"setting range ({localPosition} - {lastPosition}) is out of chunk bounds");
 
+        bool modified = false;
         for(int x = 0; x < size.x; ++x)
         {
             for(int y = 0; y < size.y; ++y)
             {
                 for(int z = 0; z < size.z; ++z)
                 {
-                    _blockStates[new(x, y, z)] = blockStates[x, y, z];
+                    modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
                 }
             }
         }
-        return RequireModelUpdate();
+        return modified ? RequireModelUpdate() : GetModelUpdateTask();
     }
 
     public virtual void Clear()
     {
-        _blockStates.Clear();
+        lock(BlocksLock)
+        {
+            foreach(var (_, blockEntity) in BlockEntities)
+                blockEntity.OnDestroyed();
+            BlockStates.Clear();
+            BlockEntities.Clear();
+        }
         RequireModelUpdate();
     }
 
@@ -101,24 +160,27 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
         if(IsInBounds(localPosition))
             return GetBlockState(localPosition);
 
-        if(WorldProvider is null)
-            return BlockState.Air;
-
         Vector3Int globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
         return WorldProvider.GetBlockState(globalPosition);
+    }
+
+    public virtual BlockEntity? GetExternalBlockEntity(Vector3Int localPosition)
+    {
+        if(IsInBounds(localPosition))
+            return GetBlockEntity(localPosition);
+
+        Vector3Int globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
+        return WorldProvider.GetBlockEntity(globalPosition);
     }
 
     public virtual void OnNeighbouringChunkEdgeUpdated(Direction directionToNeighbouringChunk,
         Vector3Int updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
     {
-        if(WorldProvider is not null)
-        {
-            var sidedBlockPosition = updatedBlockPosition - directionToNeighbouringChunk;
-            var sidedLocalBlockPosition = WorldProvider.GetBlockPositionInChunk(sidedBlockPosition);
-            var sidedBlockState = GetBlockState(sidedLocalBlockPosition);
-            if(sidedBlockState.IsAir())
-                return;
-        }
+        var sidedBlockPosition = updatedBlockPosition - directionToNeighbouringChunk;
+        var sidedLocalBlockPosition = WorldProvider.GetBlockPositionInChunk(sidedBlockPosition);
+        var sidedBlockState = GetBlockState(sidedLocalBlockPosition);
+        if(sidedBlockState.IsAir())
+            return;
 
         RequireModelUpdate();
     }
@@ -132,7 +194,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor
 
 public static class ComponentListChunkExtensions
 {
-    public static T Create<T>(this ComponentList components, Vector3Int position, Vector3Int size, IWorldProvider? worldProvider, bool startEnabled = true) where T : Chunk, new()
+    public static T Create<T>(this ComponentList components, Vector3Int position, Vector3Int size, IWorldProvider worldProvider, bool startEnabled = true) where T : Chunk, new()
     {
         var chunk = components.Create<T>(false);
 

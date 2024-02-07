@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
 using Sandcube.Mth;
@@ -216,6 +217,17 @@ public class World : ThreadHelpComponent, IWorldAccessor
             return BlockState.Air;
         position = GetBlockPositionInChunk(position);
         return chunk.GetBlockState(position);
+    }
+
+    public BlockEntity? GetBlockEntity(Vector3Int position)
+    {
+        var chunkPosition = GetChunkPosition(position);
+        var chunk = GetChunk(chunkPosition);
+        if(chunk is null)
+            return null;
+
+        position = GetBlockPositionInChunk(position);
+        return chunk.GetBlockEntity(position);
     }
 
     // Thread safe

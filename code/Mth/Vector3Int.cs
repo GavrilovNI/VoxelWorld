@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Mth.Enums;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -22,6 +23,18 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
     public static readonly Vector3Int Up = (Vector3Int)Vector3.Up;
     public static readonly Vector3Int Down = (Vector3Int)Vector3.Down;
 
+    public static readonly Comparer<Vector3Int> XYZIterationComparer = Comparer<Vector3Int>.Create((a, b) =>
+    {
+        var result = a.z - b.z;
+        if(result != 0)
+            return result;
+
+        result = a.y - b.y;
+        if(result != 0)
+            return result;
+
+        return a.x - b.x;
+    });
 
 #pragma warning disable IDE1006 // Naming Styles - We need to use the same naming as facepunch
     public int x { readonly get; set; }

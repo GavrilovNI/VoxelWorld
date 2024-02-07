@@ -105,6 +105,15 @@ public class ChunkModelUpdater : ThreadHelpComponent
         }
     }
 
+    // Thread safe
+    public virtual Task GetModelUpdateTask()
+    {
+        lock(ModelUpdateLock)
+        {
+            return ModelUpdateTaskSource.Task;
+        }
+    }
+
     public virtual void UpdateTexture(Texture texture)
     {
         foreach(var modelRenderer in ModelRenderers)

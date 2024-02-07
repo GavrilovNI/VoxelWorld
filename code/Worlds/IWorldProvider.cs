@@ -2,6 +2,6 @@
 
 namespace Sandcube.Worlds;
 
-public interface IWorldProvider : IBlockStateProvider, IWorldBlockPositioner
+public interface IWorldProvider : IBlockStateProvider, IBlockEntityProvider, IWorldBlockPositioner
 {
 }
