@@ -10,5 +10,5 @@ public interface IMenu : IValid
     void Open();
     void Close();
 
-    bool StillValid(SandcubePlayer player) => true;
+    bool IsStillValid(SandcubePlayer player) => true;
 }

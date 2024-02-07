@@ -55,7 +55,7 @@ public class MenuController : Component
                 CloseCurrentMenu();
         }
 
-        if(CurrentMenu.IsValid() && CurrentMenu.IsOpened && !CurrentMenu.StillValid(Player))
+        if(CurrentMenu.IsValid() && CurrentMenu.IsOpened && !CurrentMenu.IsStillValid(Player))
             CloseCurrentMenu();
     }
 
