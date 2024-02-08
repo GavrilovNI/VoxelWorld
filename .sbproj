@@ -191,6 +191,11 @@
           "Name": "SelectBlock",
           "KeyboardCode": "MOUSE3",
           "GroupName": "Inventory"
+        },
+        {
+          "Name": "SwapInteractionOrder",
+          "KeyboardCode": "SHIFT",
+          "GroupName": "Other"
         }
       ]
     },

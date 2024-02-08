@@ -39,7 +39,8 @@ public class WorldInteractor : Component
             return;
         }
 
-        Interact(attacking);
+        bool swapInteractionOrder = Input.Down("SwapInteractionOrder");
+        Interact(attacking, !swapInteractionOrder);
     }
 
     protected virtual InteractionResult SelectBlock()
@@ -109,19 +110,39 @@ public class WorldInteractor : Component
         return InteractionResult.Fail;
     }
 
-    protected virtual InteractionResult Interact(bool attacking)
+    protected virtual InteractionResult Interact(bool attacking, bool interactWithBlockFirst = true)
     {
         var traceResult = Trace();
 
+        InteractionResult interactionResult;
+        if(interactWithBlockFirst)
+        {
+            interactionResult = InteractWithBlock(traceResult, attacking);
+            if(interactionResult.ConsumesAction)
+                return interactionResult;
+        }
+
+        interactionResult = InteractWithItem(traceResult, attacking);
+        if(interactionResult.ConsumesAction)
+            return interactionResult;
+
+        if(!interactWithBlockFirst)
+        {
+            interactionResult = InteractWithBlock(traceResult, attacking);
+            if(interactionResult.ConsumesAction)
+                return interactionResult;
+        }
+
+        return interactionResult;
+    }
+
+
+    protected virtual InteractionResult InteractWithItem(PhysicsTraceResult traceResult, bool attacking)
+    {
         var interactionResult = InteractWithItem(HandType.Main, traceResult, attacking);
         if(interactionResult.ConsumesAction)
             return interactionResult;
-
-        interactionResult = InteractWithItem(HandType.Secondary, traceResult, attacking);
-        if(interactionResult.ConsumesAction)
-            return interactionResult;
-
-        return InteractWithBlock(HandType.Secondary, traceResult, attacking);
+        return InteractWithItem(HandType.Secondary, traceResult, attacking);
     }
 
     protected virtual InteractionResult InteractWithItem(HandType handType, PhysicsTraceResult traceResult, bool attacking)
@@ -144,6 +165,14 @@ public class WorldInteractor : Component
         }
 
         return InteractionResult.Pass;
+    }
+
+    protected virtual InteractionResult InteractWithBlock(PhysicsTraceResult traceResult, bool attacking)
+    {
+        var interactionResult = InteractWithBlock(HandType.Main, traceResult, attacking);
+        if(interactionResult.ConsumesAction)
+            return interactionResult;
+        return InteractWithBlock(HandType.Secondary, traceResult, attacking);
     }
 
     protected virtual InteractionResult InteractWithBlock(HandType handType, PhysicsTraceResult traceResult, bool attacking)
