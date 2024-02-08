@@ -13,7 +13,7 @@ public class SandcubePlayer : Component
 {
     [Property] public bool IsCreative { get; private set; } = false;
 
-    public IPlayerInventory Inventory { get; private set; } = null!; // TODO: Make Property
+    [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
 
     protected override void OnEnabled()
     {
