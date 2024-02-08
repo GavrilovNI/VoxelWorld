@@ -21,6 +21,11 @@ public class ItemCapabilitiesMenu : IMenu
 
     public int CapabilitiesCount => Capabilities.Count;
 
+    public ItemCapabilitiesMenu()
+    {
+        Capabilities = new List<IIndexedCapability<ItemStack>>();
+    }
+
     public ItemCapabilitiesMenu(IEnumerable<IIndexedCapability<ItemStack>> capabilities)
     {
         Capabilities = new List<IIndexedCapability<ItemStack>>(capabilities);

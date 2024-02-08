@@ -13,7 +13,7 @@ public class WorldInteractor : Component
 {
     [Property] public SandcubePlayer Player { get; set; } = null!;
     [Property] public GameObject Eye { get; set; } = null!;
-    [Property] public float ReachDistance { get; set; } = 39.37f * 5;
+    [Property] public float ReachDistance => Player.ReachDistance;
 
     [Property] public string InteractionTag { get; set; } = "interactable";
 

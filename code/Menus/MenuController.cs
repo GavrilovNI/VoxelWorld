@@ -77,14 +77,14 @@ public class MenuController : Component
             CloseMenu();
     }
 
-    protected virtual void Open(IMenu menu)
+    public virtual void Open(IMenu menu)
     {
         CloseMenu();
         CurrentMenu = menu;
         OpenScreen(menu.CreateScreen(Player), true);
     }
 
-    protected virtual void CloseMenu()
+    public virtual void CloseMenu()
     {
         CloseScreen();
         CurrentMenu = null;

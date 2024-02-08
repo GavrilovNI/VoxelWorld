@@ -12,6 +12,7 @@ namespace Sandcube.Players;
 public class SandcubePlayer : Component
 {
     [Property] public bool IsCreative { get; private set; } = false;
+    [Property] public float ReachDistance { get; private set; } = 39.37f * 5;
 
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
 
