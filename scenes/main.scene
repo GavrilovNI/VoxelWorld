@@ -128,7 +128,13 @@
         },
         {
           "__type": "SandcubePlayer",
-          "IsCreative": true
+          "Inventory": {
+            "_type": "component",
+            "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
+            "component_type": "PlayerInventory"
+          },
+          "IsCreative": true,
+          "ReachDistance": 196.84999
         },
         {
           "__type": "PlayerInventory"
@@ -504,6 +510,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-07T22:11:51.0443671\u002B01:00",
+  "LastSaved": "2024-02-08T01:26:01.3207849\u002B01:00",
   "__references": []
 }
