@@ -50,4 +50,9 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
             IsTransparent = true,
         }
     };
+
+    public ItemStorageBlock Barrel { get; } = new(MakeId("barrel"),
+        BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("barrel")),
+        18);
+
 }
