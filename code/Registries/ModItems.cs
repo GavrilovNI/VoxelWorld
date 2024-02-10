@@ -1,6 +1,8 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Items;
+using Sandcube.Mth;
+using Sandcube.Texturing;
 using System;
 using System.Linq;
 using System.Text;
@@ -59,8 +61,17 @@ public class ModItems : ModRegisterables<Item>
             if(!propertyType.IsAssignableTo(typeof(BlockItem)) || propertyType == typeof(BlockItem))
             {
                 var id = block.Id;
-                var itemTexture = Texture.CreateRenderTarget().WithWidth(BlockItemsTextureSize).WithHeight(BlockItemsTextureSize).Create();
+
+                var screenSize = new Vector2(Screen.Width, Screen.Height);
+                Vector2Int requestedTextureSize = BlockItemsTextureSize;
+                Vector2Int makingTextureSize = requestedTextureSize.WithX(requestedTextureSize.x * 7); // TODO: remove when https://github.com/Facepunch/sbox-issues/issues/4479 get fixed
+
+                var itemTexture = Texture.CreateRenderTarget().WithSize(makingTextureSize).Create();
                 bool made = await photoMaker.TryMakePhoto(block.DefaultBlockState, itemTexture);
+
+                RectInt partRect = new(((makingTextureSize - requestedTextureSize) / 2f).Floor(), requestedTextureSize);
+                itemTexture = itemTexture.GetPart(partRect);
+
                 if(!made)
                 {
                     itemTexture = Texture.Invalid;
