@@ -4,7 +4,7 @@ using Sandcube.Mth;
 using Sandcube.Worlds;
 using System.Threading.Tasks;
 
-namespace Sandcube.Blocks;
+namespace Sandcube.Texturing;
 
 public class BlockPhotoMaker : Component
 {
