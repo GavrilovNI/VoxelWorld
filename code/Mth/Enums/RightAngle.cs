@@ -59,19 +59,20 @@ public sealed class RightAngle : CustomEnum<RightAngle>, ICustomEnum<RightAngle>
         return RightAngle.Angle270;
     }
 
-    public RightAngle Rotate() => All[(Ordinal + 1) % 4];
-    public RightAngle RotateCounterclockwise() => All[(Ordinal + 3) % 4];
-    public RightAngle Rotate180() => All[(Ordinal + 2) % 4];
+    public static RightAngle FromNonClampedOrdinal(int ordinal) => All[(ordinal % 4 + 4) % 4];
+
+    public RightAngle Rotate() => FromNonClampedOrdinal(Ordinal + 1);
+    public RightAngle RotateCounterclockwise() => FromNonClampedOrdinal(Ordinal + 3);
+    public RightAngle Rotate180() => FromNonClampedOrdinal(Ordinal + 2);
 
     public static bool TryParse(string name, out RightAngle value) => TryParse(All, name, out value);
 
-    public static RightAngle operator *(RightAngle rotation, int value) => All[(rotation.Ordinal * value) % 4];
-    public static RightAngle operator *(int value, RightAngle rotation) => All[(rotation.Ordinal * value) % 4];
+    public static RightAngle operator *(RightAngle rotation, int value) => FromNonClampedOrdinal(rotation.Ordinal * value);
+    public static RightAngle operator *(int value, RightAngle rotation) => FromNonClampedOrdinal(rotation.Ordinal * value);
 
-    public static RightAngle operator +(RightAngle a, RightAngle b) => All[(a.Ordinal + b.Ordinal) % 4];
-    public static RightAngle operator -(RightAngle a, RightAngle b) => All[(a.Ordinal - b.Ordinal + 4) % 4];
-    public static RightAngle operator -(RightAngle rotation) => All[(rotation.Ordinal + 2) % 4];
-
+    public static RightAngle operator +(RightAngle a, RightAngle b) => FromNonClampedOrdinal(a.Ordinal + b.Ordinal);
+    public static RightAngle operator -(RightAngle a, RightAngle b) => FromNonClampedOrdinal(a.Ordinal - b.Ordinal);
+    public static RightAngle operator -(RightAngle rotation) => FromNonClampedOrdinal(rotation.Ordinal + 2);
 
     public static bool operator ==(RightAngle a, RightAngle b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(RightAngle a, RightAngle b) => a.Ordinal != b.Ordinal;
