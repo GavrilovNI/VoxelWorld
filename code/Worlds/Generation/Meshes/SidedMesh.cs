@@ -25,7 +25,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         if(rightAngleRotation == RightAngle.Angle0)
             return this;
 
-        var rotation = Rotation.FromAxis(lookDirection.Axis.PositiveNormal, rightAngleRotation.Angle * lookDirection.AxisDirection.Normal);
+        var rotation = rightAngleRotation.ToRotation(lookDirection);
         var notSidedElements = _notSidedElements.RotateAround(center, rotation);
         Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements = new();
         foreach(var (oldDirection, oldBuilder) in _sidedElements)

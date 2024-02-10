@@ -29,6 +29,8 @@ public sealed class RightAngle : CustomEnum<RightAngle>, ICustomEnum<RightAngle>
     {
     }
 
+    public Rotation ToRotation(Direction lookDirection) => Rotation.FromAxis(lookDirection.Normal, Angle);
+
     public static RightAngle ClosestTo(float angle)
     {
         angle = (angle % 360 + 360) % 360;
