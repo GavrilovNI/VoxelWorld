@@ -31,8 +31,8 @@ public sealed class BoolEnum : CustomEnum<BoolEnum>, ICustomEnum<BoolEnum>
     public static bool TryParse(string name, out BoolEnum value) => TryParse(All, name, out value);
 
     public static explicit operator BoolEnum(int ordinal) => All[ordinal];
-    public static explicit operator BoolEnum(bool value) => value ? True : False;
-    public static explicit operator bool(BoolEnum property) => property.Value;
+    public static implicit operator BoolEnum(bool value) => value ? True : False;
+    public static implicit operator bool(BoolEnum property) => property.Value;
     public static bool operator ==(BoolEnum a, BoolEnum b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(BoolEnum a, BoolEnum b) => a.Ordinal != b.Ordinal;
 
