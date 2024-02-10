@@ -34,11 +34,11 @@ public class AnimatedTexture
         FullTime = framesLength.Sum();
     }
 
-    protected Rect GetFrameRect(int index)
+    protected RectInt GetFrameRect(int index)
     {
         Vector2Int position = new(index % AtlasSize.x, index / AtlasSize.x);
         position *= FrameTextureSize;
-        return new Rect(position, FrameTextureSize);
+        return new RectInt(position, FrameTextureSize);
     }
 
     public Texture GetFrameTexture(int index)

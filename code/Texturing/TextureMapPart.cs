@@ -1,9 +1,10 @@
 ﻿using Sandbox;
+using Sandcube.Mth;
 
 namespace Sandcube.Texturing;
 
-public readonly record struct TextureMapPart(TextureMap TextureMap, Rect TextureRect) : IUvProvider
+public readonly record struct TextureMapPart(TextureMap TextureMap, RectInt TextureRect) : IUvProvider
 {
-    public Rect Uv => new(TextureRect.TopLeft / TextureMap.Size, TextureRect.Size / TextureMap.Size);
+    public Rect Uv => new(1f * TextureRect.TopLeft / TextureMap.Size, 1f * TextureRect.Size / TextureMap.Size);
     public Texture Texture => TextureMap.GetTexture(TextureRect);
 }

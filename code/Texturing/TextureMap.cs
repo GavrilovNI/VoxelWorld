@@ -2,13 +2,12 @@
 using Sandcube.Mth;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Sandcube.Texturing;
 
 public class TextureMap
 {
-    public Texture Texture { get; private set; } = Texture.Create(1, 1).Finish();
+    public Texture Texture { get; private set; }
 
     protected TextureMapNode Nodes;
     protected Vector2Int MultipleOfExpand;
@@ -21,7 +20,7 @@ public class TextureMap
     public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand)
     {
         Texture = Texture.Create(initialSize.x, initialSize.y).Finish();
-        Nodes = new TextureMapNode(new Rect(0, 0, initialSize.x, initialSize.y));
+        Nodes = new TextureMapNode(new RectInt(0, initialSize));
         MultipleOfExpand = multipleOfExpand;
     }
 
@@ -33,13 +32,13 @@ public class TextureMap
     {
     }
 
-    public Rect GetUv(Rect textureRect) => new(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
-    public Texture GetTexture(Rect textureRect) => Texture.GetPart(textureRect);
+    public Rect GetUv(RectInt textureRect) => new(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
+    public Texture GetTexture(RectInt textureRect) => Texture.GetPart(textureRect);
 
     public TextureMapPart AddTexture(Texture texture)
     {
         var textureSize = (Vector2Int)texture.Size;
-        if(!Nodes.TryTakeSpace(textureSize, out Rect rect))
+        if(!Nodes.TryTakeSpace(textureSize, out RectInt rect))
         {
             var newSize = new Vector2Int(Math.Max(Texture.Width, texture.Width), Texture.Height + texture.Height);
             var expandDelta = newSize - Size;
@@ -50,7 +49,7 @@ public class TextureMap
                 throw new InvalidOperationException("couldn't expand texture");
         }
 
-        Texture.Update(texture.GetPixels(), (int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
+        Texture.Update(texture.GetPixels(), rect);
         return new(this, rect);
     }
 
@@ -97,18 +96,18 @@ public class TextureMap
 
     public class TextureMapNode
     {
-        protected Rect Rect;
-        protected Rect? TakenRect = null;
+        protected RectInt Rect;
+        protected RectInt? TakenRect = null;
         protected TextureMapNode? RightChild = null;
         protected TextureMapNode? BottomChild = null;
         protected bool IsFull = false;
 
-        public TextureMapNode(Rect rect)
+        public TextureMapNode(RectInt rect)
         {
-            Rect = new Rect(rect.Left, rect.Top, (int)rect.Width, (int)rect.Height);
+            Rect = rect;
         }
 
-        public bool TryTakeSpace(Vector2Int size, out Rect rect)
+        public bool TryTakeSpace(Vector2Int size, out RectInt rect)
         {
             if(IsFull || size.x > Rect.Width || size.y > Rect.Height)
             {
@@ -118,12 +117,12 @@ public class TextureMap
 
             if(TakenRect == null)
             {
-                TakenRect = rect = new Rect(Rect.TopLeft, size);
+                TakenRect = rect = new RectInt(Rect.TopLeft, size);
 
                 if(Rect.Width > size.x)
-                    RightChild = new(new Rect(rect.Right, Rect.Top, Rect.Width - size.x, size.y));
+                    RightChild = new(new RectInt(rect.Right, Rect.Top, Rect.Width - size.x, size.y));
                 if(Rect.Height > size.y)
-                    BottomChild = new(new Rect(Rect.Left, Rect.Top + size.y, Rect.Width, Rect.Height - size.y));
+                    BottomChild = new(new RectInt(Rect.Left, Rect.Top + size.y, Rect.Width, Rect.Height - size.y));
 
                 IsFull = RightChild == null && BottomChild == null;
                 return true;
@@ -162,13 +161,13 @@ public class TextureMap
                 if(size.x > 0)
                 {
                     if(RightChild == null)
-                        RightChild = new(new Rect(takenRect.Right, Rect.Top, size.x, takenRect.Height));
+                        RightChild = new(new RectInt(takenRect.Right, Rect.Top, size.x, takenRect.Height));
                     else
                         RightChild.Expand(size.WithY(0));
                 }
 
                 if(BottomChild == null)
-                    BottomChild = new(new Rect(Rect.Left, takenRect.Bottom, Rect.Width, size.y));
+                    BottomChild = new(new RectInt(Rect.Left, takenRect.Bottom, Rect.Width, size.y));
                 else
                     BottomChild.Expand(size);
             }
