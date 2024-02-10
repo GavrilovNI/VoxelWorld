@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
+using Sandcube.Blocks.States;
 using Sandcube.Items;
 using Sandcube.Mth;
 using Sandcube.Texturing;
@@ -21,10 +22,9 @@ public class ModItems : ModRegisterables<Item>
     protected virtual async Task AutoCreateBlockItems(Registry<Block> blocksRegistry)
     {
         var thisType = GetType();
-        var autoBlockItemProperties = TypeLibrary.GetType(GetType()).Properties
+        var autoBlockItemProperties = TypeLibrary.GetType(thisType).Properties
             .Where(p => p.PropertyType.IsAssignableTo(typeof(Item)) && p.HasAttribute<AutoBlockItemAttribute>() && p.GetValue(this) is null);
 
-        var photoMaker = SandcubeGame.Instance!.BlockPhotoMaker;
 
         foreach(var property in autoBlockItemProperties)
         {
@@ -55,42 +55,52 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
-            BlockItem blockItem;
+            object blockItem;
+
+            (var textureMade, var texture) = await MakeBlockItemTexture(block.DefaultBlockState);
+            if(!textureMade)
+                Log.Warning($"Couldn't create texture for item {thisType.FullName}.{property.Name} of block with id '{block.Id}'");
 
             var propertyType = property.PropertyType;
-            if(!propertyType.IsAssignableTo(typeof(BlockItem)) || propertyType == typeof(BlockItem))
+            if(propertyType == typeof(BlockItem))
             {
-                var id = block.Id;
-
-                var screenSize = new Vector2(Screen.Width, Screen.Height);
-                Vector2Int requestedTextureSize = BlockItemsTextureSize;
-                Vector2Int makingTextureSize = requestedTextureSize.WithX(requestedTextureSize.x * 7); // TODO: remove when https://github.com/Facepunch/sbox-issues/issues/4479 get fixed
-
-                var itemTexture = Texture.CreateRenderTarget().WithSize(makingTextureSize).Create();
-                bool made = await photoMaker.TryMakePhoto(block.DefaultBlockState, itemTexture);
-
-                RectInt partRect = new(((makingTextureSize - requestedTextureSize) / 2f).Floor(), requestedTextureSize);
-                itemTexture = itemTexture.GetPart(partRect);
-
-                if(!made)
-                {
-                    itemTexture = Texture.Invalid;
-                    Log.Warning($"Couldn't create texture for item {thisType.FullName}.{property.Name} of block with id '{blockModedId}'");
-                }
-                blockItem = new(block, itemTexture);
+                blockItem = new BlockItem(block, texture);
             }
-            else
+            else if(propertyType.IsAssignableTo(typeof(BlockItem)))
             {
-                blockItem = TypeLibrary.Create<BlockItem>(propertyType, new object[] { block! });
+                blockItem = TypeLibrary.Create<BlockItem>(propertyType, new object[] { block!, texture });
                 if(blockItem is null)
                 {
                     Log.Warning($"Couldn't create {propertyType.Name}. Probably constructor with 1 arg of type {nameof(Block)} wasn't found");
                     continue;
                 }
             }
+            else
+            {
+                throw new InvalidOperationException($"Can't auto create block item of type {propertyType} for property {thisType.FullName}.{property.Name}");
+            }
 
             property.SetValue(this, blockItem);
         }
+    }
+
+    protected virtual async Task<(bool, Texture)> MakeBlockItemTexture(BlockState blockState)
+    {
+        var photoMaker = SandcubeGame.Instance!.BlockPhotoMaker;
+
+        var screenSize = new Vector2(Screen.Width, Screen.Height);
+        Vector2Int requestedTextureSize = BlockItemsTextureSize;
+        Vector2Int makingTextureSize = requestedTextureSize.WithX(requestedTextureSize.x * 7); // TODO: remove when https://github.com/Facepunch/sbox-issues/issues/4479 get fixed
+
+        var itemTexture = Texture.CreateRenderTarget().WithSize(makingTextureSize).Create();
+        bool made = await photoMaker.TryMakePhoto(blockState, itemTexture);
+        if(!made)
+            itemTexture = Texture.Invalid;
+
+        RectInt partRect = new(((makingTextureSize - requestedTextureSize) / 2f).Floor(), requestedTextureSize);
+        itemTexture = itemTexture.GetPart(partRect);
+
+        return (made, itemTexture);
     }
 
     private static string MakeBlockId(string propertyName)
