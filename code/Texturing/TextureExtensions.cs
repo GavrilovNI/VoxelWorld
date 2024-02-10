@@ -9,9 +9,9 @@ public static class TextureExtensions
     public static Texture GetPart(this Texture texture, RectInt rect)
     {
         var resultSize = rect.Size;
-        var result = Texture.Create(resultSize.x, resultSize.y).Finish();
+        var result = Texture.Create(resultSize.x, resultSize.y, texture.ImageFormat).Finish();
         Color32[] data = new Color32[resultSize.x * resultSize.y];
-        texture.GetPixels<Color32>((rect.Left, rect.Top, resultSize.x, resultSize.y), 0, 0, data, ImageFormat.RGBA8888);
+        texture.GetPixels<Color32>((rect.Left, rect.Top, resultSize.x, resultSize.y), 0, 0, data, texture.ImageFormat);
         result.Update(data, 0, 0, resultSize.x, resultSize.y);
         return result;
     }
