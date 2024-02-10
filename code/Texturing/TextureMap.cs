@@ -2,6 +2,7 @@
 using Sandcube.Mth;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Sandcube.Texturing;
 
@@ -11,25 +12,39 @@ public class TextureMap
 
     protected TextureMapNode Nodes;
     protected Vector2Int MultipleOfExpand;
+    protected Color32? FillColor;
 
     public Vector2Int Size => (Vector2Int)Texture.Size;
 
     protected List<(TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture)> AnimatedTextures = new();
     protected float AnimatedTime = 0;
 
-    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand)
+    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, Color32? fillColor = null)
     {
-        Texture = Texture.Create(initialSize.x, initialSize.y).Finish();
+        FillColor = fillColor;
+        Texture = CreateTexture(initialSize);
         Nodes = new TextureMapNode(new RectInt(0, initialSize));
         MultipleOfExpand = multipleOfExpand;
     }
 
-    public TextureMap(Vector2Int initialSize) : this(initialSize, new Vector2Int(256, 256))
+    public TextureMap(Vector2Int initialSize, Color32? fillColor = null) : this(initialSize, new Vector2Int(256, 256), fillColor)
     {
     }
 
-    public TextureMap() : this(new Vector2Int(256, 256))
+    public TextureMap(Color32? fillColor) : this(new Vector2Int(256, 256), fillColor)
     {
+    }
+
+    public TextureMap() : this(null)
+    {
+    }
+
+    protected virtual Texture CreateTexture(Vector2Int size)
+    {
+        var texture = Texture.Create(size.x, size.y).Finish();
+        if(FillColor.HasValue)
+            texture.Update(FillColor.Value, new Rect(0, size));
+        return texture;
     }
 
     public Rect GetUv(RectInt textureRect) => new(textureRect.TopLeft / Texture.Size, textureRect.Size / Texture.Size);
@@ -86,7 +101,7 @@ public class TextureMap
         if(delta.x < 0 || delta.y < 0)
             throw new ArgumentOutOfRangeException(nameof(delta), delta, "expand size can't be negative");
 
-        var newTexture = Texture.Create(Texture.Width + delta.x, Texture.Height + delta.y).Finish();
+        var newTexture = CreateTexture(((Vector2Int)Texture.Size) + delta);
         newTexture.Update(Texture.GetPixels(), 0, 0, Texture.Width, Texture.Height);
         Texture = newTexture;
 
