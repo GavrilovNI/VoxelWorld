@@ -28,8 +28,8 @@ public class Item : IRegisterable, IStackValue
 
     public virtual int GetStackLimit() => StackLimit;
 
-    public virtual InteractionResult OnAttack(ItemActionContext context) => InteractionResult.Pass;
-    public virtual InteractionResult OnUse(ItemActionContext context) => InteractionResult.Pass;
+    public virtual InteractionResult OnAttack(in ItemActionContext context) => InteractionResult.Pass;
+    public virtual InteractionResult OnUse(in ItemActionContext context) => InteractionResult.Pass;
 
     public override int GetHashCode() => HashCode.Combine(Id, StackLimit);
 }

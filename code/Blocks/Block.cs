@@ -48,12 +48,12 @@ public abstract class Block : IRegisterable
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
     public bool IsAir() => this == SandcubeBaseMod.Instance!.Blocks.Air;
-    public virtual bool CanBeReplaced(BlockActionContext context, BlockState placingBlockState) => IsAir();
-    public virtual BlockState GetStateForPlacement(BlockActionContext context) => DefaultBlockState;
+    public virtual bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState) => IsAir();
+    public virtual BlockState GetStateForPlacement(in BlockActionContext context) => DefaultBlockState;
 
-    public virtual InteractionResult OnAttack(BlockActionContext context) => InteractionResult.Pass;
-    public virtual InteractionResult OnInteract(BlockActionContext context) => InteractionResult.Pass;
-    public virtual void Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
+    public virtual InteractionResult OnAttack(in BlockActionContext context) => InteractionResult.Pass;
+    public virtual InteractionResult OnInteract(in BlockActionContext context) => InteractionResult.Pass;
+    public virtual void Break(in BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
 
 
     // Thread safe

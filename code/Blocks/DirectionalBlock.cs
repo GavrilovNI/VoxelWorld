@@ -25,7 +25,7 @@ public class DirectionalBlock : SimpleBlock
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(DirectionProperty, Direction.Forward);
 
-    public override BlockState GetStateForPlacement(BlockActionContext context)
+    public override BlockState GetStateForPlacement(in BlockActionContext context)
     {
         var direction = Direction.ClosestTo(-context.TraceResult.Direction, Direction.Forward);
         return DefaultBlockState.With(DirectionProperty, direction);

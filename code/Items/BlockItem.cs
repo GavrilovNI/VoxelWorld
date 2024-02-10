@@ -14,7 +14,7 @@ public class BlockItem : Item
         Block = block;
     }
 
-    public override InteractionResult OnUse(ItemActionContext context)
+    public override InteractionResult OnUse(in ItemActionContext context)
     {
         var traceResult = context.TraceResult;
 
@@ -37,7 +37,7 @@ public class BlockItem : Item
         return InteractionResult.Success;
     }
 
-    protected virtual bool TryPlace(BlockActionContext context)
+    protected virtual bool TryPlace(in BlockActionContext context)
     {
         var currentBlockState = context.BlockState;
 

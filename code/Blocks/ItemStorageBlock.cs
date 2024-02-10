@@ -44,7 +44,7 @@ public class ItemStorageBlock : SimpleBlock, IEntityBlock
         StorageStackLimit = storageStackLimit;
     }
 
-    public override InteractionResult OnInteract(BlockActionContext context)
+    public override InteractionResult OnInteract(in BlockActionContext context)
     {
         if(context.World.GetBlockEntity(context.Position) is ItemStorageBlockEntity blockEntity)
         {

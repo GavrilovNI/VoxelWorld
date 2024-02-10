@@ -26,7 +26,7 @@ public class PillarBlock : SimpleBlock
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(AxisProperty, Axis.Z);
 
-    public override BlockState GetStateForPlacement(BlockActionContext context) =>
+    public override BlockState GetStateForPlacement(in BlockActionContext context) =>
         DefaultBlockState.With(AxisProperty, Direction.ClosestTo(context.TraceResult.Normal).Axis);
 
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)

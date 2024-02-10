@@ -27,7 +27,7 @@ public class HorizontalDirectionalBlock : SimpleBlock
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(DirectionProperty, Direction.Forward);
 
-    public override BlockState GetStateForPlacement(BlockActionContext context)
+    public override BlockState GetStateForPlacement(in BlockActionContext context)
     {
         var direction = Direction.ClosestTo(-context.TraceResult.Direction.WithAxis(Axis.Z, 0), Direction.Forward);
         return DefaultBlockState.With(DirectionProperty, direction);

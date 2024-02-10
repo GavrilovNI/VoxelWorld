@@ -52,7 +52,7 @@ public class SlabBlock : SimpleBlock
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(SlabTypeProperty, SlabType.Bottom);
 
-    public override bool CanBeReplaced(BlockActionContext context, BlockState placingBlockState)
+    public override bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState)
     {
         if(placingBlockState.Block != this)
             return false;
@@ -78,7 +78,7 @@ public class SlabBlock : SimpleBlock
         return isBottom ? SlabType.Bottom : SlabType.Top;
     }
 
-    public override BlockState GetStateForPlacement(BlockActionContext context)
+    public override BlockState GetStateForPlacement(in BlockActionContext context)
     {
         var currentBlockState = context.BlockState;
         if(currentBlockState.Block == this)
@@ -88,7 +88,7 @@ public class SlabBlock : SimpleBlock
         return DefaultBlockState.With(SlabTypeProperty, slabType);
     }
 
-    public override void Break(BlockActionContext context)
+    public override void Break(in BlockActionContext context)
     {
         var currentSlabType = context.BlockState.GetValue(SlabTypeProperty);
         if(currentSlabType != SlabType.Double)
