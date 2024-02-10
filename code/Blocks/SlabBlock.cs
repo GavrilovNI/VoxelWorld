@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
+using Sandcube.Blocks.States.Properties.Enums;
 using Sandcube.Interactions;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
