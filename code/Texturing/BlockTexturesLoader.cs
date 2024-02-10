@@ -1,6 +1,7 @@
 ﻿using Sandcube.Mth.Enums;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Sandcube.Texturing;
 
@@ -112,7 +113,14 @@ public class BlockTexturesLoader
                 suffix = string.Empty;
             }
 
-            result[direction] = textureMap.GetOrLoadTexture($"{texturePathPrefix}{SuffixSeparator}{suffix}.{textureExtension}");
+            bool addSuffix = suffix != string.Empty;
+
+            var pathBuilder = new StringBuilder(texturePathPrefix);
+            if(addSuffix)
+                pathBuilder = pathBuilder.Append(SuffixSeparator).Append(suffix);
+            pathBuilder = pathBuilder.Append('.').Append(textureExtension);
+
+            result[direction] = textureMap.GetOrLoadTexture(pathBuilder.ToString());
         }
         return result;
     }
