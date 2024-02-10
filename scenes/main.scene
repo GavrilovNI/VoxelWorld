@@ -485,6 +485,31 @@
           ]
         }
       ]
+    },
+    {
+      "Id": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
+      "Name": "BlocksTextureMapShower",
+      "Position": "0,0,800",
+      "Tags": "invisible",
+      "Components": [
+        {
+          "__type": "ModelRenderer",
+          "BodyGroups": 18446744073709551615,
+          "MaterialGroup": null,
+          "MaterialOverride": "materials/voxel_map.vmat",
+          "Model": "models/dev/plane.vmdl",
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        },
+        {
+          "__type": "BlocksTextureMapShower",
+          "ModelRenderer": {
+            "_type": "component",
+            "go": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
+            "component_type": "ModelRenderer"
+          }
+        }
+      ]
     }
   ],
   "SceneProperties": {
@@ -510,6 +535,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-08T01:26:01.3207849\u002B01:00",
+  "LastSaved": "2024-02-10T15:53:42.5555227\u002B01:00",
   "__references": []
 }
