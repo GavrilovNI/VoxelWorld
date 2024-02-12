@@ -104,24 +104,46 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             if(oldState == blockState)
                 return new(false, oldState);
 
-            if(BlockEntities.Remove(localPosition, out var oldBlockEntity))
-                oldBlockEntity.OnDestroyed();
-
-            BlockStates[localPosition] = blockState;
+            BlockEntity? oldBlockEntity = null;
+            if(BlockEntities.Remove(localPosition, out var oldEntity))
+            {
+                if(oldState.Block == blockState.Block)
+                    oldBlockEntity = oldEntity;
+                else
+                    oldEntity.OnDestroyed();
+            }
 
             if(blockState.Block is IEntityBlock entityBlock)
             {
                 var globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
                 if(!entityBlock.HasEntity(WorldProvider, globalPosition, blockState))
-                    return new(true, oldState);
+                {
+                    oldBlockEntity?.OnDestroyed();
+                    BlockStates[localPosition] = blockState;
+                }
+                else if(oldBlockEntity == null)
+                {
+                    BlockStates[localPosition] = blockState;
 
-                var blockEntity = entityBlock.CreateEntity(WorldProvider, globalPosition, blockState);
-                if(blockEntity is null)
-                    throw new InvalidOperationException($"Couldn't create {typeof(BlockEntity)} for {blockState}");
+                    var newBlockEntity = entityBlock.CreateEntity(WorldProvider, globalPosition, blockState);
+                    if(newBlockEntity is null)
+                        throw new InvalidOperationException($"Couldn't create {typeof(BlockEntity)} for {blockState}");
 
-                BlockEntities[localPosition] = blockEntity;
-                blockEntity.OnCreated();
+                    BlockEntities[localPosition] = newBlockEntity;
+                    newBlockEntity.OnCreated();
+                }
+                else
+                {
+                    BlockStates[localPosition] = blockState;
+                    BlockEntities[localPosition] = oldBlockEntity;
+                }
             }
+            else
+            {
+                oldBlockEntity?.OnDestroyed();
+                BlockStates[localPosition] = blockState;
+            }
+
             return new(true, oldState);
         }
     }
