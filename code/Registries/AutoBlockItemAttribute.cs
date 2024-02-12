@@ -5,8 +5,8 @@ namespace Sandcube.Registries;
 [AttributeUsage(AttributeTargets.Property)]
 public class AutoBlockItemAttribute : Attribute
 {
-    public string ModId;
-    public string? BlockId;
+    public readonly string ModId;
+    public readonly string? BlockId;
 
     public AutoBlockItemAttribute(string modId, string? blockId)
     {
