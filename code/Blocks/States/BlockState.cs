@@ -46,9 +46,22 @@ public sealed class BlockState
         return state;
     }
 
+    [Obsolete("Try using Change<T>")]
+    public BlockState Change(BlockProperty property, Func<CustomEnum, CustomEnum> newValueAccessor)
+    {
+        var currentValue = GetValue(property);
+        return With(property, newValueAccessor(currentValue));
+    }
+
 #pragma warning disable CS0618 // Type or member is obsolete
     public BlockState With<T>(BlockProperty<T> property, T value) where T : CustomEnum<T>, ICustomEnum<T> =>
         With(property, (CustomEnum)value);
+
+    public BlockState Change<T>(BlockProperty<T> property, Func<T, T> newValueAccessor) where T : CustomEnum<T>, ICustomEnum<T>
+    {
+        var currentValue = GetValue(property);
+        return With<T>(property, newValueAccessor(currentValue));
+    }
 #pragma warning restore CS0618 // Type or member is obsolete
 
     public CustomEnum GetValue(BlockProperty blockProperty) => _properties[blockProperty];
