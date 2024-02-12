@@ -127,23 +127,27 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     // Thread safe
-    public Task SetBlockState(Vector3Int localPosition, BlockState blockState)
+    public Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
     {
         if(!IsInBounds(localPosition))
             throw new ArgumentOutOfRangeException(nameof(localPosition), localPosition, "block position is out of chunk bounds");
 
-        if(GetBlockState(localPosition) == blockState)
-            return Task.CompletedTask;
+        var result = SetBlockStateInternal(localPosition, blockState);
 
-        bool modified = SetBlockStateInternal(localPosition, blockState);
-        return modified ? RequireModelUpdate() : GetModelUpdateTask();
+        if(flags.HasFlag(BlockSetFlags.UpdateModel))
+            _ = RequireModelUpdate();
+
+        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+            return GetModelUpdateTask().ContinueWith(t => result);
+
+        return Task.FromResult(result);
     }
 
-    public Task SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates)
+    public Task<bool> SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates, BlockSetFlags flags = BlockSetFlags.Default)
     {
         var size = new Vector3Int(blockStates.GetLength(0), blockStates.GetLength(1), blockStates.GetLength(2));
         if(size.IsAnyAxis(v => v <= 0))
-            return Task.CompletedTask;
+            return Task.FromResult(false);
 
         var lastPosition = localPosition + size - Vector3Int.One;
         if(!IsInBounds(localPosition) || !IsInBounds(lastPosition))
@@ -160,7 +164,14 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 }
             }
         }
-        return modified ? RequireModelUpdate() : GetModelUpdateTask();
+
+        Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
+            .ContinueWith(t => modified);
+
+        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+            return resultTask;
+
+        return Task.FromResult(modified);
     }
 
     public virtual void Clear()

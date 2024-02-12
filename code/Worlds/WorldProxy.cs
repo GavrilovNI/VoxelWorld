@@ -26,6 +26,6 @@ public class WorldProxy : Component, IWorldAccessor, IBlockEntityProvider
     public Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => GetBlockWorldPosition(chunkPosition, blockLocalPosition);
     public Chunk? GetChunk(Vector3Int position) => World.GetChunk(position);
     public Vector3Int GetChunkPosition(Vector3Int blockPosition) => World.GetChunkPosition(blockPosition);
-    public Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState) =>
-        World.SetBlockState(position, blockState);
+    public Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState, BlockSetFlags flags) =>
+        World.SetBlockState(position, blockState, flags);
 }

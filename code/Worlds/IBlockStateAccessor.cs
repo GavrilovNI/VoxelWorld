@@ -6,5 +6,5 @@ namespace Sandcube.Worlds;
 
 public interface IBlockStateAccessor : IBlockStateProvider
 {
-    Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState);
+    Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default);
 }
