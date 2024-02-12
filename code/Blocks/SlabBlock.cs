@@ -62,8 +62,8 @@ public class SlabBlock : SimpleBlock
         if(currentSlabType == SlabType.Double)
             return false;
 
-        var wantedType = GetSlabPart(context.World, context.Position, context.TraceResult, currentSlabType.GetOpposite());
-        return wantedType != currentSlabType;
+        var newSlabType = placingBlockState.GetValue(SlabTypeProperty);
+        return currentSlabType != newSlabType;
     }
 
     protected virtual SlabType GetSlabPart(IWorldProvider world, Vector3Int blockPosition, PhysicsTraceResult traceResult, SlabType slabTypeAtCenter)
