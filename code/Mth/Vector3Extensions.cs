@@ -1,10 +1,23 @@
-﻿using Sandcube.Mth.Enums;
+﻿using Sandbox;
+using Sandcube.Mth.Enums;
 using System;
 
 namespace Sandcube.Mth;
 
 public static class Vector3Extensions
 {
+    public static Vector3 ProjectOnPlane(this Vector3 vector, Vector3 planeNormal)
+    {
+        float sqrMag = vector.Dot(planeNormal);
+        if(sqrMag.AlmostEqual(0))
+            return vector;
+
+        var dot = vector.Dot(planeNormal);
+        return new Vector3(vector.x - planeNormal.x * dot / sqrMag,
+            vector.y - planeNormal.y * dot / sqrMag,
+            vector.z - planeNormal.z * dot / sqrMag);
+    }
+
     public static Vector3Int Floor(this Vector3 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y), (int)MathF.Floor(vector.z));
     public static Vector3Int Ceiling(this Vector3 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y), (int)MathF.Ceiling(vector.z));
     public static Vector3Int Round(this Vector3 vector) => new((int)MathF.Round(vector.x), (int)MathF.Round(vector.y), (int)MathF.Round(vector.z));
