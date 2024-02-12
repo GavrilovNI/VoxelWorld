@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandbox.UI;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System.Collections.Generic;
@@ -9,6 +8,8 @@ namespace Sandcube.Worlds.Generation.Meshes;
 public static class VisualMeshes
 {
     public static readonly SidedMesh<ComplexVertex> Empty = new();
+
+    public static readonly Vector3[] DoorCorners = PhysicsMeshes.DoorCorners;
 
     public static readonly AllSidedMeshMaker FullBlock = new(
         (Rect backUv, Rect frontUv, Rect leftUv, Rect rightUv, Rect topUv, Rect bottomUv) =>
@@ -59,6 +60,32 @@ public static class VisualMeshes
                 .Add(new ComplexMeshBuilder().AddQuad(MathV.MeterCubeCorners[7], MathV.MeterCubeCorners[3], MathV.MeterCubeCorners[1], MathV.MeterCubeCorners[5], new Vector3(-1, -1).Normal, ComplexMeshBuilder.TangentUp, uv))
                 .Add(new ComplexMeshBuilder().AddQuad(MathV.MeterCubeCorners[5], MathV.MeterCubeCorners[1], MathV.MeterCubeCorners[3], MathV.MeterCubeCorners[7], new Vector3(1, 1).Normal, ComplexMeshBuilder.TangentUp, uv))
                 .Build();
+
+    public static readonly AllSidedMeshMaker BottomDoorBlock = new(
+        (Rect backUv, Rect frontUv, Rect leftUv, Rect rightUv, Rect topUv, Rect bottomUv) =>
+        {
+            return new SidedMesh<ComplexVertex>.Builder()
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[7], DoorCorners[3], DoorCorners[0], DoorCorners[4], Vector3.Backward, ComplexMeshBuilder.TangentUp, backUv), Direction.Backward)
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[5], DoorCorners[1], DoorCorners[2], DoorCorners[6], Vector3.Forward, ComplexMeshBuilder.TangentUp, frontUv))
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[6], DoorCorners[2], DoorCorners[3], DoorCorners[7], Vector3.Left, ComplexMeshBuilder.TangentUp, leftUv), Direction.Left)
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[4], DoorCorners[0], DoorCorners[1], DoorCorners[5], Vector3.Right, ComplexMeshBuilder.TangentUp, rightUv), Direction.Right)
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[3], DoorCorners[2], DoorCorners[1], DoorCorners[0], Vector3.Down, ComplexMeshBuilder.TangentForward, bottomUv), Direction.Down)
+                .Build();
+        }
+    );
+
+    public static readonly AllSidedMeshMaker TopDoorBlock = new(
+        (Rect backUv, Rect frontUv, Rect leftUv, Rect rightUv, Rect topUv, Rect bottomUv) =>
+        {
+            return new SidedMesh<ComplexVertex>.Builder()
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[7], DoorCorners[3], DoorCorners[0], DoorCorners[4], Vector3.Backward, ComplexMeshBuilder.TangentUp, backUv), Direction.Backward)
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[5], DoorCorners[1], DoorCorners[2], DoorCorners[6], Vector3.Forward, ComplexMeshBuilder.TangentUp, frontUv))
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[6], DoorCorners[2], DoorCorners[3], DoorCorners[7], Vector3.Left, ComplexMeshBuilder.TangentUp, leftUv), Direction.Left)
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[4], DoorCorners[0], DoorCorners[1], DoorCorners[5], Vector3.Right, ComplexMeshBuilder.TangentUp, rightUv), Direction.Right)
+                .Add(new ComplexMeshBuilder().AddQuad(DoorCorners[6], DoorCorners[7], DoorCorners[4], DoorCorners[5], Vector3.Up, ComplexMeshBuilder.TangentForward, topUv), Direction.Up)
+                .Build();
+        }
+    );
 
 
     public class AllSidedMeshMaker

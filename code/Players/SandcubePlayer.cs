@@ -43,6 +43,7 @@ public class SandcubePlayer : Component
         hotbar.TrySet(5, new(items.WoodLog, 32));
         hotbar.TrySet(6, new(items.Furnace, 63));
         hotbar.TrySet(7, new(items.TallGrass, 64));
+        hotbar.TrySet(8, new(items.Door, 64));
     }
 
     protected override void OnUpdate()

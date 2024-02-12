@@ -52,6 +52,14 @@ public class BlockTexturesLoader
     public static readonly BlockTexturesLoader SimplePillar =
         Pillar.With((Direction.Up, TopBottomSuffix), (Direction.Down, TopBottomSuffix));
 
+    public static readonly BlockTexturesLoader BottomDoor = SimplePillar
+        .With((Direction.Forward, FrontSuffix), (Direction.Backward, BackSuffix))
+        .Rename((d, s) => d.Axis == Axis.Z ? string.Empty : $"bottom_{s}");
+
+    public static readonly BlockTexturesLoader TopDoor = SimplePillar
+        .With((Direction.Forward, FrontSuffix), (Direction.Backward, BackSuffix))
+        .Rename((d, s) => d.Axis == Axis.Z ? string.Empty : $"top_{s}");
+
 
     public IReadOnlyDictionary<Direction, string> Suffixes { get; init; }
 

@@ -55,4 +55,7 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
         BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("barrel")),
         18);
 
+    public DoorBlock Door { get; } = new(MakeId("door"),
+        BlockTexturesLoader.BottomDoor.LoadTextureUvs(TextureMap, GetBlockPathPart("door")),
+        BlockTexturesLoader.TopDoor.LoadTextureUvs(TextureMap, GetBlockPathPart("door")));
 }

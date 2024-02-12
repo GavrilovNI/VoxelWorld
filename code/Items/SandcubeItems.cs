@@ -33,4 +33,7 @@ public sealed class SandcubeItems : ModItems
 
     [AutoBlockItem(SandcubeBaseMod.ModName)]
     public BlockItem Barrel { get; private set; } = null!;
+
+    [AutoBlockItem(SandcubeBaseMod.ModName)]
+    public BlockItem Door { get; private set; } = null!;
 }
