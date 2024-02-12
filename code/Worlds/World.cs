@@ -168,7 +168,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
 
     // Thread safe
-    public virtual async Task SetBlockState(Vector3Int position, BlockState blockState)
+    public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState)
     {
         var chunkPosition = GetChunkPosition(position);
         var chunk = await GetChunkOrLoad(chunkPosition);
@@ -178,13 +178,10 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
         var localPosition = GetBlockPositionInChunk(position);
 
-        var oldBlockState = chunk.GetBlockState(localPosition);
-        if(oldBlockState == blockState)
-            return;
-
-        await chunk.SetBlockState(localPosition, blockState);
-
-        NotifyNeighboringChunksAboutEdgeUpdate(position, oldBlockState, blockState);
+        var result = await chunk.SetBlockState(localPosition, blockState);
+        if(result.Changed)
+            NotifyNeighboringChunksAboutEdgeUpdate(position, result.OldBlockState, blockState);
+        return result;
     }
 
     protected virtual List<Direction> GetNeighboringChunkDirections(Vector3Int localBlockPosition)

@@ -96,12 +96,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
 
-    protected bool SetBlockStateInternal(Vector3Int localPosition, BlockState blockState)
+    protected BlockStateChangingResult SetBlockStateInternal(Vector3Int localPosition, BlockState blockState)
     {
         lock(BlocksLock)
         {
-            if(BlockStates.TryGetValue(localPosition, out var currentState) && currentState == blockState)
-                return false;
+            var oldState = BlockStates.GetValueOrDefault(localPosition, BlockState.Air);
+            if(oldState == blockState)
+                return new(false, oldState);
 
             if(BlockEntities.Remove(localPosition, out var oldBlockEntity))
                 oldBlockEntity.OnDestroyed();
@@ -112,7 +113,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             {
                 var globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
                 if(!entityBlock.HasEntity(WorldProvider, globalPosition, blockState))
-                    return true;
+                    return new(true, oldState);
 
                 var blockEntity = entityBlock.CreateEntity(WorldProvider, globalPosition, blockState);
                 if(blockEntity is null)
@@ -121,7 +122,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 BlockEntities[localPosition] = blockEntity;
                 blockEntity.OnCreated();
             }
-            return true;
+            return new(true, oldState);
         }
     }
 
