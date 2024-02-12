@@ -9,10 +9,11 @@ using Sandcube.Registries;
 using System.Diagnostics.CodeAnalysis;
 using Sandcube.Texturing;
 using System.Linq;
+using Sandcube.Blocks.Interfaces;
 
 namespace Sandcube.Blocks;
 
-public class DirectionalBlock : SimpleBlock
+public class DirectionalBlock : SimpleBlock, IRotatableBlock, IMirrorableBlock
 {
     public static readonly BlockProperty<Direction> DirectionProperty = new("direction");
 
@@ -29,6 +30,19 @@ public class DirectionalBlock : SimpleBlock
     {
         var direction = Direction.ClosestTo(-context.TraceResult.Direction, Direction.Forward);
         return DefaultBlockState.With(DirectionProperty, direction);
+    }
+
+    public virtual bool TryRotate(BlockState blockState, RightAngle rightAngle, Direction lookDirection, out BlockState result)
+    {
+        var direction = blockState.GetValue(DirectionProperty).Rotate(rightAngle, lookDirection);
+        result = blockState.With(DirectionProperty, direction);
+        return true;
+    }
+    public virtual BlockState Mirror(BlockState blockState)
+    {
+        var direction = blockState.GetValue(DirectionProperty);
+        direction = direction.GetOpposite();
+        return blockState.With(DirectionProperty, direction);
     }
 
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)

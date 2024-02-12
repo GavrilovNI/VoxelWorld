@@ -11,10 +11,11 @@ using System.Diagnostics.CodeAnalysis;
 using Sandcube.Texturing;
 using System.Linq;
 using Sandbox;
+using Sandcube.Blocks.Interfaces;
 
 namespace Sandcube.Blocks;
 
-public class HorizontalDirectionalBlock : SimpleBlock
+public class HorizontalDirectionalBlock : SimpleBlock, IOneAxisRotatableBlock, IMirrorableBlock
 {
     public static readonly FilteredBlockProperty<Direction> DirectionProperty = new("direction", Direction.HorizontalSet.Contains);
 
@@ -33,12 +34,12 @@ public class HorizontalDirectionalBlock : SimpleBlock
         return DefaultBlockState.With(DirectionProperty, direction);
     }
 
+    public virtual Direction GetRotationLookDirection() => Direction.Down;
     public virtual BlockState Rotate(BlockState blockState, RightAngle rightAngle)
     {
-        var direction = blockState.GetValue(DirectionProperty).Rotate(rightAngle, Direction.Down);
+        var direction = blockState.GetValue(DirectionProperty).Rotate(rightAngle, GetRotationLookDirection());
         return blockState.With(DirectionProperty, direction);
     }
-
     public virtual BlockState Mirror(BlockState blockState)
     {
         var direction = blockState.GetValue(DirectionProperty);
