@@ -39,11 +39,20 @@ public class BlockItem : Item
         var currentBlockState = context.BlockState;
 
         var stateToPlace = Block.GetStateForPlacement(context);
+        var block = stateToPlace.Block;
+
         bool canReplace = currentBlockState.Block.CanBeReplaced(context, stateToPlace);
         if(!canReplace)
             return false;
 
-        context.World.SetBlockState(context.Position, stateToPlace);
+        bool canStay = block.CanStay(context.World, context.Position, stateToPlace);
+        if(!canStay)
+            return false;
+
+        var contextCopy = context;
+        context.World.SetBlockState(context.Position, stateToPlace)
+            .ContinueWith(t => block.OnPlaced(contextCopy, stateToPlace));
+
         return true;
     }
 }

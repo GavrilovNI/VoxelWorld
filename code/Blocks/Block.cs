@@ -3,8 +3,10 @@ using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
 using Sandcube.Mods;
+using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
+using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -48,12 +50,17 @@ public abstract class Block : IRegisterable
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
     public bool IsAir() => this == SandcubeBaseMod.Instance!.Blocks.Air;
-    public virtual bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState) => IsAir();
+
+
     public virtual BlockState GetStateForPlacement(in BlockActionContext context) => DefaultBlockState;
+    public virtual bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState) => IsAir();
+    public virtual void OnPlaced(in BlockActionContext context, BlockState placedBlockState) { }
 
     public virtual InteractionResult OnAttack(in BlockActionContext context) => InteractionResult.Pass;
     public virtual InteractionResult OnInteract(in BlockActionContext context) => InteractionResult.Pass;
     public virtual void Break(in BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
+
+    public virtual bool CanStay(IWorldAccessor world, Vector3Int position, BlockState blockState) => true;
 
 
     // Thread safe
