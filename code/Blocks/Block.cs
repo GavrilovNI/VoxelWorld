@@ -62,6 +62,8 @@ public abstract class Block : IRegisterable
 
     public virtual bool CanStay(IWorldAccessor world, Vector3Int position, BlockState blockState) => true;
 
+    public virtual void OnNeighbourChanged(in NeighbourChangedContext context) { }
+
 
     // Thread safe
     public abstract ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState);

@@ -129,6 +129,9 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     // Thread safe
     public Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
     {
+        if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
+            throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
+
         if(!IsInBounds(localPosition))
             throw new ArgumentOutOfRangeException(nameof(localPosition), localPosition, "block position is out of chunk bounds");
 

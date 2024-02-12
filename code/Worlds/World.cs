@@ -178,14 +178,28 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
         var localPosition = GetBlockPositionInChunk(position);
 
-        var result = await chunk.SetBlockState(localPosition, blockState, flags & ~BlockSetFlags.AwaitModelUpdate);
+        var result = await chunk.SetBlockState(localPosition, blockState, flags & ~BlockSetFlags.AwaitModelUpdate & ~BlockSetFlags.UpdateNeigbours);
         if(result.Changed)
+        {
             NotifyNeighboringChunksAboutEdgeUpdate(position, result.OldBlockState, blockState);
+            if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
+                NotifyNeighboursAboutBlockUpdate(position, result.OldBlockState, blockState);
+        }
 
         if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
             return await chunk.GetModelUpdateTask().ContinueWith(t => result);
 
         return result;
+    }
+
+    protected virtual void NotifyNeighboursAboutBlockUpdate(Vector3Int position, BlockState oldBlockState, BlockState newBlockState)
+    {
+        foreach(Direction direction in Direction.All)
+        {
+            var neighborBlockPosition = position + direction;
+            NeighbourChangedContext context = new(this, neighborBlockPosition, direction.GetOpposite(), oldBlockState, newBlockState);
+            context.ThisBlockState.Block.OnNeighbourChanged(context);
+        }
     }
 
     protected virtual List<Direction> GetNeighboringChunkDirections(Vector3Int localBlockPosition)
