@@ -1,4 +1,5 @@
 ﻿using Sandcube.Blocks.Entities;
+using Sandcube.Blocks.Interfaces;
 using Sandcube.Blocks.States;
 using Sandcube.Interactions;
 using Sandcube.Inventories;

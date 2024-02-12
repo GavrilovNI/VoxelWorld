@@ -3,7 +3,7 @@ using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using Sandcube.Worlds;
 
-namespace Sandcube.Blocks;
+namespace Sandcube.Blocks.Interfaces;
 
 public interface IEntityBlock
 {

@@ -1,6 +1,6 @@
 using Sandbox;
-using Sandcube.Blocks;
 using Sandcube.Blocks.Entities;
+using Sandcube.Blocks.Interfaces;
 using Sandcube.Blocks.States;
 using Sandcube.Interfaces;
 using Sandcube.Mth;
