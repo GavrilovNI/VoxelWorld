@@ -1,4 +1,5 @@
 ﻿using Sandcube.Mth.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,6 +77,16 @@ public class BlockTexturesLoader
 
     public BlockTexturesLoader Rename(string oldSuffix, string newSuffix) =>
         Rename(new Dictionary<string, string>() { { oldSuffix, newSuffix } });
+
+    public BlockTexturesLoader Rename(Func<Direction, string, string> suffixChanger)
+    {
+        var newSuffixes = new Dictionary<Direction, string>(Suffixes);
+        foreach(var (direction, suffix) in newSuffixes)
+            newSuffixes[direction] = suffixChanger(direction, suffix);
+        return new BlockTexturesLoader(newSuffixes);
+    }
+
+    public BlockTexturesLoader Rename(Func<string, string> suffixChanger) => Rename((d, s) => suffixChanger(s));
 
 
     public BlockTexturesLoader With(IReadOnlyDictionary<Direction, string> suffixes)
