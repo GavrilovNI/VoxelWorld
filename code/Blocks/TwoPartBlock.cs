@@ -6,6 +6,7 @@ using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Texturing;
+using Sandcube.Texturing.Items;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Linq;
 
 namespace Sandcube.Blocks;
 
+[CustomBlockItemTextureMakerAttribute(typeof(TwoPartBlockItemTextureMaker))]
 public abstract class TwoPartBlock : Block
 {
     public static readonly BlockProperty<TwoPartBlockPartType> PartTypeProperty = new("part_type");

@@ -22,4 +22,11 @@ public class BlockPhotoMaker : Component
         World.Clear();
         return made;
     }
+
+    public void ResetTransforms()
+    {
+        Camera.Transform.World = new Transform();
+        World.Transform.World = new Transform();
+        Sun.Transform.World = new Transform();
+    }
 }

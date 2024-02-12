@@ -6,6 +6,7 @@ using Sandcube.Mods;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
+using Sandcube.Texturing.Items;
 using Sandcube.Worlds;
 using Sandcube.Worlds.Generation.Meshes;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Linq;
 
 namespace Sandcube.Blocks;
 
+[CustomBlockItemTextureMakerAttribute(typeof(BlockItemTextureMaker))]
 public abstract class Block : IRegisterable
 {
     public ModedId Id { get; }

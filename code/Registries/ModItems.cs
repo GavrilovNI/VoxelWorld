@@ -4,6 +4,7 @@ using Sandcube.Blocks.States;
 using Sandcube.Items;
 using Sandcube.Mth;
 using Sandcube.Texturing;
+using Sandcube.Texturing.Items;
 using System;
 using System.Linq;
 using System.Text;
@@ -86,14 +87,13 @@ public class ModItems : ModRegisterables<Item>
 
     protected virtual async Task<(bool, Texture)> MakeBlockItemTexture(BlockState blockState)
     {
-        var photoMaker = SandcubeGame.Instance!.BlockPhotoMaker;
-
-        var screenSize = new Vector2(Screen.Width, Screen.Height);
         Vector2Int requestedTextureSize = BlockItemsTextureSize;
         Vector2Int makingTextureSize = requestedTextureSize.WithX(requestedTextureSize.x * 7); // TODO: remove when https://github.com/Facepunch/sbox-issues/issues/4479 get fixed
 
         var itemTexture = Texture.CreateRenderTarget().WithSize(makingTextureSize).Create();
-        bool made = await photoMaker.TryMakePhoto(blockState, itemTexture);
+
+        var textureMakerAttribute = TypeLibrary.GetAttribute<CustomBlockItemTextureMakerAttribute>(blockState.Block.GetType());
+        bool made = await textureMakerAttribute.TryMakePhoto(blockState, itemTexture);
         if(!made)
             itemTexture = Texture.Invalid;
 
