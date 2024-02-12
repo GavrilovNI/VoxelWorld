@@ -2,6 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Items;
 using Sandcube.Mth;
+using Sandcube.Mth.Enums;
 using Sandcube.Players;
 using Sandcube.Worlds;
 using System.Diagnostics.CodeAnalysis;
@@ -37,20 +38,6 @@ public record class BlockActionContext
         BlockState = blockState;
     }
 
-    public static bool TryMakeFromItemActionContext(ItemActionContext itemActionContext, Vector3Int position, out BlockActionContext context)
-    {
-        var world = itemActionContext.TraceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
-        if(world == null)
-        {
-            context = null!;
-            return false;
-        }
-
-        var blockState = world.GetBlockState(position);
-        context = new BlockActionContext(itemActionContext, world, position, blockState);
-        return true;
-    }
-
     public static bool TryMakeFromItemActionContext(ItemActionContext itemActionContext, out BlockActionContext context)
     {
         var world = itemActionContext.TraceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
@@ -64,5 +51,15 @@ public record class BlockActionContext
         var blockState = world.GetBlockState(position);
         context = new BlockActionContext(itemActionContext, world, position, blockState);
         return true;
+    }
+
+    public static BlockActionContext operator +(in BlockActionContext context, Direction direction)
+    {
+        var newPosition = context.Position + direction;
+        return context with
+        {
+            Position = newPosition,
+            BlockState = context.World.GetBlockState(newPosition)
+        };
     }
 }

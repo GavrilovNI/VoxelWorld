@@ -26,10 +26,7 @@ public class BlockItem : Item
 
         if(!TryPlace(blockContext))
         {
-            var position = blockContext.Position + Direction.ClosestTo(blockContext.TraceResult.Normal);
-            if(!BlockActionContext.TryMakeFromItemActionContext(context, position, out blockContext))
-                return InteractionResult.Fail;
-
+            blockContext += Direction.ClosestTo(blockContext.TraceResult.Normal);
             if(!TryPlace(blockContext))
                 return InteractionResult.Fail;
         }
