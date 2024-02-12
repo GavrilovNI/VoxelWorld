@@ -67,6 +67,13 @@ public sealed class RightAngle : CustomEnum<RightAngle>, ICustomEnum<RightAngle>
     public RightAngle RotateCounterclockwise() => FromNonClampedOrdinal(Ordinal + 3);
     public RightAngle Rotate180() => FromNonClampedOrdinal(Ordinal + 2);
 
+    public RightAngle GetOpposite()
+    {
+        if(this == RightAngle.Angle0 || this == RightAngle.Angle180)
+            return this;
+        return FromNonClampedOrdinal(Ordinal + 2);
+    }
+
     public static bool TryParse(string name, out RightAngle value) => TryParse(All, name, out value);
 
     public static RightAngle operator *(RightAngle rotation, int value) => FromNonClampedOrdinal(rotation.Ordinal * value);
@@ -74,7 +81,7 @@ public sealed class RightAngle : CustomEnum<RightAngle>, ICustomEnum<RightAngle>
 
     public static RightAngle operator +(RightAngle a, RightAngle b) => FromNonClampedOrdinal(a.Ordinal + b.Ordinal);
     public static RightAngle operator -(RightAngle a, RightAngle b) => FromNonClampedOrdinal(a.Ordinal - b.Ordinal);
-    public static RightAngle operator -(RightAngle rotation) => FromNonClampedOrdinal(rotation.Ordinal + 2);
+    public static RightAngle operator -(RightAngle rotation) => rotation.GetOpposite();
 
     public static bool operator ==(RightAngle a, RightAngle b) => a.Ordinal == b.Ordinal;
     public static bool operator !=(RightAngle a, RightAngle b) => a.Ordinal != b.Ordinal;
