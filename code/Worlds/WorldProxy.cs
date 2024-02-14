@@ -17,16 +17,16 @@ public class WorldProxy : Component, IWorldAccessor, IBlockEntityProvider
             Enabled = false;
     }
 
-    public Vector3 GetBlockGlobalPosition(Vector3Int position) => World.GetBlockGlobalPosition(position);
+    public Vector3 GetBlockGlobalPosition(Vector3Int blockPosition) => World.GetBlockGlobalPosition(blockPosition);
     public Vector3Int GetBlockPosition(Vector3 position) => World.GetBlockPosition(position);
     public Vector3Int GetBlockPosition(Vector3 position, Vector3 hitNormal) => World.GetBlockPosition(position, hitNormal);
     public Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => World.GetBlockPositionInChunk(blockPosition);
-    public BlockState GetBlockState(Vector3Int position) => World.GetBlockState(position);
-    public BlockEntity? GetBlockEntity(Vector3Int position) => World.GetBlockEntity(position);
+    public BlockState GetBlockState(Vector3Int blockPosition) => World.GetBlockState(blockPosition);
+    public BlockEntity? GetBlockEntity(Vector3Int blockPosition) => World.GetBlockEntity(blockPosition);
     public Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => GetBlockWorldPosition(chunkPosition, blockLocalPosition);
     public bool HasChunk(Vector3Int chunkPosition) => World.HasChunk(chunkPosition);
-    public Chunk? GetChunk(Vector3Int position) => World.GetChunk(position);
+    public Chunk? GetChunk(Vector3Int chunkPosition) => World.GetChunk(chunkPosition);
     public Vector3Int GetChunkPosition(Vector3Int blockPosition) => World.GetChunkPosition(blockPosition);
-    public Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState, BlockSetFlags flags) =>
-        World.SetBlockState(position, blockState, flags);
+    public Task<BlockStateChangingResult> SetBlockState(Vector3Int blockPosition, BlockState blockState, BlockSetFlags flags) =>
+        World.SetBlockState(blockPosition, blockState, flags);
 }

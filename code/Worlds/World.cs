@@ -75,11 +75,11 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual Task<Chunk> GetChunkOrLoad(Vector3Int position)
+    public virtual Task<Chunk> GetChunkOrLoad(Vector3Int chunkPosition)
     {
         lock(Chunks)
         {
-            if(Chunks.TryGetValue(position, out var chunkUnion))
+            if(Chunks.TryGetValue(chunkPosition, out var chunkUnion))
             {
                 if(chunkUnion.Is<Chunk>(out var chunk))
                     return Task.FromResult(chunk);
@@ -88,14 +88,14 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
             ChunkCreationData creationData = new()
             {
-                Position = position,
+                Position = chunkPosition,
                 Size = ChunkSize,
                 EnableOnCreate = false,
                 World = this
             };
 
             var loadingTask = ChunkLoader.LoadChunk(creationData, ChunkLoadCancellationTokenSource.Token);
-            Chunks[position] = loadingTask;
+            Chunks[chunkPosition] = loadingTask;
             _ = loadingTask.ContinueWith(t =>
             {
                 if(!IsValid)
@@ -105,7 +105,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
                     if(t.IsCompletedSuccessfully)
                     {
                         var chunk = t.Result;
-                        Chunks[position] = chunk;
+                        Chunks[chunkPosition] = chunk;
 
                         _ = RunInGameThread(ct =>
                         {
@@ -115,7 +115,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
                     }
                     else
                     {
-                        Chunks.Remove(position);
+                        Chunks.Remove(chunkPosition);
                     }
                 }
             });
@@ -132,20 +132,20 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual Chunk? GetChunk(Vector3Int position)
+    public virtual Chunk? GetChunk(Vector3Int chunkPosition)
     {
         lock(Chunks)
         {
-            if(Chunks.TryGetValue(position, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk))
+            if(Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk))
                 return chunk;
         }
         return null;
     }
 
-    public virtual Vector3Int GetBlockPosition(Vector3 position, Vector3 hitNormal)
+    public virtual Vector3Int GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
     {
         hitNormal = Transform.World.NormalToLocal(hitNormal.Normal);
-        var result = Transform.World.PointToLocal(position).Divide(MathV.UnitsInMeter);
+        var result = Transform.World.PointToLocal(blockPosition).Divide(MathV.UnitsInMeter);
 
         foreach(var axis in Axis.All)
         {
@@ -168,7 +168,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     public virtual Vector3Int GetBlockPosition(Vector3 position) => Transform.World.PointToLocal(position).Divide(MathV.UnitsInMeter).Floor();
 
     public virtual Vector3Int GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
-    public virtual Vector3 GetBlockGlobalPosition(Vector3Int position) => position * MathV.UnitsInMeter;
+    public virtual Vector3 GetBlockGlobalPosition(Vector3Int blockPosition) => blockPosition * MathV.UnitsInMeter;
 
     public virtual Vector3Int GetChunkPosition(Vector3Int blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
     public virtual Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
@@ -176,22 +176,22 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
 
     // Thread safe
-    public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3Int position, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
+    public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3Int blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
     {
-        var chunkPosition = GetChunkPosition(position);
+        var chunkPosition = GetChunkPosition(blockPosition);
         var chunk = await GetChunkOrLoad(chunkPosition);
 
         if(!chunk.IsValid())
             throw new InvalidOperationException($"Couldn't load {nameof(Chunk)} at position {chunkPosition}");
 
-        var localPosition = GetBlockPositionInChunk(position);
+        var localPosition = GetBlockPositionInChunk(blockPosition);
 
         var result = await chunk.SetBlockState(localPosition, blockState, flags & ~BlockSetFlags.AwaitModelUpdate & ~BlockSetFlags.UpdateNeigbours);
         if(result.Changed)
         {
-            NotifyNeighboringChunksAboutEdgeUpdate(position, result.OldBlockState, blockState);
+            NotifyNeighboringChunksAboutEdgeUpdate(blockPosition, result.OldBlockState, blockState);
             if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
-                NotifyNeighboursAboutBlockUpdate(position, result.OldBlockState, blockState);
+                NotifyNeighboursAboutBlockUpdate(blockPosition, result.OldBlockState, blockState);
         }
 
         if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
@@ -200,11 +200,11 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         return result;
     }
 
-    protected virtual void NotifyNeighboursAboutBlockUpdate(Vector3Int position, BlockState oldBlockState, BlockState newBlockState)
+    protected virtual void NotifyNeighboursAboutBlockUpdate(Vector3Int blockPosition, BlockState oldBlockState, BlockState newBlockState)
     {
         foreach(Direction direction in Direction.All)
         {
-            var neighborBlockPosition = position + direction;
+            var neighborBlockPosition = blockPosition + direction;
             NeighbourChangedContext context = new(this, neighborBlockPosition, direction.GetOpposite(), oldBlockState, newBlockState);
             context.ThisBlockState.Block.OnNeighbourChanged(context);
         }
@@ -258,25 +258,25 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual BlockState GetBlockState(Vector3Int position)
+    public virtual BlockState GetBlockState(Vector3Int blockPosition)
     {
-        var chunkPosition = GetChunkPosition(position);
+        var chunkPosition = GetChunkPosition(blockPosition);
         var chunk = GetChunk(chunkPosition);
         if(chunk is null)
             return BlockState.Air;
-        position = GetBlockPositionInChunk(position);
-        return chunk.GetBlockState(position);
+        blockPosition = GetBlockPositionInChunk(blockPosition);
+        return chunk.GetBlockState(blockPosition);
     }
 
-    public BlockEntity? GetBlockEntity(Vector3Int position)
+    public BlockEntity? GetBlockEntity(Vector3Int blockPosition)
     {
-        var chunkPosition = GetChunkPosition(position);
+        var chunkPosition = GetChunkPosition(blockPosition);
         var chunk = GetChunk(chunkPosition);
         if(chunk is null)
             return null;
 
-        position = GetBlockPositionInChunk(position);
-        return chunk.GetBlockEntity(position);
+        blockPosition = GetBlockPositionInChunk(blockPosition);
+        return chunk.GetBlockEntity(blockPosition);
     }
 
     // Thread safe
