@@ -70,7 +70,13 @@
           "TickByItself": true
         },
         {
-          "__type": "WorldGenerator"
+          "__type": "WorldGenerator",
+          "Config": {
+            "Scale": "100,100",
+            "OctavesCount": 1,
+            "Persistance": 0.5,
+            "Lacunarity": 2
+          }
         }
       ]
     },
@@ -537,6 +543,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-14T17:36:51.7072386\u002B01:00",
+  "LastSaved": "2024-02-14T21:32:23.7059806\u002B01:00",
   "__references": []
 }
