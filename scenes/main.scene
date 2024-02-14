@@ -148,7 +148,7 @@
         },
         {
           "__type": "WorldAutoLoader",
-          "Distance": 2,
+          "Distance": "2,2,1",
           "World": {
             "_type": "component",
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
@@ -546,6 +546,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-14T21:55:45.9797216\u002B01:00",
+  "LastSaved": "2024-02-14T23:03:54.5773018\u002B01:00",
   "__references": []
 }

@@ -6,7 +6,7 @@ namespace Sandcube.Worlds.Generation;
 public class WorldAutoLoader : Component
 {
     [Property] public World? World { get; set; } = null;
-    [Property] public int Distance { get; set; } = 2;
+    [Property] public Vector3Int Distance { get; set; } = 2;
 
     protected override void OnUpdate()
     {
@@ -15,11 +15,14 @@ public class WorldAutoLoader : Component
 
         var centralChunkPositrion = World.GetChunkPosition(Transform.Position);
 
-        for(int x = centralChunkPositrion.x - Distance; x <= centralChunkPositrion.x + Distance; ++x)
+        var start = centralChunkPositrion - Distance;
+        var end = centralChunkPositrion + Distance;
+
+        for(int x = start.x; x <= end.x; ++x)
         {
-            for(int y = centralChunkPositrion.y - Distance; y <= centralChunkPositrion.y + Distance; ++y)
+            for(int y = start.y; y <= end.y; ++y)
             {
-                for(int z = centralChunkPositrion.z - Distance; z <= centralChunkPositrion.z + Distance; ++z)
+                for(int z = start.z; z <= end.z; ++z)
                 {
                     var chunkPosition = new Vector3Int(x, y, z);
                     _ = World.GetChunkOrLoad(chunkPosition);
