@@ -12,6 +12,8 @@ public class ChunkLoader : ThreadHelpComponent
     [Property] public GameObject ChunkPrefab { get; set; } = null!;
     [Property] public WorldGenerator? Generator { get; set; }
 
+    [Property, Category("Debug")] public bool BreakFromPrefab { get; set; } = true;
+
 
     // Call only in game thread
     public virtual Task<Chunk> LoadChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
@@ -54,7 +56,8 @@ public class ChunkLoader : ThreadHelpComponent
 
         Transform cloneTransform = new(Transform.Position + creationData.Position * creationData.Size * MathV.UnitsInMeter, Transform.Rotation);
         var chunkGameObject = ChunkPrefab.Clone(cloneTransform, GameObject, false, $"Chunk {creationData.Position}");
-        chunkGameObject.BreakFromPrefab();
+        if(BreakFromPrefab || !Game.IsEditor)
+            chunkGameObject.BreakFromPrefab();
 
         var chunk = chunkGameObject.Components.Get<Chunk>(true);
         chunk.Initialize(creationData.Position, creationData.Size, creationData.World);
