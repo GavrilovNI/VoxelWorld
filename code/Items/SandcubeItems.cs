@@ -17,6 +17,9 @@ public sealed class SandcubeItems : ModItems
     public BlockItem Dirt { get; private set; } = null!;
 
     [AutoBlockItem(SandcubeBaseMod.ModName)]
+    public BlockItem Grass { get; private set; } = null!;
+
+    [AutoBlockItem(SandcubeBaseMod.ModName)]
     public BlockItem Cobblestone { get; private set; } = null!;
 
     [AutoBlockItem(SandcubeBaseMod.ModName)]
