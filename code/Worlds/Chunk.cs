@@ -14,10 +14,9 @@ namespace Sandcube.Worlds;
 
 public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable
 {
-    [Property] public Vector3Int Position { get; internal set; }
-    [Property] public Vector3Int Size { get; internal set; } = 16;
+    [Property, HideIf(nameof(Initialized), true)] public Vector3Int Position { get; internal set; }
+    [Property, HideIf(nameof(Initialized), true)] public Vector3Int Size { get; internal set; } = 16;
     [Property] public ChunkModelUpdater ModelUpdater { get; internal set; } = null!;
-
 
     public bool Initialized { get; private set; } = false;
 

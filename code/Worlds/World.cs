@@ -16,9 +16,11 @@ namespace Sandcube.Worlds;
 
 public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 {
-    [Property] public Vector3Int ChunkSize { get; init; } = 16;
+    [Property, HideIf(nameof(IsSceneRunning), true)] public Vector3Int ChunkSize { get; init; } = 16;
     [Property] protected ChunkLoader ChunkLoader { get; set; } = null!;
     [Property] protected bool TickByItself { get; set; } = true;
+
+    private bool IsSceneRunning => !Scene.IsEditor;
 
 
     protected readonly SortedDictionary<Vector3Int, OneOf<Chunk, Task<Chunk>>> Chunks = new(Vector3Int.XYZIterationComparer);
