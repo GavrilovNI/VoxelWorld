@@ -28,12 +28,12 @@ public sealed class SandcubeItems : ModItems
     [AutoBlockItem(SandcubeBaseMod.ModName)]
     public BlockItem Furnace { get; private set; } = null!;
 
-    [AutoBlockItem(SandcubeBaseMod.ModName)]
+    [AutoBlockItem(SandcubeBaseMod.ModName, rawTexturePath: $"textures/{SandcubeBaseMod.ModName}/items/tall_grass.png")]
     public BlockItem TallGrass { get; private set; } = null!;
 
     [AutoBlockItem(SandcubeBaseMod.ModName)]
     public BlockItem Barrel { get; private set; } = null!;
 
-    [AutoBlockItem(SandcubeBaseMod.ModName)]
+    [AutoBlockItem(SandcubeBaseMod.ModName, rawTexturePath: $"textures/{SandcubeBaseMod.ModName}/items/door.png")]
     public BlockItem Door { get; private set; } = null!;
 }

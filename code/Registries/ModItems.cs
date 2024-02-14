@@ -57,9 +57,17 @@ public class ModItems : ModRegisterables<Item>
 
             object blockItem;
 
-            (var textureMade, var texture) = await MakeBlockItemTexture(block.DefaultBlockState);
-            if(!textureMade)
-                Log.Warning($"Couldn't create texture for item {thisType.FullName}.{property.Name} of block with id '{block.Id}'");
+            Texture texture;
+            if(autoAttribute.UseRawTexture)
+            {
+                texture = Texture.Load(FileSystem.Mounted, autoAttribute.RawTexturePath, true);
+            }
+            else
+            {
+                (var textureMade, texture) = await MakeBlockItemTexture(block.DefaultBlockState);
+                if(!textureMade)
+                    Log.Warning($"Couldn't create texture for item {thisType.FullName}.{property.Name} of block with id '{block.Id}'");
+            }
 
             var propertyType = property.PropertyType;
             if(propertyType == typeof(BlockItem))

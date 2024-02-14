@@ -7,16 +7,14 @@ public class AutoBlockItemAttribute : Attribute
 {
     public readonly string ModId;
     public readonly string? BlockId;
+    public readonly bool UseRawTexture = false;
+    public readonly string? RawTexturePath;
 
-    public AutoBlockItemAttribute(string modId, string? blockId)
+    public AutoBlockItemAttribute(string modId, string? blockId = null, string? rawTexturePath = null)
     {
         ModId = modId;
         BlockId = blockId;
-    }
-
-    public AutoBlockItemAttribute(string modId)
-    {
-        ModId = modId;
-        BlockId = null;
+        UseRawTexture = rawTexturePath != null;
+        RawTexturePath = rawTexturePath;
     }
 }
