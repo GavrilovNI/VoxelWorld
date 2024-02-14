@@ -49,6 +49,13 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
         this.z = z;
     }
 
+    public Vector3Int(Vector2Int vector, int z = 0)
+    {
+        this.x = vector.x;
+        this.y = vector.y;
+        this.z = z;
+    }
+
     public Vector3Int(int all)
     {
         this.x = all;
