@@ -180,13 +180,29 @@ public class ChunkModelUpdater : ThreadHelpComponent
         }
     }
 
+    protected virtual BlockState? GetExternalBlockState(Vector3Int localPosition)
+    {
+        if(Chunk.IsInBounds(localPosition))
+            return Chunk.GetBlockState(localPosition);
+
+        var world = Chunk.WorldProvider;
+        Vector3Int worldPosition = world.GetBlockWorldPosition(Chunk.Position, localPosition);
+        var chunkPosition = world.GetChunkPosition(worldPosition);
+        if(!world.HasChunk(chunkPosition))
+            return null;
+
+        return world.GetBlockState(worldPosition);
+    }
+
     // Thread safe
     protected virtual bool ShouldAddFace(Vector3Int localPosition, BlockState blockState, BlockMeshType meshType, Direction direction)
     {
         var neighborPosition = localPosition + direction;
-        var neighborBlockState = Chunk.GetExternalBlockState(neighborPosition);
-        var neighborBlock = neighborBlockState.Block;
+        var neighborBlockState = GetExternalBlockState(neighborPosition);
+        if(neighborBlockState is null)
+            return false;
 
+        var neighborBlock = neighborBlockState.Block;
         return !neighborBlock.HidesNeighbourFace(neighborBlockState, meshType, direction.GetOpposite());
     }
 

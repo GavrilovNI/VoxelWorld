@@ -211,16 +211,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         RequireModelUpdate();
     }
 
-    protected virtual bool IsInBounds(Vector3Int localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
-
-    public virtual BlockState GetExternalBlockState(Vector3Int localPosition)
-    {
-        if(IsInBounds(localPosition))
-            return GetBlockState(localPosition);
-
-        Vector3Int globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
-        return WorldProvider.GetBlockState(globalPosition);
-    }
+    public virtual bool IsInBounds(Vector3Int localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
 
     public virtual BlockEntity? GetExternalBlockEntity(Vector3Int localPosition)
     {

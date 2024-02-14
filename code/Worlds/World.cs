@@ -66,6 +66,14 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         }
     }
 
+    public virtual bool HasChunk(Vector3Int chunkPosition)
+    {
+        lock(Chunks)
+        {
+            return Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>();
+        }
+    }
+
     // Thread safe
     public virtual Task<Chunk> GetChunkOrLoad(Vector3Int position)
     {
