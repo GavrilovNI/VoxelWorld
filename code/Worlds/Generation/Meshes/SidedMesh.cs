@@ -26,12 +26,12 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             return this;
 
         var rotation = rightAngleRotation.ToRotation(lookDirection);
-        var notSidedElements = new UnlimitedMesh<V>.Builder().Add(_notSidedElements).RotateAround(center, rotation);
+        var notSidedElements = new UnlimitedMesh<V>.Builder().Add(_notSidedElements).RotateAround(rotation, center);
         Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements = new();
         foreach(var (oldDirection, oldBuilder) in _sidedElements)
         {
             var newDirection = Direction.ClosestTo(oldDirection.Normal * rotation);
-            var newBuilder = new UnlimitedMesh<V>.Builder().Add(oldBuilder).RotateAround(center, rotation);
+            var newBuilder = new UnlimitedMesh<V>.Builder().Add(oldBuilder).RotateAround(rotation, center);
             sidedElements[newDirection] = newBuilder;
         }
         return new(sidedElements, notSidedElements);

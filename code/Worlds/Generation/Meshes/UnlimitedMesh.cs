@@ -37,7 +37,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         Bounds = mesh.Bounds;
     }
 
-    public UnlimitedMesh<V> RotateAround(Vector3 center, Rotation rotation)
+    public UnlimitedMesh<V> RotateAround(Rotation rotation, Vector3 center)
     {
         var indices = _indices.Select(l => new List<ushort>(l)).ToList();
 
@@ -143,9 +143,9 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             return this;
         }
 
-        public virtual Builder RotateAround(Vector3 center, Rotation rotation)
+        public virtual Builder RotateAround(Rotation rotation, Vector3 center)
         {
-            Mesh = Mesh.RotateAround(center, rotation);
+            Mesh = Mesh.RotateAround(rotation, center);
             CurrentVertices = Vertices.Count == 0 ? null : Vertices[^1];
             CurrentIndices = Indices.Count == 0 ? null : Indices[^1];
             return this;
