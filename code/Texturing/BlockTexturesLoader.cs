@@ -62,10 +62,17 @@ public class BlockTexturesLoader
 
 
     public IReadOnlyDictionary<Direction, string> Suffixes { get; init; }
+    public IReadOnlyDictionary<Direction, string> TexturePaths { get; init; }
 
-    public BlockTexturesLoader(IReadOnlyDictionary<Direction, string> textureSuffixes)
+    public BlockTexturesLoader(IReadOnlyDictionary<Direction, string> textureSuffixes) :
+        this(textureSuffixes, new Dictionary<Direction, string>())
+    {
+    }
+
+    public BlockTexturesLoader(IReadOnlyDictionary<Direction, string> textureSuffixes, IReadOnlyDictionary<Direction, string> texturePaths)
     {
         Suffixes = textureSuffixes;
+        TexturePaths = texturePaths;
     }
 
 
@@ -77,7 +84,7 @@ public class BlockTexturesLoader
             if(suffixOldToNewNames.TryGetValue(suffix, out var newSuffix))
                 newSuffixes[direction] = newSuffix;
         }
-        return new BlockTexturesLoader(newSuffixes);
+        return new BlockTexturesLoader(newSuffixes, TexturePaths);
     }
 
     public BlockTexturesLoader Rename(params (string oldSuffix, string newSuffix)[] suffixOldToNewNames) =>
@@ -91,7 +98,7 @@ public class BlockTexturesLoader
         var newSuffixes = new Dictionary<Direction, string>(Suffixes);
         foreach(var (direction, suffix) in newSuffixes)
             newSuffixes[direction] = suffixChanger(direction, suffix);
-        return new BlockTexturesLoader(newSuffixes);
+        return new BlockTexturesLoader(newSuffixes, TexturePaths);
     }
 
     public BlockTexturesLoader Rename(Func<string, string> suffixChanger) => Rename((d, s) => suffixChanger(s));
@@ -102,7 +109,7 @@ public class BlockTexturesLoader
         var newSuffixes = new Dictionary<Direction, string>(Suffixes);
         foreach(var (direction, suffix) in suffixes)
             newSuffixes[direction] = suffix;
-        return new BlockTexturesLoader(newSuffixes);
+        return new BlockTexturesLoader(newSuffixes, TexturePaths);
     }
 
     public BlockTexturesLoader With(params (Direction direction, string suffix)[] suffixes) =>
@@ -114,7 +121,33 @@ public class BlockTexturesLoader
         {
             [direction] = suffix
         };
-        return new BlockTexturesLoader(newSuffixes);
+        return new BlockTexturesLoader(newSuffixes, TexturePaths);
+    }
+
+    public BlockTexturesLoader WithTextures(params (Direction direction, string? texturePath)[] texturePaths) =>
+        WithTextures(texturePaths.ToDictionary(e => e.direction, e => e.texturePath));
+
+    public BlockTexturesLoader WithTextures(IReadOnlyDictionary<Direction, string?> texturePaths)
+    {
+        var newTexturePaths = new Dictionary<Direction, string>(Suffixes);
+        foreach(var (direction, texturePath) in texturePaths)
+        {
+            if(texturePath is null)
+                newTexturePaths.Remove(direction);
+            else
+                newTexturePaths[direction] = texturePath;
+        }
+        return new BlockTexturesLoader(Suffixes, newTexturePaths);
+    }
+
+    public BlockTexturesLoader WithTexture(Direction direction, string? texturePath)
+    {
+        var newTexturePaths = new Dictionary<Direction, string>(TexturePaths);
+        if(texturePath is null)
+            newTexturePaths.Remove(direction);
+        else
+            newTexturePaths[direction] = texturePath;
+        return new BlockTexturesLoader(Suffixes, newTexturePaths);
     }
 
 
@@ -124,6 +157,12 @@ public class BlockTexturesLoader
         Dictionary<Direction, TextureMapPart> result = new();
         foreach(var direction in Direction.All)
         {
+            if(TexturePaths.TryGetValue(direction, out var texturePath))
+            {
+                result[direction] = textureMap.GetOrLoadTexture(texturePath);
+                continue;
+            }
+
             string suffix;
             if(!Suffixes.TryGetValue(direction, out suffix!))
             {
