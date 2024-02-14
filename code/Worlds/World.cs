@@ -48,7 +48,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         {
             foreach(var (_, chunkUnion) in Chunks)
             {
-                if(chunkUnion.Is<Chunk>(out var chunk))
+                if(chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid)
                     chunk.Tick();
             }
         }
@@ -60,7 +60,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         {
             foreach(var (_, chunkUnion) in Chunks)
             {
-                if(chunkUnion.Is<Chunk>(out var chunk))
+                if(chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid)
                     chunk.UpdateTexture(texture);
             }
         }
@@ -70,7 +70,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     {
         lock(Chunks)
         {
-            return Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>();
+            return Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid;
         }
     }
 
@@ -82,8 +82,14 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             if(Chunks.TryGetValue(chunkPosition, out var chunkUnion))
             {
                 if(chunkUnion.Is<Chunk>(out var chunk))
-                    return Task.FromResult(chunk);
-                return chunkUnion.As<Task<Chunk>>()!;
+                {
+                    if(chunk.IsValid)
+                        return Task.FromResult(chunk);
+                }
+                else
+                {
+                    return chunkUnion.As<Task<Chunk>>()!;
+                }
             }
 
             ChunkCreationData creationData = new()
@@ -136,7 +142,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     {
         lock(Chunks)
         {
-            if(Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk))
+            if(Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid)
                 return chunk;
         }
         return null;
