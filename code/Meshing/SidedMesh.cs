@@ -48,6 +48,17 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         Bounds = bounds;
     }
 
+    public bool IsEmpty()
+    {
+        foreach(var (direction, element) in _sidedElements)
+        {
+            if(!element.IsEmpty())
+                return false;
+        }
+
+        return _notSidedElements.IsEmpty();
+    }
+
     public SidedMesh<V> RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
     {
         if(rightAngleRotation == RightAngle.Angle0)
@@ -108,6 +119,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             return builder!;
         }
 
+        public virtual bool IsEmpty() => Mesh.IsEmpty();
         public Builder Add(UnlimitedMesh<V>.Builder builder)
         {
             Mesh._notSidedElements.Add(builder);
