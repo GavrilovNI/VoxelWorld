@@ -96,17 +96,12 @@ public class ModItems : ModRegisterables<Item>
     {
         var photoMaker = SandcubeGame.Instance!.BlockPhotoMaker;
 
-        var screenSize = new Vector2(Screen.Width, Screen.Height);
-        Vector2Int requestedTextureSize = BlockItemsTextureSize;
-        Vector2Int makingTextureSize = requestedTextureSize.WithX(requestedTextureSize.x * 7); // TODO: remove when https://github.com/Facepunch/sbox-issues/issues/4479 get fixed
+        var itemTexture = Texture.CreateRenderTarget().WithWidth(BlockItemsTextureSize)
+            .WithHeight(BlockItemsTextureSize).Create();
 
-        var itemTexture = Texture.CreateRenderTarget().WithSize(makingTextureSize).Create();
         bool made = await photoMaker.TryMakePhoto(blockState, itemTexture);
         if(!made)
             itemTexture = Texture.Invalid;
-
-        RectInt partRect = new(((makingTextureSize - requestedTextureSize) / 2f).Floor(), requestedTextureSize);
-        itemTexture = itemTexture.GetPart(partRect);
 
         return (made, itemTexture);
     }
