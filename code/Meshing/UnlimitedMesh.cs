@@ -183,6 +183,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             Mesh = Mesh.RotateAround(rotation, center);
             CurrentVertices = Vertices.Count == 0 ? null : Vertices[^1];
             CurrentIndices = Indices.Count == 0 ? null : Indices[^1];
+            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
             return this;
         }
 
