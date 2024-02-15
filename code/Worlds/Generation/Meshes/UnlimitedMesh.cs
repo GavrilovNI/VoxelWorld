@@ -1,4 +1,5 @@
-﻿using Sandcube.Mth;
+﻿using Sandbox;
+using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
@@ -97,6 +98,23 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
     public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position)
     {
         builder.Add(this, position);
+    }
+
+    // call only in main thread
+    public void CreateBuffersFor(Mesh mesh, int partIndex)
+    {
+        ThreadSafe.AssertIsMainThread();
+        var vertices = _vertices[partIndex];
+        var indices = _indices[partIndex];
+
+        mesh.CreateVertexBuffer(vertices.Count, Vertex.Layout, new List<V>(vertices));
+        mesh.CreateIndexBuffer(indices.Count, indices.Select(i => (int)i).ToList());
+
+        BBox bounds = vertices.Count == 0 ? new() : BBox.FromPositionAndSize(vertices[0].GetPosition());
+        foreach(var vertex in vertices)
+            bounds = bounds.AddPoint(vertex.GetPosition());
+
+        mesh.Bounds = bounds;
     }
 
     public UnlimitedMesh<T> Convert<T>(Func<V, T> vertexConvertor) where T : unmanaged, IVertex
@@ -395,6 +413,9 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             CurrentVertices!.Add(vertexToAdd);
             return this;
         }
+
+        // call only in main thread
+        public virtual void CreateBuffersFor(Mesh mesh, int partIndex) => Mesh.CreateBuffersFor(mesh, partIndex);
 
         public UnlimitedMesh<V> Build() => new(Mesh);
     }

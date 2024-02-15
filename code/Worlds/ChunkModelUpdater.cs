@@ -283,63 +283,52 @@ public class ChunkModelUpdater : ThreadHelpComponent
         return result;
     }
 
-    // Thread safe
-    protected virtual Task UpdateModelRenderers(ComplexMeshBuilder opaqueBuilder, ComplexMeshBuilder translucentBuilder, CancellationToken cancellationToken)
+    // call only in main thread
+    protected virtual void UpdateModelRenderers(ComplexMeshBuilder opaqueBuilder, ComplexMeshBuilder translucentBuilder, CancellationToken cancellationToken)
     {
+        ThreadSafe.AssertIsMainThread();
+
         bool isEmpty = opaqueBuilder.PartsCount == 0 && translucentBuilder.PartsCount == 0;
         if(isEmpty)
-            return Task.CompletedTask;
+            return;
 
-        return Task.RunInThreadAsync(async () =>
+        var opaqueModels = CreateRenderModels(opaqueBuilder, OpaqueVoxelsMaterial);
+        var translucentModels = CreateRenderModels(translucentBuilder, TranslucentVoxelsMaterial);
+
+        DestroyModelRenderers();
+        var opaqueRenderers = AddModelRenderers(opaqueModels.Length);
+        var translucentRenderers = AddModelRenderers(translucentModels.Length);
+
+        var blocksTexture = SandcubeGame.Instance!.BlocksTextureMap.Texture;
+        for(int i = 0; i < opaqueModels.Length; ++i)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var opaqueTask = CreateRenderModels(opaqueBuilder, OpaqueVoxelsMaterial);
-            var translucentTask = CreateRenderModels(translucentBuilder, TranslucentVoxelsMaterial);
+            opaqueRenderers[i].Model = opaqueModels[i];
+            opaqueRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
+        }
 
-            await Task.WhenAll(opaqueTask, translucentTask);
-
-            Model[] opaqueModels = opaqueTask.Result;
-            Model[] translucentModels = translucentTask.Result;
-
-            await RunInGameThread(ct =>
-            {
-                DestroyModelRenderers();
-                var opaqueRenderers = AddModelRenderers(opaqueModels.Length);
-                var translucentRenderers = AddModelRenderers(translucentModels.Length);
-
-                var blocksTexture = SandcubeGame.Instance!.BlocksTextureMap.Texture;
-                for(int i = 0; i < opaqueModels.Length; ++i)
-                {
-                    opaqueRenderers[i].Model = opaqueModels[i];
-                    opaqueRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
-                }
-
-                for(int i = 0; i < translucentModels.Length; ++i)
-                {
-                    translucentRenderers[i].Model = translucentModels[i];
-                    translucentRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
-                }
-            }, cancellationToken);
-
-        });
-
-        async Task<Model[]> CreateRenderModels(ComplexMeshBuilder builder, Material material)
+        for(int i = 0; i < translucentModels.Length; ++i)
         {
-            var buffers = builder.ToVertexBuffers();
+            translucentRenderers[i].Model = translucentModels[i];
+            translucentRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
+        }
+
+        Model[] CreateRenderModels(ComplexMeshBuilder builder, Material material)
+        {
+            ThreadSafe.AssertIsMainThread();
+
+            var partsCount = builder.PartsCount;
             cancellationToken.ThrowIfCancellationRequested();
 
-            Model[] models = new Model[buffers.Count];
-            await RunInGameThread(ct =>
+            Model[] models = new Model[partsCount];
+
+            for(int i = 0; i < partsCount; ++i)
             {
-                for(int i = 0; i < buffers.Count; ++i)
-                {
-                    ModelBuilder modelBuilder = new();
-                    Mesh mesh = new(material);
-                    mesh.CreateBuffers(buffers[i]); // should be called in game thread as it's not thread safe
-                    modelBuilder.AddMesh(mesh);
-                    models[i] = modelBuilder.Create(); // should be called in game thread as it's not thread safe
-                }
-            }, cancellationToken);
+                ModelBuilder modelBuilder = new();
+                Mesh mesh = new(material);
+                builder.CreateBuffersFor(mesh, i);
+                modelBuilder.AddMesh(mesh);
+                models[i] = modelBuilder.Create();
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
             return models;
@@ -402,15 +391,15 @@ public class ChunkModelUpdater : ThreadHelpComponent
         ThreadSafe.AssertIsMainThread();
 
         cancellationToken.ThrowIfCancellationRequested();
-        var rendererTask = UpdateModelRenderers(builders.Opaque, builders.Translucent, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
         var physicsTask = UpdateCollider(PhysicsCollider, builders.Physics, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
         var interactionTask = UpdateCollider(InteractionCollider, builders.Interaction, cancellationToken);
 
-        await Task.WhenAll(rendererTask, physicsTask, interactionTask);
+        cancellationToken.ThrowIfCancellationRequested();
+        UpdateModelRenderers(builders.Opaque, builders.Translucent, cancellationToken);
+
+        await Task.WhenAll(physicsTask, interactionTask);
 
         cancellationToken.ThrowIfCancellationRequested();
         RecalculateBounds(builders.Opaque.IsEmpty() ? null : builders.Opaque,
