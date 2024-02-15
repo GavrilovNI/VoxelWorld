@@ -438,7 +438,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         // thread safe if builder is not being changed during execution
         public virtual void AddAsCollisionMesh(ModelBuilder modelBuilder) => Mesh.AddAsCollisionMesh(modelBuilder);
 
-        public UnlimitedMesh<V> Build() => new(Mesh);
+        public UnlimitedMesh<V> Build() => new(Mesh._vertices, Mesh._indices, Bounds);
     }
 
     public class Builder<T> : Builder where T : Builder<T>
