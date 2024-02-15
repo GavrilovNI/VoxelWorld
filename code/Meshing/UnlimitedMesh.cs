@@ -290,74 +290,31 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
         public virtual Builder AddCube(Vector3 position, Vector3 size)
         {
-            //        6_______5
-            //       /|      /|
-            //     7/_|____4/ |
-            //      | |     | | 
-            //      | |2____|_|1         z  x
-            //      | /     | /          | /
-            //      |/______|/        y__|/
-            //      3 front 0 
+            Vector3[] corners = MathV.GetCubeCorners(size);
 
-            Vector3[] corners = new Vector3[8]
-            {
-            position,
-            position + new Vector3(size.x, 0f, 0f),
-            position + new Vector3(size.x, size.y, 0f),
-            position + new Vector3(0f, size.y, 0f),
-            position + new Vector3(0f, 0f, size.y),
-            position + new Vector3(size.x, 0f, size.y),
-            position + new Vector3(size.x, size.y, size.y),
-            position + new Vector3(0f, size.y, size.y)
-            };
+            foreach(var corner in corners)
+                AddVertex(corner);
 
-            AddQuad(corners[3], corners[2], corners[1], corners[0]); // bottom
-            AddQuad(corners[6], corners[7], corners[4], corners[5]); // top
-            AddQuad(corners[4], corners[0], corners[1], corners[5]); // right
-            AddQuad(corners[5], corners[1], corners[2], corners[6]); // back
-            AddQuad(corners[6], corners[2], corners[3], corners[7]); // left
-            AddQuad(corners[7], corners[3], corners[0], corners[4]); // front
+            AddTriangleIndex(5, 6, 7); // bottom
+            AddTriangleIndex(7, 8, 5);
+
+            AddTriangleIndex(2, 1, 4); // top
+            AddTriangleIndex(4, 3, 2);
+
+            AddTriangleIndex(4, 8, 7); // right
+            AddTriangleIndex(7, 3, 4);
+
+            AddTriangleIndex(3, 7, 6); // back
+            AddTriangleIndex(6, 2, 3);
+
+            AddTriangleIndex(2, 6, 5); // left
+            AddTriangleIndex(5, 1, 2);
+
+            AddTriangleIndex(1, 5, 8); // front
+            AddTriangleIndex(8, 4, 1);
+
             return this;
         }
-
-        public virtual Builder AddCube(Vector3 position, Vector3 size, IReadOnlySet<Direction> sidesToAdd)
-        {
-            //        6_______5
-            //       /|      /|
-            //     7/_|____4/ |
-            //      | |     | | 
-            //      | |2____|_|1         z  x
-            //      | /     | /          | /
-            //      |/______|/        y__|/
-            //      3 front 0 
-
-            Vector3[] corners = new Vector3[8]
-            {
-            position,
-            position + new Vector3(size.x, 0f, 0f),
-            position + new Vector3(size.x, size.y, 0f),
-            position + new Vector3(0f, size.y, 0f),
-            position + new Vector3(0f, 0f, size.y),
-            position + new Vector3(size.x, 0f, size.y),
-            position + new Vector3(size.x, size.y, size.y),
-            position + new Vector3(0f, size.y, size.y)
-            };
-
-            if(sidesToAdd.Contains(Direction.Down))
-                AddQuad(corners[3], corners[2], corners[1], corners[0]); // bottom
-            if(sidesToAdd.Contains(Direction.Up))
-                AddQuad(corners[6], corners[7], corners[4], corners[5]); // top
-            if(sidesToAdd.Contains(Direction.Right))
-                AddQuad(corners[4], corners[0], corners[1], corners[5]); // right
-            if(sidesToAdd.Contains(Direction.Forward))
-                AddQuad(corners[5], corners[1], corners[2], corners[6]); // back
-            if(sidesToAdd.Contains(Direction.Left))
-                AddQuad(corners[6], corners[2], corners[3], corners[7]); // left
-            if(sidesToAdd.Contains(Direction.Backward))
-                AddQuad(corners[7], corners[3], corners[0], corners[4]); // front
-            return this;
-        }
-
 
         public List<V> CombineVertices() => Mesh.CombineVertices();
 
@@ -437,8 +394,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         public override T AddQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d) => (T)base.AddQuad(a, b, c, d);
 
         public override T AddCube(Vector3 position, Vector3 size) => (T)base.AddCube(position, size);
-        public override T AddCube(Vector3 position, Vector3 size, IReadOnlySet<Direction> sidesToAdd) => (T)base.AddCube(position, size, sidesToAdd);
-
+        
         protected override T AddNewDataList() => (T)base.AddNewDataList();
 
         protected override T AddRawIndex(ushort i) => (T)base.AddRawIndex(i);

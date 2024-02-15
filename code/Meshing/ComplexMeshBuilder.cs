@@ -47,41 +47,7 @@ public class ComplexMeshBuilder : UnlimitedMesh<ComplexVertex>.Builder<ComplexMe
     public virtual ComplexMeshBuilder AddQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, Vector4 tangent) =>
         AddQuad(a, b, c, d, normal, tangent, UvFull);
 
-    public virtual ComplexMeshBuilder AddCube(Vector3 position, Vector3 size, Rect uv)
-    {
-        Vector3[] corners = MathV.GetCubeCorners(size);
-        AddQuad(corners[3], corners[2], corners[1], corners[0], Vector3.Down, TangentForward, uv); // bottom
-        AddQuad(corners[6], corners[7], corners[4], corners[5], Vector3.Up, TangentForward, uv); // top
-        AddQuad(corners[4], corners[0], corners[1], corners[5], Vector3.Right, TangentUp, uv); // right
-        AddQuad(corners[5], corners[1], corners[2], corners[6], Vector3.Forward, TangentUp, uv); // back
-        AddQuad(corners[6], corners[2], corners[3], corners[7], Vector3.Left, TangentUp, uv); // left
-        AddQuad(corners[7], corners[3], corners[0], corners[4], Vector3.Backward, TangentUp, uv); // front
-        return this;
-    }
-    public override ComplexMeshBuilder AddCube(Vector3 position, Vector3 size) => AddCube(position, size, UvFull);
-
-    public virtual ComplexMeshBuilder AddCube(Vector3 position, Vector3 size, Rect uv, IReadOnlySet<Direction> sidesToAdd)
-    {
-        Vector3[] corners = MathV.GetCubeCorners(size);
-
-        if(sidesToAdd.Contains(Direction.Down))
-            AddQuad(corners[3], corners[2], corners[1], corners[0], Vector3.Down, TangentForward, uv); // bottom
-        if(sidesToAdd.Contains(Direction.Up))
-            AddQuad(corners[6], corners[7], corners[4], corners[5], Vector3.Up, TangentForward, uv); // top
-        if(sidesToAdd.Contains(Direction.Right))
-            AddQuad(corners[4], corners[0], corners[1], corners[5], Vector3.Right, TangentUp, uv); // right
-        if(sidesToAdd.Contains(Direction.Forward))
-            AddQuad(corners[5], corners[1], corners[2], corners[6], Vector3.Forward, TangentUp, uv); // back
-        if(sidesToAdd.Contains(Direction.Left))
-            AddQuad(corners[6], corners[2], corners[3], corners[7], Vector3.Left, TangentUp, uv); // left
-        if(sidesToAdd.Contains(Direction.Backward))
-            AddQuad(corners[7], corners[3], corners[0], corners[4], Vector3.Backward, TangentUp, uv); // front
-        return this;
-    }
-    public override ComplexMeshBuilder AddCube(Vector3 position, Vector3 size, IReadOnlySet<Direction> sidesToAdd) => AddCube(position, size, UvFull, sidesToAdd);
-
     public virtual List<VertexBuffer> ToVertexBuffers() => Mesh.ToVertexBuffers();
-
 
     protected virtual ComplexMeshBuilder AddVertex(Vector3 position, Vector2 uv)
     {
@@ -101,10 +67,7 @@ public class ComplexMeshBuilder<T> : ComplexMeshBuilder where T : ComplexMeshBui
     public override T AddQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, Vector4 tangent) => (T)base.AddQuad(a, b, c, d, normal, tangent);
 
     public override T AddCube(Vector3 position, Vector3 size) => (T)base.AddCube(position, size);
-    public override T AddCube(Vector3 position, Vector3 size, Rect uv) => (T)base.AddCube(position, size, uv);
-    public override T AddCube(Vector3 position, Vector3 size, Rect uv, IReadOnlySet<Direction> sidesToAdd) => (T)base.AddCube(position, size, uv, sidesToAdd);
-    public override T AddCube(Vector3 position, Vector3 size, IReadOnlySet<Direction> sidesToAdd) => (T)base.AddCube(position, size, sidesToAdd);
-
+    
     protected override T AddVertex(Vector3 position, Vector2 uv) => (T)base.AddVertex(position, uv);
 }
 
