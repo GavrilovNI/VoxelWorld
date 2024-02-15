@@ -90,8 +90,21 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
         bool isBottom = blockState.GetValue(PartTypeProperty) == TwoPartBlockPartType.First;
         var meshMaker = isBottom ? VisualMeshes.BottomDoorBlock : VisualMeshes.TopDoorBlock;
 
+        bool isLeftHinge = blockState.GetValue(HingeProperty) == DoorHingeSide.Left;
+
         var uvProviders = isBottom ? FirstUvProviders : SecondUvProviders;
-        var uvs = uvProviders.ToDictionary(e => e.Key, e => e.Value.Uv);
+        var uvs = uvProviders.ToDictionary(e =>
+        {
+            if(!isLeftHinge && e.Key.Axis == Axis.Y)
+                return e.Key.GetOpposite();
+            return e.Key;
+        }, e =>
+        {
+            var result = e.Value.Uv;
+            if(!isLeftHinge)
+                (result.Left, result.Right) = (result.Right, result.Left);
+            return result;
+        });
 
         var mesh = meshMaker.Make(uvs);
         return RotateMesh(blockState, mesh);
