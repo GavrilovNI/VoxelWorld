@@ -342,7 +342,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
         {
             cancellationToken.ThrowIfCancellationRequested();
             ModelBuilder physicsModelBuilder = new();
-            physicsModelBuilder.AddCollisionMesh(builder.CombineVertices().Select(v => v.Position).ToArray(), builder.CombineIndices().ToArray());
+            builder.AddAsCollisionMesh(physicsModelBuilder);
 
             await RunInGameThread(ct =>
             {

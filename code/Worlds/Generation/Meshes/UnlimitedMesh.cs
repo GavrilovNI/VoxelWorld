@@ -117,6 +117,22 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         mesh.Bounds = bounds;
     }
 
+    // thread safe
+    public void AddAsCollisionMesh(ModelBuilder modelBuilder)
+    {
+        for(int i = 0; i < PartsCount; ++i)
+            AddAsCollisionMesh(modelBuilder, i);
+    }
+
+    // thread safe
+    public void AddAsCollisionMesh(ModelBuilder modelBuilder, int partIndex)
+    {
+        var vertices = _vertices[partIndex].Select(v => v.GetPosition()).ToArray();
+        var indices = _indices[partIndex].Select(i => (int)i).ToArray();
+
+        modelBuilder.AddCollisionMesh(vertices, indices);
+    }
+
     public UnlimitedMesh<T> Convert<T>(Func<V, T> vertexConvertor) where T : unmanaged, IVertex
     {
         UnlimitedMesh<T> result = new();
@@ -416,6 +432,11 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
         // call only in main thread
         public virtual void CreateBuffersFor(Mesh mesh, int partIndex) => Mesh.CreateBuffersFor(mesh, partIndex);
+
+        // thread safe if builder is not being changed during execution
+        public virtual void AddAsCollisionMesh(ModelBuilder modelBuilder, int partIndex) => Mesh.AddAsCollisionMesh(modelBuilder, partIndex);
+        // thread safe if builder is not being changed during execution
+        public virtual void AddAsCollisionMesh(ModelBuilder modelBuilder) => Mesh.AddAsCollisionMesh(modelBuilder);
 
         public UnlimitedMesh<V> Build() => new(Mesh);
     }
