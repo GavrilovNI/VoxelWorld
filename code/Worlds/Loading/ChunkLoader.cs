@@ -42,7 +42,7 @@ public class ChunkLoader : ThreadHelpComponent
         }).ContinueWith(t =>
         {
             if(!t.IsCompletedSuccessfully)
-                chunk.Destroy();
+                chunk.GameObject.Destroy();
 
             cancellationToken.ThrowIfCancellationRequested();
             return t.Result;
