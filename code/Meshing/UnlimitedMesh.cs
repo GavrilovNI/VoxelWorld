@@ -95,9 +95,9 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         return result;
     }
 
-    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position)
+    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default)
     {
-        builder.Add(this, position);
+        builder.Add(this, offset);
     }
 
     // call only in main thread
@@ -158,7 +158,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         protected List<V>? CurrentVertices;
         protected List<ushort>? CurrentIndices;
 
-        public BBox Bounds { get; protected set; }
+        protected BBox? BuildingBounds = null;
+        public BBox Bounds => BuildingBounds ?? default;
 
         public V Default;
 
@@ -173,7 +174,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             Indices.Clear();
             CurrentVertices = null;
             CurrentIndices = null;
-            Bounds = default;
+            BuildingBounds = null;
             return this;
         }
 
@@ -196,7 +197,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             if(mesh.IsEmpty())
                 return this;
 
-            ExpandBounds(mesh.Bounds.Translate(offset));
+            BuildingBounds = BuildingBounds.AddOrCreate(mesh.Bounds.Translate(offset));
             for(int i = 0; i < mesh._vertices.Count; ++i)
             {
                 var vertices = mesh._vertices[i];
@@ -228,7 +229,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             return this;
         }
 
-        public virtual void AddToBuilder(Builder builder, Vector3 position) => builder.Add(Mesh, position);
+        public virtual void AddToBuilder(Builder builder, Vector3 offset = default) => builder.Add(Mesh, offset);
 
         public virtual Builder AddTriangle(V a, V b, V c)
         {
@@ -394,29 +395,9 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             return this;
         }
 
-        protected virtual Builder ExpandBounds(Vector3 toAddVertexPosition)
-        {
-            bool isFirstVertex = Vertices.Count == 0 || Vertices.Count == 1 && Vertices[0].Count == 0;
-            if(isFirstVertex)
-                Bounds = new(toAddVertexPosition, toAddVertexPosition);
-            else
-                Bounds = Bounds.AddPoint(toAddVertexPosition);
-            return this;
-        }
-
-        protected virtual Builder ExpandBounds(BBox toAddVerticesBounds)
-        {
-            bool isFirstVertex = Vertices.Count == 0 || Vertices.Count == 1 && Vertices[0].Count == 0;
-            if(isFirstVertex)
-                Bounds = toAddVerticesBounds;
-            else
-                Bounds = Bounds.AddBBox(toAddVerticesBounds);
-            return this;
-        }
-
         protected virtual Builder AddVertex(V vertex)
         {
-            ExpandBounds(vertex.GetPosition());
+            BuildingBounds = BuildingBounds.AddOrCreate(vertex.GetPosition());
             CurrentVertices!.Add(vertex);
             return this;
         }
@@ -425,7 +406,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         {
             var vertexToAdd = Default;
             vertexToAdd.SetPosition(position);
-            ExpandBounds(position);
+            BuildingBounds = BuildingBounds.AddOrCreate(position);
             CurrentVertices!.Add(vertexToAdd);
             return this;
         }
@@ -462,9 +443,6 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         protected override T AddRawIndex(ushort i) => (T)base.AddRawIndex(i);
         protected override T AddIndex(ushort i) => (T)base.AddIndex(i);
         protected override T AddTriangleIndex(ushort a, ushort b, ushort c) => (T)base.AddTriangleIndex(a, b, c);
-
-        protected override T ExpandBounds(Vector3 toAddVertexPosition) => (T)base.ExpandBounds(toAddVertexPosition);
-        protected override T ExpandBounds(BBox toAddVerticesBounds) => (T)base.ExpandBounds(toAddVerticesBounds);
 
         protected override T AddVertex(V vertex) => (T)base.AddVertex(vertex);
         protected override T AddVertex(Vector3 position) => (T)base.AddVertex(position);

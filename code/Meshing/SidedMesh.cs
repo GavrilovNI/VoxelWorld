@@ -65,79 +65,79 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         return new(sidedElements, notSidedElements);
     }
 
-    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position, IReadOnlySet<Direction> visibleFaces)
+    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
     {
-        builder.Add(_notSidedElements, position);
+        builder.Add(_notSidedElements, offset);
 
-        foreach(var face in visibleFaces)
+        foreach(var face in sidesToAdd)
         {
             if(_sidedElements.TryGetValue(face, out var element))
-                builder.Add(element, position);
+                builder.Add(element, offset);
         }
     }
 
-    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position) => AddToBuilder(builder, position, Direction.AllSet);
+    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) => AddToBuilder(builder, Direction.AllSet, offset);
     // thread safe
-    public void AddAsCollisionMesh(ModelBuilder modelBuilder, IReadOnlySet<Direction> facesToAdd, Vector3 offset = default)
+    public void AddAsCollisionMesh(ModelBuilder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
     {
-        _notSidedElements.AddAsCollisionMesh(modelBuilder);
-        foreach(var direction in facesToAdd)
+        _notSidedElements.AddAsCollisionMesh(builder);
+        foreach(var direction in sidesToAdd)
         {
             if(_sidedElements.TryGetValue(direction, out var sidedElement))
-                sidedElement.AddAsCollisionMesh(modelBuilder, offset);
+                sidedElement.AddAsCollisionMesh(builder, offset);
         }
     }
     // thread safe
-    public void AddAsCollisionMesh(ModelBuilder modelBuilder, Vector3 offset = default) => AddAsCollisionMesh(modelBuilder, Direction.AllSet, offset);
+    public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => AddAsCollisionMesh(builder, Direction.AllSet, offset);
 
 
     public class Builder : ISidedMeshPart<V>
     {
-        private SidedMesh<V> _sidedMesh = new();
+        protected SidedMesh<V> Mesh { get; private set; } = new();
 
-        private BBox? _bounds = null;
-        public BBox Bounds => _bounds ?? default;
+        protected BBox? BuildingBounds = null;
+        public BBox Bounds => BuildingBounds ?? default;
 
         private UnlimitedMesh<V>.Builder GetOrCreateSidedBuilder(Direction direction)
         {
-            if(!_sidedMesh._sidedElements.TryGetValue(direction, out var builder))
+            if(!Mesh._sidedElements.TryGetValue(direction, out var builder))
             {
                 builder = new();
-                _sidedMesh._sidedElements[direction] = builder;
+                Mesh._sidedElements[direction] = builder;
             }
             return builder!;
         }
 
-        public Builder Add(UnlimitedMesh<V>.Builder voxelMeshBuilder)
+        public Builder Add(UnlimitedMesh<V>.Builder builder)
         {
-            _sidedMesh._notSidedElements.Add(voxelMeshBuilder);
-            if(!voxelMeshBuilder.IsEmpty())
-                _bounds = _bounds.AddOrCreate(voxelMeshBuilder.Bounds);
+            Mesh._notSidedElements.Add(builder);
+            if(!builder.IsEmpty())
+                BuildingBounds = BuildingBounds.AddOrCreate(builder.Bounds);
             return this;
         }
 
-        public Builder Add(UnlimitedMesh<V>.Builder voxelMeshBuilder, Direction cullFace)
+        public Builder Add(UnlimitedMesh<V>.Builder builder, Direction side)
         {
-            GetOrCreateSidedBuilder(cullFace).Add(voxelMeshBuilder);
-            if(!voxelMeshBuilder.IsEmpty())
-                _bounds = _bounds.AddOrCreate(voxelMeshBuilder.Bounds);
+            GetOrCreateSidedBuilder(side).Add(builder);
+            if(!builder.IsEmpty())
+                BuildingBounds = BuildingBounds.AddOrCreate(builder.Bounds);
             return this;
         }
 
-        public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position, IReadOnlySet<Direction> visibleFaces) =>
-            _sidedMesh.AddToBuilder(builder, position, visibleFaces);
-        public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position) =>
-            _sidedMesh.AddToBuilder(builder, position);
+        public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
+            Mesh.AddToBuilder(builder, sidesToAdd, offset);
+        public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) =>
+            Mesh.AddToBuilder(builder, offset);
 
         // thread safe if builder is not being changed during execution
-        public void AddAsCollisionMesh(ModelBuilder modelBuilder, IReadOnlySet<Direction> facesToAdd, Vector3 offset = default) =>
-            _sidedMesh.AddAsCollisionMesh(modelBuilder, facesToAdd, offset);
+        public void AddAsCollisionMesh(ModelBuilder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
+            Mesh.AddAsCollisionMesh(builder, sidesToAdd, offset);
 
         // thread safe if builder is not being changed during execution
-        public void AddAsCollisionMesh(ModelBuilder modelBuilder, Vector3 offset = default) =>
-            _sidedMesh.AddAsCollisionMesh(modelBuilder, offset);
+        public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) =>
+            Mesh.AddAsCollisionMesh(builder, offset);
 
 
-        public SidedMesh<V> Build() => new(_sidedMesh._sidedElements, _sidedMesh._notSidedElements, Bounds);
+        public SidedMesh<V> Build() => new(Mesh._sidedElements, Mesh._notSidedElements, Bounds);
     }
 }

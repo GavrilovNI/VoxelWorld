@@ -424,7 +424,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
             var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
-            BlockMeshMap.GetVisual(blockState)!.AddToBuilder(builder, localPosition * MathV.UnitsInMeter, visibleFaces);
+            BlockMeshMap.GetVisual(blockState)!.AddToBuilder(builder, visibleFaces, localPosition * MathV.UnitsInMeter);
         }, BlockMeshType.Visual);
     }
 
