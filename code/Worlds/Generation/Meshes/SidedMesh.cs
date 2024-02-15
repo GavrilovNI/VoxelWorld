@@ -1,4 +1,5 @@
-﻿using Sandcube.Mth.Enums;
+﻿using Sandbox;
+using Sandcube.Mth.Enums;
 using System.Collections.Generic;
 
 namespace Sandcube.Worlds.Generation.Meshes;
@@ -49,6 +50,18 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
     }
 
     public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position) => AddToBuilder(builder, position, Direction.AllSet);
+    // thread safe
+    public void AddAsCollisionMesh(ModelBuilder modelBuilder, IReadOnlySet<Direction> facesToAdd, Vector3 offset = default)
+    {
+        _notSidedElements.AddAsCollisionMesh(modelBuilder);
+        foreach(var direction in facesToAdd)
+        {
+            if(_sidedElements.TryGetValue(direction, out var sidedElement))
+                sidedElement.AddAsCollisionMesh(modelBuilder, offset);
+        }
+    }
+    // thread safe
+    public void AddAsCollisionMesh(ModelBuilder modelBuilder, Vector3 offset = default) => AddAsCollisionMesh(modelBuilder, Direction.AllSet, offset);
 
 
     public class Builder : ISidedMeshPart<V>
@@ -81,6 +94,15 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             _sidedMesh.AddToBuilder(builder, position, visibleFaces);
         public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 position) =>
             _sidedMesh.AddToBuilder(builder, position);
+
+        // thread safe if builder is not being changed during execution
+        public void AddAsCollisionMesh(ModelBuilder modelBuilder, IReadOnlySet<Direction> facesToAdd, Vector3 offset = default) =>
+            _sidedMesh.AddAsCollisionMesh(modelBuilder, facesToAdd, offset);
+
+        // thread safe if builder is not being changed during execution
+        public void AddAsCollisionMesh(ModelBuilder modelBuilder, Vector3 offset = default) =>
+            _sidedMesh.AddAsCollisionMesh(modelBuilder, offset);
+
 
         public SidedMesh<V> Build() => new(_sidedMesh._sidedElements, _sidedMesh._notSidedElements);
     }
