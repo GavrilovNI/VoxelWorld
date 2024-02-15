@@ -119,7 +119,21 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             return builder!;
         }
 
+        public virtual Builder Clear()
+        {
+            Mesh = new();
+            BuildingBounds = null;
+            return this;
+        }
         public virtual bool IsEmpty() => Mesh.IsEmpty();
+
+        public virtual Builder RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
+        {
+            Mesh = Mesh.RotateAround(rightAngleRotation, lookDirection, center);
+            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            return this;
+        }
+
         public Builder Add(UnlimitedMesh<V>.Builder builder)
         {
             Mesh._notSidedElements.Add(builder);
