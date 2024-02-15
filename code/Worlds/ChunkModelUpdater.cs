@@ -402,35 +402,28 @@ public class ChunkModelUpdater : ThreadHelpComponent
         await Task.WhenAll(physicsTask, interactionTask);
 
         cancellationToken.ThrowIfCancellationRequested();
-        RecalculateBounds(builders.Opaque.IsEmpty() ? null : builders.Opaque,
-            builders.Translucent.IsEmpty() ? null : builders.Translucent,
-            builders.Physics.IsEmpty() ? null : builders.Physics,
-            builders.Interaction?.IsEmpty() ?? true ? null : builders.Interaction);
+
+        RecalculateBounds(builders.Opaque.Bounds,
+            builders.Translucent.Bounds,
+            builders.Physics.Bounds,
+            builders.Interaction.Bounds);
 
         cancellationToken.ThrowIfCancellationRequested();
     }
 
-
-    // Call only in game thread
-    protected virtual void RecalculateBounds(params IBounded?[] bounders)
+    protected virtual void RecalculateBounds(params BBox[] bounds)
     {
         ThreadSafe.AssertIsMainThread();
 
-        BBox? bounds = null;
-        foreach(var currentBounder in bounders)
+        BBox? result = null;
+        foreach(var currentBounds in bounds)
         {
-            if(currentBounder is null)
-                continue;
-            if(bounds.HasValue)
-                bounds = bounds.Value.AddBBox(currentBounder.Bounds);
-            else
-                bounds = currentBounder.Bounds;
+            if(!currentBounds.Size.AlmostEqual(0))
+                result = result.AddOrCreate(currentBounds);
         }
+        result ??= new BBox();
 
-        if(!bounds.HasValue)
-            bounds = new BBox();
-
-        Bounds = bounds.Value.Translate(Transform.Position);
+        Bounds = result.Value.Translate(Transform.Position);
     }
 
 

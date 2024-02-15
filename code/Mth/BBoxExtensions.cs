@@ -15,4 +15,18 @@ public static class BBoxExtensions
         result.Maxs += value;
         return result;
     }
+
+    public static BBox AddOrCreate(this BBox? @this, Vector3 point)
+    {
+        if(@this.HasValue)
+            return @this.Value.AddPoint(point);
+        return new(point, point);
+    }
+
+    public static BBox AddOrCreate(this BBox? @this, BBox bbox)
+    {
+        if(@this.HasValue)
+            return @this.Value.AddBBox(bbox);
+        return bbox;
+    }
 }

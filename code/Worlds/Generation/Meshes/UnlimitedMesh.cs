@@ -148,7 +148,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         return result;
     }
 
-    public class Builder : IMeshPart<V>, IBounded
+    public class Builder : IMeshPart<V>
     {
         protected UnlimitedMesh<V> Mesh { get; private set; } = new();
 
