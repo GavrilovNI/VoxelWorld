@@ -78,8 +78,8 @@ public class ChunkModelUpdater : ThreadHelpComponent
     {
         public required ComplexMeshBuilder Opaque { get; init; }
         public required ComplexMeshBuilder Translucent { get; init; }
-        public required PositionOnlyMeshBuilder Physics { get; init; }
-        public required PositionOnlyMeshBuilder Interaction { get; init; }
+        public required ModelBuilder Physics { get; init; }
+        public required ModelBuilder Interaction { get; init; }
 
         [SetsRequiredMembers]
         public MeshBuilders()
@@ -233,10 +233,10 @@ public class ChunkModelUpdater : ThreadHelpComponent
             await GenerateMeshes(builders, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
-            await RunInGameThread(async ct =>
+            await RunInGameThread(ct =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await ApplyMeshes(builders, cancellationToken);
+                ApplyMeshes(builders, cancellationToken);
 
                 lock(ModelUpdateLock)
                 {
@@ -335,24 +335,15 @@ public class ChunkModelUpdater : ThreadHelpComponent
         }
     }
 
-    // Thread safe
-    protected virtual Task UpdateCollider(ModelCollider collider, PositionOnlyMeshBuilder builder, CancellationToken cancellationToken)
+    // call only in main thread
+    protected virtual void UpdateCollider(ModelCollider collider, ModelBuilder builder, CancellationToken cancellationToken)
     {
-        return Task.RunInThreadAsync(async () =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ModelBuilder physicsModelBuilder = new();
-            builder.AddAsCollisionMesh(physicsModelBuilder);
+        ThreadSafe.AssertIsMainThread();
 
-            await RunInGameThread(ct =>
-            {
-                var model = physicsModelBuilder.Create(); // should be called in game thread as it's not thread safe
-                cancellationToken.ThrowIfCancellationRequested();
-                collider.Model = model;
-                collider.Enabled = !builder.IsEmpty();
-            }, cancellationToken);
-
-        });
+        var model = builder.Create();
+        cancellationToken.ThrowIfCancellationRequested();
+        collider.Model = model;
+        //collider.Enabled = !builder.IsEmpty();
     }
 
 
@@ -386,27 +377,25 @@ public class ChunkModelUpdater : ThreadHelpComponent
     }
 
     // Call only in game thread
-    protected virtual async Task ApplyMeshes(MeshBuilders builders, CancellationToken cancellationToken)
+    protected virtual void ApplyMeshes(MeshBuilders builders, CancellationToken cancellationToken)
     {
         ThreadSafe.AssertIsMainThread();
 
         cancellationToken.ThrowIfCancellationRequested();
-        var physicsTask = UpdateCollider(PhysicsCollider, builders.Physics, cancellationToken);
+        UpdateCollider(PhysicsCollider, builders.Physics, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
-        var interactionTask = UpdateCollider(InteractionCollider, builders.Interaction, cancellationToken);
+        UpdateCollider(InteractionCollider, builders.Interaction, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
         UpdateModelRenderers(builders.Opaque, builders.Translucent, cancellationToken);
-
-        await Task.WhenAll(physicsTask, interactionTask);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         RecalculateBounds(builders.Opaque.Bounds,
             builders.Translucent.Bounds,
-            builders.Physics.Bounds,
-            builders.Interaction.Bounds);
+            PhysicsCollider.Model.PhysicsBounds,
+            InteractionCollider.Model.PhysicsBounds);
 
         cancellationToken.ThrowIfCancellationRequested();
     }
@@ -439,20 +428,20 @@ public class ChunkModelUpdater : ThreadHelpComponent
     }
 
     // Thread safe
-    protected virtual void BuildPhysicsMesh(UnlimitedMesh<Vector3Vertex>.Builder builder)
+    protected virtual void BuildPhysicsMesh(ModelBuilder builder)
     {
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
-            BlockMeshMap.GetPhysics(blockState)!.AddToBuilder(builder, localPosition * MathV.UnitsInMeter, visibleFaces);
+            BlockMeshMap.GetPhysics(blockState)!.AddAsCollisionMesh(builder, visibleFaces, localPosition * MathV.UnitsInMeter);
         }, BlockMeshType.Physics);
     }
 
     // Thread safe
-    protected virtual void BuildInteractionMesh(UnlimitedMesh<Vector3Vertex>.Builder builder)
+    protected virtual void BuildInteractionMesh(ModelBuilder builder)
     {
         BuildMesh((Vector3Int localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
         {
-            BlockMeshMap.GetInteraction(blockState)!.AddToBuilder(builder, localPosition * MathV.UnitsInMeter, visibleFaces);
+            BlockMeshMap.GetInteraction(blockState)!.AddAsCollisionMesh(builder, visibleFaces, localPosition * MathV.UnitsInMeter);
         }, BlockMeshType.Interaction);
     }
 
