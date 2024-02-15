@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing;
 
 public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 {

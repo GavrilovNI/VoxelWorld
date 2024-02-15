@@ -3,7 +3,7 @@ using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing;
 
 public class ComplexMeshBuilder : UnlimitedMesh<ComplexVertex>.Builder<ComplexMeshBuilder>
 {

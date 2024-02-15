@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing;
 
 public struct ComplexVertex : IVertex
 {

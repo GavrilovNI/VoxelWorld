@@ -1,7 +1,7 @@
 ﻿using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing.Blocks;
 
 public class PhysicsMeshes
 {

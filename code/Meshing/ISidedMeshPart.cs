@@ -2,7 +2,7 @@
 using Sandcube.Mth.Enums;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing;
 
 public interface ISidedMeshPart<V> : IMeshPart<V> where V : unmanaged, IVertex
 {

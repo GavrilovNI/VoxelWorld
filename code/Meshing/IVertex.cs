@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing;
 
 public interface IVertex
 {

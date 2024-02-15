@@ -2,7 +2,7 @@
 using Sandcube.Blocks.States;
 using System.Collections.Concurrent;
 
-namespace Sandcube.Worlds.Generation.Meshes;
+namespace Sandcube.Meshing.Blocks;
 
 // Thread safe
 public class BlockMeshMap
