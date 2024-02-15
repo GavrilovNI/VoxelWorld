@@ -3,6 +3,7 @@ using Sandcube.Mods;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Texturing;
+using System.Linq;
 
 namespace Sandcube.Blocks;
 
@@ -58,6 +59,6 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
         18);
 
     public DoorBlock Door { get; } = new(MakeId("door"),
-        BlockTexturesLoader.BottomDoor.LoadTextureUvs(TextureMap, GetBlockPathPart("door")),
-        BlockTexturesLoader.TopDoor.LoadTextureUvs(TextureMap, GetBlockPathPart("door")));
+        BlockTexturesLoader.AllSides.LoadTextureUvs(TextureMap, GetBlockPathPart("door_bottom"), Direction.AllSet.Except(new[] { Direction.Up}).ToHashSet()),
+        BlockTexturesLoader.AllSides.LoadTextureUvs(TextureMap, GetBlockPathPart("door_top"), Direction.AllSet.Except(new[] { Direction.Down }).ToHashSet()));
 }

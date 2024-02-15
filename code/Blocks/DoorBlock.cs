@@ -91,36 +91,7 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
         var meshMaker = isBottom ? VisualMeshes.BottomDoorBlock : VisualMeshes.TopDoorBlock;
 
         var uvProviders = isBottom ? FirstUvProviders : SecondUvProviders;
-        Func<Rect, Rect> uvSideModifier = uv => new Rect(uv.Left, uv.Top + uv.Height / 2f, uv.Width, uv.Height / 2f);
-
-        var doorWidthPercent = DefaultValues.DoorWidth / MathV.UnitsInMeter;
-
-        var uvs = uvProviders.ToDictionary(e => e.Key, e =>
-        {
-            var uv = e.Value.Uv;
-            var direction = e.Key;
-            if(direction.Axis == Axis.X)
-                return uv;
-
-            if(direction.Axis == Axis.Y)
-            {
-                var uvDelta = uv.Width * (1f - doorWidthPercent);
-                if(direction.AxisDirection == AxisDirection.Positive)
-                    uv.Right -= uvDelta;
-                else
-                    uv.Left += uvDelta;
-            }
-            else
-            {
-                var uvDelta = uv.Height * (1f - doorWidthPercent);
-                if(direction.AxisDirection == AxisDirection.Positive)
-                    uv.Bottom -= uvDelta;
-                else
-                    uv.Top += uvDelta;
-            }
-
-            return uv;
-        });
+        var uvs = uvProviders.ToDictionary(e => e.Key, e => e.Value.Uv);
 
         var mesh = meshMaker.Make(uvs);
         return RotateMesh(blockState, mesh);

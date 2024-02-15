@@ -52,15 +52,6 @@ public class BlockTexturesLoader
     public static readonly BlockTexturesLoader SimplePillar =
         Pillar.With((Direction.Up, TopBottomSuffix), (Direction.Down, TopBottomSuffix));
 
-    public static readonly BlockTexturesLoader BottomDoor = SimplePillar
-        .With((Direction.Forward, FrontSuffix), (Direction.Backward, BackSuffix))
-        .Rename((d, s) => d.Axis == Axis.Z ? string.Empty : $"bottom_{s}");
-
-    public static readonly BlockTexturesLoader TopDoor = SimplePillar
-        .With((Direction.Forward, FrontSuffix), (Direction.Backward, BackSuffix))
-        .Rename((d, s) => d.Axis == Axis.Z ? string.Empty : $"top_{s}");
-
-
     public IReadOnlyDictionary<Direction, string> Suffixes { get; init; }
     public IReadOnlyDictionary<Direction, string> TexturePaths { get; init; }
 
@@ -150,12 +141,15 @@ public class BlockTexturesLoader
         return new BlockTexturesLoader(Suffixes, newTexturePaths);
     }
 
+    public Dictionary<Direction, TextureMapPart> LoadTextures(PathedTextureMap textureMap,
+        string texturePathPrefix, string textureExtension = "png", bool loadWithoutSuffixIfUnknown = true) =>
+        LoadTextures(textureMap, texturePathPrefix, Direction.AllSet, textureExtension, loadWithoutSuffixIfUnknown);
 
     public Dictionary<Direction, TextureMapPart> LoadTextures(PathedTextureMap textureMap,
-        string texturePathPrefix, string textureExtension = "png", bool loadWithoutSuffixIfUnknown = true)
+        string texturePathPrefix, IReadOnlySet<Direction> directions, string textureExtension = "png", bool loadWithoutSuffixIfUnknown = true)
     {
         Dictionary<Direction, TextureMapPart> result = new();
-        foreach(var direction in Direction.All)
+        foreach(var direction in directions)
         {
             if(TexturePaths.TryGetValue(direction, out var texturePath))
             {
@@ -182,11 +176,14 @@ public class BlockTexturesLoader
         }
         return result;
     }
+    public Dictionary<Direction, IUvProvider> LoadTextureUvs(PathedTextureMap textureMap,
+        string texturePathPrefix, string textureExtension = "png", bool loadWithoutSuffixIfUnknown = true) =>
+        LoadTextureUvs(textureMap, texturePathPrefix, Direction.AllSet, textureExtension, loadWithoutSuffixIfUnknown);
 
     public Dictionary<Direction, IUvProvider> LoadTextureUvs(PathedTextureMap textureMap,
-        string texturePathPrefix, string textureExtension = "png", bool loadWithoutSuffixIfUnknown = true)
+        string texturePathPrefix, IReadOnlySet<Direction> directions, string textureExtension = "png", bool loadWithoutSuffixIfUnknown = true)
     {
-        return LoadTextures(textureMap, texturePathPrefix, textureExtension, loadWithoutSuffixIfUnknown)
+        return LoadTextures(textureMap, texturePathPrefix, directions, textureExtension, loadWithoutSuffixIfUnknown)
             .ToDictionary(e => e.Key, e => (IUvProvider)e.Value);
     }
 }
