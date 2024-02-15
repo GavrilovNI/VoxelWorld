@@ -91,7 +91,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
     // thread safe
     public void AddAsCollisionMesh(ModelBuilder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
     {
-        _notSidedElements.AddAsCollisionMesh(builder);
+        _notSidedElements.AddAsCollisionMesh(builder, offset);
         foreach(var direction in sidesToAdd)
         {
             if(_sidedElements.TryGetValue(direction, out var sidedElement))
