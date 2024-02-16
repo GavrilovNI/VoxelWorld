@@ -76,6 +76,51 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         }
     }
 
+    private void HandleChunkLoadingTask(Vector3Int chunkPosition, Task<Chunk> task)
+    {
+        if(!task.IsCompleted)
+            throw new InvalidOperationException("Chunk loading task wasn't completed");
+
+        lock(Chunks)
+        {
+            if(!IsValid)
+                return;
+
+            if(task.IsCompletedSuccessfully)
+            {
+                var chunk = task.Result;
+
+                Chunks[chunkPosition] = chunk;
+
+                _ = RunInGameThread(ct =>
+                {
+                    if(!chunk.IsValid || ct.IsCancellationRequested)
+                        return;
+
+                    lock(Chunks)
+                    {
+                        var chunkIsValid = Chunks.TryGetValue(chunkPosition, out var chunkUnion) &&
+                            chunkUnion.Is<Chunk>(out var realChunk) &&
+                            realChunk == chunk;
+
+                        if(!chunkIsValid)
+                        {
+                            chunk.GameObject.Destroy();
+                            return;
+                        }
+
+                        chunk.GameObject.Enabled = true;
+                        OnChunkLoaded(chunk);
+                    }  
+                });
+            }
+            else
+            {
+                Chunks.Remove(chunkPosition);
+            }
+        }
+    }
+
     // Thread safe
     public virtual Task<Chunk> GetChunkOrLoad(Vector3Int chunkPosition)
     {
@@ -104,31 +149,74 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
             var loadingTask = ChunkLoader.LoadChunk(creationData, ChunkLoadCancellationTokenSource.Token);
             Chunks[chunkPosition] = loadingTask;
-            _ = loadingTask.ContinueWith(t =>
+            _ = loadingTask.ContinueWith(t => HandleChunkLoadingTask(chunkPosition, loadingTask));
+
+            return loadingTask;
+        }
+    }
+
+    public virtual Task<int> LoadChunksSimultaneously(IReadOnlySet<Vector3Int> chunkPositions)
+    {
+        lock(Chunks)
+        {
+            List<Task<Chunk>> alreadyLoadingTasks = new();
+            Dictionary<Vector3Int, Task<Chunk>> tasksToLoad = new();
+
+            int loadedCount = 0;
+
+            foreach(var chunkPosition in chunkPositions)
+            {
+                if(Chunks.TryGetValue(chunkPosition, out var chunkUnion))
+                {
+                    if(chunkUnion.Is<Task<Chunk>>(out var task))
+                    {
+                        alreadyLoadingTasks.Add(task);
+                        _ = task.ContinueWith(t =>
+                        {
+                            if(t.IsCompletedSuccessfully)
+                                Interlocked.Increment(ref loadedCount);
+                        });
+                        continue;
+                    }
+                    else if(chunkUnion.As<Chunk>()!.IsValid)
+                    {
+                        Interlocked.Increment(ref loadedCount);
+                        continue;
+                    }
+                }
+
+                ChunkCreationData creationData = new()
+                {
+                    Position = chunkPosition,
+                    Size = ChunkSize,
+                    EnableOnCreate = false,
+                    World = this
+                };
+
+                var loadingTask = ChunkLoader.LoadChunk(creationData, ChunkLoadCancellationTokenSource.Token);
+                Chunks[chunkPosition] = loadingTask;
+                tasksToLoad.Add(chunkPosition, loadingTask);
+            }
+
+            var loadingTasks = Task.WhenAll(tasksToLoad.Values);
+
+            _ = loadingTasks.ContinueWith(t =>
             {
                 if(!IsValid)
                     return;
                 lock(Chunks)
                 {
-                    if(t.IsCompletedSuccessfully)
+                    foreach(var (chunkPosition, loadingTask) in tasksToLoad)
                     {
-                        var chunk = t.Result;
-                        Chunks[chunkPosition] = chunk;
-
-                        _ = RunInGameThread(ct =>
-                        {
-                            chunk.GameObject.Enabled = true;
-                            OnChunkLoaded(chunk);
-                        });
-                    }
-                    else
-                    {
-                        Chunks.Remove(chunkPosition);
+                        if(loadingTask.IsCompletedSuccessfully)
+                            Interlocked.Increment(ref loadedCount);
+                        HandleChunkLoadingTask(chunkPosition, loadingTask);
                     }
                 }
             });
 
-            return loadingTask;
+            return Task.WhenAll(loadingTasks, Task.WhenAll(alreadyLoadingTasks))
+                .ContinueWith(t => loadedCount);
         }
     }
 
