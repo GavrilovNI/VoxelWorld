@@ -29,6 +29,7 @@ public class WorldEditorTool : EditorTool<World>
 public class WorldEditorToolWindow : WidgetWindow
 {
     private World? _world = null;
+    private World? World => _world.IsValid() && !_world.Scene.IsEditor ? _world : null;
 
     public WorldEditorToolWindow()
     {
@@ -67,18 +68,20 @@ public class WorldEditorToolWindow : WidgetWindow
 
     protected void ClearWorld()
     {
-        _world?.Clear();
+        World?.Clear();
     }
 
     public void ToolUpdate()
     {
-        if(_world is null)
-            return;
     }
 
     internal void OnSelectionChanged(World world)
     {
         _world = world;
+        if(World.IsValid())
+            Show();
+        else
+            Hide();
         WindowTitle = $"World - {world.GameObject.Name}";
     }
 }
