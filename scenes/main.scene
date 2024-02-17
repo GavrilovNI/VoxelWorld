@@ -5,6 +5,7 @@
       "Id": "e9aebd45-7f85-4fff-8f75-cfcb5ac9bb38",
       "Name": "Directional Light",
       "Rotation": "0.4351622,0.4351622,-0.5573454,0.5573453",
+      "Tags": "light_directional,light",
       "Enabled": true,
       "Components": [
         {
@@ -532,7 +533,7 @@
           "Id": "1e19d035-1f06-4264-9646-754a6f8f472b",
           "Name": "Sun",
           "Rotation": "0.4304596,0.4304594,-0.5609856,0.5609852",
-          "Tags": "photomaker,invisible",
+          "Tags": "photomaker,invisible,light_directional,light",
           "Enabled": true,
           "Components": [
             {
