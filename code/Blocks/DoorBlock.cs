@@ -83,6 +83,15 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
             return false;
 
         var direction = blockState.GetValue(DirectionProperty);
+        var isOpen = blockState.GetValue(OpenedProperty);
+        var hinge = blockState.GetValue(HingeProperty);
+        
+        if(isOpen)
+        {
+            var rotation = hinge == DoorHingeSide.Left ? RightAngle.Angle90 : RightAngle.Angle270;
+            direction = direction.Rotate(rotation, Direction.Down);
+        }
+
         return direction == directionToFace;
     }
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)
