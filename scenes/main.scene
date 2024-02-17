@@ -71,19 +71,68 @@
         },
         {
           "__type": "WorldGenerator",
-          "Config": {
-            "Scale": "100,100",
-            "OctavesCount": 1,
+          "AdditiveDensityFromHeightCurve": {
+            "rangey": "-1,1",
+            "frames": [
+              {
+                "y": 1,
+                "in": 0.6086956,
+                "out": -0.6086956
+              },
+              {
+                "x": 0.41369048,
+                "y": 0.5381129,
+                "in": 1.0989428,
+                "out": -1.0989428
+              },
+              {
+                "x": 0.7604167,
+                "y": 0.026405497
+              },
+              {
+                "x": 1
+              }
+            ]
+          },
+          "DensityNoiseSettings": {
+            "Scale": "20,20,20",
+            "OctavesCount": 2,
             "Persistance": 0.5,
             "Lacunarity": 2
-          }
+          },
+          "HeightNoiseSettings": {
+            "Scale": "50,50",
+            "OctavesCount": 2,
+            "Persistance": 0.3,
+            "Lacunarity": 2.2
+          },
+          "HeightSurfaceCurve": [
+            {
+              "in": -1.1203572,
+              "out": 1.1203572
+            },
+            {
+              "x": 0.73363096,
+              "y": 0.53349507,
+              "in": -0.59002864,
+              "out": 0.59002864
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "in": -1.0212762,
+              "out": 1.0212762
+            }
+          ],
+          "MaxHeight": 120,
+          "MinHeight": 0
         }
       ]
     },
     {
       "Id": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
       "Name": "Player",
-      "Position": "0,0,1000",
+      "Position": "0,0,1900",
       "Enabled": true,
       "Components": [
         {
@@ -547,6 +596,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-16T01:53:20.8029881\u002B01:00",
+  "LastSaved": "2024-02-17T17:57:20.485389\u002B01:00",
   "__references": []
 }
