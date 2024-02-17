@@ -100,18 +100,28 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
         var meshMaker = isBottom ? VisualMeshes.BottomDoorBlock : VisualMeshes.TopDoorBlock;
 
         bool isLeftHinge = blockState.GetValue(HingeProperty) == DoorHingeSide.Left;
+        bool isOpen = blockState.GetValue(OpenedProperty);
 
         var uvProviders = isBottom ? FirstUvProviders : SecondUvProviders;
         var uvs = uvProviders.ToDictionary(e =>
         {
-            if(!isLeftHinge && e.Key.Axis == Axis.Y)
+            var axis = e.Key.Axis;
+            if(axis == Axis.Z)
+                return e.Key;
+
+            bool shouldSwap = axis == Axis.X ? isOpen : isLeftHinge == isOpen;
+            if(shouldSwap)
                 return e.Key.GetOpposite();
+
             return e.Key;
         }, e =>
         {
+            bool shouldSwap = e.Key.Axis == Axis.Z ? isLeftHinge == isOpen : !isLeftHinge;
+
             var result = e.Value.Uv;
-            if(!isLeftHinge)
+            if(shouldSwap)
                 (result.Left, result.Right) = (result.Right, result.Left);
+
             return result;
         });
 
@@ -151,22 +161,12 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
         var lookDirection = Direction.Down;
 
         var result = mesh;
-
         bool isOpen = blockState.GetValue(OpenedProperty);
         if(isOpen)
         {
             bool isLeftHinge = blockState.GetValue(HingeProperty) == DoorHingeSide.Left;
-
-            var hingeRotationAngle = isLeftHinge ? RightAngle.Angle270 : RightAngle.Angle90;
-
-            var doorHalfWidthPercent = DefaultValues.DoorWidth / MathV.UnitsInMeter / 2f;
-            Vector3 hingePosition;
-            if(isLeftHinge)
-                hingePosition = new Vector3(MathV.UnitsInMeter * doorHalfWidthPercent, MathV.UnitsInMeter * (1 - doorHalfWidthPercent), MathV.UnitsInMeter / 2f);
-            else
-                hingePosition = new Vector3(MathV.UnitsInMeter * doorHalfWidthPercent, MathV.UnitsInMeter * doorHalfWidthPercent, MathV.UnitsInMeter / 2f);
-
-            result = result.RotateAround(hingeRotationAngle, lookDirection, hingePosition);
+            var hingeRotationAngle = isLeftHinge ? RightAngle.Angle90 : RightAngle.Angle270;
+            result = result.RotateAround(hingeRotationAngle, lookDirection, MathV.UnitsInMeter / 2f);
         }
 
         var direction = blockState.GetValue(DirectionProperty);
