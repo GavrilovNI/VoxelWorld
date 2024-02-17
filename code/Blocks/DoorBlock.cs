@@ -19,9 +19,9 @@ namespace Sandcube.Blocks;
 
 public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
 {
-    public static readonly FilteredBlockProperty<Direction> DirectionProperty = new("direction", Direction.HorizontalSet.Contains);
-    public static readonly BlockProperty<BoolEnum> OpenedProperty = new("opened");
-    public static readonly BlockProperty<DoorHingeSide> HingeProperty = new("hinge_side");
+    public static readonly FilteredBlockProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
+    public static readonly BlockProperty<BoolEnum> OpenedProperty = new((Id)"opened");
+    public static readonly BlockProperty<DoorHingeSide> HingeProperty = new((Id)"hinge_side");
 
     [SetsRequiredMembers]
     public DoorBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> bottomUvProviders,

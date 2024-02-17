@@ -1,5 +1,4 @@
-﻿using Sandbox;
-using Sandcube.Blocks.States;
+﻿using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
 using Sandcube.Mth;
@@ -16,7 +15,7 @@ namespace Sandcube.Blocks;
 
 public class PillarBlock : SimpleBlock
 {
-    public static readonly BlockProperty<Axis> AxisProperty = new("axis");
+    public static readonly BlockProperty<Axis> AxisProperty = new((Id)"axis");
 
     [SetsRequiredMembers]
     public PillarBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)

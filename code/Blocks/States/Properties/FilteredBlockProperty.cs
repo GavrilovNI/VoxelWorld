@@ -9,7 +9,7 @@ public class FilteredBlockProperty<T> : BlockProperty<T> where T : CustomEnum<T>
 {
     public readonly Func<T, bool> Filter;
 
-    public FilteredBlockProperty(string name, Func<T, bool> filter) : base(name)
+    public FilteredBlockProperty(Id id, Func<T, bool> filter) : base(id)
     {
         Filter = filter;
     }

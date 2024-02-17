@@ -17,7 +17,7 @@ namespace Sandcube.Blocks;
 
 public abstract class TwoPartBlock : Block
 {
-    public static readonly BlockProperty<TwoPartBlockPartType> PartTypeProperty = new("part_type");
+    public static readonly BlockProperty<TwoPartBlockPartType> PartTypeProperty = new((Id)"part_type");
 
     public IReadOnlyDictionary<Direction, IUvProvider> FirstUvProviders { get; private set; }
     public IReadOnlyDictionary<Direction, IUvProvider> SecondUvProviders { get; private set; }

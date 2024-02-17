@@ -18,7 +18,7 @@ namespace Sandcube.Blocks;
 
 public class HorizontalDirectionalBlock : SimpleBlock, IOneAxisRotatableBlock, IMirrorableBlock
 {
-    public static readonly FilteredBlockProperty<Direction> DirectionProperty = new("direction", Direction.HorizontalSet.Contains);
+    public static readonly FilteredBlockProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
 
     [SetsRequiredMembers]
     public HorizontalDirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)

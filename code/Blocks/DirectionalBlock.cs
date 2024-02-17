@@ -16,7 +16,7 @@ namespace Sandcube.Blocks;
 
 public class DirectionalBlock : SimpleBlock, IRotatableBlock, IMirrorableBlock
 {
-    public static readonly BlockProperty<Direction> DirectionProperty = new("direction");
+    public static readonly BlockProperty<Direction> DirectionProperty = new((Id)"direction");
 
     [SetsRequiredMembers]
     public DirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)

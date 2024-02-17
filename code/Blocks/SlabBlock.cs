@@ -19,7 +19,7 @@ namespace Sandcube.Blocks;
 
 public class SlabBlock : SimpleBlock
 {
-    public static readonly BlockProperty<SlabType> SlabTypeProperty = new("type");
+    public static readonly BlockProperty<SlabType> SlabTypeProperty = new((Id)"type");
 
     [SetsRequiredMembers]
     public SlabBlock(in ModedId id, IUvProvider fullBlockUvProvider) :
