@@ -51,7 +51,15 @@ public readonly record struct ModedId
         return true;
     }
 
+    public static ModedId Parse(string id)
+    {
+        if(!TryParse(id, out var result))
+            throw new FormatException($"Couldn't parse {nameof(ModedId)} from '{id}'");
+        return result;
+    }
+
     public static implicit operator string(ModedId id) => id.ToString();
+    public static explicit operator ModedId(string id) => Parse(id);
 
     public readonly override string ToString()
     {
