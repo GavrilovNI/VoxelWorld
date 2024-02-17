@@ -291,7 +291,10 @@ public class ChunkModelUpdater : ThreadHelpComponent
 
         bool isEmpty = opaqueBuilder.PartsCount == 0 && translucentBuilder.PartsCount == 0;
         if(isEmpty)
+        {
+            DestroyModelRenderers();
             return;
+        }
 
         var opaqueModels = CreateRenderModels(opaqueBuilder, OpaqueVoxelsMaterial);
         var translucentModels = CreateRenderModels(translucentBuilder, TranslucentVoxelsMaterial);
