@@ -2,6 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
+using Sandcube.IO;
 using Sandcube.Meshing;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods;
@@ -11,11 +12,12 @@ using Sandcube.Registries;
 using Sandcube.Worlds;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 
 namespace Sandcube.Blocks;
 
-public abstract class Block : IRegisterable
+public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReadable<Block>
 {
     public ModedId Id { get; }
     public readonly BlockState DefaultBlockState;
@@ -76,4 +78,15 @@ public abstract class Block : IRegisterable
     public override string ToString() => $"{nameof(Block)}({Id})";
 
     public override int GetHashCode() => Id.GetHashCode();
+
+    public void Write(BinaryWriter writer) => writer.Write<ModedId>(Id);
+
+    public static Block Read(BinaryReader reader)
+    {
+        var id = ModedId.Read(reader);
+        var block = SandcubeGame.Instance!.BlocksRegistry.Get(id);
+        if(block is null)
+            throw new KeyNotFoundException($"Block with id {id} not found");
+        return block;
+    }
 }

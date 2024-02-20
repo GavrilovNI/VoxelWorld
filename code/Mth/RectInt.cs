@@ -1,10 +1,12 @@
 ﻿using Sandbox;
 using Sandbox.UI;
+using Sandcube.IO;
 using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Sandcube.Mth;
-public struct RectInt : IEquatable<RectInt>
+public struct RectInt : IEquatable<RectInt>, IBinaryWritable, IBinaryStaticReadable<RectInt>
 {
     public int Left;
 
@@ -403,4 +405,21 @@ public struct RectInt : IEquatable<RectInt>
     public readonly bool Equals(RectInt o) => Left == o.Left && Right == o.Right && Top == o.Top && Bottom == o.Bottom;
 
     public override readonly int GetHashCode() => HashCode.Combine(Left, Right, Top, Bottom);
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Left);
+        writer.Write(Top);
+        writer.Write(Right);
+        writer.Write(Bottom);
+    }
+
+    public static RectInt Read(BinaryReader reader)
+    {
+        int left = reader.ReadInt32();
+        int top = reader.ReadInt32();
+        int right = reader.ReadInt32();
+        int bottom = reader.ReadInt32();
+        return FromSides(left, top, right, bottom);
+    }
 }

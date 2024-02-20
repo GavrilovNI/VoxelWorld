@@ -4,11 +4,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Sandcube.IO;
+using System.IO;
 
 namespace Sandcube.Mth.Enums;
 
 
-public abstract class CustomEnum
+public abstract class CustomEnum : IBinaryWritable
 {
     public int Ordinal { get; init; }
     public string Name { get; init; }
@@ -36,9 +38,17 @@ public abstract class CustomEnum
 
     // TODO: remove. its workaround of whitelist error when calling interface static member
     public abstract IEnumerable<CustomEnum> GetAll();
+
+    public void Write(BinaryWriter writer) => writer.Write(Ordinal);
+    public static CustomEnum Read<T>(BinaryReader reader) => Read(reader, typeof(T));
+    public static CustomEnum Read(BinaryReader reader, Type enumType)
+    {
+        var ordinal = reader.ReadInt32();
+        return GetValues(enumType).ElementAt(ordinal);
+    }
 }
 
-public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICustomEnum<T>
+public abstract class CustomEnum<T> : CustomEnum, IBinaryWritable, IBinaryStaticReadable<T> where T : CustomEnum<T>, ICustomEnum<T>
 {
     [Obsolete("For serialization only", true)]
     public CustomEnum()
@@ -75,6 +85,9 @@ public abstract class CustomEnum<T> : CustomEnum where T : CustomEnum<T>, ICusto
     public sealed override int GetHashCode() => Ordinal;
 
     public override string ToString() => Name;
+
+    public static T Read(BinaryReader reader) => (T)CustomEnum.Read<T>(reader);
+
 
     public class CustomEnumJsonConverter : JsonConverter<T>
     {

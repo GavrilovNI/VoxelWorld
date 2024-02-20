@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Sandcube.IO;
+using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Sandcube;
 
-public readonly record struct Id
+public readonly record struct Id : IBinaryWritable, IBinaryStaticReadable<Id>
 {
     public static readonly Regex Regex = new("^[a-z_]+$");
 
@@ -23,4 +25,7 @@ public readonly record struct Id
     {
         return Name;
     }
+
+    public void Write(BinaryWriter writer) => writer.Write(Name);
+    public static Id Read(BinaryReader reader) => (Id)reader.ReadString();
 }

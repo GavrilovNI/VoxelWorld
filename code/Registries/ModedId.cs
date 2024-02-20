@@ -1,9 +1,11 @@
-﻿using Sandcube.Mods;
+﻿using Sandcube.IO;
+using Sandcube.Mods;
 using System;
+using System.IO;
 
 namespace Sandcube.Registries;
 
-public readonly record struct ModedId
+public readonly record struct ModedId : IBinaryWritable, IBinaryStaticReadable<ModedId>
 {
     public readonly Id ModId { get; init; }
     public readonly Id Name { get; init; }
@@ -64,5 +66,18 @@ public readonly record struct ModedId
     public readonly override string ToString()
     {
         return $"{ModId}:{Name}";
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write<Id>(ModId);
+        writer.Write<Id>(Name);
+    }
+
+    public static ModedId Read(BinaryReader reader)
+    {
+        var modId = Id.Read(reader);
+        var name = Id.Read(reader);
+        return new(modId, name);
     }
 }

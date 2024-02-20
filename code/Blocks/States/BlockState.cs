@@ -2,12 +2,15 @@
 using Sandcube.Mods;
 using Sandcube.Mth.Enums;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using Sandcube.IO;
+using System.IO;
 
 namespace Sandcube.Blocks.States;
 
-public sealed class BlockState
+public sealed class BlockState : IBinaryWritable, IBinaryStaticReadable<BlockState>
 {
     public static BlockState Air => SandcubeBaseMod.Instance!.Blocks.Air.DefaultBlockState;
 
@@ -69,6 +72,39 @@ public sealed class BlockState
     public T GetValue<T>(BlockProperty<T> blockProperty) where T : CustomEnum<T>, ICustomEnum<T> =>
         (GetValue((BlockProperty)blockProperty) as T)!;
 
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Block);
+
+        writer.Write(_properties.Count);
+        foreach(var (property, propertyValue) in _properties)
+        {
+            writer.Write<Id>(property.Id);
+            writer.Write(propertyValue);
+        }
+    }
+
+    public static BlockState Read(BinaryReader reader)
+    {
+        var block = Block.Read(reader);
+
+        var blockState = block.DefaultBlockState;
+
+        var propertiesCount = reader.ReadInt32();
+        for(int i = 0; i < propertiesCount; ++i)
+        {
+            var id = Id.Read(reader);
+            var property = blockState._properties.First(kv => kv.Key.Id == id).Key;
+            var propertyValue = CustomEnum.Read(reader, property.PropertyType);
+#pragma warning disable CS0618 // Type or member is obsolete
+            blockState = blockState.With(property, propertyValue);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        return blockState;
+    }
+
     public override string ToString()
     {
         StringBuilder builder = new($"Block: \"{Block.Id}\"");
@@ -78,6 +114,7 @@ public sealed class BlockState
             builder.Append(", Properties: {");
             foreach(var property in _properties)
                 builder.Append($"\"{property.Key.Name}\": \"{property.Value.Name}\"");
+                builder.Append($"\"{property.Id}\": \"{propertyValue.Name}\"");
             builder.Append("}");
         }
 

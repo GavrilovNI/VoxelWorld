@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.IO;
 using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Text.Json.Serialization;
 namespace Sandcube.Mth;
 
 [JsonConverter(typeof(Vector3IntJsonConverter))]
-public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>
+public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, IBinaryWritable, IBinaryStaticReadable<Vector3Int>
 {
     public static readonly Vector3Int One = new(1);
     public static readonly Vector3Int Zero = new(0);
