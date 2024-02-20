@@ -81,7 +81,7 @@ public class ChunkLoader : ThreadHelpComponent
             cancellationToken.ThrowIfCancellationRequested();
             var states = Generator!.Generate(chunk.BlockOffset, chunk.Size);
             cancellationToken.ThrowIfCancellationRequested();
-            chunk.SetBlockStates(Vector3Int.Zero, states);
+            chunk.SetBlockStates(Vector3Int.Zero, states, BlockSetFlags.Default & ~BlockSetFlags.MarkDirty);
             cancellationToken.ThrowIfCancellationRequested();
         });
     }

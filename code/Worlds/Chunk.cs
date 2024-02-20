@@ -27,6 +27,26 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public Vector3Int BlockOffset => Position * Size;
 
+    private bool _isDirty = false;
+    public bool IsDirty
+    {
+        get
+        {
+            lock(Blocks)
+            {
+                // TODO: test blockEntities
+                return _isDirty;
+            }
+        }
+        protected set
+        {
+            lock(Blocks)
+            {
+                _isDirty = value;
+            }
+        }
+    }
+
     protected readonly BlocksContainer Blocks = new();
 
     public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldProvider worldProvider)
@@ -92,7 +112,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
 
-    protected BlockStateChangingResult SetBlockStateInternal(Vector3Int localPosition, BlockState blockState)
+    protected BlockStateChangingResult SetBlockStateInternal(Vector3Int localPosition, BlockState blockState, bool markDirty)
     {
         lock(Blocks)
         {
@@ -139,6 +159,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 oldBlockEntity?.OnDestroyed();
                 Blocks.BlockStates[localPosition] = blockState;
             }
+            if(markDirty)
+                MarkDirty();
 
             return new(true, oldState);
         }
@@ -153,7 +175,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         if(!IsInBounds(localPosition))
             throw new ArgumentOutOfRangeException(nameof(localPosition), localPosition, "block position is out of chunk bounds");
 
-        var result = SetBlockStateInternal(localPosition, blockState);
+        var result = SetBlockStateInternal(localPosition, blockState, flags.HasFlag(BlockSetFlags.MarkDirty));
 
         if(flags.HasFlag(BlockSetFlags.UpdateModel))
             _ = RequireModelUpdate();
@@ -182,10 +204,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             {
                 for(int z = 0; z < size.z; ++z)
                 {
-                    modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
+                    modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z], false);
                 }
             }
         }
+
+        if(flags.HasFlag(BlockSetFlags.MarkDirty))
+            MarkDirty();
 
         Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
             .ContinueWith(t => modified);
@@ -211,6 +236,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 foreach(var (_, blockEntity) in Blocks.BlockEntities)
                     blockEntity.OnDestroyed();
                 Blocks.Clear();
+                if(flags.HasFlag(BlockSetFlags.MarkDirty))
+                    MarkDirty();
             }
         }
 
@@ -251,6 +278,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         var bounds = Bounds.Translate(-Transform.Position).Expanded(1);
         Gizmo.Hitbox.BBox(bounds);
     }
+
+    protected void MarkDirty() => IsDirty = true;
 }
 
 public static class ComponentListChunkExtensions
