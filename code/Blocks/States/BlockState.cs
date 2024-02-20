@@ -112,8 +112,7 @@ public sealed class BlockState : IBinaryWritable, IBinaryStaticReadable<BlockSta
         if(_properties.Count > 0)
         {
             builder.Append(", Properties: {");
-            foreach(var property in _properties)
-                builder.Append($"\"{property.Key.Name}\": \"{property.Value.Name}\"");
+            foreach(var (property, propertyValue) in _properties)
                 builder.Append($"\"{property.Id}\": \"{propertyValue.Name}\"");
             builder.Append("}");
         }
