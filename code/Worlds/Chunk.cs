@@ -2,6 +2,7 @@ using Sandbox;
 using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.Interfaces;
 using Sandcube.Blocks.States;
+using Sandcube.Data;
 using Sandcube.Interfaces;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
@@ -26,11 +27,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public Vector3Int BlockOffset => Position * Size;
 
-
-    protected readonly object BlocksLock = new();
-    protected readonly Dictionary<Vector3Int, BlockState> BlockStates = new();
-    protected readonly SortedDictionary<Vector3Int, BlockEntity> BlockEntities = new(Vector3Int.XYZIterationComparer);
-
+    protected readonly BlocksContainer Blocks = new();
 
     public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldProvider worldProvider)
     {
@@ -66,9 +63,9 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     {
         ThreadSafe.AssertIsMainThread();
 
-        lock(BlocksLock)
+        lock(Blocks)
         {
-            foreach(var (_, blockEntity) in BlockEntities)
+            foreach(var (_, blockEntity) in Blocks.BlockEntities)
             {
                 if(blockEntity is ITickable tickable)
                     tickable.Tick();
@@ -79,32 +76,32 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     // Thread safe
     public BlockState GetBlockState(Vector3Int position)
     {
-        lock(BlocksLock)
+        lock(Blocks)
         {
-            return BlockStates.GetValueOrDefault(position, BlockState.Air);
+            return Blocks.BlockStates.GetValueOrDefault(position, BlockState.Air);
         }
     }
 
     // Thread safe
     public BlockEntity? GetBlockEntity(Vector3Int position)
     {
-        lock(BlocksLock)
+        lock(Blocks)
         {
-            return BlockEntities!.GetValueOrDefault(position, null);
+            return Blocks.BlockEntities!.GetValueOrDefault(position, null);
         }
     }
 
 
     protected BlockStateChangingResult SetBlockStateInternal(Vector3Int localPosition, BlockState blockState)
     {
-        lock(BlocksLock)
+        lock(Blocks)
         {
-            var oldState = BlockStates.GetValueOrDefault(localPosition, BlockState.Air);
+            var oldState = Blocks.BlockStates.GetValueOrDefault(localPosition, BlockState.Air);
             if(oldState == blockState)
                 return new(false, oldState);
 
             BlockEntity? oldBlockEntity = null;
-            if(BlockEntities.Remove(localPosition, out var oldEntity))
+            if(Blocks.BlockEntities.Remove(localPosition, out var oldEntity))
             {
                 if(oldState.Block == blockState.Block)
                     oldBlockEntity = oldEntity;
@@ -118,29 +115,29 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 if(!entityBlock.HasEntity(WorldProvider, globalPosition, blockState))
                 {
                     oldBlockEntity?.OnDestroyed();
-                    BlockStates[localPosition] = blockState;
+                    Blocks.BlockStates[localPosition] = blockState;
                 }
                 else if(oldBlockEntity == null)
                 {
-                    BlockStates[localPosition] = blockState;
+                    Blocks.BlockStates[localPosition] = blockState;
 
                     var newBlockEntity = entityBlock.CreateEntity(WorldProvider, globalPosition, blockState);
                     if(newBlockEntity is null)
                         throw new InvalidOperationException($"Couldn't create {typeof(BlockEntity)} for {blockState}");
 
-                    BlockEntities[localPosition] = newBlockEntity;
+                    Blocks.BlockEntities[localPosition] = newBlockEntity;
                     newBlockEntity.OnCreated();
                 }
                 else
                 {
-                    BlockStates[localPosition] = blockState;
-                    BlockEntities[localPosition] = oldBlockEntity;
+                    Blocks.BlockStates[localPosition] = blockState;
+                    Blocks.BlockEntities[localPosition] = oldBlockEntity;
                 }
             }
             else
             {
                 oldBlockEntity?.OnDestroyed();
-                BlockStates[localPosition] = blockState;
+                Blocks.BlockStates[localPosition] = blockState;
             }
 
             return new(true, oldState);
@@ -167,6 +164,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         return Task.FromResult(result);
     }
 
+    // Thread safe
     public Task<bool> SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates, BlockSetFlags flags = BlockSetFlags.Default)
     {
         var size = new Vector3Int(blockStates.GetLength(0), blockStates.GetLength(1), blockStates.GetLength(2));
@@ -200,12 +198,11 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public virtual void Clear()
     {
-        lock(BlocksLock)
+        lock(Blocks)
         {
-            foreach(var (_, blockEntity) in BlockEntities)
+            foreach(var (_, blockEntity) in Blocks.BlockEntities)
                 blockEntity.OnDestroyed();
-            BlockStates.Clear();
-            BlockEntities.Clear();
+            Blocks.Clear();
         }
         RequireModelUpdate();
     }
