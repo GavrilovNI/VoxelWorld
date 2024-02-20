@@ -196,15 +196,31 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         return Task.FromResult(modified);
     }
 
-    public virtual void Clear()
+    public virtual Task<bool> Clear(BlockSetFlags flags = BlockSetFlags.Default)
     {
+        if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
+            throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
+
+        bool modified = false;
+
         lock(Blocks)
         {
-            foreach(var (_, blockEntity) in Blocks.BlockEntities)
-                blockEntity.OnDestroyed();
-            Blocks.Clear();
+            modified = !Blocks.IsEmpty();
+            if(modified)
+            {
+                foreach(var (_, blockEntity) in Blocks.BlockEntities)
+                    blockEntity.OnDestroyed();
+                Blocks.Clear();
+            }
         }
-        RequireModelUpdate();
+
+        Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
+            .ContinueWith(t => modified);
+
+        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+            return resultTask;
+
+        return Task.FromResult(modified);
     }
 
     public virtual bool IsInBounds(Vector3Int localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
