@@ -2,7 +2,7 @@
 
 namespace Sandcube.IO;
 
-public interface IBinaryReadable<T> where T : IBinaryReadable<T>
+public interface IBinaryReadable
 {
     void Read(BinaryReader reader);
 }

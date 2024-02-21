@@ -5,7 +5,7 @@ using System.IO;
 namespace Sandcube.IO;
 public static class BinaryReaderWriterExtensions
 {
-    public static void ReadTo<T>(this BinaryReader reader, ref T value) where T : IBinaryReadable<T>
+    public static void ReadTo<T>(this BinaryReader reader, ref T value) where T : IBinaryReadable
     {
         value.Read(reader);
     }
