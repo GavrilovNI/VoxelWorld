@@ -199,13 +199,16 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             throw new InvalidOperationException($"setting range ({localPosition} - {lastPosition}) is out of chunk bounds");
 
         bool modified = false;
-        for(int x = 0; x < size.x; ++x)
+        lock(Blocks)
         {
-            for(int y = 0; y < size.y; ++y)
+            for(int x = 0; x < size.x; ++x)
             {
-                for(int z = 0; z < size.z; ++z)
+                for(int y = 0; y < size.y; ++y)
                 {
-                    modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
+                    for(int z = 0; z < size.z; ++z)
+                    {
+                        modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
+                    }
                 }
             }
         }
