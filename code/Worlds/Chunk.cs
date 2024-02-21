@@ -43,6 +43,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             lock(Blocks)
             {
                 _isDirty = value;
+                // TODO: reset blockEntities?
             }
         }
     }
@@ -284,6 +285,48 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     protected void MarkDirty() => IsDirty = true;
+
+
+    public virtual Task Load(IReadOnlyBlocksContainer blocks, BlockSetFlags flags = BlockSetFlags.UpdateModel)
+    {
+        if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
+            throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
+
+        lock(Blocks)
+        {
+            for(int x = 0; x < Size.x; ++x)
+            {
+                for(int y = 0; y < Size.y; ++y)
+                {
+                    for(int z = 0; z < Size.z; ++z)
+                    {
+                        var position = new Vector3Int(x, y, z);
+                        if(Blocks.BlockEntities.Remove(position, out var oldBlockEntity))
+                            oldBlockEntity.OnDestroyed();
+
+                        var blockState = blocks.GetBlockState(position) ?? BlockState.Air;
+                        Blocks.BlockStates[position] = blockState;
+
+                        var blockEntity = blocks.GetBlockEntity(position);
+                        if(blockEntity is not null)
+                            Blocks.BlockEntities[position] = blockEntity;
+                    }
+                }
+            }
+        }
+
+        if(flags.HasFlag(BlockSetFlags.MarkDirty))
+            MarkDirty();
+        else
+            IsDirty = false;
+
+        Task resultTask = (flags.HasFlag(BlockSetFlags.UpdateModel) ? RequireModelUpdate() : GetModelUpdateTask());
+
+        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+            return resultTask;
+
+        return Task.CompletedTask;
+    }
 }
 
 public static class ComponentListChunkExtensions
