@@ -20,6 +20,13 @@ public class Palette<T> : IPalette<T>, IBinaryWritable/*, IBinaryStaticReadable<
 
     }
 
+    public void Clear()
+    {
+        _nextId = 0;
+        _valueFromId.Clear();
+        _idFromValue.Clear();
+    }
+
     public int GetOrAdd(T value)
     {
         if(_idFromValue.TryGetValue(value, out var id))
