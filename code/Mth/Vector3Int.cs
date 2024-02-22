@@ -90,6 +90,39 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, IBinar
     [JsonIgnore]
     public readonly float LengthSquared => x * x + y * y + z * z;
 
+    public readonly Angles EulerAngles => VectorAngle(this);
+
+    public readonly Vector3 Inverse => new(1f / x, 1f / y, 1f / z);
+
+    public int this[int index]
+    {
+        readonly get
+        {
+            return index switch
+            {
+                0 => x,
+                1 => y,
+                2 => z,
+                _ => throw new IndexOutOfRangeException(),
+            };
+        }
+        set
+        {
+            switch(index)
+            {
+                case 0:
+                    x = value;
+                    break;
+                case 1:
+                    y = value;
+                    break;
+                case 2:
+                    z = value;
+                    break;
+            }
+        }
+    }
+
 
     public readonly Vector3Int WithX(int x) => new(x, this.y, this.z);
     public readonly Vector3Int WithY(int y) => new(this.x, y, this.z);
