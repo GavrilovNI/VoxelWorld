@@ -37,11 +37,11 @@ public class WorldSaveHelper
         return true;
     }
 
-    public virtual string GetRegionFileName(in Vector3Int regionPosition) =>
+    public virtual string GetRegionFile(in Vector3Int regionPosition) =>
         $"{regionPosition.x}.{regionPosition.y}.{regionPosition.z}.region";
 
     public virtual bool HasRegionFile(in Vector3Int regionPosition) =>
-        RegionsFileSystem.FileExists(GetRegionFileName(regionPosition));
+        RegionsFileSystem.FileExists(GetRegionFile(regionPosition));
 
     public virtual Dictionary<Vector3Int, string> GetAllRegionFiles()
     {
@@ -66,13 +66,13 @@ public class WorldSaveHelper
 
     public virtual Stream OpenRegionRead(in Vector3Int regionPosition, FileMode fileMode = FileMode.Open)
     {
-        string fileName = GetRegionFileName(regionPosition);
+        string fileName = GetRegionFile(regionPosition);
         return RegionsFileSystem.OpenRead(fileName, fileMode);
     }
 
     public virtual Stream OpenRegionWrite(in Vector3Int regionPosition, FileMode fileMode = FileMode.Create)
     {
-        string fileName = GetRegionFileName(regionPosition);
+        string fileName = GetRegionFile(regionPosition);
         return RegionsFileSystem.OpenWrite(fileName, fileMode);
     }
 }
