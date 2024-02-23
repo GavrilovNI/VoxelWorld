@@ -226,10 +226,15 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         bool modified = false;
         lock(Blocks)
         {
-            foreach(var blockPosition in Bounds.GetPositions(false))
+            for(int x = 0; x < size.x; ++x)
             {
-                var blockState = blockStates[blockPosition.x, blockPosition.y, blockPosition.z];
-                modified |= SetBlockStateInternal(localPosition + blockPosition, blockState);
+                for(int y = 0; y < size.y; ++y)
+                {
+                    for(int z = 0; z < size.z; ++z)
+                    {
+                        modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
+                    }
+                }
             }
 
             if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
