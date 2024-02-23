@@ -16,7 +16,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
     protected BlockStatePalette BlockStatePalette;
     protected readonly int MaxChunksCount;
 
-    protected readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
+    public readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
 
     protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
 
@@ -130,14 +130,20 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
             var blockStateId = reader.ReadInt32();
             var blockState = BlockStatePalette!.GetValue(blockStateId);
             data.BlockStates[blockPosition] = blockState;
+        }
 
-            int blockEntityDataSize = reader.ReadInt32();
-            if(blockEntityDataSize > 0)
+        int blockEntitiesCount = reader.ReadInt32();
+        for(int i = 0; i < blockEntitiesCount; ++i)
+        {
+            int blockPosition = reader.ReadInt32();
+            int blockEntityDataLength = reader.ReadInt32();
+            if(blockEntityDataLength > 0)
             {
-                var blockEntityData = reader.ReadBytes(blockEntityDataSize);
+                var blockEntityData = reader.ReadBytes(blockEntityDataLength);
                 data.BlockEntitiesData[blockPosition] = blockEntityData;
             }
         }
+
         return data;
     }
 
@@ -176,21 +182,23 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected virtual void WriteChunkData(BinaryWriter writer, Vector3Int chunkPosition)
     {
-        var chunk = Chunks!.GetValueOrDefault(chunkPosition, null);
+        var chunk = Chunks[chunkPosition];
+
         foreach(var blockPosition in AllBlockPositionsInChunk)
         {
-            var blockState = chunk!.BlockStates[blockPosition];
+            var blockState = chunk.BlockStates.GetValueOrDefault(blockPosition, BlockState.Air);
             var blockStateId = BlockStatePalette!.GetId(blockState);
             writer.Write(blockStateId);
+        }
 
-            if(chunk.BlockEntitiesData.TryGetValue(blockPosition, out var blockEntityData))
+        writer.Write(chunk.BlockEntitiesData.Count);
+        foreach(var (blockPosition, blockEntityData) in chunk.BlockEntitiesData)
+        {
+            if(blockEntityData.Length > 0)
             {
+                writer.Write(blockPosition);
                 writer.Write(blockEntityData.Length);
                 writer.Write(blockEntityData);
-            }
-            else
-            {
-                writer.Write(0);
             }
         }
     }
