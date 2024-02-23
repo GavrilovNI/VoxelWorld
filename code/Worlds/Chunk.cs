@@ -3,6 +3,7 @@ using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.Interfaces;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
+using Sandcube.Data.Enumarating;
 using Sandcube.Interfaces;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
@@ -24,6 +25,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     public IWorldProvider WorldProvider { get; internal set; } = null!;
 
     public BBox ModelBounds => ModelUpdater.Bounds;
+
+    public BBoxInt Bounds => BBoxInt.FromMinsAndSize(Position, Size);
 
     public Vector3Int BlockOffset => Position * Size;
 
@@ -202,15 +205,10 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         bool modified = false;
         lock(Blocks)
         {
-            for(int x = 0; x < size.x; ++x)
+            foreach(var blockPosition in Bounds.GetPositions(false))
             {
-                for(int y = 0; y < size.y; ++y)
-                {
-                    for(int z = 0; z < size.z; ++z)
-                    {
-                        modified |= SetBlockStateInternal(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
-                    }
-                }
+                var blockState = blockStates[blockPosition.x, blockPosition.y, blockPosition.z];
+                modified |= SetBlockStateInternal(localPosition + blockPosition, blockState);
             }
         }
 
@@ -294,24 +292,17 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
         lock(Blocks)
         {
-            for(int x = 0; x < Size.x; ++x)
+            foreach(var blockPosition in Bounds.GetPositions(false))
             {
-                for(int y = 0; y < Size.y; ++y)
-                {
-                    for(int z = 0; z < Size.z; ++z)
-                    {
-                        var position = new Vector3Int(x, y, z);
-                        if(Blocks.BlockEntities.Remove(position, out var oldBlockEntity))
-                            oldBlockEntity.OnDestroyed();
+                if(Blocks.BlockEntities.Remove(blockPosition, out var oldBlockEntity))
+                    oldBlockEntity.OnDestroyed();
 
-                        var blockState = blocks.GetBlockState(position) ?? BlockState.Air;
-                        Blocks.BlockStates[position] = blockState;
+                var blockState = blocks.GetBlockState(blockPosition) ?? BlockState.Air;
+                Blocks.BlockStates[blockPosition] = blockState;
 
-                        var blockEntity = blocks.GetBlockEntity(position);
-                        if(blockEntity is not null)
-                            Blocks.BlockEntities[position] = blockEntity;
-                    }
-                }
+                var blockEntity = blocks.GetBlockEntity(blockPosition);
+                if(blockEntity is not null)
+                    Blocks.BlockEntities[blockPosition] = blockEntity;
             }
         }
 
