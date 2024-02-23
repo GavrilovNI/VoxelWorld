@@ -23,7 +23,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public IWorldProvider WorldProvider { get; internal set; } = null!;
 
-    public BBox Bounds => ModelUpdater.Bounds;
+    public BBox ModelBounds => ModelUpdater.Bounds;
 
     public Vector3Int BlockOffset => Position * Size;
 
@@ -280,7 +280,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     protected override void DrawGizmos()
     {
-        var bounds = Bounds.Translate(-Transform.Position).Expanded(1);
+        var bounds = ModelBounds.Translate(-Transform.Position).Expanded(1);
         Gizmo.Hitbox.BBox(bounds);
     }
 
