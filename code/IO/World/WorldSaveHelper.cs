@@ -13,7 +13,7 @@ public class WorldSaveHelper
     public WorldSaveHelper(BaseFileSystem worldFileSystem)
     {
         WorldFileSystem = worldFileSystem;
-        RegionsFileSystem = worldFileSystem.CreateSubSystem("regions");
+        RegionsFileSystem = worldFileSystem.CreateDirectoryAndSubSystem("regions");
     }
 
     public virtual void SaveWorldOptions(in WorldSaveOptions options)
