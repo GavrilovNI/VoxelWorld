@@ -74,6 +74,21 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     public virtual Task RequireModelUpdate() => ModelUpdater.RequireModelUpdate();
     public virtual Task GetModelUpdateTask() => ModelUpdater.GetModelUpdateTask();
 
+    protected virtual Task GetModelUpdateTask(BlockSetFlags flags, bool wasModified = true)
+    {
+        Task modelUpdateTask;
+
+        if(wasModified && flags.HasFlag(BlockSetFlags.UpdateModel))
+            modelUpdateTask = RequireModelUpdate();
+        else
+            modelUpdateTask = GetModelUpdateTask();
+
+        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+            return modelUpdateTask;
+
+        return Task.CompletedTask;
+    }
+
     public virtual void UpdateTexture(Texture texture) => ModelUpdater.UpdateTexture(texture);
 
 
@@ -186,14 +201,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
                 IsDirty = true;
 
-            var resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && result.Changed) ? RequireModelUpdate() : GetModelUpdateTask())
-                .ContinueWith(t => result);
-
-            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-                return resultTask;
+            return GetModelUpdateTask(flags, result.Changed).ContinueWith(t => result);
         }
-
-        return Task.FromResult(result);
     }
 
     // Thread safe
@@ -219,14 +228,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
                 IsDirty = true;
 
-            Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
-                .ContinueWith(t => modified);
-
-            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-                return resultTask;
+            return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
         }
-
-        return Task.FromResult(modified);
     }
 
     public virtual Task<bool> Clear(BlockSetFlags flags = BlockSetFlags.Default)
@@ -248,14 +251,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                     IsDirty = true;
             }
 
-            Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
-                .ContinueWith(t => modified);
-
-            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-                return resultTask;
+            return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
         }
-
-        return Task.FromResult(modified);
     }
 
     public virtual bool IsInBounds(Vector3Int localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
@@ -312,14 +309,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             else
                 IsDirty = false;
 
-
-            Task resultTask = (flags.HasFlag(BlockSetFlags.UpdateModel) ? RequireModelUpdate() : GetModelUpdateTask());
-
-            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-                return resultTask;
+            return GetModelUpdateTask(flags);
         }
-
-        return Task.CompletedTask;
     }
 }
 
