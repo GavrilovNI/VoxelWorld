@@ -127,6 +127,17 @@
           ],
           "MaxHeight": 120,
           "MinHeight": 0
+        },
+        {
+          "__type": "WorldSaver",
+          "ClickToSave": false,
+          "RegionSize": "5,5,5",
+          "SavePath": "saves/test",
+          "World": {
+            "_type": "component",
+            "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+            "component_type": "World"
+          }
         }
       ]
     },
@@ -597,6 +608,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-17T17:57:20.485389\u002B01:00",
+  "LastSaved": "2024-02-24T00:10:02.1050893\u002B01:00",
   "__references": []
 }

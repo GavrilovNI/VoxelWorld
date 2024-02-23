@@ -9,6 +9,7 @@ using Sandcube.Threading;
 using Sandcube.Worlds.Loading;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -388,6 +389,17 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
                 chunkUnion.As<Chunk>()?.GameObject.Destroy();
 
             Chunks.Clear();
+        }
+    }
+
+    public Dictionary<Vector3Int, BlocksData> Save(bool keepDirty = false)
+    {
+        lock(Chunks)
+        {
+            var chunksToSave = Chunks.Where(c => c.Value.Is<Chunk>(out var chunk) && chunk.IsValid && chunk.IsDirty)
+                .Select(c => c.Value.As<Chunk>()!);
+
+            return chunksToSave.ToDictionary(c => c.Position, c => c.Save(keepDirty));
         }
     }
 }
