@@ -123,6 +123,24 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, IBinar
         }
     }
 
+    public readonly IEnumerator<Vector3Int> GetPositionsFromZero(bool includeMaxs = true) => GetPositionsFromZero(true, includeMaxs);
+
+    public readonly IEnumerator<Vector3Int> GetPositionsFromZero(bool includeZero, bool includeMaxs)
+    {
+        var first = includeZero ? Vector3Int.Zero : Vector3Int.One;
+        var last = includeMaxs ? this : this - 1;
+
+        for(int x = first.x; x <= last.x; ++x)
+        {
+            for(int y = first.y; y <= last.y; ++y)
+            {
+                for(int z = first.z; z <= last.z; ++z)
+                {
+                    yield return new(x, y, z);
+                }
+            }
+        }
+    }
 
     public readonly Vector3Int WithX(int x) => new(x, this.y, this.z);
     public readonly Vector3Int WithY(int y) => new(this.x, y, this.z);
