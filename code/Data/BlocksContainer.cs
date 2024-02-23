@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Sandcube.Data;
 
-public class BlocksContainer : IReadOnlyBlocksContainer
+public class BlocksContainer
 {
     public Dictionary<Vector3Int, BlockState> BlockStates = new();
     public SortedDictionary<Vector3Int, BlockEntity> BlockEntities = new(Vector3Int.XYZIterationComparer);
