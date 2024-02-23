@@ -185,13 +185,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
             if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
                 IsDirty = true;
+
+            var resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && result.Changed) ? RequireModelUpdate() : GetModelUpdateTask())
+                .ContinueWith(t => result);
+
+            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+                return resultTask;
         }
-
-        if(flags.HasFlag(BlockSetFlags.UpdateModel))
-            _ = RequireModelUpdate();
-
-        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-            return GetModelUpdateTask().ContinueWith(t => result);
 
         return Task.FromResult(result);
     }
@@ -218,13 +218,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
             if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
                 IsDirty = true;
+
+            Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
+                .ContinueWith(t => modified);
+
+            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+                return resultTask;
         }
-
-        Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
-            .ContinueWith(t => modified);
-
-        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-            return resultTask;
 
         return Task.FromResult(modified);
     }
@@ -247,13 +247,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 if(flags.HasFlag(BlockSetFlags.MarkDirty))
                     IsDirty = true;
             }
+
+            Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
+                .ContinueWith(t => modified);
+
+            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+                return resultTask;
         }
-
-        Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
-            .ContinueWith(t => modified);
-
-        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-            return resultTask;
 
         return Task.FromResult(modified);
     }
@@ -311,12 +311,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 IsDirty = true;
             else
                 IsDirty = false;
+
+
+            Task resultTask = (flags.HasFlag(BlockSetFlags.UpdateModel) ? RequireModelUpdate() : GetModelUpdateTask());
+
+            if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
+                return resultTask;
         }
-
-        Task resultTask = (flags.HasFlag(BlockSetFlags.UpdateModel) ? RequireModelUpdate() : GetModelUpdateTask());
-
-        if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-            return resultTask;
 
         return Task.CompletedTask;
     }
