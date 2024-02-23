@@ -3,7 +3,7 @@ using Sandcube.Mth;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Sandcube.IO.World;
+namespace Sandcube.IO.Worlds;
 
 public class WorldSaveHelper
 {
