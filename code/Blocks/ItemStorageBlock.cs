@@ -56,6 +56,7 @@ public class ItemStorageBlock : SimpleBlock, IEntityBlock
         return InteractionResult.Fail;
     }
 
-    public BlockEntity? CreateEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => new ItemStorageBlockEntity(world, position, StorageSize, StorageStackLimit);
-    public bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => true;
+    public virtual BlockEntity? CreateEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => new ItemStorageBlockEntity(world, position, StorageSize, StorageStackLimit);
+    public virtual bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => true;
+    public virtual bool IsValidEntity(IWorldProvider world, Vector3Int position, BlockState blockState, BlockEntity blockEntity) => blockEntity is ItemStorageBlockEntity;
 }
