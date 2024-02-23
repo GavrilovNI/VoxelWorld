@@ -177,10 +177,15 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         if(!IsInBounds(localPosition))
             throw new ArgumentOutOfRangeException(nameof(localPosition), localPosition, "block position is out of chunk bounds");
 
-        var result = SetBlockStateInternal(localPosition, blockState);
+        BlockStateChangingResult result;
 
-        if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
-            IsDirty = true;
+        lock(Blocks)
+        {
+            result = SetBlockStateInternal(localPosition, blockState);
+
+            if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
+                IsDirty = true;
+        }
 
         if(flags.HasFlag(BlockSetFlags.UpdateModel))
             _ = RequireModelUpdate();
@@ -210,10 +215,10 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 var blockState = blockStates[blockPosition.x, blockPosition.y, blockPosition.z];
                 modified |= SetBlockStateInternal(localPosition + blockPosition, blockState);
             }
-        }
 
-        if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
-            IsDirty = true;
+            if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
+                IsDirty = true;
+        }
 
         Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
             .ContinueWith(t => modified);
@@ -301,12 +306,12 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 if(blockEntity is not null)
                     Blocks.BlockEntities[blockPosition] = blockEntity;
             }
-        }
 
-        if(flags.HasFlag(BlockSetFlags.MarkDirty))
-            IsDirty = true;
-        else
-            IsDirty = false;
+            if(flags.HasFlag(BlockSetFlags.MarkDirty))
+                IsDirty = true;
+            else
+                IsDirty = false;
+        }
 
         Task resultTask = (flags.HasFlag(BlockSetFlags.UpdateModel) ? RequireModelUpdate() : GetModelUpdateTask());
 
