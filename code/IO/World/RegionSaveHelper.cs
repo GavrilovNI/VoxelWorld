@@ -16,7 +16,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
     protected BlockStatePalette BlockStatePalette;
     protected readonly int MaxChunksCount;
 
-    protected readonly Dictionary<Vector3Int, BlocksContainer> Chunks = new();
+    protected readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
 
     protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
 
@@ -121,20 +121,24 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         return chunkOffsets;
     }
 
-    protected virtual BlocksContainer ReadChunkData(BinaryReader reader)
+    protected virtual BlocksData ReadChunkData(BinaryReader reader)
     {
-        var blocks = new BlocksContainer();
+        var data = new BlocksData();
 
         foreach(var blockPosition in AllBlockPositionsInChunk)
         {
             var blockStateId = reader.ReadInt32();
             var blockState = BlockStatePalette!.GetValue(blockStateId);
-            blocks.BlockStates[blockPosition] = blockState;
+            data.BlockStates[blockPosition] = blockState;
+
+            int blockEntityDataSize = reader.ReadInt32();
+            if(blockEntityDataSize > 0)
+            {
+                var blockEntityData = reader.ReadBytes(blockEntityDataSize);
+                data.BlockEntitiesData[blockPosition] = blockEntityData;
+            }
         }
-
-        //TODO: read block entities
-
-        return blocks;
+        return data;
     }
 
     #endregion
@@ -178,9 +182,17 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
             var blockState = chunk!.BlockStates[blockPosition];
             var blockStateId = BlockStatePalette!.GetId(blockState);
             writer.Write(blockStateId);
-        }
 
-        //TODO: write block entities
+            if(chunk.BlockEntitiesData.TryGetValue(blockPosition, out var blockEntityData))
+            {
+                writer.Write(blockEntityData.Length);
+                writer.Write(blockEntityData);
+            }
+            else
+            {
+                writer.Write(0);
+            }
+        }
     }
 
     #endregion

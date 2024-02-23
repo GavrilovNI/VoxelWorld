@@ -37,7 +37,15 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         {
             lock(Blocks)
             {
-                // TODO: test blockEntities
+                foreach(var (_, blockEntity) in Blocks.BlockEntities)
+                {
+                    if(blockEntity.IsDirty)
+                    {
+                        _isDirty = true;
+                        break;
+                    }
+                }
+
                 return _isDirty;
             }
         }
@@ -46,7 +54,6 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             lock(Blocks)
             {
                 _isDirty = value;
-                // TODO: reset blockEntities?
             }
         }
     }
@@ -286,29 +293,43 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         Gizmo.Hitbox.BBox(bounds);
     }
 
-    public virtual Task Load(IReadOnlyBlocksContainer blocks, BlockSetFlags flags = BlockSetFlags.UpdateModel)
+    public virtual Task Load(BlocksData data, BlockSetFlags flags = BlockSetFlags.UpdateModel)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
 
         lock(Blocks)
         {
+            var setDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
+
             foreach(var blockPosition in Bounds.GetPositions(false))
             {
                 if(Blocks.BlockEntities.Remove(blockPosition, out var oldBlockEntity))
                     oldBlockEntity.OnDestroyed();
 
-                var blockState = blocks.GetBlockState(blockPosition) ?? BlockState.Air;
-                Blocks.BlockStates[blockPosition] = blockState;
+                var blockState = data.BlockStates!.GetValueOrDefault(blockPosition, null) ?? BlockState.Air;
+                SetBlockStateInternal(blockPosition, blockState);
 
-                var blockEntity = blocks.GetBlockEntity(blockPosition);
-                if(blockEntity is not null)
-                    Blocks.BlockEntities[blockPosition] = blockEntity;
+                var blockEntity = Blocks.GetBlockEntity(blockPosition);
+                if(blockEntity is null)
+                    continue;
+
+                data.UpdateEntity(blockEntity, setDirty);
             }
 
-            IsDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
+            IsDirty = setDirty;
 
             return GetModelUpdateTask(flags);
+        }
+    }
+
+    public virtual BlocksData Save(bool keepDirty = false)
+    {
+        lock(Blocks)
+        {
+            if(!keepDirty)
+                IsDirty = false;
+            return Blocks.ToBlocksData(keepDirty);
         }
     }
 }

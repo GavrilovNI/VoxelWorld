@@ -10,6 +10,14 @@ public class BlocksContainer
     public Dictionary<Vector3Int, BlockState> BlockStates = new();
     public SortedDictionary<Vector3Int, BlockEntity> BlockEntities = new(Vector3Int.XYZIterationComparer);
 
+    public BlocksContainer()
+    {
+
+    }
+
+    public BlocksData ToBlocksData(bool keepEntitiesDirty = false) =>
+        new(BlockStates, BlockEntities, keepEntitiesDirty);
+
     public void Clear()
     {
         BlockStates.Clear();
