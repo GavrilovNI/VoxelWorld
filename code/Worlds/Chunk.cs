@@ -246,7 +246,9 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             {
                 foreach(var (_, blockEntity) in Blocks.BlockEntities)
                     blockEntity.OnDestroyed();
+
                 Blocks.Clear();
+
                 if(flags.HasFlag(BlockSetFlags.MarkDirty))
                     IsDirty = true;
             }
@@ -304,10 +306,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                     Blocks.BlockEntities[blockPosition] = blockEntity;
             }
 
-            if(flags.HasFlag(BlockSetFlags.MarkDirty))
-                IsDirty = true;
-            else
-                IsDirty = false;
+            IsDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
 
             return GetModelUpdateTask(flags);
         }
