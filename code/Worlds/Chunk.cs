@@ -180,7 +180,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         var result = SetBlockStateInternal(localPosition, blockState);
 
         if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
-            MarkDirty();
+            IsDirty = true;
 
         if(flags.HasFlag(BlockSetFlags.UpdateModel))
             _ = RequireModelUpdate();
@@ -213,7 +213,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         }
 
         if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
-            MarkDirty();
+            IsDirty = true;
 
         Task<bool> resultTask = ((flags.HasFlag(BlockSetFlags.UpdateModel) && modified) ? RequireModelUpdate() : GetModelUpdateTask())
             .ContinueWith(t => modified);
@@ -240,7 +240,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                     blockEntity.OnDestroyed();
                 Blocks.Clear();
                 if(flags.HasFlag(BlockSetFlags.MarkDirty))
-                    MarkDirty();
+                    IsDirty = true;
             }
         }
 
@@ -282,9 +282,6 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         Gizmo.Hitbox.BBox(bounds);
     }
 
-    protected void MarkDirty() => IsDirty = true;
-
-
     public virtual Task Load(IReadOnlyBlocksContainer blocks, BlockSetFlags flags = BlockSetFlags.UpdateModel)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
@@ -307,7 +304,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         }
 
         if(flags.HasFlag(BlockSetFlags.MarkDirty))
-            MarkDirty();
+            IsDirty = true;
         else
             IsDirty = false;
 
