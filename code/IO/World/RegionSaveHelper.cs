@@ -18,41 +18,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected readonly Dictionary<Vector3Int, BlocksContainer> Chunks = new();
 
-    protected virtual IEnumerator<Vector3Int> AllChunkPositions
-    {
-        get
-        {
-            var regionSize = WorldSaveOptions.RegionSize;
-            for(int x = 0; x < regionSize.x; ++x)
-            {
-                for(int y = 0; y < regionSize.y; ++y)
-                {
-                    for(int z = 0; z < regionSize.z; ++z)
-                    {
-                        yield return new Vector3Int(x, y, z);
-                    }
-                }
-            }
-        }
-    }
-
-    protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk
-    {
-        get
-        {
-            var chunkSize = WorldSaveOptions.ChunkSize;
-            for(int x = 0; x < chunkSize.x; ++x)
-            {
-                for(int y = 0; y < chunkSize.y; ++y)
-                {
-                    for(int z = 0; z < chunkSize.z; ++z)
-                    {
-                        yield return new Vector3Int(x, y, z);
-                    }
-                }
-            }
-        }
-    }
+    protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
 
     public RegionSaveHelper(in WorldSaveOptions worldSaveOptions, in Vector3Int regionPosition)
     {
