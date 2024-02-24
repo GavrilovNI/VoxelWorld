@@ -74,10 +74,10 @@ public class Palette<T> : IPalette<T>, IBinaryWritable/*, IBinaryStaticReadable<
     public void Write(BinaryWriter writer)
     {
         writer.Write(_idFromValue.Count);
-        foreach(var (key, value) in _idFromValue)
+        foreach(var (value, id) in _idFromValue)
         {
-            writer.Write(key);
             writer.Write(value);
+            writer.Write(id);
         }
     }
 
