@@ -81,19 +81,9 @@ public class Palette<T> : IPalette<T>, IBinaryWritable/*, IBinaryStaticReadable<
         }
     }
 
-    // TODO: uncomment when T.Read can be used
+    // TODO: implement when T.Read can be used
     /*public static Palette<T> Read(BinaryReader reader)
     {
-        Palette<T> result = new();
-        int count = reader.ReadInt32();
-        for(int i = 0; i < count; ++i)
-        {
-            var key = T.Read(reader);
-            int value = reader.ReadInt32();
-            result._values[key] = value;
-            result._nextValue = Math.Max(result._nextValue, value);
-        }
-        return result;
     }*/
 }
 
