@@ -30,13 +30,7 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
     public SimpleBlock Grass { get; } = new(MakeId("grass"),
         BlockTexturesLoader.Pillar.WithTexture(Direction.Down, $"{GetBlockPathPart("dirt")}.png").LoadTextureUvs(TextureMap, GetBlockPathPart("grass")));
     public SimpleBlock Cobblestone { get; } = new(MakeId("cobblestone"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("cobblestone")}.png"));
-    public SimpleBlock Glass { get; } = new(MakeId("glass"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("glass")}.png"))
-    {
-        Properties = BlockProperties.Default with
-        {
-            IsTransparent = true,
-        }
-    };
+    public GlassBlock Glass { get; } = new(MakeId("glass"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("glass")}.png"));
 
     public PillarBlock WoodLog { get; } = new(MakeId("wood_log"),
         BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("wood_log")));
