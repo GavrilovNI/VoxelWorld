@@ -102,12 +102,14 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         long[] chunkOffsets = ReadChunkOffsets(reader);
         long chunksEnd = reader.ReadInt64();
 
+        var chunksStart = reader.BaseStream.Position;
         for(int i = 0; i < MaxChunksCount; ++i)
         {
             var chunkOffset = chunkOffsets[i];
             if(chunkOffset < 0)
                 continue;
 
+            reader.BaseStream.Position = chunksStart + chunkOffset;
             Vector3Int chunkPosition = GetChunkPosition(i);
             Chunks[chunkPosition] = ReadChunkData(reader);
         }
@@ -126,6 +128,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         if(chunkOffset < 0)
             return false;
 
+        reader.BaseStream.Position += chunkOffset;
         Chunks[chunkPosition] = ReadChunkData(reader);
 
         if(readToEnd)
