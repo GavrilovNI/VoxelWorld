@@ -204,7 +204,11 @@ public class ChunkModelUpdater : ThreadHelpComponent
             return false;
 
         var neighborBlock = neighborBlockState.Block;
-        return !neighborBlock.HidesNeighbourFace(neighborBlockState, meshType, direction.GetOpposite());
+
+        if(neighborBlock.HidesNeighbourFace(neighborBlockState, meshType, direction.GetOpposite()))
+            return false;
+
+        return blockState.Block.ShouldAddFace(blockState, meshType, direction, neighborBlockState);
     }
 
     // Call only in game thread

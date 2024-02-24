@@ -49,6 +49,10 @@ public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReada
         return !blockState.IsAir();
     }
 
+    // Thread safe
+    public virtual bool ShouldAddFace(BlockState blockState, BlockMeshType meshType, Direction direction,
+        BlockState neighborBlockState) => true;
+
     public virtual IEnumerable<BlockProperty> CombineProperties() => Enumerable.Empty<BlockProperty>();
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
