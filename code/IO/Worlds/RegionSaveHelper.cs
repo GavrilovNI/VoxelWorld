@@ -3,8 +3,9 @@ using Sandcube.Blocks.States;
 using Sandcube.Data;
 using Sandcube.Data.Enumarating;
 using Sandcube.Mth;
-using System.Collections.Generic;
+using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Sandcube.IO.Worlds;
 
@@ -14,8 +15,9 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected BlockStatePalette BlockStatePalette;
     protected readonly int MaxChunksCount;
+    protected readonly BBoxInt Bounds;
 
-    public readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
+    protected readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
 
     protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
 
@@ -25,6 +27,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
         var regionSize = WorldSaveOptions.RegionSize;
         MaxChunksCount = regionSize.x * regionSize.y * regionSize.z;
+        Bounds = BBoxInt.FromMinsAndSize(0, regionSize);
 
         BlockStatePalette = new BlockStatePalette();
         UpdateBlockStatePalette();
@@ -36,7 +39,16 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         UpdateBlockStatePalette();
     }
 
+    public virtual void SetChunksData(Vector3Int localChunkPosition, BlocksData blocksData)
+    {
+        if(!Bounds.Contains(localChunkPosition))
+            throw new ArgumentOutOfRangeException(nameof(localChunkPosition));
 
+        Chunks[localChunkPosition] = blocksData;
+    }
+
+    public virtual bool RemoveChunksData(Vector3Int localChunkPosition, BlocksData blocksData) =>
+        Chunks.Remove(localChunkPosition);
 
     public virtual void Write(BinaryWriter writer)
     {

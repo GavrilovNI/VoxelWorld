@@ -60,8 +60,12 @@ public class WorldSaver : Component
                 }
             }
 
+            var firstChunkPosition = regionPosition * RegionSize;
             foreach(var (chunkPosition, chunkData) in region)
-                regionHelper.Chunks[chunkPosition] = chunkData;
+            {
+                var chunkLocalPosition = chunkPosition - firstChunkPosition;
+                regionHelper.SetChunksData(chunkLocalPosition, chunkData);
+            }
 
             using var regionWriteStream = helper.OpenRegionWrite(regionPosition);
             using var writer = new BinaryWriter(regionWriteStream);
