@@ -50,6 +50,14 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
     public virtual bool RemoveChunksData(Vector3Int localChunkPosition, BlocksData blocksData) =>
         Chunks.Remove(localChunkPosition);
 
+    public virtual BlocksData? GetChunkData(Vector3Int localChunkPosition)
+    {
+        if(!Bounds.Contains(localChunkPosition))
+            throw new ArgumentOutOfRangeException(nameof(localChunkPosition));
+
+        return Chunks!.GetValueOrDefault(localChunkPosition, null);
+    }
+
     public virtual void Write(BinaryWriter writer)
     {
         UpdateBlockStatePalette();
