@@ -14,26 +14,28 @@ public class TextureMap
     protected Vector2Int MultipleOfExpand;
     protected Color32? FillColor;
     protected int Mips;
+    protected int TextureBorderSize;
 
     public Vector2Int Size => (Vector2Int)Texture.Size;
 
     protected List<(TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture)> AnimatedTextures = new();
     protected float AnimatedTime = 0;
 
-    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, int mips = 1, Color32? fillColor = null)
+    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, int mips = 1, Color32? fillColor = null, int textureBorderSize = 0)
     {
         FillColor = fillColor;
         Mips = mips;
+        TextureBorderSize = textureBorderSize;
         Texture = CreateTexture(initialSize);
         Nodes = new TextureMapNode(new RectInt(0, initialSize));
         MultipleOfExpand = multipleOfExpand;
     }
 
-    public TextureMap(Vector2Int initialSize, int mips = 1, Color32? fillColor = null) : this(initialSize, new Vector2Int(256, 256), mips, fillColor)
+    public TextureMap(Vector2Int initialSize, int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) : this(initialSize, new Vector2Int(256, 256), mips, fillColor, textureBorderSize)
     {
     }
 
-    public TextureMap(int mips = 1, Color32? fillColor = null) : this(new Vector2Int(256, 256), mips, fillColor)
+    public TextureMap(int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) : this(new Vector2Int(256, 256), mips, fillColor, textureBorderSize)
     {
     }
 
@@ -51,19 +53,57 @@ public class TextureMap
     public TextureMapPart AddTexture(Texture texture)
     {
         var textureSize = (Vector2Int)texture.Size;
-        if(!Nodes.TryTakeSpace(textureSize, out RectInt rect))
+        var textureSizeWithBorders = textureSize + Vector2Int.One * TextureBorderSize * 2;
+        if(!Nodes.TryTakeSpace(textureSizeWithBorders, out RectInt rect))
         {
-            var newSize = new Vector2Int(Math.Max(Texture.Width, texture.Width), Texture.Height + texture.Height);
+            var newSize = new Vector2Int(Math.Max(Texture.Width, textureSizeWithBorders.x), Texture.Height + textureSizeWithBorders.y);
             var expandDelta = newSize - Size;
             expandDelta = (1f * expandDelta / MultipleOfExpand).Ceiling() * MultipleOfExpand;
 
             Expand(expandDelta);
-            if(!Nodes.TryTakeSpace(textureSize, out rect))
+            if(!Nodes.TryTakeSpace(textureSizeWithBorders, out rect))
                 throw new InvalidOperationException("couldn't expand texture");
         }
 
-        Texture.Update(texture.GetPixels(), rect);
-        return new(this, rect);
+        var realTextureRect = rect.Shrink(TextureBorderSize);
+        Texture.Update(texture.GetPixels(), realTextureRect);
+
+        AddTextureBorders(realTextureRect, TextureBorderSize);
+
+        return new(this, realTextureRect);
+    }
+
+    protected void AddTextureBorders(RectInt textureRect, int borderSize = 1)
+    {
+        if(borderSize <= 0)
+            return;
+
+        var topRect = new RectInt(textureRect.Left, textureRect.Top, textureRect.Width, 1);
+        var leftRect = new RectInt(textureRect.Left, textureRect.Top, 1, textureRect.Height);
+        var bottomRect = new RectInt(textureRect.Left, textureRect.Bottom - 1, textureRect.Width, 1);
+        var rightRect = new RectInt(textureRect.Right - 1, textureRect.Top, 1, textureRect.Height);
+
+        var topPixels = Texture.GetPixels(topRect);
+        var leftPixels = Texture.GetPixels(leftRect);
+        var bottomPixels = Texture.GetPixels(bottomRect);
+        var rightPixels = Texture.GetPixels(rightRect);
+
+        for(int i = 1; i <= borderSize; ++i)
+        {
+            Texture.Update(topPixels, topRect + new Vector2Int(0, -i));
+            Texture.Update(leftPixels, leftRect + new Vector2Int(-i, 0));
+            Texture.Update(bottomPixels, bottomRect + new Vector2Int(0, i));
+            Texture.Update(rightPixels, rightRect + new Vector2Int(i, 0));
+        }
+
+        Texture.Update(Texture.GetPixel(textureRect.Left, textureRect.Top),
+            new RectInt(textureRect.TopLeft - borderSize, borderSize));
+        Texture.Update(Texture.GetPixel(textureRect.Right - 1, textureRect.Top),
+            new RectInt(new Vector2Int(textureRect.Right, textureRect.Top - borderSize), borderSize));
+        Texture.Update(Texture.GetPixel(textureRect.Left, textureRect.Bottom - 1),
+            new RectInt(new Vector2Int(textureRect.Left - borderSize, textureRect.Bottom), borderSize));
+        Texture.Update(Texture.GetPixel(textureRect.Right - 1, textureRect.Bottom  -1),
+            new RectInt(textureRect.BottomRight, borderSize));
     }
 
     public TextureMapPart AddAnimatedTexture(AnimatedTexture animatedTexture)
