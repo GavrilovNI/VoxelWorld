@@ -13,7 +13,7 @@ public class ItemStorageBlockEntity : BlockEntity
 {
     public ItemStackInventory Capability { get; protected set; }
 
-    public override bool IsSaved => Capability.IsSaved;
+    protected override bool IsSavedInternal => Capability.IsSaved;
 
     public ItemStorageBlockEntity(IWorldProvider world, Vector3Int position, int storageSize, int slotLimit = DefaultValues.ItemStackLimit) : base(world, position)
     {
@@ -44,5 +44,5 @@ public class ItemStorageBlockEntity : BlockEntity
         Capability = ItemStackInventory.Read(reader);
     }
 
-    public override void MarkSaved() => Capability.MarkSaved();
+    protected override void MarkSavedInternal(IReadOnlySaveMarker saveMarker) => Capability.MarkSaved(saveMarker);
 }

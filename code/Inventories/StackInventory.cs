@@ -28,7 +28,8 @@ public abstract class StackInventory<T> : IndexedCapability<T>, IBinaryWritable,
 
     public override int Size { get; }
 
-    public bool IsSaved { get; protected set; }
+    private IReadOnlySaveMarker _saveMarker = SaveMarker.Saved;
+    public bool IsSaved => _saveMarker.IsSaved;
 
     public StackInventory(int size, int slotLimit = int.MaxValue)
     {
@@ -50,7 +51,7 @@ public abstract class StackInventory<T> : IndexedCapability<T>, IBinaryWritable,
     {
         _stacks[index] = stack;
         _stacksHashCode = null;
-        IsSaved = false;
+        MarkNotSaved();
     }
 
     public override int SetMax(int index, T stack, bool simulate = false)
@@ -106,5 +107,12 @@ public abstract class StackInventory<T> : IndexedCapability<T>, IBinaryWritable,
             writer.Write(Get(i));
     }
 
-    public void MarkSaved() => IsSaved = true;
+    public void MarkSaved(IReadOnlySaveMarker saveMarker)
+    {
+        if(IsSaved)
+            return;
+        _saveMarker = saveMarker;
+    }
+
+    protected void MarkNotSaved() => _saveMarker = SaveMarker.NotSaved;
 }

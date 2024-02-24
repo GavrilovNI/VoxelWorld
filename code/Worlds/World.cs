@@ -3,6 +3,7 @@ using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
 using Sandcube.Interfaces;
+using Sandcube.IO;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
@@ -392,14 +393,14 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         }
     }
 
-    public Dictionary<Vector3Int, BlocksData> Save(bool keepDirty = false)
+    public Dictionary<Vector3Int, BlocksData> Save(IReadOnlySaveMarker saveMarker)
     {
         lock(Chunks)
         {
             var chunksToSave = Chunks.Where(c => c.Value.Is<Chunk>(out var chunk) && chunk.IsValid && !chunk.IsSaved)
                 .Select(c => c.Value.As<Chunk>()!);
 
-            return chunksToSave.ToDictionary(c => c.Position, c => c.Save(keepDirty));
+            return chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
         }
     }
 }

@@ -44,7 +44,8 @@ public class WorldSaver : Component
             helper.SaveWorldOptions(options);
         }
 
-        var chunksData = World.Save();
+        SaveMarker saveMarker = SaveMarker.NewNotSaved;
+        var chunksData = World.Save(saveMarker);
         var regions = chunksData.GroupBy(c => (1f * c.Key / RegionSize).Floor());
 
         foreach(var region in regions)
@@ -71,5 +72,7 @@ public class WorldSaver : Component
             using var writer = new BinaryWriter(regionWriteStream);
             regionHelper.Write(writer);
         }
+
+        saveMarker.MarkSaved();
     }
 }

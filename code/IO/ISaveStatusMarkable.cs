@@ -5,5 +5,5 @@ namespace Sandcube.IO;
 public interface ISaveStatusMarkable
 {
     bool IsSaved { get; }
-    void MarkSaved();
+    void MarkSaved(IReadOnlySaveMarker saveMarker);
 }

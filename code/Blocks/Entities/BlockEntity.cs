@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.ModelEditor.Nodes;
 using Sandcube.Blocks.States;
 using Sandcube.IO;
 using Sandcube.Mth;
@@ -7,7 +8,7 @@ using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
-public abstract class BlockEntity : IValid, ISaveStatusMarkable
+public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
 {
     public Vector3Int Position { get; }
     public Vector3 GlobalPosition => World.GetBlockGlobalPosition(Position);
@@ -17,7 +18,21 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable
 
     public bool IsValid { get; private set; }
 
-    public virtual bool IsSaved => true;
+    private IReadOnlySaveMarker _saveMarker = SaveMarker.Saved;
+    public bool IsSaved
+    {
+        get
+        {
+            if(!_saveMarker.IsSaved)
+                return false;
+
+            if(!IsSavedInternal)
+                _saveMarker = SaveMarker.NotSaved;
+
+            return _saveMarker.IsSaved;
+        }
+    }
+    protected virtual bool IsSavedInternal => true;
 
 
     public BlockEntity(IWorldProvider world, Vector3Int position)
@@ -44,18 +59,35 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable
     protected virtual void WriteAdditional(BinaryWriter writer) { }
     protected virtual void ReadAdditional(BinaryReader reader) { }
 
-    public virtual void MarkSaved() { }
+    public void MarkSaved(IReadOnlySaveMarker saveMarker)
+    {
+        if(IsSaved)
+            return;
+
+        _saveMarker = saveMarker;
+        MarkSavedInternal(saveMarker);
+    }
+    protected virtual void MarkSavedInternal(IReadOnlySaveMarker saveMarker) { }
 
     public void Load(BinaryReader reader)
     {
-        ReadAdditional(reader);
-        MarkSaved();
+        Read(reader);
+        MarkSaved(SaveMarker.Saved);
     }
 
-    public void Save(BinaryWriter writer, bool keepDirty = false)
+    public void Save(BinaryWriter writer, IReadOnlySaveMarker saveMarker)
+    {
+        Write(writer);
+        MarkSaved(saveMarker);
+    }
+
+    public void Write(BinaryWriter writer)
     {
         WriteAdditional(writer);
-        if(!keepDirty)
-            MarkSaved();
+    }
+
+    protected void Read(BinaryReader reader)
+    {
+        ReadAdditional(reader);
     }
 }

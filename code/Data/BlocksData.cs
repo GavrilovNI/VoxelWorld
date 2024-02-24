@@ -1,14 +1,12 @@
-﻿using Sandbox;
-using Sandcube.Blocks.Entities;
+﻿using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Sandcube.Data;
 
-public class BlocksData
+public class BlocksData : IReadOnlyBlocksData
 {
     public Dictionary<Vector3Int, BlockState> BlockStates;
     public Dictionary<Vector3Int, byte[]> BlockEntitiesData;
@@ -26,13 +24,13 @@ public class BlocksData
     }
 
     public BlocksData(IReadOnlyDictionary<Vector3Int, BlockState> blockStates,
-        IReadOnlyDictionary<Vector3Int, BlockEntity> blockEntities, bool keepEntitiesDirty = false)
+        IReadOnlyDictionary<Vector3Int, BlockEntity> blockEntities)
     {
         BlockStates = new(blockStates);
         BlockEntitiesData = new();
 
         foreach(var (position, blockkEntity) in blockEntities)
-            SetEntityData(position, blockkEntity, keepEntitiesDirty);
+            SetEntityData(position, blockkEntity);
     }
 
     public BlocksData(BlocksData other)
@@ -49,11 +47,13 @@ public class BlocksData
 
     public bool IsEmpty() => BlockStates.Count == 0 && BlockEntitiesData.Count == 0;
 
-    public void SetEntityData(in Vector3Int position, in BlockEntity blockEntity, bool keepDirty = false)
+    public BlockState? GetBlockState(in Vector3Int position) => BlockStates!.GetValueOrDefault(position, null);
+
+    public void SetEntityData(in Vector3Int position, in BlockEntity blockEntity)
     {
         using MemoryStream stream = new();
         using BinaryWriter writer = new(stream);
-        blockEntity.Save(writer, keepDirty);
+        blockEntity.Write(writer);
 
         if(stream.Length == 0)
             return;

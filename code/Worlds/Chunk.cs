@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable, ISaveStatusMarkable
+public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable
 {
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Position { get; internal set; }
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Size { get; internal set; } = 16;
@@ -28,30 +28,13 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public Vector3Int BlockOffset => Position * Size;
 
-    private bool _isSaved = false;
     public bool IsSaved
     {
         get
         {
             lock(Blocks)
             {
-                foreach(var (_, blockEntity) in Blocks.BlockEntities)
-                {
-                    if(!blockEntity.IsSaved)
-                    {
-                        _isSaved = false;
-                        break;
-                    }
-                }
-
-                return _isSaved;
-            }
-        }
-        protected set
-        {
-            lock(Blocks)
-            {
-                _isSaved = value;
+                return Blocks.IsSaved;
             }
         }
     }
@@ -149,11 +132,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
         lock(Blocks)
         {
-            result = Blocks.PlaceBlock(localPosition, blockState);
-
-            if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
-                IsSaved = false;
-
+            result = Blocks.PlaceBlock(localPosition, blockState, flags.HasFlag(BlockSetFlags.MarkDirty));
             return GetModelUpdateTask(flags, result.Changed).ContinueWith(t => result);
         }
     }
@@ -170,21 +149,14 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             throw new InvalidOperationException($"setting range ({localPosition} - {lastPosition}) is out of chunk bounds");
 
         bool modified = false;
+        bool markDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
         lock(Blocks)
         {
-            for(int x = 0; x < size.x; ++x)
+            foreach(var positionOffset in size.GetPositionsFromZero(false))
             {
-                for(int y = 0; y < size.y; ++y)
-                {
-                    for(int z = 0; z < size.z; ++z)
-                    {
-                        modified |= Blocks.PlaceBlock(localPosition + new Vector3Int(x, y, z), blockStates[x, y, z]);
-                    }
-                }
+                var blockState = blockStates[positionOffset.x, positionOffset.y, positionOffset.z];
+                modified |= Blocks.PlaceBlock(localPosition + positionOffset, blockState, markDirty);
             }
-
-            if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
-                IsSaved = false;
 
             return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
         }
@@ -199,13 +171,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
         lock(Blocks)
         {
-            modified = Blocks.Clear();
-            if(modified)
-            {
-                if(flags.HasFlag(BlockSetFlags.MarkDirty))
-                    IsSaved = false;
-            }
-
+            modified = Blocks.Clear(flags.HasFlag(BlockSetFlags.MarkDirty));
             return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
         }
     }
@@ -240,46 +206,34 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     // thread safe
-    public virtual Task Load(BlocksData data, BlockSetFlags flags = BlockSetFlags.UpdateModel)
+    public virtual Task Load(IReadOnlyBlocksData data, BlockSetFlags flags = BlockSetFlags.UpdateModel)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
 
         lock(Blocks)
         {
-            var setDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
-
-            foreach(var blockPosition in Size.GetPositionsFromZero(false))
-            {
-                Blocks.RemoveBlockEntity(blockPosition);
-
-                var blockState = data.BlockStates.GetValueOrDefault(blockPosition, BlockState.Air);
-                Blocks.PlaceBlock(blockPosition, blockState);
-
-                var blockEntity = Blocks.GetBlockEntity(blockPosition);
-                if(blockEntity is null)
-                    continue;
-
-                data.UpdateEntity(blockPosition, blockEntity);
-            }
-
-            IsSaved = !setDirty;
-
+            Blocks.Load(data, Size.GetPositionsFromZero(false), flags.HasFlag(BlockSetFlags.MarkDirty));
             return GetModelUpdateTask(flags);
         }
     }
 
-    public virtual BlocksData Save(bool keepDirty = false)
+    public virtual BlocksData Save(IReadOnlySaveMarker saveMarker)
     {
         lock(Blocks)
         {
-            if(!keepDirty)
-                IsSaved = true;
-            return Blocks.ToBlocksData(keepDirty);
+            MarkSaved(saveMarker);
+            return Blocks.ToBlocksData();
         }
     }
 
-    public void MarkSaved() => IsSaved = true;
+    protected void MarkSaved(IReadOnlySaveMarker saveMarker)
+    {
+        lock(Blocks)
+        {
+            Blocks.MarkSaved(saveMarker);
+        }
+    }
 }
 
 public static class ComponentListChunkExtensions
