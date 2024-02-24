@@ -116,7 +116,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
     protected virtual long[] ReadChunkOffsets(BinaryReader reader)
     {
         long[] chunkOffsets = new long[MaxChunksCount];
-        for(int i = 0; i <= MaxChunksCount; ++i)
+        for(int i = 0; i < MaxChunksCount; ++i)
             chunkOffsets[i] = reader.ReadInt64();
         return chunkOffsets;
     }
