@@ -46,8 +46,8 @@
       "Enabled": true,
       "Components": [
         {
-          "__type": "LimitedChunkLoader",
-          "ActiveLoadingChunks": 0,
+          "__type": "LimitedChunkCreator",
+          "ActiveCreatingChunks": 0,
           "BreakFromPrefab": true,
           "ChunkPrefab": {
             "_type": "gameobject",
@@ -58,14 +58,14 @@
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
             "component_type": "WorldGenerator"
           },
-          "MaxChunksToLoadAtTime": 15
+          "MaxChunksToCreateAtTime": 15
         },
         {
           "__type": "World",
-          "ChunkLoader": {
+          "ChunkCreator": {
             "_type": "component",
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
-            "component_type": "LimitedChunkLoader"
+            "component_type": "LimitedChunkCreator"
           },
           "ChunkSize": "16,16,16",
           "TickByItself": true
@@ -521,16 +521,16 @@
           "Components": [
             {
               "__type": "World",
-              "ChunkLoader": {
+              "ChunkCreator": {
                 "_type": "component",
                 "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
-                "component_type": "ChunkLoader"
+                "component_type": "ChunkCreator"
               },
               "ChunkSize": "16,16,16",
               "TickByItself": true
             },
             {
-              "__type": "ChunkLoader",
+              "__type": "ChunkCreator",
               "BreakFromPrefab": true,
               "ChunkPrefab": {
                 "_type": "gameobject",
@@ -608,6 +608,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-24T00:10:02.1050893\u002B01:00",
+  "LastSaved": "2024-02-24T01:13:32.8142401\u002B01:00",
   "__references": []
 }

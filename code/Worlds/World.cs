@@ -18,7 +18,7 @@ namespace Sandcube.Worlds;
 public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 {
     [Property, HideIf(nameof(IsSceneRunning), true)] public Vector3Int ChunkSize { get; init; } = 16;
-    [Property] protected ChunkLoader ChunkLoader { get; set; } = null!;
+    [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
     [Property] protected bool TickByItself { get; set; } = true;
 
     private bool IsSceneRunning => !Scene.IsEditor;
@@ -148,7 +148,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
                 World = this
             };
 
-            var loadingTask = ChunkLoader.LoadChunk(creationData, ChunkLoadCancellationTokenSource.Token);
+            var loadingTask = ChunkCreator.CreateChunk(creationData, ChunkLoadCancellationTokenSource.Token);
             Chunks[chunkPosition] = loadingTask;
             _ = loadingTask.ContinueWith(t => HandleChunkLoadingTask(chunkPosition, loadingTask));
 
@@ -194,7 +194,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
                     World = this
                 };
 
-                var loadingTask = ChunkLoader.LoadChunk(creationData, ChunkLoadCancellationTokenSource.Token);
+                var loadingTask = ChunkCreator.CreateChunk(creationData, ChunkLoadCancellationTokenSource.Token);
                 Chunks[chunkPosition] = loadingTask;
                 tasksToLoad.Add(chunkPosition, loadingTask);
             }

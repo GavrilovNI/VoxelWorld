@@ -7,7 +7,7 @@ using Sandcube.Worlds.Generation;
 
 namespace Sandcube.Worlds.Loading;
 
-public class ChunkLoader : ThreadHelpComponent
+public class ChunkCreator : ThreadHelpComponent
 {
     [Property] public GameObject ChunkPrefab { get; set; } = null!;
     [Property] public WorldGenerator? Generator { get; set; }
@@ -16,12 +16,12 @@ public class ChunkLoader : ThreadHelpComponent
 
 
     // Call only in game thread
-    public virtual Task<Chunk> LoadChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
+    public virtual Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
     {
         ThreadSafe.AssertIsMainThread();
 
         cancellationToken.ThrowIfCancellationRequested();
-        var chunk = CreateChunk(creationData with { EnableOnCreate = false });
+        var chunk = CreateChunkObject(creationData with { EnableOnCreate = false });
 
         return Task.RunInThreadAsync(async () =>
         {
@@ -50,7 +50,7 @@ public class ChunkLoader : ThreadHelpComponent
     }
 
     // Call only in game thread
-    protected virtual Chunk CreateChunk(ChunkCreationData creationData)
+    protected virtual Chunk CreateChunkObject(ChunkCreationData creationData)
     {
         ThreadSafe.AssertIsMainThread();
 
