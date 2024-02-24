@@ -9,6 +9,7 @@ using Sandcube.Mth.Enums;
 using Sandcube.Threading;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
@@ -24,8 +25,6 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     public IWorldProvider WorldProvider { get; internal set; } = null!;
 
     public BBox ModelBounds => ModelUpdater.Bounds;
-
-    public BBoxInt Bounds => BBoxInt.FromMinsAndSize(Position, Size);
 
     public Vector3Int BlockOffset => Position * Size;
 
@@ -240,6 +239,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         Gizmo.Hitbox.BBox(bounds);
     }
 
+    // thread safe
     public virtual Task Load(BlocksData data, BlockSetFlags flags = BlockSetFlags.UpdateModel)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
@@ -249,11 +249,11 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         {
             var setDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
 
-            foreach(var blockPosition in Bounds.GetPositions(false))
+            foreach(var blockPosition in Size.GetPositionsFromZero(false))
             {
                 Blocks.RemoveBlockEntity(blockPosition);
 
-                var blockState = data.BlockStates!.GetValueOrDefault(blockPosition, null) ?? BlockState.Air;
+                var blockState = data.BlockStates.GetValueOrDefault(blockPosition, BlockState.Air);
                 Blocks.PlaceBlock(blockPosition, blockState);
 
                 var blockEntity = Blocks.GetBlockEntity(blockPosition);
