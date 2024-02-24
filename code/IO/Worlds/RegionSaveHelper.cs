@@ -125,11 +125,11 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
         int index = GetChunkIndex(chunkPosition);
         var chunkOffset = chunkOffsets[index];
-        if(chunkOffset < 0)
-            return false;
-
-        reader.BaseStream.Position += chunkOffset;
-        Chunks[chunkPosition] = ReadChunkData(reader);
+        if(chunkOffset >= 0)
+        {
+            reader.BaseStream.Position += chunkOffset;
+            Chunks[chunkPosition] = ReadChunkData(reader);
+        }
 
         if(readToEnd)
             reader.BaseStream.Position = chunksEnd;
