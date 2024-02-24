@@ -1,8 +1,9 @@
-﻿
+﻿using Sandcube.IO;
 
 namespace Sandcube.Inventories;
 
-public interface IStack<T> where T : class, IStack<T>
+//TODO: implement IBinaryStaticReadable<T> when T.Read get whitelisted
+public interface IStack<T> : IBinaryWritable where T : class, IStack<T>
 {
 #pragma warning disable SB3000 // Hotloading not supported
     public abstract static T Empty { get; }

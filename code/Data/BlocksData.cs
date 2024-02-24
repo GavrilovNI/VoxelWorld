@@ -4,6 +4,7 @@ using Sandcube.Blocks.States;
 using Sandcube.Mth;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Sandcube.Data;
 
@@ -61,14 +62,13 @@ public class BlocksData
         BlockEntitiesData[position] = data;
     }
 
-    public void UpdateEntity(BlockEntity blockEntity, bool setDirty = false) => UpdateEntity(blockEntity.Position, blockEntity, setDirty);
-    public void UpdateEntity(in Vector3Int position, BlockEntity blockEntity, bool setDirty = false)
+    public void UpdateEntity(in Vector3Int position, BlockEntity blockEntity)
     {
         if(!BlockEntitiesData.TryGetValue(position, out var data))
             return;
 
         using MemoryStream stream = new(data);
         using BinaryReader reader = new(stream);
-        blockEntity.Load(reader, setDirty);
+        blockEntity.Load(reader);
     }
 }

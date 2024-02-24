@@ -9,7 +9,6 @@ using Sandcube.Mth.Enums;
 using Sandcube.Threading;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
@@ -37,7 +36,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             {
                 foreach(var (_, blockEntity) in Blocks.BlockEntities)
                 {
-                    if(blockEntity.IsDirty)
+                    if(!blockEntity.IsSaved)
                     {
                         _isDirty = true;
                         break;
@@ -260,7 +259,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 if(blockEntity is null)
                     continue;
 
-                data.UpdateEntity(blockEntity, setDirty);
+                data.UpdateEntity(blockPosition, blockEntity);
             }
 
             IsDirty = setDirty;

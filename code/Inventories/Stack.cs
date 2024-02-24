@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Sandcube.IO;
+using Sandcube.Items;
+using System;
+using System.IO;
 
 namespace Sandcube.Inventories;
 
-public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue
+public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue<T>
 {
 #pragma warning disable SB3000 // Hotloading not supported
     public static Stack<T> Empty { get; } = new(null!, 0);
@@ -43,4 +46,32 @@ public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue
     }
 
     public override int GetHashCode() => HashCode.Combine(Value, Count);
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Count);
+        if(Count > 0)
+            writer.Write(Value!);
+    }
+}
+
+public record class ItemStack : Stack<Item>, IBinaryStaticReadable<ItemStack>
+{
+#pragma warning disable SB3000 // Hotloading not supported
+    public static new ItemStack Empty { get; } = new(null!, 0);
+#pragma warning restore SB3000 // Hotloading not supported
+
+    public ItemStack(Item value, int count = 1) : base(value, count)
+    {
+    }
+
+    public static ItemStack Read(BinaryReader reader)
+    {
+        int count = reader.ReadInt32();
+        if(count <= 0)
+            return Empty;
+
+        var item = Item.Read(reader);
+        return new(item, count);
+    }
 }

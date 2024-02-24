@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Sandcube.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Sandcube.Inventories;
 
-public abstract class StackInventory<T> : IndexedCapability<T> where T : class, IStack<T>
+//TODO: implement IBinaryStaticReadable when T.Read will be whitelisted
+public abstract class StackInventory<T> : IndexedCapability<T>, IBinaryWritable, ISaveStatusMarkable where T : class, IStack<T>
 {
     private readonly Dictionary<int, T> _stacks = new();
     public readonly int SlotLimit;
@@ -25,6 +28,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
 
     public override int Size { get; }
 
+    public bool IsSaved { get; protected set; }
 
     public StackInventory(int size, int slotLimit = int.MaxValue)
     {
@@ -42,6 +46,13 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
 
     public override int GetSlotLimit(int index) => SlotLimit;
 
+    protected virtual void Set(int index, T stack)
+    {
+        _stacks[index] = stack;
+        _stacksHashCode = null;
+        IsSaved = false;
+    }
+
     public override int SetMax(int index, T stack, bool simulate = false)
     {
         if(index < 0 || index >= Size)
@@ -50,10 +61,7 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
         var limit = GetSlotLimit(index, stack);
         var maxCountToSet = Math.Min(limit, stack.Count);
         if(!simulate)
-        {
-            _stacks[index] = stack.WithCount(maxCountToSet);
-            _stacksHashCode = null;
-        }
+            Set(index, stack);
 
         return maxCountToSet;
     }
@@ -89,4 +97,14 @@ public abstract class StackInventory<T> : IndexedCapability<T> where T : class, 
     public override IEnumerator<T> GetEnumerator() => _stacks.Values.GetEnumerator();
 
     public override int GetHashCode() => StacksHashCode;
+
+    public virtual void Write(BinaryWriter writer)
+    {
+        writer.Write(SlotLimit);
+        writer.Write(Size);
+        for(int i = 0; i < Size; ++i)
+            writer.Write(Get(i));
+    }
+
+    public void MarkSaved() => IsSaved = true;
 }

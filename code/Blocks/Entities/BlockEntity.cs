@@ -1,12 +1,13 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
+using Sandcube.IO;
 using Sandcube.Mth;
 using Sandcube.Worlds;
 using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
-public abstract class BlockEntity : IValid
+public abstract class BlockEntity : IValid, ISaveStatusMarkable
 {
     public Vector3Int Position { get; }
     public Vector3 GlobalPosition => World.GetBlockGlobalPosition(Position);
@@ -16,7 +17,7 @@ public abstract class BlockEntity : IValid
 
     public bool IsValid { get; private set; }
 
-    public bool IsDirty { get; private set; }
+    public virtual bool IsSaved => true;
 
 
     public BlockEntity(IWorldProvider world, Vector3Int position)
@@ -43,18 +44,18 @@ public abstract class BlockEntity : IValid
     protected virtual void WriteAdditional(BinaryWriter writer) { }
     protected virtual void ReadAdditional(BinaryReader reader) { }
 
-    protected void MarkDirty() => IsDirty = true;
+    public virtual void MarkSaved() { }
 
-    public void Load(BinaryReader reader, bool setDirty = false)
+    public void Load(BinaryReader reader)
     {
         ReadAdditional(reader);
-        IsDirty = setDirty;
+        MarkSaved();
     }
 
     public void Save(BinaryWriter writer, bool keepDirty = false)
     {
         WriteAdditional(writer);
         if(!keepDirty)
-            IsDirty = false;
+            MarkSaved();
     }
 }

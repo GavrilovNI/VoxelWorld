@@ -1,16 +1,19 @@
 ﻿using Sandcube.Inventories;
-using Sandcube.Items;
+using Sandcube.IO;
 using Sandcube.Menus;
 using Sandcube.Mth;
 using Sandcube.Players;
 using Sandcube.Worlds;
 using System;
+using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
 public class ItemStorageBlockEntity : BlockEntity
 {
-    public IIndexedCapability<Inventories.Stack<Item>> Capability { get; }
+    public ItemStackInventory Capability { get; protected set; }
+
+    public override bool IsSaved => Capability.IsSaved;
 
     public ItemStorageBlockEntity(IWorldProvider world, Vector3Int position, int storageSize, int slotLimit = DefaultValues.ItemStackLimit) : base(world, position)
     {
@@ -30,4 +33,16 @@ public class ItemStorageBlockEntity : BlockEntity
     {
         // TODO: drop items;
     }
+
+    protected override void WriteAdditional(BinaryWriter writer)
+    {
+        writer.Write(Capability);
+    }
+
+    protected override void ReadAdditional(BinaryReader reader)
+    {
+        Capability = ItemStackInventory.Read(reader);
+    }
+
+    public override void MarkSaved() => Capability.MarkSaved();
 }
