@@ -15,25 +15,25 @@ public class PathedTextureMap : TextureMap
 
     protected Dictionary<string, TextureMapPart> PartsByPath = new();
 
-    public PathedTextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, string loadPathPrefix = "", Color32? fillColor = null) :
-        base(initialSize, multipleOfExpand, fillColor)
+    public PathedTextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, string loadPathPrefix = "", int mips = 1, Color32? fillColor = null) :
+        base(initialSize, multipleOfExpand, mips, fillColor)
     {
         LoadPathPrefix = loadPathPrefix;
         SetupDefaultTextures();
     }
 
-    public PathedTextureMap(Vector2Int initialSize, string loadPathPrefix = "", Color32? fillColor = null) :
-        this(initialSize, new Vector2Int(256, 256), loadPathPrefix, fillColor)
+    public PathedTextureMap(Vector2Int initialSize, string loadPathPrefix = "", int mips = 1, Color32? fillColor = null) :
+        this(initialSize, new Vector2Int(256, 256), loadPathPrefix, mips, fillColor)
     {
     }
 
-    public PathedTextureMap(string loadPathPrefix = "", Color32? fillColor = null) :
-        this(new Vector2Int(256, 256), loadPathPrefix, fillColor)
+    public PathedTextureMap(string loadPathPrefix = "", int mips = 1, Color32? fillColor = null) :
+        this(new Vector2Int(256, 256), loadPathPrefix, mips, fillColor)
     {
     }
 
     public PathedTextureMap() :
-        this(new Vector2Int(256, 256), string.Empty, null)
+        this(string.Empty, 1, null)
     {
     }
 

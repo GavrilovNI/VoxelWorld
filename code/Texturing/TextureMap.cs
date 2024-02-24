@@ -13,35 +13,33 @@ public class TextureMap
     protected TextureMapNode Nodes;
     protected Vector2Int MultipleOfExpand;
     protected Color32? FillColor;
+    protected int Mips;
 
     public Vector2Int Size => (Vector2Int)Texture.Size;
 
     protected List<(TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture)> AnimatedTextures = new();
     protected float AnimatedTime = 0;
 
-    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, Color32? fillColor = null)
+    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, int mips = 1, Color32? fillColor = null)
     {
         FillColor = fillColor;
+        Mips = mips;
         Texture = CreateTexture(initialSize);
         Nodes = new TextureMapNode(new RectInt(0, initialSize));
         MultipleOfExpand = multipleOfExpand;
     }
 
-    public TextureMap(Vector2Int initialSize, Color32? fillColor = null) : this(initialSize, new Vector2Int(256, 256), fillColor)
+    public TextureMap(Vector2Int initialSize, int mips = 1, Color32? fillColor = null) : this(initialSize, new Vector2Int(256, 256), mips, fillColor)
     {
     }
 
-    public TextureMap(Color32? fillColor) : this(new Vector2Int(256, 256), fillColor)
-    {
-    }
-
-    public TextureMap() : this(null)
+    public TextureMap(int mips = 1, Color32? fillColor = null) : this(new Vector2Int(256, 256), mips, fillColor)
     {
     }
 
     protected virtual Texture CreateTexture(Vector2Int size)
     {
-        var texture = Texture.Create(size.x, size.y).Finish();
+        var texture = Texture.Create(size.x, size.y).WithMips(Mips).Finish();
         if(FillColor.HasValue)
             texture.Update(FillColor.Value, new Rect(0, size));
         return texture;
