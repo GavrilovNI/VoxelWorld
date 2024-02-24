@@ -39,7 +39,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         UpdateBlockStatePalette();
     }
 
-    public virtual void SetChunksData(Vector3Int localChunkPosition, BlocksData blocksData)
+    public virtual void SetChunkData(Vector3Int localChunkPosition, BlocksData blocksData)
     {
         if(!Bounds.Contains(localChunkPosition))
             throw new ArgumentOutOfRangeException(nameof(localChunkPosition));

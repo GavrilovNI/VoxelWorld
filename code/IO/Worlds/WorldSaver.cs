@@ -64,7 +64,7 @@ public class WorldSaver : Component
             foreach(var (chunkPosition, chunkData) in region)
             {
                 var chunkLocalPosition = chunkPosition - firstChunkPosition;
-                regionHelper.SetChunksData(chunkLocalPosition, chunkData);
+                regionHelper.SetChunkData(chunkLocalPosition, chunkData);
             }
 
             using var regionWriteStream = helper.OpenRegionWrite(regionPosition);
