@@ -187,7 +187,6 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
         foreach(var (chunkPosition, chunk) in Chunks)
         {
-            WriteChunkData(writer, chunkPosition);
             using(StreamPositionRememberer rememberer = writer)
             {
                 int chunkIndex = GetChunkIndex(chunkPosition);
@@ -195,6 +194,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
                 writer.BaseStream.Position = chunksOffsetsStart + chunkIndex * sizeof(long);
                 writer.Write(chunkOffset);
             }
+            WriteChunkData(writer, chunkPosition);
         }
 
         using(StreamPositionRememberer rememberer = writer)
