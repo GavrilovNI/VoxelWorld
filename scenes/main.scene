@@ -571,7 +571,7 @@
           "__type": "ModelRenderer",
           "BodyGroups": 18446744073709551615,
           "MaterialGroup": null,
-          "MaterialOverride": "materials/voxel_map.vmat",
+          "MaterialOverride": "materials/voxels_translucent.vmat",
           "Model": "models/dev/plane.vmdl",
           "RenderType": "On",
           "Tint": "1,1,1,1"
@@ -610,6 +610,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-24T02:12:52.7880785\u002B01:00",
+  "LastSaved": "2024-02-24T20:41:15.2700211\u002B01:00",
   "__references": []
 }

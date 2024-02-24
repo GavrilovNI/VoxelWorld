@@ -1,0 +1,19 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/voxels_opaque.shader"
+
+	//---- Texture Filtering ----
+	F_TEXTURE_FILTERING 3 // Point Sample
+
+	Texture "materials/lights/white_color.tga"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	DynamicParams
+	{
+		Texture "color"
+	}
+}

@@ -27,7 +27,7 @@
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": true,
-        "OpaqueVoxelsMaterial": "materials/voxel_map.vmat",
+        "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
         "PhysicsCollider": {
           "_type": "component",
           "go": "1ce9c04a-c4c3-4e7b-864d-39896d8ed47a",
@@ -35,7 +35,7 @@
         },
         "PhysicsEnabled": true,
         "RenderingEnabled": true,
-        "TranslucentVoxelsMaterial": "materials/voxel_map.vmat"
+        "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat"
       },
       {
         "__type": "ModelCollider",
