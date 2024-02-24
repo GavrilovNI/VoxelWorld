@@ -10,7 +10,6 @@ namespace Sandcube.IO.Worlds;
 
 public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 {
-    protected readonly Vector3Int RegionPosition;
     protected readonly WorldSaveOptions WorldSaveOptions;
 
     protected BlockStatePalette BlockStatePalette;
@@ -20,10 +19,9 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
 
-    public RegionSaveHelper(in WorldSaveOptions worldSaveOptions, in Vector3Int regionPosition)
+    public RegionSaveHelper(in WorldSaveOptions worldSaveOptions)
     {
         WorldSaveOptions = worldSaveOptions;
-        RegionPosition = regionPosition;
 
         var regionSize = WorldSaveOptions.RegionSize;
         MaxChunksCount = regionSize.x * regionSize.y * regionSize.z;

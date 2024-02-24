@@ -50,7 +50,7 @@ public class WorldSaver : Component
         foreach(var region in regions)
         {
             var regionPosition = region.Key;
-            var regionHelper = new RegionSaveHelper(options, regionPosition);
+            var regionHelper = new RegionSaveHelper(options);
             if(helper.HasRegionFile(regionPosition))
             {
                 using(var regionReadStream = helper.OpenRegionRead(regionPosition))
