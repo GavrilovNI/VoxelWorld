@@ -159,7 +159,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         int blockEntitiesCount = reader.ReadInt32();
         for(int i = 0; i < blockEntitiesCount; ++i)
         {
-            int blockPosition = reader.ReadInt32();
+            var blockPosition = Vector3Int.Read(reader);
             int blockEntityDataLength = reader.ReadInt32();
             if(blockEntityDataLength > 0)
             {
