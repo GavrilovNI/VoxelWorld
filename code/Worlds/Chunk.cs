@@ -4,6 +4,7 @@ using Sandcube.Blocks.States;
 using Sandcube.Data;
 using Sandcube.Data.Enumarating;
 using Sandcube.Interfaces;
+using Sandcube.IO;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable
+public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable, ISaveStatusMarkable
 {
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Position { get; internal set; }
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Size { get; internal set; } = 16;
@@ -27,8 +28,8 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
     public Vector3Int BlockOffset => Position * Size;
 
-    private bool _isDirty = false;
-    public bool IsDirty
+    private bool _isSaved = false;
+    public bool IsSaved
     {
         get
         {
@@ -38,19 +39,19 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 {
                     if(!blockEntity.IsSaved)
                     {
-                        _isDirty = true;
+                        _isSaved = false;
                         break;
                     }
                 }
 
-                return _isDirty;
+                return _isSaved;
             }
         }
         protected set
         {
             lock(Blocks)
             {
-                _isDirty = value;
+                _isSaved = value;
             }
         }
     }
@@ -151,7 +152,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             result = Blocks.PlaceBlock(localPosition, blockState);
 
             if(result.Changed && flags.HasFlag(BlockSetFlags.MarkDirty))
-                IsDirty = true;
+                IsSaved = false;
 
             return GetModelUpdateTask(flags, result.Changed).ContinueWith(t => result);
         }
@@ -183,7 +184,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             }
 
             if(modified && flags.HasFlag(BlockSetFlags.MarkDirty))
-                IsDirty = true;
+                IsSaved = false;
 
             return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
         }
@@ -202,7 +203,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
             if(modified)
             {
                 if(flags.HasFlag(BlockSetFlags.MarkDirty))
-                    IsDirty = true;
+                    IsSaved = false;
             }
 
             return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
@@ -262,7 +263,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 data.UpdateEntity(blockPosition, blockEntity);
             }
 
-            IsDirty = setDirty;
+            IsSaved = !setDirty;
 
             return GetModelUpdateTask(flags);
         }
@@ -273,10 +274,12 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         lock(Blocks)
         {
             if(!keepDirty)
-                IsDirty = false;
+                IsSaved = true;
             return Blocks.ToBlocksData(keepDirty);
         }
     }
+
+    public void MarkSaved() => IsSaved = true;
 }
 
 public static class ComponentListChunkExtensions

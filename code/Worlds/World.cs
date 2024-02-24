@@ -396,7 +396,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     {
         lock(Chunks)
         {
-            var chunksToSave = Chunks.Where(c => c.Value.Is<Chunk>(out var chunk) && chunk.IsValid && chunk.IsDirty)
+            var chunksToSave = Chunks.Where(c => c.Value.Is<Chunk>(out var chunk) && chunk.IsValid && !chunk.IsSaved)
                 .Select(c => c.Value.As<Chunk>()!);
 
             return chunksToSave.ToDictionary(c => c.Position, c => c.Save(keepDirty));
