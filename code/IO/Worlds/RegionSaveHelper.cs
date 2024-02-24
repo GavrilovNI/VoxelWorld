@@ -72,10 +72,13 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         ReadChunks(reader, readToEnd);
     }
 
-    public virtual bool ReadOnlyOneChunk(BinaryReader reader, Vector3Int chunkPosition, bool readToEnd = true)
+    public virtual bool ReadOnlyOneChunk(BinaryReader reader, Vector3Int localChunkPosition, bool readToEnd = true)
     {
+        if(!Bounds.Contains(localChunkPosition))
+            throw new ArgumentOutOfRangeException(nameof(localChunkPosition));
+
         BlockStatePalette = BlockStatePalette.Read(reader);
-        return ReadChunk(reader, chunkPosition, readToEnd);
+        return ReadChunk(reader, localChunkPosition, readToEnd);
     }
 
     protected virtual void UpdateBlockStatePalette()
