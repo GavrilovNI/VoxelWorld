@@ -58,6 +58,7 @@
             "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
             "component_type": "WorldGenerator"
           },
+          "LoadPath": "saves/test",
           "MaxChunksToCreateAtTime": 15
         },
         {
@@ -536,7 +537,8 @@
                 "_type": "gameobject",
                 "prefab": "prefabs/visualonlychunk.prefab"
               },
-              "Generator": null
+              "Generator": null,
+              "LoadPath": ""
             }
           ]
         },
@@ -608,6 +610,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-24T01:13:32.8142401\u002B01:00",
+  "LastSaved": "2024-02-24T02:12:52.7880785\u002B01:00",
   "__references": []
 }
