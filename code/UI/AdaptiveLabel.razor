@@ -1,37 +1,53 @@
 @using Sandbox;
 @using Sandbox.UI;
 @using System;
+@using System.Linq;
 
 
 @namespace Sandcube.UI
 @inherits Label
 
 <root>
-@(Text?.ToString() ?? string.Empty)
 </root>
 
 @code
 {
-    protected virtual void UpdateStyle()
+    public Length? GetFontSizeStyle(Panel panel)
     {
-        if(ComputedStyle is null)
-            return;
-
-        var fontSize = ComputedStyle.FontSize;
-        if(!fontSize.HasValue)
+        foreach(var styleBlock in panel.ActiveStyleBlocks)
         {
-            Log.Warning($"Couldn't find fontSize style for {nameof(AdaptiveLabel)}");
-            return;
+            foreach(var property in styleBlock.GetRawValues())
+            {
+                if(property.Name == "font-size")
+                    return Length.Parse(property.Value);
+            }
         }
 
-        if(fontSize.Value.Unit == LengthUnit.Percentage)
+        if (panel.Parent is not null && panel.Parent != panel)
+            return GetFontSizeStyle(panel.Parent);
+
+        return null;
+    }
+
+    protected virtual void UpdateStyle()
+    {
+        var requiredFontSize = GetFontSizeStyle(this);
+        if(requiredFontSize.HasValue && requiredFontSize.Value.Unit == LengthUnit.Percentage)
         {
-            var neededSize = fontSize.Value.Value / 100f * Parent.Box.Rect.Height / FindRootPanel().Scale;
+            var neededSize = requiredFontSize.Value.Value / 100f * Parent.Box.Rect.Height / FindRootPanel().Scale;
             Style.FontSize = Length.Pixels(neededSize);
+        }
+        else
+        {
+            Style.FontSize = null;
         }
     }
 
-    public override void OnLayout(ref Rect layoutRect) => UpdateStyle();
+    public override void FinalLayout(Vector2 offset)
+    {
+        UpdateStyle();
+        base.FinalLayout(offset);
+    }
 
     public override void OnHotloaded()
     {
@@ -39,5 +55,11 @@
         UpdateStyle();
     }
 
-    protected override int BuildHash() => HashCode.Combine(ComputedStyle, Text, FindRootPanel().Scale, Parent.Box.Rect.Height);
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        UpdateStyle();
+    }
+
+    protected override int BuildHash() => HashCode.Combine(Text, FindRootPanel().Scale, Parent.Box.Rect.Height);
 }
