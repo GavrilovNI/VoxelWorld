@@ -1,0 +1,105 @@
+CreateGameMenu {
+    background-color: #333;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    pointer-events: all;
+    justify-content: center;
+    align-items: center;
+
+    .center {
+        position: absolute;
+        height: 80%;
+        width: 40%;
+        align-items: center;
+        flex-direction: column;
+        font-family: Poppins;
+
+        .title {
+            position: relative;
+            width: 100%;
+            font-size: 10%;
+            margin: 3%;
+            text-align: center;
+        }
+
+        .options-container {
+            position: relative;
+            height: 15%;
+            width: 100%;
+            overflow: scroll;
+
+            .options {
+                position: relative;
+                aspect-ratio: 1.2;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5%;
+
+                .option {
+                    width: 100%;
+                    height: 10%;
+                    margin: 1%;
+
+                    .info {
+                        position: relative;
+                        height: 100%;
+                        width: 30%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+
+                        .label {
+                            position: relative;
+                            font-size: 50%;
+                        }
+                    }
+
+                    .text-entry {
+                        height: 100%;
+                        font-size: 50%;
+                        position: relative;
+                        width: 70%;
+                        background-color: #444;
+                    }
+                }
+            }
+        }
+
+        .create-game {
+            width: 30%;
+            aspect-ratio: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .label {
+                position: relative;
+                font-size: 50%;
+                text-align: center;
+            }
+        }
+
+        .content-right {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+        }
+
+
+        .button {
+            background-color: #444;
+
+            &:hover {
+                background-color: #555;
+            }
+
+            &:active {
+                background-color: #888;
+            }
+        }
+    }
+}

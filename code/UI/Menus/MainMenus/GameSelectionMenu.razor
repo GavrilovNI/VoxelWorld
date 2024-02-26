@@ -1,0 +1,115 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandcube.Data;
+@using Sandcube.IO;
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Threading.Tasks;
+
+@namespace Sandcube.UI.Menus.MainMenus
+
+@inherits PanelComponent
+
+
+<root>
+    @{
+        var saves = GetAllSaves().OrderBy(s => s.Value.Name);
+        var savesCount = saves.Count();
+
+        <div class="center">
+            <AdaptiveLabel class="title">Your Games</AdaptiveLabel>
+
+            @if(savesCount == 0)
+            {
+                <AdaptiveLabel class="no-games-info">You have not any saved game</AdaptiveLabel>
+            }
+
+            <div class="buttons-container">
+                <div class="buttons">
+                    @foreach(var (path, info) in saves)
+                    {
+                        <div class="button load-button" onclick="@(() => _ = TryLoadGame(path))">
+                            <div class ="world-icon-container">
+                                <div class="world-icon"></div>
+                            </div>
+                            <div class="world-info">
+                                <AdaptiveLabel class="world-name">@info.Name</AdaptiveLabel>
+                                <AdaptiveLabel class="world-path">@($"{SavesPath}/{path}")</AdaptiveLabel>
+                            </div>
+                        </div>
+                    }
+
+                    @if(savesCount == 0)
+                    {
+                        <div class="button create-game" onclick="@(() => OpenCreateGameMenu())">
+                            <AdaptiveLabel class="label">Create Game</AdaptiveLabel>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="bottom-buttons">
+                @if(savesCount > 0)
+                {
+                    <div class="button create-game" onclick="@(() => OpenCreateGameMenu())">
+                        <AdaptiveLabel class="label">Create New Game</AdaptiveLabel>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+</root>
+
+
+@code
+{
+    // <AdaptiveLabel class="world-path" FontSize=20% Text=@($"{SavesPath}/{path}") />
+    [Property] protected MainMenuController MainMenuController { get; set; } = null!;
+    [Property] protected CreateGameMenu CreateGameMenu { get; set; } = null!;
+    [Property] protected string SavesPath { get; set; } = "saves";
+    [Property] protected GameLoader GameLoader { get; set; } = null!;
+
+    private bool _isLoadingGame = false;
+
+    protected BaseFileSystem SavesFileSystem => FileSystem.Data.CreateDirectoryAndSubSystem(SavesPath);
+
+    public Dictionary<string, GameInfo> GetAllSaves() => GameSaveHelper.GetAllSaves(SavesFileSystem);
+
+    public async Task<bool> TryLoadGame(string path)
+    {
+        if(_isLoadingGame)
+            return false;
+        if(!SavesFileSystem.DirectoryExists(path))
+            return false;
+
+        _isLoadingGame = true;
+
+        var gameFileSystem = SavesFileSystem.CreateSubSystem(path);
+        bool loaded = await GameLoader.TryLoadGame(gameFileSystem);
+
+        _isLoadingGame = false;
+        return loaded;
+    }
+
+    public void OpenCreateGameMenu()
+    {
+        if(_isLoadingGame)
+            return;
+        MainMenuController.OpenMenu(CreateGameMenu);
+    }
+
+    public void Close()
+    {
+        if(_isLoadingGame)
+            return;
+        MainMenuController.CloseMenu(this);
+    }
+
+    protected override void OnUpdate()
+    {
+        if (Input.EscapePressed)
+            Close();
+    }
+}

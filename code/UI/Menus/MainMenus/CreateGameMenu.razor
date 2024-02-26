@@ -1,0 +1,84 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandcube.Data;
+@using Sandcube.IO;
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Threading.Tasks;
+
+@namespace Sandcube.UI.Menus.MainMenus
+
+@inherits PanelComponent
+
+
+<root>
+    @{
+        <div class="center">
+            <AdaptiveLabel class="title">Create Game</AdaptiveLabel>
+            <div class="options-container">
+                <div class="options">
+                    <div class="option">
+                        <div class="info">
+                            <AdaptiveLabel class="label">Name:</AdaptiveLabel>
+                        </div>
+                        <AdaptiveTextEntry type="text" class="text-entry" @ref=NameTextEntry Text="New World" MaxLength=@(20)>
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="button create-game" onclick="@(() => TryCreateGame())">
+                    <AdaptiveLabel class="label">Create</AdaptiveLabel>
+                </div>
+            </div>
+        </div>
+    }
+
+</root>
+
+
+@code
+{
+    // <AdaptiveLabel class="world-path" FontSize=20% Text=@($"{SavesPath}/{path}") />
+    [Property] protected MainMenuController MainMenuController { get; set; } = null!;
+    [Property] protected string SavesPath { get; set; } = "saves";
+    [Property] protected GameLoader GameLoader { get; set; } = null!;
+
+    protected TextEntry NameTextEntry { get; set; }
+
+    private bool _isLoadingGame = false;
+
+    protected BaseFileSystem SavesFileSystem => FileSystem.Data.CreateDirectoryAndSubSystem(SavesPath);
+
+    public async Task<(bool loaded, string path)> TryCreateGame()
+    {
+        if(_isLoadingGame)
+            return (false, string.Empty);
+
+        var name = NameTextEntry.Text;
+        if(string.IsNullOrWhiteSpace(name))
+            return (false, string.Empty);
+
+        _isLoadingGame = true;
+
+        GameInfo gameInfo = new() { Name = name };
+
+        (bool loaded, string path) = await GameLoader.TryCreateNewGame(SavesFileSystem, gameInfo);
+
+        _isLoadingGame = false;
+        return (loaded, path);
+    }
+
+    public void Close()
+    {
+        if(_isLoadingGame)
+            return;
+        MainMenuController.CloseMenu(this);
+    }
+
+    protected override void OnUpdate()
+    {
+        if (Input.EscapePressed)
+            Close();
+    }
+}

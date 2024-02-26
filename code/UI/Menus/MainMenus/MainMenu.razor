@@ -1,0 +1,27 @@
+@using Sandbox;
+@using Sandbox.UI;
+
+@namespace Sandcube.UI.Menus.MainMenus
+
+@inherits PanelComponent
+
+
+<root>
+	<div class="buttons">
+		<div id="button singleplayer" class="button" onclick="@(OpenGameSelectingMenu)">
+			<AdaptiveLabel>Singleplayer</AdaptiveLabel>
+		</div>
+	</div>
+</root>
+
+
+@code
+{
+	[Property] protected MainMenuController MainMenuController { get; set; } = null!;
+	[Property] protected GameSelectionMenu GameSelectionMenu { get; set; } = null!;
+
+	protected void OpenGameSelectingMenu()
+	{
+		MainMenuController.OpenMenu(GameSelectionMenu);
+	}
+}

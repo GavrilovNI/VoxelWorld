@@ -1,4 +1,5 @@
 {
+  "Id": "98a8a00c-2b01-4811-a8f3-9cad8e1c9a36",
   "GameObjects": [
     {
       "Id": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
@@ -7,24 +8,69 @@
       "Components": [
         {
           "__type": "ScreenPanel",
-          "__enabled": true,
           "AutoScreenScale": true,
           "Opacity": 1,
           "Scale": 1,
           "ZIndex": 100
-        }
-      ],
-      "Children": [
+        },
         {
-          "Id": "1fbf35a1-3863-4fb3-8fa0-86be72f1a682",
-          "Name": "UI",
-          "Enabled": true,
-          "Components": [
-            {
-              "__type": "MainMenu",
-              "__enabled": true
-            }
-          ]
+          "__type": "MainMenuController",
+          "MainMenu": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "MainMenu"
+          }
+        },
+        {
+          "__type": "MainMenu",
+          "GameSelectionMenu": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "GameSelectionMenu"
+          },
+          "MainMenuController": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "MainMenuController"
+          }
+        },
+        {
+          "__type": "GameSelectionMenu",
+          "CreateGameMenu": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "CreateGameMenu"
+          },
+          "GameLoader": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "GameLoader"
+          },
+          "MainMenuController": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "MainMenuController"
+          },
+          "SavesPath": "saves"
+        },
+        {
+          "__type": "CreateGameMenu",
+          "GameLoader": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "GameLoader"
+          },
+          "MainMenuController": {
+            "_type": "component",
+            "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+            "component_type": "MainMenuController"
+          },
+          "SavesPath": "saves"
+        },
+        {
+          "__type": "GameLoader",
+          "ErrorScene": "scenes/mainmenu.scene",
+          "GameScene": "scenes/main.scene"
         }
       ]
     },
@@ -35,15 +81,17 @@
       "Components": [
         {
           "__type": "CameraComponent",
-          "__enabled": true,
           "BackgroundColor": "0.33333,0.46275,0.52157,1",
           "ClearFlags": "All",
           "FieldOfView": 60,
+          "IsMainCamera": true,
           "Orthographic": false,
           "OrthographicHeight": 1204,
+          "Priority": 1,
           "RenderExcludeTags": "",
           "RenderTags": "",
           "TargetEye": "None",
+          "Viewport": "0,0,1,1",
           "ZFar": 10000,
           "ZNear": 10
         }
@@ -51,15 +99,28 @@
     }
   ],
   "SceneProperties": {
+    "FixedUpdateFrequency": 50,
     "Lerping": true,
-    "UseFixedUpdate": true,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 60,
     "ThreadedAnimation": true,
     "TimeScale": 1,
-    "MaxFixedUpdates": 5,
-    "FixedUpdateFrequency": 50,
-    "NetworkFrequency": 60
+    "UseFixedUpdate": true,
+    "NavMesh": {
+      "Enabled": false,
+      "IncludeStaticBodies": true,
+      "IncludeKeyframedBodies": true,
+      "EditorAutoUpdate": true,
+      "AgentHeight": 64,
+      "AgentRadius": 16,
+      "AgentStepSize": 18,
+      "AgentMaxSlope": 40,
+      "ExcludedBodies": "",
+      "IncludedBodies": ""
+    }
   },
   "Title": "mainmenu",
   "Description": "",
+  "LastSaved": "2024-02-26T01:07:33.1073718\u002B01:00",
   "__references": []
 }
