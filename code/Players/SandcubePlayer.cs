@@ -16,34 +16,10 @@ public class SandcubePlayer : Component
 
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
 
-    protected override void OnEnabled()
-    {
-        SandcubeGame.Started += OnGameStart;
-    }
-
-    protected override void OnDisabled()
-    {
-        SandcubeGame.Started -= OnGameStart;
-    }
 
     protected override void OnAwake()
     {
         Inventory ??= Components.Get<PlayerInventory>();
-    }
-
-    protected virtual void OnGameStart()
-    {
-        var items = SandcubeBaseMod.Instance!.Items;
-        var hotbar = Inventory.Hotbar;
-        hotbar.TrySet(0, new(items.Stone));
-        hotbar.TrySet(1, new(items.Dirt, 1));
-        hotbar.TrySet(2, new(items.Cobblestone, 2));
-        hotbar.TrySet(3, new(items.StoneSlab, 9));
-        hotbar.TrySet(4, new(items.Glass, 10));
-        hotbar.TrySet(5, new(items.WoodLog, 32));
-        hotbar.TrySet(6, new(items.Furnace, 63));
-        hotbar.TrySet(7, new(items.TallGrass, 64));
-        hotbar.TrySet(8, new(items.Door, 64));
     }
 
     protected override void OnUpdate()

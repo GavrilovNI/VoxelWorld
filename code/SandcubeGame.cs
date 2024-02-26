@@ -5,6 +5,7 @@ using Sandcube.IO;
 using Sandcube.Items;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods;
+using Sandcube.Players;
 using Sandcube.Registries;
 using Sandcube.Texturing;
 using Sandcube.Worlds;
@@ -35,9 +36,12 @@ public sealed class SandcubeGame : Component
     }
 
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
+    [Property] public GameObject PlayerPrefab { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
+    public SandcubePlayer LocalPlayer { get; private set; } = null!;
 
+    [Property] protected bool ClickToSpawnPlayer { get; set; } = false;
 
     private readonly WorldsContainer _worlds = new(); // TODO: make readonly?
     public IReadOnlyWorldsContainer Worlds => _worlds;
@@ -110,6 +114,20 @@ public sealed class SandcubeGame : Component
         world = CreateWorld(id, worldFileSystem.GetPathFromData("/"));
         _worlds.AddWorld(id, world);
         return true;
+    }
+
+    public SandcubePlayer SpawnPlayer(World world, bool enable = true)
+    {
+        var cloneConfig = new CloneConfig(Transform.World, world.GameObject, false, $"Player");
+        var playerGameObject = PlayerPrefab.Clone(cloneConfig);
+        playerGameObject.BreakFromPrefab();
+        var player = playerGameObject.Components.Get<SandcubePlayer>(true);
+
+        foreach(var worldInitializable in playerGameObject.Components.GetAll<IWorldInitializable>(FindMode.EverythingInSelf))
+            worldInitializable.InitializeWorld(world);
+
+        playerGameObject.Enabled = enable;
+        return player;
     }
 
     public async Task LoadMods(IEnumerable<ISandcubeMod> mods)
@@ -191,6 +209,18 @@ public sealed class SandcubeGame : Component
 
         if(ShouldAnimateBlockTextures)
             AnimateBlockTextures();
+
+        if(ClickToSpawnPlayer)
+        {
+            ClickToSpawnPlayer = false;
+            if(Worlds.Count > 0)
+            {
+                var world = Worlds.First().Value;
+                LocalPlayer = SpawnPlayer(world);
+                foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerInitializable>(FindMode.EverythingInSelfAndDescendants))
+                    localPlayerInitializable.InitializeLocalPlayer(LocalPlayer);
+            }
+        }
     }
 
     protected override void OnDisabled()

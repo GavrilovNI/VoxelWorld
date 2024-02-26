@@ -4,12 +4,14 @@
 @using Sandcube.Inventories
 @using Sandcube.Inventories.Players
 @using Sandcube.Items
+@using Sandcube.Players
 @using Sandcube.UI.Inventories
 @using System
 
 @namespace Sandcube.UI.Inventories.Players
 @attribute [StyleSheet]
 @inherits PanelComponent
+@implements ILocalPlayerInitializable
 
 <root>
 	@if(PlayerInventory is not null)
@@ -42,6 +44,8 @@
 
 	protected Stack<Item> SecondaryHandStack => PlayerInventory?.GetHandItem(HandType.Secondary) ?? Stack<Item>.Empty;
 	protected Texture SelectorTexture;
+
+	public void InitializeLocalPlayer(SandcubePlayer player) => PlayerInventory = player.Components.Get<PlayerInventory>();
 
 	protected override void OnAwake()
 	{

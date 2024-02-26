@@ -1,11 +1,9 @@
 ﻿using Sandbox;
 using Sandcube.Players;
-using Sandcube.UI.Inventories.Players;
-using Sandcube.UI.Menus;
 
 namespace Sandcube.Menus;
 
-public class MenuController : Component
+public class MenuController : Component, ILocalPlayerInitializable
 {
     private static MenuController? _instance = null;
     public static MenuController? Instance
@@ -27,6 +25,7 @@ public class MenuController : Component
     public bool ShouldDestroyScreenOnClose { get; private set; }
     public bool IsPlayerInventory { get; private set; }
 
+    public void InitializeLocalPlayer(SandcubePlayer player) => Player = player;
 
     protected override void OnEnabled()
     {
@@ -60,7 +59,7 @@ public class MenuController : Component
                 OpenScreen(EscapeScreen, false);
             }
         }
-        else if(Input.Pressed("Inventory"))
+        else if(Player.IsValid() && Input.Pressed("Inventory"))
         {
             if(!IsAnyOpened)
             {
