@@ -13,6 +13,7 @@ namespace Sandcube.Worlds.Loading;
 
 public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
 {
+    [Property] protected GameObject ChunksParent { get; set; } = null!;
     [Property] public GameObject ChunkPrefab { get; set; } = null!;
     [Property] public WorldGenerator? Generator { get; set; }
     [Property] protected string SavePath { get; set; } = string.Empty;
@@ -20,6 +21,11 @@ public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
     [Property, Category("Debug")] public bool BreakFromPrefab { get; set; } = true;
 
     public virtual void InitizlizeSavePath(string savePath) => SavePath = savePath;
+
+    protected override void OnAwake()
+    {
+        ChunksParent ??= GameObject;
+    }
 
     // Call only in game thread
     public virtual Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
@@ -64,7 +70,7 @@ public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
         ThreadSafe.AssertIsMainThread();
 
         Transform cloneTransform = new(Transform.Position + creationData.Position * creationData.Size * MathV.UnitsInMeter, Transform.Rotation);
-        var chunkGameObject = ChunkPrefab.Clone(cloneTransform, GameObject, false, $"Chunk {creationData.Position}");
+        var chunkGameObject = ChunkPrefab.Clone(cloneTransform, ChunksParent, false, $"Chunk {creationData.Position}");
         if(BreakFromPrefab || !Game.IsEditor)
             chunkGameObject.BreakFromPrefab();
 

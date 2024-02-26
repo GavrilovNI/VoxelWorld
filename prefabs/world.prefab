@@ -1,7 +1,7 @@
 {
   "RootObject": {
-    "Id": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
-    "Name": "World",
+    "Id": "abfff34c-f45d-43d3-b275-4f14535c2d15",
+    "Name": "world",
     "Tags": "world",
     "Enabled": true,
     "Components": [
@@ -13,9 +13,13 @@
           "_type": "gameobject",
           "prefab": "prefabs/chunk.prefab"
         },
+        "ChunksParent": {
+          "_type": "gameobject",
+          "go": "014344ea-4dc2-4d9e-a6e2-6679ff219542"
+        },
         "Generator": {
           "_type": "component",
-          "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
           "component_type": "WorldGenerator"
         },
         "MaxChunksToCreateAtTime": 5,
@@ -25,7 +29,7 @@
         "__type": "World",
         "ChunkCreator": {
           "_type": "component",
-          "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
           "component_type": "LimitedChunkCreator"
         },
         "ChunkSize": "16,16,16",
@@ -96,9 +100,17 @@
         "SavePath": "",
         "World": {
           "_type": "component",
-          "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
           "component_type": "World"
         }
+      }
+    ],
+    "Children": [
+      {
+        "Id": "014344ea-4dc2-4d9e-a6e2-6679ff219542",
+        "Name": "Chunks",
+        "Position": "106.9336,106.9336,-151.227",
+        "Enabled": true
       }
     ]
   },

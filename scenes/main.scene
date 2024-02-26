@@ -172,6 +172,7 @@
                 "_type": "gameobject",
                 "prefab": "prefabs/visualonlychunk.prefab"
               },
+              "ChunksParent": null,
               "Generator": null,
               "SavePath": ""
             }
