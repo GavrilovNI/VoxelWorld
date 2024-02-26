@@ -1,0 +1,109 @@
+{
+  "RootObject": {
+    "Id": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+    "Name": "World",
+    "Tags": "world",
+    "Enabled": true,
+    "Components": [
+      {
+        "__type": "LimitedChunkCreator",
+        "ActiveCreatingChunks": 0,
+        "BreakFromPrefab": false,
+        "ChunkPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/chunk.prefab"
+        },
+        "Generator": {
+          "_type": "component",
+          "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "component_type": "WorldGenerator"
+        },
+        "MaxChunksToCreateAtTime": 5,
+        "SavePath": ""
+      },
+      {
+        "__type": "World",
+        "ChunkCreator": {
+          "_type": "component",
+          "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "component_type": "LimitedChunkCreator"
+        },
+        "ChunkSize": "16,16,16",
+        "TickByItself": true
+      },
+      {
+        "__type": "WorldGenerator",
+        "AdditiveDensityFromHeightCurve": {
+          "rangey": "-1,1",
+          "frames": [
+            {
+              "y": 1,
+              "in": 0.6086956,
+              "out": -0.6086956
+            },
+            {
+              "x": 0.41369048,
+              "y": 0.5381129,
+              "in": 1.0989428,
+              "out": -1.0989428
+            },
+            {
+              "x": 0.7604167,
+              "y": 0.026405497
+            },
+            {
+              "x": 1
+            }
+          ]
+        },
+        "DensityNoiseSettings": {
+          "Scale": "20,20,20",
+          "OctavesCount": 2,
+          "Persistance": 0.5,
+          "Lacunarity": 2
+        },
+        "HeightNoiseSettings": {
+          "Scale": "50,50",
+          "OctavesCount": 2,
+          "Persistance": 0.3,
+          "Lacunarity": 2.2
+        },
+        "HeightSurfaceCurve": [
+          {
+            "in": -1.1203572,
+            "out": 1.1203572
+          },
+          {
+            "x": 0.73363096,
+            "y": 0.53349507,
+            "in": -0.59002864,
+            "out": 0.59002864
+          },
+          {
+            "x": 1,
+            "y": 1,
+            "in": -1.0212762,
+            "out": 1.0212762
+          }
+        ],
+        "MaxHeight": 120,
+        "MinHeight": 0
+      },
+      {
+        "__type": "WorldSaver",
+        "ClickToSave": false,
+        "RegionSize": "5,5,5",
+        "SavePath": "",
+        "World": {
+          "_type": "component",
+          "go": "80c6ed29-307c-404c-bd7d-4c168ac9555b",
+          "component_type": "World"
+        }
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "__references": []
+}

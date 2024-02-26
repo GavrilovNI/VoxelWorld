@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace Sandcube.IO.Worlds;
 
-public class WorldSaver : Component
+public class WorldSaver : Component, ISavePathInitializable
 {
     [Property] private World World { get; set; } = null!;
     [Property] private Vector3Int RegionSize { get; set; } = Vector3Int.One * 5;
-    [Property] private string SavePath { get; set; } = "saves/test";
+    [Property] private string SavePath { get; set; } = string.Empty;
     [Property] private bool ClickToSave { get; set; } = false;
 
 
@@ -23,6 +23,8 @@ public class WorldSaver : Component
             Save();
         }
     }
+
+    public virtual void InitizlizeSavePath(string savePath) => SavePath = savePath;
 
     public virtual void Save() => Save(FileSystem.Data.CreateDirectoryAndSubSystem(SavePath));
 

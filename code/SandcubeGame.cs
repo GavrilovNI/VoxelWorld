@@ -5,7 +5,6 @@ using Sandcube.IO;
 using Sandcube.Items;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods;
-using Sandcube.Players;
 using Sandcube.Registries;
 using Sandcube.Texturing;
 using Sandcube.Worlds;
@@ -35,9 +34,13 @@ public sealed class SandcubeGame : Component
         private set => _instance = value;
     }
 
+    [Property] public GameObject WorldPrefab { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
 
+
+    private readonly WorldsContainer _worlds = new(); // TODO: make readonly?
+    public IReadOnlyWorldsContainer Worlds => _worlds;
 
     public GameInfo? CurrentGameInfo { get; private set; }
     public GameSaveHelper? CurrentGameSaveHelper { get; private set; }
@@ -89,6 +92,26 @@ public sealed class SandcubeGame : Component
         return true;
     }
 
+    public bool TryAddWorld(ModedId id, out World world)
+    {
+        AssertLoadingStatus(LoadingStatus.Loaded);
+
+        if(_worlds.TryGetWorld(id, out world))
+            return true;
+
+        if(CurrentGameSaveHelper is null)
+        {
+            world = null!;
+            return false;
+        }
+
+        var worldFileSystem = CurrentGameSaveHelper.GetOrCreateWorldFileSystem(id);
+
+        world = CreateWorld(id, worldFileSystem.GetPathFromData("/"));
+        _worlds.AddWorld(id, world);
+        return true;
+    }
+
     public async Task LoadMods(IEnumerable<ISandcubeMod> mods)
     {
         AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
@@ -124,6 +147,20 @@ public sealed class SandcubeGame : Component
     public ISandcubeMod? GetMod(Id id) => _mods!.GetValueOrDefault(id, null);
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 
+
+    private World CreateWorld(string name, string savePath, bool enable = true)
+    {
+        var cloneConfig = new CloneConfig(Transform.World, GameObject, false, $"World {name}");
+        var worldGameObject = WorldPrefab.Clone(cloneConfig);
+        worldGameObject.BreakFromPrefab();
+        var world = worldGameObject.Components.Get<World>(true);
+
+        foreach(var savePathInitializable in worldGameObject.Components.GetAll<ISavePathInitializable>(FindMode.EverythingInSelf))
+            savePathInitializable.InitizlizeSavePath(savePath);
+
+        worldGameObject.Enabled = enable;
+        return world;
+    }
 
     protected override void OnEnabled()
     {
@@ -180,7 +217,11 @@ public sealed class SandcubeGame : Component
 
     private void AnimateBlockTextures()
     {
-        //TODO:
+        if(BlocksTextureMap.UpdateAnimatedTextures())
+        {
+            foreach(var (_, world) in Worlds)
+                world.UpdateTexture(BlocksTextureMap.Texture);
+        }
     }
 
     private void RebuildBlockMeshes()

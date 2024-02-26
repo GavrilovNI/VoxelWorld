@@ -31,5 +31,6 @@ public sealed class SandcubeBaseMod : ISandcubeMod
 
     public void OnGameLoaded()
     {
+        SandcubeGame.Instance!.TryAddWorld(new ModedId(ModName, "main"), out _);
     }
 }

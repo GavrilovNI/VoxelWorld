@@ -11,14 +11,15 @@ using System;
 
 namespace Sandcube.Worlds.Loading;
 
-public class ChunkCreator : ThreadHelpComponent
+public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
 {
     [Property] public GameObject ChunkPrefab { get; set; } = null!;
     [Property] public WorldGenerator? Generator { get; set; }
-    [Property] protected string LoadPath { get; set; } = string.Empty;
+    [Property] protected string SavePath { get; set; } = string.Empty;
 
     [Property, Category("Debug")] public bool BreakFromPrefab { get; set; } = true;
 
+    public virtual void InitizlizeSavePath(string savePath) => SavePath = savePath;
 
     // Call only in game thread
     public virtual Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
@@ -96,10 +97,10 @@ public class ChunkCreator : ThreadHelpComponent
 
     public virtual bool TryLoadChunk(Chunk chunk)
     {
-        if(string.IsNullOrWhiteSpace(LoadPath))
+        if(string.IsNullOrWhiteSpace(SavePath))
             return false;
 
-        return TryLoadChunk(FileSystem.Data.CreateDirectoryAndSubSystem(LoadPath), chunk);
+        return TryLoadChunk(FileSystem.Data.CreateDirectoryAndSubSystem(SavePath), chunk);
     }
 
     protected virtual bool TryLoadChunk(BaseFileSystem fileSystem, Chunk chunk)

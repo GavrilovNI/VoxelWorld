@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds.Generation;
 
-public class WorldAutoLoader : ThreadHelpComponent
+public class WorldAutoLoader : ThreadHelpComponent, IWorldInitializable
 {
     [Property] public World? World { get; set; } = null;
     [Property] public Vector3Int Distance { get; set; } = 2;
@@ -16,6 +16,8 @@ public class WorldAutoLoader : ThreadHelpComponent
 
     protected Dictionary<Vector3Int, Chunk> LoadedChunks = new();
     protected Task<int>? LoadingTask;
+
+    public void InitializeWorld(World world) => World = world;
 
     protected override void OnUpdateInner()
     {
