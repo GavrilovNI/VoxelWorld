@@ -27,8 +27,6 @@ public class Item : IRegisterable, IStackValue<Item>
     {
     }
 
-    public virtual void OnRegistered() { }
-
     public virtual int GetStackLimit() => StackLimit;
 
     public virtual InteractionResult OnAttack(in ItemActionContext context) => InteractionResult.Pass;
@@ -45,7 +43,7 @@ public class Item : IRegisterable, IStackValue<Item>
     {
         var id = ModedId.Read(reader);
 
-        var item = SandcubeGame.Instance!.ItemsRegistry.Get(id);
+        var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().Get(id);
         if(item is null)
             throw new KeyNotFoundException($"Item with id {id} not found");
 

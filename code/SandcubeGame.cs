@@ -1,8 +1,8 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
+using Sandcube.Blocks.States;
 using Sandcube.Data;
 using Sandcube.IO;
-using Sandcube.Items;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods;
 using Sandcube.Players;
@@ -49,8 +49,8 @@ public sealed class SandcubeGame : Component
     public GameInfo? CurrentGameInfo { get; private set; }
     public GameSaveHelper? CurrentGameSaveHelper { get; private set; }
 
-    public Registry<Block> BlocksRegistry { get; } = new();
-    public Registry<Item> ItemsRegistry { get; } = new();
+    public RegistriesContainer Registries { get; } = new();
+
     public PathedTextureMap BlocksTextureMap { get; } = new("textures/", 3, new Color32(255, 0, 255), 4);
     public BlockMeshMap BlockMeshes { get; } = new();
 
@@ -134,23 +134,17 @@ public sealed class SandcubeGame : Component
     {
         AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
 
-        List<Task> blocksRegisteringTasks = new();
+        List<Task> registeringTasks = new();
         foreach(var mod in mods)
         {
             if(_mods.ContainsKey(mod.Id))
                 throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
             _mods[mod.Id] = mod;
 
-            blocksRegisteringTasks.Add(mod.RegisterBlocks(BlocksRegistry));
+            var task = mod.RegisterValues(Registries);
+            registeringTasks.Add(task);
         }
-        await Task.WhenAll(blocksRegisteringTasks);
-
-        RebuildBlockMeshes();
-
-        List<Task> itemsRegisteringTasks = new();
-        foreach(var mod in mods)
-            itemsRegisteringTasks.Add(mod.RegisterItems(ItemsRegistry));
-        await Task.WhenAll(itemsRegisteringTasks);
+        await Task.WhenAll(registeringTasks);
 
         foreach(var mod in mods)
             mod.OnLoaded();
@@ -254,14 +248,13 @@ public sealed class SandcubeGame : Component
         }
     }
 
-    private void RebuildBlockMeshes()
+    public void RebuildBlockMeshes(IEnumerable<Block> blocks) =>
+        RebuildBlockMeshes(blocks.SelectMany(block => block.BlockStateSet));
+
+    public void RebuildBlockMeshes(IEnumerable<BlockState> blockStates)
     {
-        BlockMeshes.Clear();
-        foreach(var block in BlocksRegistry.All)
-        {
-            foreach(var blockState in block.Value.BlockStateSet)
-                BlockMeshes.Add(blockState);
-        }
+        foreach(var blockState in blockStates)
+            BlockMeshes.Update(blockState);
     }
 
     private async Task LoadAllMods()

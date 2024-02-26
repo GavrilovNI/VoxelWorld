@@ -17,16 +17,17 @@ public sealed class SandcubeBaseMod : ISandcubeMod
 
     public void OnLoaded() { }
 
-    public async Task RegisterBlocks(Registry<Block> registry)
+    public async Task RegisterValues(RegistriesContainer registries)
     {
-        Blocks = new();
-        await Blocks.Register(registry);
-    }
+        RegistriesContainer container = new();
 
-    public async Task RegisterItems(Registry<Item> registry)
-    {
+        Blocks = new();
+        await Blocks.Register(registries);
+        SandcubeGame.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
         Items = new();
-        await Items.Register(registry);
+        await Items.Register(registries);
+
+        registries.Add(container);
     }
 
     public void OnGameLoaded()

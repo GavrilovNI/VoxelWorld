@@ -38,8 +38,6 @@ public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReada
     {
     }
 
-    public virtual void OnRegistered() { }
-
     // Thread safe
     public virtual bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
     {
@@ -88,7 +86,7 @@ public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReada
     public static Block Read(BinaryReader reader)
     {
         var id = ModedId.Read(reader);
-        var block = SandcubeGame.Instance!.BlocksRegistry.Get(id);
+        var block = SandcubeGame.Instance!.Registries.GetRegistry<Block>().Get(id);
         if(block is null)
             throw new KeyNotFoundException($"Block with id {id} not found");
         return block;

@@ -2,6 +2,7 @@
 using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.Items;
+using Sandcube.Registries;
 using Sandcube.Worlds;
 using System.Linq;
 
@@ -78,7 +79,7 @@ public class WorldInteractor : Component
 
         if(Player.IsCreative)
         {
-            var item = SandcubeGame.Instance!.ItemsRegistry.FirstOrDefault(i => i is BlockItem blockItem && blockItem.Block == block, null);
+            var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().FirstOrDefault(i => i is BlockItem blockItem && blockItem.Block == block, null);
             if(item is null)
                 return InteractionResult.Fail;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using Sandcube.Blocks.States;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Sandcube.Meshing.Blocks;
 
@@ -8,9 +8,9 @@ namespace Sandcube.Meshing.Blocks;
 public class BlockMeshMap
 {
     private readonly object _lock = new object();
-    private readonly ConcurrentDictionary<BlockState, ISidedMeshPart<ComplexVertex>> _visualMeshes = new();
-    private readonly ConcurrentDictionary<BlockState, ISidedMeshPart<Vector3Vertex>> _physicsMeshes = new();
-    private readonly ConcurrentDictionary<BlockState, ISidedMeshPart<Vector3Vertex>> _interactionMeshes = new();
+    private readonly Dictionary<BlockState, ISidedMeshPart<ComplexVertex>> _visualMeshes = new();
+    private readonly Dictionary<BlockState, ISidedMeshPart<Vector3Vertex>> _physicsMeshes = new();
+    private readonly Dictionary<BlockState, ISidedMeshPart<Vector3Vertex>> _interactionMeshes = new();
 
     public void Clear()
     {
@@ -22,22 +22,43 @@ public class BlockMeshMap
         }
     }
 
-    public void Add(BlockState blockState)
+    public void Update(BlockState blockState)
     {
         var block = blockState.Block;
 
+        var visual = block.CreateVisualMesh(blockState);
+        var physics = block.CreatePhysicsMesh(blockState);
+        var interaction = block.CreateInteractionMesh(blockState);
+
         lock(_lock)
         {
-            if(!_visualMeshes.TryAdd(blockState, block.CreateVisualMesh(blockState)) ||
-                !_physicsMeshes.TryAdd(blockState, block.CreatePhysicsMesh(blockState)) ||
-                !_interactionMeshes.TryAdd(blockState, block.CreateInteractionMesh(blockState)))
-            {
-                throw new InvalidOperationException($"{nameof(BlockState)} {blockState} was already added");
-            }
+            _visualMeshes[blockState] = visual;
+            _physicsMeshes[blockState] = physics;
+            _interactionMeshes[blockState] = interaction;
         }
     }
 
-    public ISidedMeshPart<ComplexVertex>? GetVisual(BlockState blockState) => _visualMeshes[blockState];
-    public ISidedMeshPart<Vector3Vertex>? GetPhysics(BlockState blockState) => _physicsMeshes[blockState];
-    public ISidedMeshPart<Vector3Vertex>? GetInteraction(BlockState blockState) => _interactionMeshes[blockState];
+    public ISidedMeshPart<ComplexVertex>? GetVisual(BlockState blockState)
+    {
+        lock(_lock)
+        {
+            return _visualMeshes[blockState];
+        }
+    }
+
+    public ISidedMeshPart<Vector3Vertex>? GetPhysics(BlockState blockState)
+    {
+        lock(_lock)
+        {
+            return _physicsMeshes[blockState];
+        }
+    }
+
+    public ISidedMeshPart<Vector3Vertex>? GetInteraction(BlockState blockState)
+    {
+        lock(_lock)
+        {
+            return _interactionMeshes[blockState];
+        }
+    }
 }

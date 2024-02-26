@@ -5,7 +5,7 @@ namespace Sandcube.Registries;
 
 public class ModRegisterables<T> where T : class, IRegisterable
 {
-    public virtual Task Register(Registry<T> registry)
+    public virtual Task Register(RegistriesContainer registries)
     {
         var properties = TypeLibrary.GetType(GetType()).Properties.Where(p => p.IsPublic && p.PropertyType.IsAssignableTo(typeof(T)));
 
@@ -17,8 +17,7 @@ public class ModRegisterables<T> where T : class, IRegisterable
             if(property.IsSetMethodPublic)
                 Log.Warning($"set of {GetType().FullName}.{property.Name} should be private");
 
-            var value = (property.GetValue(this) as T)!;
-            registry.Add(value);
+            registries.Register<T>((IRegisterable)property.GetValue(this));
         }
 
         return Task.CompletedTask;

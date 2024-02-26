@@ -129,9 +129,9 @@ public class ModItems : ModRegisterables<Item>
         return builder.ToString();
     }
 
-    public override async Task Register(Registry<Item> registry)
+    public override async Task Register(RegistriesContainer registries)
     {
-        await AutoCreateBlockItems(SandcubeGame.Instance!.BlocksRegistry);
-        await base.Register(registry);
+        await AutoCreateBlockItems(registries.GetRegistry<Block>());
+        await base.Register(registries);
     }
 }
