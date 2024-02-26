@@ -5,7 +5,7 @@ using Sandcube.Interactions;
 using Sandcube.IO;
 using Sandcube.Meshing;
 using Sandcube.Meshing.Blocks;
-using Sandcube.Mods;
+using Sandcube.Mods.Base;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;

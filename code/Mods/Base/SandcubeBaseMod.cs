@@ -1,9 +1,10 @@
 ﻿using Sandcube.Blocks;
-using Sandcube.Items;
+using Sandcube.Mods.Base.Blocks;
+using Sandcube.Mods.Base.Items;
 using Sandcube.Registries;
 using System.Threading.Tasks;
 
-namespace Sandcube.Mods;
+namespace Sandcube.Mods.Base;
 
 public sealed class SandcubeBaseMod : ISandcubeMod
 {

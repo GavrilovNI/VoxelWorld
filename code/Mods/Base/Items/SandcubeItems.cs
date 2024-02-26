@@ -1,7 +1,8 @@
-﻿using Sandcube.Mods;
+﻿using Sandcube.Items;
+using Sandcube.Mods.Base;
 using Sandcube.Registries;
 
-namespace Sandcube.Items;
+namespace Sandcube.Mods.Base.Items;
 
 public sealed class SandcubeItems : ModItems
 {

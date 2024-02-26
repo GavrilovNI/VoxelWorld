@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Blocks.States;
-using Sandcube.Mods;
+using Sandcube.Mods.Base;
 using Sandcube.Mth;
 
 namespace Sandcube.Worlds.Generation;
