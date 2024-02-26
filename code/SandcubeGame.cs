@@ -2,6 +2,7 @@
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
+using Sandcube.Exceptions;
 using Sandcube.IO;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods;
@@ -36,6 +37,8 @@ public sealed class SandcubeGame : Component
         private set => _instance = value;
     }
 
+    [Property] public GameObject ModsParent { get; private set; } = null!;
+    [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
     [Property] public GameObject PlayerPrefab { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
@@ -66,7 +69,12 @@ public sealed class SandcubeGame : Component
         InitalizationStatus = InitalizationStatus.Initializing;
         Instance = this;
 
-        await LoadAllMods();
+        var loaded = TryCloneModFrom<SandcubeBaseMod>(BaseModPrefab, out var baseMod);
+        if(!loaded)
+            throw new InvalidOperationException($"couldn't create {nameof(SandcubeBaseMod)}");
+
+        BaseMod = baseMod;
+        await LoadMods(new ISandcubeMod[] { BaseMod });
 
         InitalizationStatus = InitalizationStatus.Initialized;
         Initialized?.Invoke();
@@ -140,7 +148,11 @@ public sealed class SandcubeGame : Component
         {
             if(_mods.ContainsKey(mod.Id))
                 throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
+
             _mods[mod.Id] = mod;
+
+            if(mod is Component modComponent)
+                modComponent.GameObject.Parent = ModsParent;
 
             var task = mod.RegisterValues(Registries);
             registeringTasks.Add(task);
@@ -189,6 +201,8 @@ public sealed class SandcubeGame : Component
     {
         if(Instance.IsValid() && Instance != this)
             return;
+
+        ModsParent ??= GameObject;
 
         if(InitalizationStatus == InitalizationStatus.NotInitialized)
             _ = Initialize();
@@ -258,14 +272,61 @@ public sealed class SandcubeGame : Component
             BlockMeshes.Update(blockState);
     }
 
-    private async Task LoadAllMods()
+    public static bool TryCreateMod(TypeDescription type, out ISandcubeMod mod)
     {
-        BaseMod = new();
-        List<ISandcubeMod> modsToLoad = new() { BaseMod };
-        await LoadMods(modsToLoad);
+        var targetType = type.TargetType;
+        if(!targetType.IsAssignableTo(typeof(ISandcubeMod)))
+        {
+            mod = null!;
+            return false;
+        }
+
+        if(targetType.IsAssignableTo(typeof(Component)))
+        {
+            GameObject modObject = new();
+            mod = (modObject.Components.Create(type) as ISandcubeMod)!;
+            modObject.Name = mod.Id;
+            return true;
+        }
+
+        try
+        {
+            mod = type.Create<ISandcubeMod>();
+            return true;
+        }
+        catch(MissingMethodException)
+        {
+            mod = default!;
+            return false;
+        }
     }
 
-    
+    public static bool TryCreateMod<T>(out T mod) where T : ISandcubeMod
+    {
+        var created = TryCreateMod(TypeLibrary.GetType<T>(), out var createdMod);
+        mod = created ? (T)createdMod : default!;
+        return created;
+    }
+
+    public static bool TryCloneModFrom(GameObject modObject, out ISandcubeMod mod) =>
+        TryCloneModFrom<ISandcubeMod>(modObject, out mod);
+
+    public static bool TryCloneModFrom<T>(GameObject modObject, out T mod) where T : ISandcubeMod
+    {
+        ArgumentNotValidException.ThrowIfNotValid(modObject);
+        modObject = modObject.Clone();
+        modObject.BreakFromPrefab();
+        mod = modObject.Components.Get<T>(FindMode.EverythingInSelfAndDescendants);
+
+        bool found = mod is not null;
+        if(found)
+            modObject.Name = mod!.Id;
+        else
+            modObject.Destroy();
+
+        return found;
+    }
+
     private void AssertValid()
     {
         if(!IsValid)

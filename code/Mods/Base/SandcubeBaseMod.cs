@@ -1,4 +1,5 @@
-﻿using Sandcube.Blocks;
+﻿using Sandbox;
+using Sandcube.Blocks;
 using Sandcube.Mods.Base.Blocks;
 using Sandcube.Mods.Base.Items;
 using Sandcube.Registries;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Mods.Base;
 
-public sealed class SandcubeBaseMod : ISandcubeMod
+public sealed class SandcubeBaseMod : Component, ISandcubeMod
 {
     public const string ModName = "sandcube";
     public static SandcubeBaseMod? Instance => SandcubeGame.Instance?.BaseMod;
