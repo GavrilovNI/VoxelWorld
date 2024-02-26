@@ -19,7 +19,7 @@ public class WorldAutoLoader : ThreadHelpComponent
 
     protected override void OnUpdateInner()
     {
-        bool worldIsLoaded = SandcubeGame.IsStarted && World is not null;
+        bool worldIsLoaded = SandcubeGame.LoadingStatus == LoadingStatus.Loaded && World is not null;
         bool loadedLastChunks = LoadingTask is null || LoadingTask.IsCompleted;
 
         if(!worldIsLoaded || !loadedLastChunks)

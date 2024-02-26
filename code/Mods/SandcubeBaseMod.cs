@@ -28,4 +28,8 @@ public sealed class SandcubeBaseMod : ISandcubeMod
         Items = new();
         await Items.Register(registry);
     }
+
+    public void OnGameLoaded()
+    {
+    }
 }

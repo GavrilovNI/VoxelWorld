@@ -13,4 +13,6 @@ public interface ISandcubeMod
     public Task RegisterItems(Registry<Item> registry);
 
     public void OnLoaded();
+
+    public void OnGameLoaded();
 }

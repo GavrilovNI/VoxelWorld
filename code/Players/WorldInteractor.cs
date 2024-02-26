@@ -1,10 +1,8 @@
 ﻿using Sandbox;
 using Sandcube.Interactions;
 using Sandcube.Inventories;
-using Sandcube.Inventories.Players;
 using Sandcube.Items;
 using Sandcube.Worlds;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Sandcube.Players;
@@ -13,7 +11,7 @@ public class WorldInteractor : Component
 {
     [Property] public SandcubePlayer Player { get; set; } = null!;
     [Property] public GameObject Eye { get; set; } = null!;
-    [Property] public float ReachDistance => Player.ReachDistance;
+    public float ReachDistance => Player.ReachDistance;
 
     [Property] public string InteractionTag { get; set; } = "interactable";
 
@@ -25,7 +23,7 @@ public class WorldInteractor : Component
 
     protected override void OnUpdate()
     {
-        if(!SandcubeGame.IsStarted)
+        if(SandcubeGame.LoadingStatus != LoadingStatus.Loaded)
             return;
 
         bool attacking = Input.Pressed("attack1");

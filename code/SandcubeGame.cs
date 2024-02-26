@@ -1,23 +1,28 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
+using Sandcube.Data;
+using Sandcube.IO;
 using Sandcube.Items;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods;
+using Sandcube.Players;
 using Sandcube.Registries;
 using Sandcube.Texturing;
 using Sandcube.Worlds;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sandcube;
 
 public sealed class SandcubeGame : Component
 {
-    public static event Action? Started;
-    public static event Action? Stopped;
-    public static bool IsStarted { get; private set; } = false;
+    public static event Action? Initialized;
+    public static InitalizationStatus InitalizationStatus { get; private set; } = InitalizationStatus.NotInitialized;
+    public static LoadingStatus LoadingStatus { get; private set; } = LoadingStatus.NotLoaded;
 
+    
     private static SandcubeGame? _instance = null;
     public static SandcubeGame? Instance
     {
@@ -30,9 +35,12 @@ public sealed class SandcubeGame : Component
         private set => _instance = value;
     }
 
-    [Property] public World World { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
+
+
+    public GameInfo? CurrentGameInfo { get; private set; }
+    public GameSaveHelper? CurrentGameSaveHelper { get; private set; }
 
     public Registry<Block> BlocksRegistry { get; } = new();
     public Registry<Item> ItemsRegistry { get; } = new();
@@ -43,89 +51,48 @@ public sealed class SandcubeGame : Component
 
     private readonly Dictionary<Id, ISandcubeMod> _mods = new();
 
-    protected override void OnEnabled()
+    public async Task Initialize()
     {
-        if(Instance.IsValid() && Instance != this)
-        {
-            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(SandcubeGame)}. Destroying this...");
-            Destroy();
-            return;
-        }
+        AssertInitalizationStatus(InitalizationStatus.NotInitialized);
 
-        if(!Scene.IsEditor)
-            Instance = this;
-    }
+        InitalizationStatus = InitalizationStatus.Initializing;
+        Instance = this;
 
-    protected override void OnStart()
-    {
-        if(Instance != this)
-            return;
-
-        _ = OnInitialize();
-    }
-
-    protected override void OnDisabled()
-    {
-        if(Instance != this || !IsStarted)
-            return;
-
-        Stopped?.Invoke();
-        IsStarted = false;
-    }
-
-    protected override void OnDestroy()
-    {
-        if(Instance != this)
-            return;
-
-        Instance = null;
-    }
-
-    private async Task OnInitialize()
-    {
         await LoadAllMods();
 
-        if(!Enabled || !this.IsValid())
-            return;
-
-        IsStarted = true;
-        Started?.Invoke();
+        InitalizationStatus = InitalizationStatus.Initialized;
+        Initialized?.Invoke();
     }
 
-    protected override void OnUpdate()
+    public bool TryLoadGame(BaseFileSystem baseFileSystem)
     {
-        if(!IsStarted)
-            return;
+        AssertInitalizationStatus(InitalizationStatus.Initialized);
+        AssertLoadingStatus(LoadingStatus.NotLoaded);
 
-        if(ShouldAnimateBlockTextures)
-            AnimateBlockTextures();
-    }
+        LoadingStatus = LoadingStatus.Loading;
 
-    private void AnimateBlockTextures()
-    {
-        if(BlocksTextureMap.UpdateAnimatedTextures())
-            World.UpdateTexture(BlocksTextureMap.Texture);
-    }
-
-    private void RebuildBlockMeshes()
-    {
-        BlockMeshes.Clear();
-        foreach(var block in BlocksRegistry.All)
+        GameSaveHelper helper = new(baseFileSystem);
+        if(!helper.TryReadGameInfo(out var gameInfo))
         {
-            foreach(var blockState in block.Value.BlockStateSet)
-                BlockMeshes.Add(blockState);
+            LoadingStatus = LoadingStatus.NotLoaded;
+            return false;
         }
-    }
 
-    private async Task LoadAllMods()
-    {
-        BaseMod = new();
-        List<ISandcubeMod> modsToLoad = new() { BaseMod };
-        await LoadMods(modsToLoad);
+        CurrentGameInfo = gameInfo;
+        CurrentGameSaveHelper = helper;
+
+        LoadingStatus = LoadingStatus.Loaded;
+
+        foreach(var (_, mod) in _mods)
+            mod.OnGameLoaded();
+
+        return true;
     }
 
     public async Task LoadMods(IEnumerable<ISandcubeMod> mods)
     {
+        AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
+
         List<Task> blocksRegisteringTasks = new();
         foreach(var mod in mods)
         {
@@ -146,20 +113,117 @@ public sealed class SandcubeGame : Component
 
         foreach(var mod in mods)
             mod.OnLoaded();
-    }
 
-    public async Task LoadMod(ISandcubeMod mod)
-    {
-        if(_mods.ContainsKey(mod.Id))
-            throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
-        _mods[mod.Id] = mod;
-
-        await mod.RegisterBlocks(BlocksRegistry);
-        RebuildBlockMeshes();
-        await mod.RegisterItems(ItemsRegistry);
-        mod.OnLoaded();
+        if(LoadingStatus == LoadingStatus.Loaded)
+        {
+            foreach(var mod in mods)
+                mod.OnGameLoaded();
+        }
     }
 
     public ISandcubeMod? GetMod(Id id) => _mods!.GetValueOrDefault(id, null);
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
+
+
+    protected override void OnEnabled()
+    {
+        if(Instance.IsValid() && Instance != this)
+        {
+            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(SandcubeGame)}. Destroying {this}...");
+            Destroy();
+            return;
+        }
+    }
+
+    protected override void OnStart()
+    {
+        if(Instance.IsValid() && Instance != this)
+            return;
+
+        if(InitalizationStatus == InitalizationStatus.NotInitialized)
+            _ = Initialize();
+    }
+
+    protected override void OnUpdate()
+    {
+        if(Instance.IsValid() && Instance != this)
+            return;
+
+        if(InitalizationStatus != InitalizationStatus.Initialized)
+            return;
+
+        if(ShouldAnimateBlockTextures)
+            AnimateBlockTextures();
+    }
+
+    protected override void OnDisabled()
+    {
+        if(Instance.IsValid() && Instance != this)
+            return;
+
+        if(IsValid)
+        {
+            Log.Warning($"{nameof(SandcubeGame)} was disabled. It's fine if it being destroyed or scene is unloading. Destroying {this} ...");
+            Destroy();
+        }
+    }
+
+    protected override void OnDestroy()
+    {
+        if(Instance.IsValid() && Instance != this)
+            return;
+
+        InitalizationStatus = InitalizationStatus.NotInitialized;
+        LoadingStatus = LoadingStatus.NotLoaded;
+        Instance = null;
+    }
+
+    private void AnimateBlockTextures()
+    {
+        //TODO:
+    }
+
+    private void RebuildBlockMeshes()
+    {
+        BlockMeshes.Clear();
+        foreach(var block in BlocksRegistry.All)
+        {
+            foreach(var blockState in block.Value.BlockStateSet)
+                BlockMeshes.Add(blockState);
+        }
+    }
+
+    private async Task LoadAllMods()
+    {
+        BaseMod = new();
+        List<ISandcubeMod> modsToLoad = new() { BaseMod };
+        await LoadMods(modsToLoad);
+    }
+
+    
+    private void AssertValid()
+    {
+        if(!IsValid)
+            throw new InvalidOperationException($"{nameof(SandcubeGame)} {this} is not valid");
+        if(Instance.IsValid() && Instance != this)
+            throw new InvalidOperationException($"{nameof(SandcubeGame)} {this} is duplicated instance");
+        if(Scene.IsEditor)
+            throw new InvalidOperationException($"{nameof(SandcubeGame)} {this} can't run in editor");
+    }
+
+    private void AssertInitalizationStatus(InitalizationStatus initalizationStatus, bool equal = true)
+    {
+        AssertValid();
+        bool statusEqual = InitalizationStatus == initalizationStatus;
+        if(statusEqual != equal)
+            throw new InvalidOperationException($"{nameof(SandcubeGame)}'s {nameof(InitalizationStatus)} is{(equal ? string.Empty : " not")} {initalizationStatus}");
+    }
+
+    private void AssertLoadingStatus(LoadingStatus loadingStatus, bool equal = true)
+    {
+        AssertValid();
+        bool statusEqual = LoadingStatus == loadingStatus;
+        if(statusEqual != equal)
+            throw new InvalidOperationException($"{nameof(SandcubeGame)}'s {nameof(LoadingStatus)} is{(equal ? string.Empty : " not")} {loadingStatus}");
+    }
 }
