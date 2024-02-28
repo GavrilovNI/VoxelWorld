@@ -5,19 +5,21 @@ namespace Sandcube.Registries;
 
 public class ModRegisterables<T> where T : IRegisterable
 {
-    public virtual Task Register(RegistriesContainer registries)
+    public virtual Task Register(RegistriesContainer registries) => RegisterFrom(this, registries.GetOrAddRegistry<T>());
+
+    public static Task RegisterFrom(object target, Registry<T> registry)
     {
-        var properties = TypeLibrary.GetType(GetType()).Properties.Where(p => p.IsPublic && p.PropertyType.IsAssignableTo(typeof(T)));
+        var properties = TypeLibrary.GetType(target.GetType()).Properties.Where(p => p.IsPublic && p.PropertyType.IsAssignableTo(typeof(T)));
 
         foreach(var property in properties)
         {
             if(property.IsStatic)
-                Log.Warning($"{GetType().FullName}.{property.Name} shouldn't be static (causes error on hotload)");
+                Log.Warning($"{target.GetType().FullName}.{property.Name} shouldn't be static (causes error on hotload)");
 
             if(property.IsSetMethodPublic)
-                Log.Warning($"set of {GetType().FullName}.{property.Name} should be private");
+                Log.Warning($"set of {target.GetType().FullName}.{property.Name} should be private");
 
-            registries.Register<T>((IRegisterable)property.GetValue(this));
+            registry.Register((IRegisterable)property.GetValue(target));
         }
 
         return Task.CompletedTask;
