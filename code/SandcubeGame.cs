@@ -39,6 +39,7 @@ public sealed class SandcubeGame : Component
     }
 
     [Property] public GameObject ModsParent { get; private set; } = null!;
+    [Property] public GameObject WorldsParent { get; private set; } = null!;
     [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
     [Property] public GameObject PlayerPrefab { get; private set; } = null!;
@@ -193,7 +194,7 @@ public sealed class SandcubeGame : Component
 
     private World CreateWorld(string name, string savePath, bool enable = true)
     {
-        var cloneConfig = new CloneConfig(Transform.World, GameObject, false, $"World {name}");
+        var cloneConfig = new CloneConfig(Transform.World, WorldsParent, false, $"World {name}");
         var worldGameObject = WorldPrefab.Clone(cloneConfig);
         worldGameObject.BreakFromPrefab();
         var world = worldGameObject.Components.Get<World>(true);
@@ -221,6 +222,7 @@ public sealed class SandcubeGame : Component
             return;
 
         ModsParent ??= GameObject;
+        WorldsParent ??= GameObject;
 
         if(InitalizationStatus == InitalizationStatus.NotInitialized)
             _ = Initialize();

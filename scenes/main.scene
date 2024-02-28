@@ -47,6 +47,10 @@
           "WorldPrefab": {
             "_type": "gameobject",
             "prefab": "prefabs/world.prefab"
+          },
+          "WorldsParent": {
+            "_type": "gameobject",
+            "go": "108bed85-7734-41fa-bcd2-22f15b326b19"
           }
         }
       ],
@@ -54,6 +58,11 @@
         {
           "Id": "d0115228-fd86-4a80-84c5-febd9bcadaa5",
           "Name": "Mods",
+          "Enabled": true
+        },
+        {
+          "Id": "108bed85-7734-41fa-bcd2-22f15b326b19",
+          "Name": "Worlds",
           "Enabled": true
         }
       ]
@@ -262,6 +271,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-28T17:13:21.2863884\u002B01:00",
+  "LastSaved": "2024-02-28T18:03:38.8219484\u002B01:00",
   "__references": []
 }
