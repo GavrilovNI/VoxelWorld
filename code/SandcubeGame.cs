@@ -143,24 +143,41 @@ public sealed class SandcubeGame : Component
     {
         AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
 
-        List<Task> registeringTasks = new();
+        List<Task<(Id modId, RegistriesContainer registries)>> registeringTasks = new();
         foreach(var mod in mods)
         {
             if(_mods.ContainsKey(mod.Id))
                 throw new InvalidOperationException($"Mod with id {mod.Id} was already added");
 
-            _mods[mod.Id] = mod;
-
             if(mod is Component modComponent)
                 modComponent.GameObject.Parent = ModsParent;
 
-            var task = mod.RegisterValues(Registries);
+            RegistriesContainer registries = new();
+            var task = mod.RegisterValues(registries).ContinueWith(t => (mod.Id, registries));
             registeringTasks.Add(task);
         }
         await Task.WhenAll(registeringTasks);
 
-        foreach(var mod in mods)
+        var regsiteredMods = mods.ToDictionary(m => m.Id, m => m);
+        foreach(var (modId, registries) in registeringTasks.Select(t => t.Result))
+        {
+            var usedIdsFromMod = 
+                registries.All(registry => registry.Value.All.All(registerable => registerable.Key.ModId == modId));
+
+            if(!usedIdsFromMod)
+            {
+                Log.Warning($"Mod {modId} tried to register values with different mod id, skipping mod");
+                regsiteredMods.Remove(modId);
+                continue;
+            }
+            Registries.Add(registries);
+        }
+
+        foreach(var (id, mod) in regsiteredMods)
+        {
+            _mods[id] = mod;
             mod.OnLoaded();
+        }
 
         if(LoadingStatus == LoadingStatus.Loaded)
         {
