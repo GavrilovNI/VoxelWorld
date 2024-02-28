@@ -113,13 +113,11 @@
       {
         "Id": "014344ea-4dc2-4d9e-a6e2-6679ff219542",
         "Name": "Chunks",
-        "Position": "106.9336,106.9336,-151.227",
         "Enabled": true
       },
       {
         "Id": "1f2de40c-01fc-4b07-a921-ac1d0b417cb4",
         "Name": "Entities",
-        "Position": "106.9336,106.9336,-151.227",
         "Enabled": true
       }
     ]
