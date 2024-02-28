@@ -39,7 +39,8 @@ public abstract class Registry
             Register(value);
     }
 
-    public IRegisterable? Get(ModedId id) => _values!.GetValueOrDefault(id, null);
+    public bool Contains(ModedId id) => _values.ContainsKey(id);
+    public IRegisterable Get(ModedId id) => _values[id];
 
     public bool CanRegister(Type type) => type.IsAssignableTo(ValueType);
     public bool CanRegister<T>() => typeof(T).IsAssignableTo(ValueType);
@@ -47,7 +48,7 @@ public abstract class Registry
     public IEnumerator<IRegisterable> GetEnumerator() => All.Values.GetEnumerator();
 }
 
-public class Registry<T> : Registry, IEnumerable<T> where T : class, IRegisterable
+public class Registry<T> : Registry, IEnumerable<T> where T : IRegisterable
 {
     public new IReadOnlyDictionary<ModedId, T> All => base.All.ToDictionary(kv => kv.Key, kv => (T)kv.Value).AsReadOnly();
 
@@ -65,7 +66,7 @@ public class Registry<T> : Registry, IEnumerable<T> where T : class, IRegisterab
 
     public void Register(T value) => base.Register(value);
 
-    public new T? Get(ModedId id) => base.Get(id) as T;
+    public new T Get(ModedId id) => (T)base.Get(id);
 
     public new IEnumerator<T> GetEnumerator() => base.GetEnumerator().Cast<T>();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

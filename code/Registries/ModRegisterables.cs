@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Registries;
 
-public class ModRegisterables<T> where T : class, IRegisterable
+public class ModRegisterables<T> where T : IRegisterable
 {
     public virtual Task Register(RegistriesContainer registries)
     {

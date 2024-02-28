@@ -1,17 +1,17 @@
 ﻿using Sandcube.Data.Enumarating;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Sandcube.Registries;
 
-public class RegistriesContainer
+public class RegistriesContainer : IEnumerable<KeyValuePair<Type, Registry>>
 {
     private readonly Dictionary<Type, Registry> _registries = new();
 
     public void Clear() => _registries.Clear();
 
-    public Registry<T> GetOrAddRegistry<T>() where T : class, IRegisterable
+    public Registry<T> GetOrAddRegistry<T>() where T : IRegisterable
     {
         var type = typeof(T);
         if(_registries.TryGetValue(type, out var registry))
@@ -22,9 +22,9 @@ public class RegistriesContainer
         return result;
     }
 
-    public Registry<T> GetRegistry<T>() where T : class, IRegisterable => (Registry<T>)_registries[typeof(T)];
+    public Registry<T> GetRegistry<T>() where T : IRegisterable => (Registry<T>)_registries[typeof(T)];
 
-    public bool TryGetRegistry<T>(out Registry<T> registry) where T : class, IRegisterable
+    public bool TryGetRegistry<T>(out Registry<T> registry) where T : IRegisterable
     {
         if(_registries.TryGetValue(typeof(T), out var result))
         {
@@ -36,7 +36,7 @@ public class RegistriesContainer
         return false;
     }
 
-    public void Register<T>(IRegisterable value) where T : class, IRegisterable
+    public void Register<T>(IRegisterable value) where T : IRegisterable
     {
         GetOrAddRegistry<T>().Register(value);
     }
@@ -51,4 +51,7 @@ public class RegistriesContainer
                 _registries[type] = registry.Clone();
         }
     }
+
+    public IEnumerator<KeyValuePair<Type, Registry>> GetEnumerator() => _registries.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
