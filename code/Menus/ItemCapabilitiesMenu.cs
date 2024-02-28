@@ -123,9 +123,9 @@ public class ItemCapabilitiesMenu : IMenu
     }
 
 
-    public virtual bool IsStillValid(SandcubePlayer player) => true;
+    public virtual bool IsStillValid(Player player) => true;
 
-    public virtual GameObject CreateScreen(SandcubePlayer player)
+    public virtual GameObject CreateScreen(Player player)
     {
         var gameObject = new GameObject();
         var screen = gameObject.Components.Create<ItemCapabilitiesScreen>();

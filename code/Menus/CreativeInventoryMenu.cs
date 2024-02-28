@@ -12,7 +12,7 @@ public class CreativeInventoryMenu : ItemCapabilitiesMenu
         Capabilities.Insert(0, new CreativeItemStackInventory());
     }
 
-    public override bool IsStillValid(SandcubePlayer player) => player.IsCreative;
+    public override bool IsStillValid(Player player) => player.IsCreative;
 
     public override bool PlaceStack(IReadOnlyIndexedCapability<Inventories.Stack<Item>> capability, int slotIndex, int maxCount)
     {

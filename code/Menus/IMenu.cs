@@ -5,6 +5,6 @@ namespace Sandcube.Menus;
 
 public interface IMenu
 {
-    bool IsStillValid(SandcubePlayer player) => true;
-    GameObject CreateScreen(SandcubePlayer player);
+    bool IsStillValid(Player player) => true;
+    GameObject CreateScreen(Player player);
 }

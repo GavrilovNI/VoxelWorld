@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Entities;
 using Sandcube.Players;
 
 namespace Sandcube.Menus;
@@ -16,7 +17,7 @@ public class MenuController : Component, ILocalPlayerInitializable
         }
         private set => _instance = value;
     }
-    [Property] public SandcubePlayer Player { get; set; } = null!;
+    [Property] public Player? Player { get; set; }
     [Property] public GameObject EscapeScreen { get; set; } = null!;
 
     public bool IsAnyOpened => CurrentMenu is not null || CurrentScreen is not null;
@@ -25,7 +26,7 @@ public class MenuController : Component, ILocalPlayerInitializable
     public bool ShouldDestroyScreenOnClose { get; private set; }
     public bool IsPlayerInventory { get; private set; }
 
-    public void InitializeLocalPlayer(SandcubePlayer player) => Player = player;
+    public void InitializeLocalPlayer(Entity player) => Player = player as Player;
 
     protected override void OnEnabled()
     {
@@ -72,15 +73,17 @@ public class MenuController : Component, ILocalPlayerInitializable
             }
         }
 
-        if(CurrentMenu is not null && !CurrentMenu.IsStillValid(Player))
+        if(!Player.IsValid() || CurrentMenu is not null && !CurrentMenu.IsStillValid(Player!))
             CloseMenu();
     }
 
     public virtual void Open(IMenu menu)
     {
+        if(!Player.IsValid())
+            return;
         CloseMenu();
         CurrentMenu = menu;
-        OpenScreen(menu.CreateScreen(Player), true);
+        OpenScreen(menu.CreateScreen(Player!), true);
     }
 
     public virtual void CloseMenu()

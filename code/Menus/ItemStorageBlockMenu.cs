@@ -24,7 +24,7 @@ public class ItemStorageBlockMenu : ItemCapabilitiesMenu
         PlayerInventory = playerInventory;
     }
 
-    public override bool IsStillValid(SandcubePlayer player)
+    public override bool IsStillValid(Player player)
     {
         if(PlayerInventory != player.Inventory)
             return false;

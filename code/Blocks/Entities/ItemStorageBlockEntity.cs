@@ -24,7 +24,7 @@ public class ItemStorageBlockEntity : BlockEntity
         Capability = new ItemStackInventory(storageSize, slotLimit);
     }
 
-    public IMenu CreateMenu(SandcubePlayer player)
+    public IMenu CreateMenu(Player player)
     {
         return new ItemStorageBlockMenu(this, player.Inventory);
     }

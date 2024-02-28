@@ -5,6 +5,7 @@
 @using Sandcube.Inventories.Players
 @using Sandcube.Items
 @using Sandcube.Players
+@using Sandcube.Entities
 @using Sandcube.UI.Inventories
 @using System
 
@@ -45,7 +46,7 @@
 	protected Stack<Item> SecondaryHandStack => PlayerInventory?.GetHandItem(HandType.Secondary) ?? Stack<Item>.Empty;
 	protected Texture SelectorTexture;
 
-	public void InitializeLocalPlayer(SandcubePlayer player) => PlayerInventory = player.Components.Get<PlayerInventory>();
+	public void InitializeLocalPlayer(Entity player) => PlayerInventory = player.Components.Get<PlayerInventory>();
 
 	protected override void OnAwake()
 	{

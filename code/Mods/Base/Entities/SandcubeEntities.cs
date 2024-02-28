@@ -8,4 +8,6 @@ public sealed class SandcubeEntities : ModEntities
 {
     private static ModedId MakeId(string entityId) => new(SandcubeBaseMod.ModName, entityId);
 
+    [Property] private PrefabScene PlayerPrefab { get; set; } = null!;
+    [AutoPrefabEntityType(SandcubeBaseMod.ModName)] public EntityType Player { get; private set; } = null!;
 }

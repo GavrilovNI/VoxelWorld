@@ -10,7 +10,7 @@ namespace Sandcube.Players;
 
 public class WorldInteractor : Component
 {
-    [Property] public SandcubePlayer Player { get; set; } = null!;
+    [Property] public Player Player { get; set; } = null!;
     [Property] public GameObject Eye { get; set; } = null!;
     public float ReachDistance => Player.ReachDistance;
 

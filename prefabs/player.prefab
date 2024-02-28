@@ -1,28 +1,40 @@
 {
   "RootObject": {
-    "Id": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
-    "Name": "Player",
-    "Position": "0,0,1900",
+    "Id": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+    "Name": "player",
     "Enabled": true,
     "Components": [
       {
-        "__type": "CitizenAnimationHelper",
-        "BodyWeight": 1,
-        "EyeSource": null,
-        "EyesWeight": 1,
-        "HeadWeight": 1,
-        "Height": 1,
-        "IkLeftFoot": null,
-        "IkLeftHand": null,
-        "IkRightFoot": null,
-        "IkRightHand": null,
-        "LookAt": null,
-        "LookAtEnabled": false,
-        "Target": {
+        "__type": "Player",
+        "Inventory": {
           "_type": "component",
-          "go": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
-          "component_type": "SkinnedModelRenderer"
+          "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+          "component_type": "PlayerInventory"
+        },
+        "IsCreative": false,
+        "ReachDistance": 196.84999
+      },
+      {
+        "__type": "PlayerInventory"
+      },
+      {
+        "__type": "WorldInteractor",
+        "Eye": {
+          "_type": "gameobject",
+          "go": "de14f3b2-5b8b-4a8b-9984-c257fd919ba5"
+        },
+        "InteractionTag": "interactable",
+        "Player": {
+          "_type": "component",
+          "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+          "component_type": "Player"
         }
+      },
+      {
+        "__type": "WorldAutoLoader",
+        "Distance": "2,2,2",
+        "TimeBetweenSuccessfulAttempts": 1,
+        "World": null
       },
       {
         "__type": "CharacterController",
@@ -30,148 +42,31 @@
         "Bounciness": 0.3,
         "GroundAngle": 45,
         "Height": 64,
-        "IgnoreLayers": "interactable",
+        "IgnoreLayers": "",
         "Radius": 16,
         "StepHeight": 18
       },
       {
         "__type": "SandcubePlayerController",
         "__enabled": false,
-        "AnimationHelper": {
-          "_type": "component",
-          "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
-          "component_type": "CitizenAnimationHelper"
-        },
-        "Body": {
-          "_type": "gameobject",
-          "go": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7"
-        },
+        "AnimationHelper": null,
+        "Body": null,
         "CameraParent": {
           "_type": "gameobject",
-          "go": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61"
+          "go": "17a80f85-558a-4f16-83a3-c18996fb7136"
         },
         "Gravity": "0,0,800"
-      },
-      {
-        "__type": "SandcubePlayer",
-        "Inventory": {
-          "_type": "component",
-          "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
-          "component_type": "PlayerInventory"
-        },
-        "IsCreative": true,
-        "ReachDistance": 196.84999
-      },
-      {
-        "__type": "PlayerInventory"
-      },
-      {
-        "__type": "WorldAutoLoader",
-        "Distance": "2,2,1",
-        "TimeBetweenSuccessfulAttempts": 1,
-        "World": null
-      },
-      {
-        "__type": "WorldInteractor",
-        "Eye": {
-          "_type": "gameobject",
-          "go": "7c163f9b-273d-41e8-91d6-9f096d02854b"
-        },
-        "InteractionTag": "interactable",
-        "Player": {
-          "_type": "component",
-          "go": "4d326de5-b0c5-447f-8cc9-c6b3d0bd93a8",
-          "component_type": "SandcubePlayer"
-        }
       }
     ],
     "Children": [
       {
-        "Id": "7daff6f8-35a7-4fa6-9d2f-3c4e693af8d7",
-        "Name": "Body",
-        "Position": "0,-0.66093,0",
-        "Components": [
-          {
-            "__type": "SkinnedModelRenderer",
-            "AnimationGraph": null,
-            "BodyGroups": 18446744073709551615,
-            "BoneMergeTarget": null,
-            "CreateBoneObjects": false,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Model": "models/citizen/citizen.vmdl",
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": [
-          {
-            "Id": "975e3006-e7c3-46a5-9f30-c31a196c89f9",
-            "Name": "Name Tag UI",
-            "Position": "-0.000001814945,0.1895752,80.7357",
-            "Rotation": "-0.00000005960058,0.000000000000005518709,-0.9999317,0.01167414",
-            "Enabled": true,
-            "Components": [
-              {
-                "__type": "WorldPanel",
-                "HorizontalAlign": "Center",
-                "LookAtCamera": true,
-                "PanelSize": "1024,256",
-                "RenderScale": 1,
-                "VerticalAlign": "Center"
-              }
-            ]
-          },
-          {
-            "Id": "258a1012-ff9e-49b5-bf1b-887d483bb0bf",
-            "Name": "Hair",
-            "Position": "0,0.66093,0",
-            "Enabled": true,
-            "Components": [
-              {
-                "__type": "SkinnedModelRenderer",
-                "AnimationGraph": null,
-                "BodyGroups": 18446744073709551615,
-                "BoneMergeTarget": null,
-                "CreateBoneObjects": false,
-                "MaterialGroup": null,
-                "MaterialOverride": null,
-                "Model": "models/citizen_clothes/hair/hair_fade/models/hair_fade.vmdl",
-                "RenderType": "On",
-                "Tint": "1,1,1,1"
-              }
-            ]
-          },
-          {
-            "Id": "f14d65a1-eea4-4fe5-89d7-a550ec6b8f11",
-            "Name": "Hair",
-            "Position": "0,0.66093,0",
-            "Enabled": true,
-            "Components": [
-              {
-                "__type": "SkinnedModelRenderer",
-                "AnimationGraph": null,
-                "BodyGroups": 18446744073709551615,
-                "BoneMergeTarget": null,
-                "CreateBoneObjects": false,
-                "MaterialGroup": null,
-                "MaterialOverride": null,
-                "Model": "models/citizen_clothes/shoes/boots/models/army_boots.vmdl",
-                "RenderType": "On",
-                "Tint": "1,1,1,1"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "5bf8c623-c006-44a9-9a99-2bbe02ff7d61",
+        "Id": "17a80f85-558a-4f16-83a3-c18996fb7136",
         "Name": "EyePos",
         "Position": "0,0,64",
         "Enabled": true,
         "Children": [
           {
-            "Id": "7c163f9b-273d-41e8-91d6-9f096d02854b",
+            "Id": "de14f3b2-5b8b-4a8b-9984-c257fd919ba5",
             "Name": "Camera",
             "Position": "8,0,0",
             "Enabled": true,
