@@ -9,7 +9,7 @@ public interface ISandcubeMod
 
     public Task RegisterValues(RegistriesContainer registries) => Task.CompletedTask;
 
-    public void OnLoaded();
+    public void OnLoaded() { }
 
-    public void OnGameLoaded();
+    public void OnGameLoaded() { }
 }
