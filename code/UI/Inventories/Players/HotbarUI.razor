@@ -15,7 +15,7 @@
 @implements ILocalPlayerInitializable
 
 <root>
-	@if(PlayerInventory is not null)
+	@if(PlayerInventory.IsValid())
 	{
 		var hotbar = PlayerInventory.Hotbar;
 		<div class="inner" style="aspect-ratio:@(hotbar.Size)">
@@ -53,5 +53,5 @@
 		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
 	}
 
-	protected override int BuildHash() => HashCode.Combine(PlayerInventory?.Hotbar, PlayerInventory?.MainHandIndex);
+	protected override int BuildHash() => HashCode.Combine(PlayerInventory?.Hotbar, PlayerInventory?.MainHandIndex, PlayerInventory.IsValid());
 }
