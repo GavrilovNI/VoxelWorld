@@ -1,14 +1,24 @@
 {
   "RootObject": {
     "Id": "00458465-149e-4d28-a919-a4e59e0bed11",
-    "Name": "BaseMod",
-    "Position": "-200.0244,127.7601,-98.13211",
+    "Name": "basemod",
     "Enabled": true,
     "Components": [
       {
         "__type": "SandcubeBaseMod"
+      },
+      {
+        "__type": "SandcubeEntities",
+        }
+      },
+      {
+        "__type": "WorldAutoLoader",
+        "Distance": "2,2,1",
+        "TimeBetweenSuccessfulAttempts": 1,
+        "World": null
       }
-    ]
+    ],
+    "Children": []
   },
   "ShowInMenu": false,
   "MenuPath": null,

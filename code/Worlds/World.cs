@@ -2,6 +2,8 @@
 using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
+using Sandcube.Entities;
+using Sandcube.Exceptions;
 using Sandcube.Interfaces;
 using Sandcube.IO;
 using Sandcube.Mth;
@@ -22,11 +24,16 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
     [Property] protected bool TickByItself { get; set; } = true;
 
+    [Property] protected GameObject EntitiesParent { get; set; } = null!;
+
     private bool IsSceneRunning => !Scene.IsEditor;
 
 
     protected readonly SortedDictionary<Vector3Int, OneOf<Chunk, Task<Chunk>>> Chunks = new(Vector3Int.XYZIterationComparer);
     protected CancellationTokenSource ChunkLoadCancellationTokenSource = new();
+
+    protected readonly Dictionary<Guid, Entity> Entities = new();
+
 
     protected override void OnDestroyInner()
     {
@@ -57,6 +64,32 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             }
         }
     }
+
+    public void AddEntity(Entity entity)
+    {
+        ArgumentNotValidException.ThrowIfNotValid(entity);
+
+        if(!object.ReferenceEquals(this, entity.World))
+            throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
+
+        var entityGameObject = entity.GameObject;
+        var entityId = entityGameObject.Id;
+        if(Entities.ContainsKey(entityId))
+            throw new InvalidOperationException($"{nameof(Entity)} {entity} is already added to {nameof(World)} {this}");
+
+        Entities[entityId] = entity;
+        entityGameObject.Parent = EntitiesParent;
+    }
+
+    public void RemoveEntity(Entity entity)
+    {
+        if(object.ReferenceEquals(this, entity.World))
+            throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was still set to {nameof(World)} {this}");
+
+        var entityId = entity.GameObject.Id;
+        Entities.Remove(entityId);
+    }
+
 
     public virtual void UpdateTexture(Texture texture)
     {

@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Mods.Base.Blocks;
+using Sandcube.Mods.Base.Entities;
 using Sandcube.Mods.Base.Items;
 using Sandcube.Registries;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
 
     public SandcubeBlocks Blocks { get; private set; } = null!;
     public SandcubeItems Items { get; private set; } = null!;
+    public SandcubeEntities Entities { get; private set; } = null!;
 
     public void OnLoaded() { }
 
@@ -28,6 +30,8 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
         SandcubeGame.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
         Items = new();
         await Items.Register(registries);
+        Entities = Components.Get<SandcubeEntities>(true);
+        await Entities.Register(registries);
 
         registries.Add(container);
     }

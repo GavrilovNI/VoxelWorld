@@ -178,6 +178,7 @@
                 "component_type": "ChunkCreator"
               },
               "ChunkSize": "16,16,16",
+              "EntitiesParent": null,
               "TickByItself": true
             },
             {
@@ -261,6 +262,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-26T19:11:48.5130575\u002B01:00",
+  "LastSaved": "2024-02-28T17:13:21.2863884\u002B01:00",
   "__references": []
 }

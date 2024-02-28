@@ -1,0 +1,11 @@
+﻿using Sandbox;
+using Sandcube.Entities.Types;
+using Sandcube.Registries;
+
+namespace Sandcube.Mods.Base.Entities;
+
+public sealed class SandcubeEntities : ModEntities
+{
+    private static ModedId MakeId(string entityId) => new(SandcubeBaseMod.ModName, entityId);
+
+}
