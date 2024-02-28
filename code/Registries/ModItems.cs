@@ -61,22 +61,20 @@ public class ModItems : ModRegisterables<Item>
             }
 
             var propertyType = property.PropertyType;
-            if(propertyType == typeof(BlockItem))
+            if(propertyType.IsGenericType)
             {
-                blockItem = new BlockItem(block, texture);
+                Log.Warning($"Couldn't create block item {thisType.FullName}.{property.Name}, generic types are not supported");
+                continue;
             }
-            else if(propertyType.IsAssignableTo(typeof(BlockItem)))
+
+            try
             {
-                blockItem = TypeLibrary.Create<BlockItem>(propertyType, new object[] { block!, texture });
-                if(blockItem is null)
-                {
-                    Log.Warning($"Couldn't create {propertyType.Name}. Probably constructor with 1 arg of type {nameof(Block)} wasn't found");
-                    continue;
-                }
+                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, texture });
             }
-            else
+            catch(MissingMethodException)
             {
-                throw new InvalidOperationException($"Can't auto create block item of type {propertyType} for property {thisType.FullName}.{property.Name}");
+                Log.Warning($"Couldn't create block item {thisType.FullName}.{property.Name}, constructor with args {typeof(Block)} {typeof(Texture)} not found");
+                continue;
             }
 
             property.SetValue(this, blockItem);
