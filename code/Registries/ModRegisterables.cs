@@ -19,7 +19,13 @@ public class ModRegisterables<T> where T : IRegisterable
             if(property.IsSetMethodPublic)
                 Log.Warning($"set of {target.GetType().FullName}.{property.Name} should be private");
 
-            registry.Register((IRegisterable)property.GetValue(target));
+            var value = property.GetValue(target);
+            if(value is null)
+            {
+                Log.Warning($"value {target.GetType().FullName}.{property.Name} was null");
+                continue;
+            }
+            registry.Register((IRegisterable)value);
         }
 
         return Task.CompletedTask;
