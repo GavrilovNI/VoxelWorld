@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sandbox;
+using System;
 
 namespace Sandcube.Registries;
 
@@ -16,5 +17,24 @@ public class AutoBlockItemAttribute : Attribute
         BlockId = blockId;
         UseRawTexture = rawTexturePath != null;
         RawTexturePath = rawTexturePath;
+    }
+
+    public bool TryGetModedId(PropertyDescription property, out ModedId modedId)
+    {
+        var blockIdString = BlockId ?? property.Name;
+        if(!Id.TryFromCamelCase(blockIdString, out Id blockId))
+        {
+            modedId = default;
+            return false;
+        }
+
+        if(!Id.TryFromCamelCase(ModId, out Id modId))
+        {
+            modedId = default;
+            return false;
+        }
+
+        modedId = new(modId, blockId);
+        return true;
     }
 }

@@ -2,11 +2,8 @@
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Items;
-using Sandcube.Mth;
-using Sandcube.Texturing;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sandcube.Registries;
@@ -35,23 +32,17 @@ public class ModItems : ModRegisterables<Item>
             }
 
             var autoAttribute = property.GetCustomAttribute<AutoBlockItemAttribute>();
-            var blockId = autoAttribute.BlockId ?? MakeBlockId(property.Name);
 
-            ModedId blockModedId;
-            try
+            if(!autoAttribute.TryGetModedId(property, out ModedId blockId))
             {
-                blockModedId = new(autoAttribute.ModId, blockId);
-            }
-            catch(ArgumentException)
-            {
-                Log.Warning($"Couldn't create block id to create item {thisType.FullName}.{property.Name}. Tried ModId '{autoAttribute.ModId}' and blockId '{blockId}'");
+                Log.Warning($"Couldn't create {nameof(ModedId)} to create item {thisType.FullName}.{property.Name}");
                 continue;
             }
 
-            var block = blocksRegistry.Get(blockModedId);
+            var block = blocksRegistry.Get(blockId);
             if(block is null)
             {
-                Log.Warning($"Couldn't find block with id '{blockModedId}' to create item {thisType.FullName}.{property.Name}");
+                Log.Warning($"Couldn't find block with id '{blockId}' to create item {thisType.FullName}.{property.Name}");
                 continue;
             }
 
@@ -104,29 +95,6 @@ public class ModItems : ModRegisterables<Item>
             itemTexture = Texture.Invalid;
 
         return (made, itemTexture);
-    }
-
-    private static string MakeBlockId(string propertyName)
-    {
-        const char underscore = '_';
-        if(propertyName.Contains(underscore))
-            return propertyName.ToLower();
-
-        StringBuilder builder = new();
-
-        for(int i = 0; i < propertyName.Length; ++i)
-        {
-            var c = propertyName[i];
-            if(Char.IsUpper(c))
-            {
-                c = Char.ToLower(c);
-                if(i != 0)
-                    builder.Append(underscore);
-            }
-            builder.Append(c);
-        }
-
-        return builder.ToString();
     }
 
     public override async Task Register(RegistriesContainer registries)
