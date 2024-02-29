@@ -96,7 +96,7 @@ public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
             cancellationToken.ThrowIfCancellationRequested();
             var states = Generator!.Generate(chunk.BlockOffset, chunk.Size);
             cancellationToken.ThrowIfCancellationRequested();
-            chunk.SetBlockStates(Vector3Int.Zero, states, BlockSetFlags.Default & ~BlockSetFlags.MarkDirty);
+            chunk.SetBlockStates(states, BlockSetFlags.UpdateModel);
             cancellationToken.ThrowIfCancellationRequested();
         });
     }

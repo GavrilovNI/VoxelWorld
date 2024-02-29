@@ -2,6 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Mods.Base;
 using Sandcube.Mth;
+using System.Collections.Generic;
 
 namespace Sandcube.Worlds.Generation;
 
@@ -14,7 +15,7 @@ public class WorldGenerator : Component
     [Property] public Curve HeightSurfaceCurve { get; set; }
     [Property] public Curve AdditiveDensityFromHeightCurve { get; set; }
 
-    protected bool ShouldPlaceBlock(Vector3Int position, float surfaceHeight)
+    protected bool ShouldPlaceBlock(in Vector3Int position, float surfaceHeight)
     {
         const int surfaceModifactionsHeight = 4;
         if(position.z < MinHeight - surfaceModifactionsHeight)
@@ -31,9 +32,9 @@ public class WorldGenerator : Component
         return shouldPalceBlock;
     }
 
-    public BlockState[,,] Generate(Vector3Int position, Vector3Int size)
+    public Dictionary<Vector3Int, BlockState> Generate(Vector3Int position, Vector3Int size)
     {
-        BlockState[,,] result = new BlockState[size.x, size.y, size.z];
+        Dictionary<Vector3Int, BlockState> result = new();
 
         var blocks = SandcubeBaseMod.Instance!.Blocks;
 
@@ -48,17 +49,16 @@ public class WorldGenerator : Component
 
                 for(int z = size.z - 1; z >= 0; --z)
                 {
-                    Vector3Int globalBlockPosition = new(globalBlockPositionXY, position.z + z);
-                    var shouldPlaceBlock = ShouldPlaceBlock(globalBlockPosition, surfaceHeight);
+                    var shouldPlaceBlock = ShouldPlaceBlockWithZOffset(0);
 
                     BlockState blockState;
                     if(shouldPlaceBlock)
                     {
-                        if(!ShouldPlaceBlockHigher(1))
+                        if(!ShouldPlaceBlockWithZOffset(1))
                             blockState = blocks.Grass.DefaultBlockState;
-                        else if(!ShouldPlaceBlockHigher(2) ||
-                            !ShouldPlaceBlockHigher(3) ||
-                            !ShouldPlaceBlockHigher(4))
+                        else if(!ShouldPlaceBlockWithZOffset(2) ||
+                            !ShouldPlaceBlockWithZOffset(3) ||
+                            !ShouldPlaceBlockWithZOffset(4))
                             blockState = blocks.Dirt.DefaultBlockState;
                         else
                             blockState = blocks.Stone.DefaultBlockState;
@@ -68,14 +68,19 @@ public class WorldGenerator : Component
                         blockState = blocks.Air.DefaultBlockState;
                     }
 
-                    result[x, y, z] = blockState;
+                    result[new(x, y, z)] = blockState;
                 
-                    bool ShouldPlaceBlockHigher(int heightOffset)
+                    bool ShouldPlaceBlockWithZOffset(int heightOffset)
                     {
-                        if(z + heightOffset >= size.z)
-                            return ShouldPlaceBlock(globalBlockPosition + Vector3Int.Up * heightOffset, surfaceHeight);
+                        if(heightOffset <= 0 || z + heightOffset >= size.z)
+                        {
+                            Vector3Int globalBlockPosition = new(globalBlockPositionXY, position.z + z + heightOffset);
+                            return ShouldPlaceBlock(globalBlockPosition, surfaceHeight);
+                        }
                         else
-                            return result[x, y, z + heightOffset] != blocks.Air.DefaultBlockState;
+                        {
+                            return result[new(x, y, z + heightOffset)] != blocks.Air.DefaultBlockState;
+                        }
                     }
                 }
             }

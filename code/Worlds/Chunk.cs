@@ -2,13 +2,13 @@ using Sandbox;
 using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
-using Sandcube.Data.Enumarating;
 using Sandcube.Interfaces;
 using Sandcube.IO;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Threading;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -138,27 +138,21 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     // Thread safe
-    public Task<bool> SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
+    public Task<bool> SetBlockStates(IDictionary<Vector3Int, BlockState> blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
-
-        var size = new Vector3Int(blockStates.GetLength(0), blockStates.GetLength(1), blockStates.GetLength(2));
-        if(size.IsAnyAxis(v => v <= 0))
-            return Task.FromResult(false);
-
-        var lastPosition = localPosition + size - Vector3Int.One;
-        if(!IsInBounds(localPosition) || !IsInBounds(lastPosition))
-            throw new InvalidOperationException($"setting range ({localPosition} - {lastPosition}) is out of chunk bounds");
 
         bool modified = false;
         bool markDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
         lock(Blocks)
         {
-            foreach(var positionOffset in size.GetPositionsFromZero(false))
+            foreach(var (position, blockState) in blockStates)
             {
-                var blockState = blockStates[positionOffset.x, positionOffset.y, positionOffset.z];
-                modified |= Blocks.PlaceBlock(localPosition + positionOffset, blockState, markDirty);
+                if(!IsInBounds(position))
+                    throw new InvalidOperationException($"block position {position} is out of chunk bounds");
+
+                modified |= Blocks.PlaceBlock(position, blockState, markDirty);
             }
 
             return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
