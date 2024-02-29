@@ -120,7 +120,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     // Thread safe
-    public Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
+    public Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
@@ -138,7 +138,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     // Thread safe
-    public Task<bool> SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates, BlockSetFlags flags = BlockSetFlags.Default)
+    public Task<bool> SetBlockStates(Vector3Int localPosition, BlockState[,,] blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         var size = new Vector3Int(blockStates.GetLength(0), blockStates.GetLength(1), blockStates.GetLength(2));
         if(size.IsAnyAxis(v => v <= 0))
