@@ -20,6 +20,9 @@ namespace Sandcube.Worlds;
 
 public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 {
+    public event Action<Vector3Int>? ChunkLoaded;
+    public event Action<Vector3Int>? ChunkUnloaded;
+
     [Property, HideIf(nameof(IsSceneRunning), true)] public Vector3Int ChunkSize { get; init; } = 16;
     [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
     [Property] protected bool TickByItself { get; set; } = true;
@@ -29,16 +32,23 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     private bool IsSceneRunning => !Scene.IsEditor;
 
 
-    protected readonly SortedDictionary<Vector3Int, OneOf<Chunk, Task<Chunk>>> Chunks = new(Vector3Int.XYZIterationComparer);
-    protected CancellationTokenSource ChunkLoadCancellationTokenSource = new();
+    protected ChunksCollection Chunks { get; private set; } = null!;
 
     protected readonly Dictionary<Guid, Entity> Entities = new();
 
 
+    protected override void OnAwake()
+    {
+        Chunks = new(DestroyChunk, Vector3Int.XYZIterationComparer);
+        Chunks.ChunkLoaded += OnChunkLoaded;
+        Chunks.ChunkUnloaded += OnChunkUnloaded;
+    }
+
     protected override void OnDestroyInner()
     {
-        base.OnDestroyInner();
         Clear();
+        Chunks.ChunkLoaded -= OnChunkLoaded;
+        Chunks.ChunkUnloaded -= OnChunkUnloaded;
     }
 
     protected override void OnUpdateInner()
@@ -47,6 +57,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             TickInternal();
     }
 
+    // Thread safe
     public virtual void Tick()
     {
         if(!TickByItself)
@@ -55,14 +66,8 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
     protected virtual void TickInternal()
     {
-        lock(Chunks)
-        {
-            foreach(var (_, chunkUnion) in Chunks)
-            {
-                if(chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid)
-                    chunk.Tick();
-            }
-        }
+        foreach(var (_, chunk) in Chunks)
+            chunk.Tick();
     }
 
     public void AddEntity(Entity entity)
@@ -93,184 +98,102 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
     public virtual void UpdateTexture(Texture texture)
     {
-        lock(Chunks)
-        {
-            foreach(var (_, chunkUnion) in Chunks)
-            {
-                if(chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid)
-                    chunk.UpdateTexture(texture);
-            }
-        }
+        foreach(var (_, chunk) in Chunks)
+            chunk.UpdateTexture(texture);
+    }
+    
     }
 
+    // Thread safe
     public virtual bool HasChunk(Vector3Int chunkPosition)
     {
-        lock(Chunks)
-        {
-            return Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid;
-        }
+        return Chunks.HasLoaded(chunkPosition);
     }
 
-    private void HandleChunkLoadingTask(Vector3Int chunkPosition, Task<Chunk> task)
+    // Thread safe
+    protected virtual async Task<Chunk?> GetChunkOrLoad(Vector3Int chunkPosition, bool awaitModelUpdate = false)
     {
-        if(!task.IsCompleted)
-            throw new InvalidOperationException("Chunk loading task wasn't completed");
 
-        lock(Chunks)
+        var chunk = await Chunks.GetChunkOrLoad(chunkPosition, token => CreateChunk(chunkPosition, token));
+
+        if(awaitModelUpdate && chunk.IsValid())
+            await chunk.GetModelUpdateTask();
+
+        return chunk;
+    }
+
+    // Thread safe
+    protected virtual Chunk? GetChunk(Vector3Int chunkPosition) => Chunks.Get(chunkPosition);
+
+    // Thread safe
+    protected virtual async Task<Chunk> CreateChunk(Vector3Int chunkPosition, CancellationToken cancellationToken)
+    {
+        ChunkCreationData creationData = new()
+        {
+            Position = chunkPosition,
+            Size = ChunkSize,
+            EnableOnCreate = false,
+            World = this
+        };
+
+        var chunk = await RunInGameThread(async c =>
+        {
+            return await ChunkCreator.CreateChunk(creationData, cancellationToken);
+        });
+
+
+        return chunk;
+    }
+
+    // Thread safe
+    public virtual async Task LoadChunk(Vector3Int chunkPosition, bool awaitModelUpdate = false)
+    {
+        Chunk? chunk;
+        do
         {
             if(!IsValid)
-                return;
-
-            if(task.IsCompletedSuccessfully)
-            {
-                var chunk = task.Result;
-
-                Chunks[chunkPosition] = chunk;
-
-                _ = RunInGameThread(ct =>
-                {
-                    if(!chunk.IsValid || ct.IsCancellationRequested)
-                        return;
-
-                    lock(Chunks)
-                    {
-                        var chunkIsValid = Chunks.TryGetValue(chunkPosition, out var chunkUnion) &&
-                            chunkUnion.Is<Chunk>(out var realChunk) &&
-                            realChunk == chunk;
-
-                        if(!chunkIsValid)
-                        {
-                            chunk.GameObject.Destroy();
-                            return;
-                        }
-
-                        chunk.GameObject.Enabled = true;
-                        OnChunkLoaded(chunk);
-                    }  
-                });
-            }
-            else
-            {
-                Chunks.Remove(chunkPosition);
-            }
+                throw new OperationCanceledException();
+            chunk = await GetChunkOrLoad(chunkPosition, awaitModelUpdate);
         }
+        while(!chunk.IsValid());
     }
 
     // Thread safe
-    public virtual Task<Chunk> GetChunkOrLoad(Vector3Int chunkPosition)
+    public virtual async Task LoadChunksSimultaneously(IReadOnlySet<Vector3Int> chunkPositions, bool awaitModelUpdate = false)
     {
-        lock(Chunks)
-        {
-            if(Chunks.TryGetValue(chunkPosition, out var chunkUnion))
-            {
-                if(chunkUnion.Is<Chunk>(out var chunk))
-                {
-                    if(chunk.IsValid)
-                        return Task.FromResult(chunk);
-                }
-                else
-                {
-                    return chunkUnion.As<Task<Chunk>>()!;
-                }
-            }
+        List<Task> tasks = new();
 
-            ChunkCreationData creationData = new()
-            {
-                Position = chunkPosition,
-                Size = ChunkSize,
-                EnableOnCreate = false,
-                World = this
-            };
+        foreach (var chunkPosition in chunkPositions)
+            tasks.Add(LoadChunk(chunkPosition, awaitModelUpdate));
 
-            var loadingTask = ChunkCreator.CreateChunk(creationData, ChunkLoadCancellationTokenSource.Token);
-            Chunks[chunkPosition] = loadingTask;
-            _ = loadingTask.ContinueWith(t => HandleChunkLoadingTask(chunkPosition, loadingTask));
-
-            return loadingTask;
-        }
+        await Task.WhenAll(tasks);
     }
 
-    public virtual Task<int> LoadChunksSimultaneously(IReadOnlySet<Vector3Int> chunkPositions)
-    {
-        lock(Chunks)
-        {
-            List<Task<Chunk>> alreadyLoadingTasks = new();
-            Dictionary<Vector3Int, Task<Chunk>> tasksToLoad = new();
-
-            int loadedCount = 0;
-
-            foreach(var chunkPosition in chunkPositions)
-            {
-                if(Chunks.TryGetValue(chunkPosition, out var chunkUnion))
-                {
-                    if(chunkUnion.Is<Task<Chunk>>(out var task))
-                    {
-                        alreadyLoadingTasks.Add(task);
-                        _ = task.ContinueWith(t =>
-                        {
-                            if(t.IsCompletedSuccessfully)
-                                Interlocked.Increment(ref loadedCount);
-                        });
-                        continue;
-                    }
-                    else if(chunkUnion.As<Chunk>()!.IsValid)
-                    {
-                        Interlocked.Increment(ref loadedCount);
-                        continue;
-                    }
-                }
-
-                ChunkCreationData creationData = new()
-                {
-                    Position = chunkPosition,
-                    Size = ChunkSize,
-                    EnableOnCreate = false,
-                    World = this
-                };
-
-                var loadingTask = ChunkCreator.CreateChunk(creationData, ChunkLoadCancellationTokenSource.Token);
-                Chunks[chunkPosition] = loadingTask;
-                tasksToLoad.Add(chunkPosition, loadingTask);
-            }
-
-            var loadingTasks = Task.WhenAll(tasksToLoad.Values);
-
-            _ = loadingTasks.ContinueWith(t =>
-            {
-                if(!IsValid)
-                    return;
-                lock(Chunks)
-                {
-                    foreach(var (chunkPosition, loadingTask) in tasksToLoad)
-                    {
-                        if(loadingTask.IsCompletedSuccessfully)
-                            Interlocked.Increment(ref loadedCount);
-                        HandleChunkLoadingTask(chunkPosition, loadingTask);
-                    }
-                }
-            });
-
-            return Task.WhenAll(loadingTasks, Task.WhenAll(alreadyLoadingTasks))
-                .ContinueWith(t => loadedCount);
-        }
-    }
-
-    // Call only in game thread
+    // Thread safe
     protected virtual void OnChunkLoaded(Chunk chunk)
     {
-        ThreadSafe.AssertIsMainThread();
-        UpdateNeighboringChunks(chunk.Position);
+        _ = RunInGameThread(ct =>
+        {
+            if(!chunk.IsValid)
+                return;
+
+            chunk.GameObject.Enabled = true;
+            chunk.Destroyed += OnChunkDestroyed;
+            ChunkLoaded?.Invoke(chunk.Position);
+            UpdateNeighboringChunks(chunk.Position);
+        });
     }
 
     // Thread safe
-    public virtual Chunk? GetChunk(Vector3Int chunkPosition)
+    protected virtual void OnChunkUnloaded(Chunk chunk)
     {
-        lock(Chunks)
-        {
-            if(Chunks.TryGetValue(chunkPosition, out var chunkUnion) && chunkUnion.Is<Chunk>(out var chunk) && chunk.IsValid)
-                return chunk;
-        }
-        return null;
+        _ = RunInGameThread(ct => ChunkUnloaded?.Invoke(chunk.Position));
+    }
+
+    protected virtual void OnChunkDestroyed(Chunk chunk)
+    {
+        chunk.Destroyed -= OnChunkDestroyed;
+        Chunks.RemoveLoaded(chunk);
     }
 
     public virtual Vector3Int GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
@@ -310,7 +233,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3Int blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
     {
         var chunkPosition = GetChunkPosition(blockPosition);
-        var chunk = await GetChunkOrLoad(chunkPosition);
+        var chunk = await GetChunkOrLoad(chunkPosition, false);
 
         if(!chunk.IsValid())
             throw new InvalidOperationException($"Couldn't load {nameof(Chunk)} at position {chunkPosition}");
@@ -411,29 +334,25 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual void Clear()
+    public virtual void Clear() => Chunks.Clear();
+
+    protected virtual void DestroyChunk(Chunk? chunk)
     {
-        lock(Chunks)
+        if(!chunk.IsValid())
+            return;
+
+        _ = RunInGameThread((ct) =>
         {
-            ChunkLoadCancellationTokenSource.Cancel();
-            ChunkLoadCancellationTokenSource.Dispose();
-            ChunkLoadCancellationTokenSource = new();
-
-            foreach(var (_, chunkUnion) in Chunks)
-                chunkUnion.As<Chunk>()?.GameObject.Destroy();
-
-            Chunks.Clear();
-        }
+            if(chunk.IsValid())
+                chunk.GameObject.Destroy();
+        });
     }
 
     public Dictionary<Vector3Int, BlocksData> Save(IReadOnlySaveMarker saveMarker)
     {
-        lock(Chunks)
-        {
-            var chunksToSave = Chunks.Where(c => c.Value.Is<Chunk>(out var chunk) && chunk.IsValid && !chunk.IsSaved)
-                .Select(c => c.Value.As<Chunk>()!);
+        var chunksToSave = Chunks.Where(pair => !pair.Value.IsSaved)
+                .Select(pair => pair.Value);
 
-            return chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
-        }
+        return chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
     }
 }
