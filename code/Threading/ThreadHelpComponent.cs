@@ -105,17 +105,17 @@ public class ThreadHelpComponent : Component
 
 
     // Thread safe
-    public Task RunInGameThread(Action<CancellationToken> action) => Enqueue(action, CancellationToken.None);
+    public Task RunInGameThread(Action<CancellationToken> action) => RunOrEnqueue(action, CancellationToken.None);
     // Thread safe
-    public Task RunInGameThread(Action<CancellationToken> action, CancellationToken cancellationToken) => Enqueue(action, cancellationToken);
+    public Task RunInGameThread(Action<CancellationToken> action, CancellationToken cancellationToken) => RunOrEnqueue(action, cancellationToken);
     // Thread safe
-    public Task RunInGameThread(Func<CancellationToken, Task> taskSupplier) => Enqueue(taskSupplier, CancellationToken.None);
+    public Task RunInGameThread(Func<CancellationToken, Task> taskSupplier) => RunOrEnqueue(taskSupplier, CancellationToken.None);
     // Thread safe
-    public Task RunInGameThread(Func<CancellationToken, Task> taskSupplier, CancellationToken cancellationToken) => Enqueue(taskSupplier, cancellationToken);
+    public Task RunInGameThread(Func<CancellationToken, Task> taskSupplier, CancellationToken cancellationToken) => RunOrEnqueue(taskSupplier, cancellationToken);
     // Thread safe
-    public Task<T> RunInGameThread<T>(Func<CancellationToken, Task<T>> taskSupplier) => Enqueue(taskSupplier, CancellationToken.None);
+    public Task<T> RunInGameThread<T>(Func<CancellationToken, Task<T>> taskSupplier) => RunOrEnqueue(taskSupplier, CancellationToken.None);
     // Thread safe
-    public Task<T> RunInGameThread<T>(Func<CancellationToken, Task<T>> taskSupplier, CancellationToken cancellationToken) => Enqueue(taskSupplier, cancellationToken);
+    public Task<T> RunInGameThread<T>(Func<CancellationToken, Task<T>> taskSupplier, CancellationToken cancellationToken) => RunOrEnqueue(taskSupplier, cancellationToken);
 
 
     protected sealed override void OnUpdate()
@@ -153,11 +153,22 @@ public class ThreadHelpComponent : Component
     protected virtual void OnDestroyInner() { }
 
     // Thread safe
-    private Task Enqueue(OneOf<Action<CancellationToken>, Func<CancellationToken, Task>> task,
+    private Task RunOrEnqueue(OneOf<Action<CancellationToken>, Func<CancellationToken, Task>> task,
         CancellationToken cancellationToken)
     {
         if(!IsValid)
             throw new TaskCanceledException();
+
+        if(Enabled && ThreadSafe.IsMainThread)
+        {
+            if(task.Is<Action<CancellationToken>>(out var action))
+            {
+                action.Invoke(cancellationToken);
+                return Task.CompletedTask;
+            }
+
+            return task.As<Func<CancellationToken, Task>>()!.Invoke(cancellationToken);
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -181,11 +192,14 @@ public class ThreadHelpComponent : Component
     }
 
     // Thread safe
-    private Task<T> Enqueue<T>(Func<CancellationToken, Task<T>> task,
+    private Task<T> RunOrEnqueue<T>(Func<CancellationToken, Task<T>> task,
         CancellationToken cancellationToken)
     {
         if(!IsValid)
             throw new TaskCanceledException();
+
+        if(Enabled && ThreadSafe.IsMainThread)
+            return task.Invoke(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
