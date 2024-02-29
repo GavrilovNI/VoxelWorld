@@ -25,6 +25,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
     [Property, HideIf(nameof(IsSceneRunning), true)] public Vector3Int ChunkSize { get; init; } = 16;
     [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
+    [Property] public BBoxInt Limits { get; private set; } = new BBoxInt(new Vector3Int(-50000, -50000, -256), new Vector3Int(50000, 50000, 255));
     [Property] protected bool TickByItself { get; set; } = true;
 
     [Property] protected GameObject EntitiesParent { get; set; } = null!;
@@ -102,17 +103,27 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             chunk.UpdateTexture(texture);
     }
     
+    // Thread safe
+    public virtual bool IsChunkInLimits(Vector3Int chunkPosition)
+    {
+        var chunkFirstBlockPosition = GetBlockWorldPosition(chunkPosition, 0);
+        return Limits.Overlaps(BBoxInt.FromMinsAndSize(chunkFirstBlockPosition, ChunkSize));
     }
 
     // Thread safe
     public virtual bool HasChunk(Vector3Int chunkPosition)
     {
+        if(!IsChunkInLimits(chunkPosition))
+            return false;
+
         return Chunks.HasLoaded(chunkPosition);
     }
 
     // Thread safe
     protected virtual async Task<Chunk?> GetChunkOrLoad(Vector3Int chunkPosition, bool awaitModelUpdate = false)
     {
+        if(!IsChunkInLimits(chunkPosition))
+            throw new InvalidOperationException($"Chunk position {chunkPosition} is not in Limits {Limits}");
 
         var chunk = await Chunks.GetChunkOrLoad(chunkPosition, token => CreateChunk(chunkPosition, token));
 
@@ -141,6 +152,8 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             return await ChunkCreator.CreateChunk(creationData, cancellationToken);
         });
 
+        var positionsToClear = chunk.Size.GetPositionsFromZero().Where(p => !Limits.Contains(p));
+        await chunk.SetBlockStates(positionsToClear.ToDictionary(p => p, p => BlockState.Air));
 
         return chunk;
     }
@@ -232,6 +245,9 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     // Thread safe
     public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3Int blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
     {
+        if(!Limits.Contains(blockPosition))
+            return BlockStateChangingResult.NotChanged;
+
         var chunkPosition = GetChunkPosition(blockPosition);
         var chunk = await GetChunkOrLoad(chunkPosition, false);
 

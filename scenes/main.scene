@@ -188,6 +188,10 @@
               },
               "ChunkSize": "16,16,16",
               "EntitiesParent": null,
+              "Limits": {
+                "Mins": "-50000,-50000,-256",
+                "Maxs": "50000,50000,255"
+              },
               "TickByItself": true
             },
             {
