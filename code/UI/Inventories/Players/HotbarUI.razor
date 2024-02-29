@@ -46,7 +46,7 @@
 	protected Stack<Item> SecondaryHandStack => PlayerInventory?.GetHandItem(HandType.Secondary) ?? Stack<Item>.Empty;
 	protected Texture SelectorTexture;
 
-	public void InitializeLocalPlayer(Entity player) => PlayerInventory = player.Components.Get<PlayerInventory>();
+	public void InitializeLocalPlayer(Entity player) => PlayerInventory = player.Components.Get<PlayerInventory>(true);
 
 	protected override void OnAwake()
 	{
