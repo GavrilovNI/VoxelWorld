@@ -11,82 +11,96 @@ namespace Sandcube.Worlds.Generation;
 public class WorldAutoLoader : ThreadHelpComponent, IWorldInitializable
 {
     [Property] public World? World { get; set; } = null;
-    [Property] public Vector3Int Distance { get; set; } = 2;
+    [Property] public BBoxInt Bounds { get; set; } = BBoxInt.FromPositionAndRadius(Vector3Int.Zero, 2);
     [Property] public float TimeBetweenSuccessfulAttempts { get; set; } = 1f;
 
-    protected Dictionary<Vector3Int, Chunk> LoadedChunks = new();
-    protected Task<int>? LoadingTask;
+    protected HashSet<Vector3Int> LoadedChunks = new();
+    protected Task? LoadingTask;
+
+    protected bool IsStarted = false;
 
     public void InitializeWorld(World world) => World = world;
 
     protected override void OnUpdateInner()
     {
         bool worldIsLoaded = SandcubeGame.LoadingStatus == LoadingStatus.Loaded && World is not null;
-        bool loadedLastChunks = LoadingTask is null || LoadingTask.IsCompleted;
+        if(worldIsLoaded && !IsStarted)
+            StartLoading();
+        else if(!worldIsLoaded && IsStarted)
+            StopLoading();
 
+        if(!IsStarted)
+            return;
+
+        bool loadedLastChunks = LoadingTask is null || LoadingTask.IsCompleted;
         if(!worldIsLoaded || !loadedLastChunks)
             return;
 
-        RemoveInvalidLoadedChunks();
         var chunkPositionsToLoad = GetChunkPositionsToLoad();
         LoadingTask = LoadChunks(chunkPositionsToLoad);
     }
 
-    protected Task<int> LoadChunks(IReadOnlySet<Vector3Int> positions)
+    protected override void OnDestroyInner()
+    {
+        StopLoading();
+    }
+
+    protected void StartLoading()
+    {
+        if(IsStarted)
+            return;
+
+        IsStarted = true;
+        World!.ChunkLoaded += OnChunkLoaded;
+        World.ChunkUnloaded += OnChunkUnloaded;
+    }
+
+    protected void StopLoading()
+    {
+        if(!IsStarted)
+            return;
+
+        IsStarted = false;
+        World!.ChunkLoaded -= OnChunkLoaded;
+        World.ChunkUnloaded -= OnChunkUnloaded;
+    }
+
+    protected virtual void OnChunkLoaded(Vector3Int position)
+    {
+        LoadedChunks.Add(position);
+    }
+
+    protected virtual void OnChunkUnloaded(Vector3Int position)
+    {
+        LoadedChunks.Remove(position);
+    }
+
+    protected async Task LoadChunks(IReadOnlySet<Vector3Int> positions)
     {
         if(positions.Count == 0)
-            return Task.FromResult(0);
+            return;
 
-        var task = World!.LoadChunksSimultaneously(positions);
-        _ = task.ContinueWith(t => RunInGameThread((ct) =>
-            OnChunksLoaded(t.Result, positions.Count, positions)));
-        return task;
+        await World!.LoadChunksSimultaneously(positions);
     }
 
     protected virtual HashSet<Vector3Int> GetChunkPositionsToLoad()
     {
         var centralChunkPositrion = World!.GetChunkPosition(Transform.Position);
-        var start = centralChunkPositrion - Distance;
-        var end = centralChunkPositrion + Distance;
+        HashSet<Vector3Int> chunksToLoad = (Bounds + centralChunkPositrion).GetPositions()
+            .Where(p => !LoadedChunks.Contains(p) && World.IsChunkInLimits(p))
+            .ToHashSet();
 
-        HashSet<Vector3Int> chunksToLoad = new();
-        for(int x = start.x; x <= end.x; ++x)
+        HashSet<Vector3Int> except = new();
+        foreach(var position in chunksToLoad.ToList())
         {
-            for(int y = start.y; y <= end.y; ++y)
+            if(World.HasChunk(position))
             {
-                for(int z = start.z; z <= end.z; ++z)
-                {
-                    var chunkPosition = new Vector3Int(x, y, z);
-                    chunksToLoad.Add(chunkPosition);
-                }
+                LoadedChunks.Add(position);
+                except.Add(position);
             }
         }
+        chunksToLoad.ExceptWith(except);
 
-        chunksToLoad.ExceptWith(LoadedChunks.Where(kv => kv.Value.IsValid).Select(kv => kv.Key));
         return chunksToLoad;
-    }
-
-    protected virtual void OnChunksLoaded(int loadedCount, int requestedCount, IReadOnlySet<Vector3Int> loadedChunkPositions)
-    {
-        ThreadSafe.AssertIsMainThread();
-        AddLoadedChunks(loadedChunkPositions);
-    }
-
-    protected virtual void AddLoadedChunks(IReadOnlySet<Vector3Int> loadedChunkPositions)
-    {
-        foreach(var position in loadedChunkPositions)
-        {
-            var chunk = World!.GetChunk(position);
-            if(chunk.IsValid())
-                LoadedChunks[position] = chunk;
-            else
-                LoadedChunks.Remove(position);
-        }
-    }
-
-    protected virtual void RemoveInvalidLoadedChunks()
-    {
-        foreach(var (position, _) in LoadedChunks.Where(kv => !kv.Value.IsValid))
-            LoadedChunks.Remove(position);
     }
 }
