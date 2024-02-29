@@ -16,6 +16,8 @@ namespace Sandcube.Worlds;
 
 public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable
 {
+    public event Action<Chunk>? Destroyed = null;
+
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Position { get; internal set; }
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Size { get; internal set; } = 16;
     [Property] public ChunkModelUpdater ModelUpdater { get; internal set; } = null!;
@@ -58,6 +60,11 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     protected override void OnEnabled()
     {
         Initialized = true;
+    }
+
+    protected override void OnDestroyInner()
+    {
+        Destroyed?.Invoke(this);
     }
 
     public virtual Task RequireModelUpdate() => ModelUpdater.RequireModelUpdate();
