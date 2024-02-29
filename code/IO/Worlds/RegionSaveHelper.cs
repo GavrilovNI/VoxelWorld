@@ -19,7 +19,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
 
-    protected virtual IEnumerator<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
+    protected virtual IEnumerable<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
 
     public RegionSaveHelper(in WorldSaveOptions worldSaveOptions)
     {

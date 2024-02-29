@@ -164,7 +164,7 @@ public class BlocksContainer : ISaveStatusMarkable
         return BlockStateChangingResult.FromChanged(oldState);
     }
 
-    public void Load(IReadOnlyBlocksData data, IEnumerator<Vector3Int> positions, bool setDirty = false)
+    public void Load(IReadOnlyBlocksData data, IEnumerable<Vector3Int> positions, bool setDirty = false)
     {
         foreach(var blockPosition in positions)
         {

@@ -132,9 +132,9 @@ public struct BBoxInt : IEquatable<BBoxInt>
     public static implicit operator BBox(in BBoxInt bbox) => new(bbox.Mins, bbox.Maxs);
 
 
-    public readonly IEnumerator<Vector3Int> GetPositions(bool includeMaxs = true) => GetPositions(true, includeMaxs);
+    public readonly IEnumerable<Vector3Int> GetPositions(bool includeMaxs = true) => GetPositions(true, includeMaxs);
 
-    public readonly IEnumerator<Vector3Int> GetPositions(bool includeMins, bool includeMaxs)
+    public readonly IEnumerable<Vector3Int> GetPositions(bool includeMins, bool includeMaxs)
     {
         var first = includeMins ? Mins : Mins + 1;
         var last = includeMaxs ? Maxs : Maxs - 1;

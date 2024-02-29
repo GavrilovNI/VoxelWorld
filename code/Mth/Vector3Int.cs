@@ -123,9 +123,9 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, IBinar
         }
     }
 
-    public readonly IEnumerator<Vector3Int> GetPositionsFromZero(bool includeMaxs = true) => GetPositionsFromZero(true, includeMaxs);
+    public readonly IEnumerable<Vector3Int> GetPositionsFromZero(bool includeMaxs = true) => GetPositionsFromZero(true, includeMaxs);
 
-    public readonly IEnumerator<Vector3Int> GetPositionsFromZero(bool includeZero, bool includeMaxs)
+    public readonly IEnumerable<Vector3Int> GetPositionsFromZero(bool includeZero, bool includeMaxs)
     {
         var first = includeZero ? Vector3Int.Zero : Vector3Int.One;
         var last = includeMaxs ? this : this - 1;
