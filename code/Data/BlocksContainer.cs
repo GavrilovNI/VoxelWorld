@@ -117,7 +117,7 @@ public class BlocksContainer : ISaveStatusMarkable
     {
         var oldState = GetBlockState(position);
         if(oldState == blockState)
-            return new(false, oldState);
+            return BlockStateChangingResult.NotChanged;
 
         if(blockState.Block is IEntityBlock entityBlock)
         {
@@ -161,7 +161,7 @@ public class BlocksContainer : ISaveStatusMarkable
         if(markDirty)
             MarkNotSaved();
 
-        return new(true, oldState);
+        return BlockStateChangingResult.FromChanged(oldState);
     }
 
     public void Load(IReadOnlyBlocksData data, IEnumerator<Vector3Int> positions, bool setDirty = false)
