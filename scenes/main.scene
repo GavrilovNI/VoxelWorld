@@ -34,7 +34,6 @@
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
-          "ClickToSpawnPlayer": false,
           "ModsParent": {
             "_type": "gameobject",
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
@@ -51,6 +50,13 @@
           "WorldsParent": {
             "_type": "gameobject",
             "go": "108bed85-7734-41fa-bcd2-22f15b326b19"
+          }
+        },
+        {
+          "__type": "PlayerSpawner",
+          "ClickToSpawnPlayer": false,
+          "SafeBounds": {
+            "Maxs": "1,1,2"
           }
         }
       ],
@@ -275,6 +281,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-28T18:03:38.8219484\u002B01:00",
+  "LastSaved": "2024-02-29T18:02:05.6221058\u002B01:00",
   "__references": []
 }

@@ -32,7 +32,10 @@
       },
       {
         "__type": "WorldAutoLoader",
-        "Distance": "2,2,2",
+        "Bounds": {
+          "Mins": "-2,-2,-2",
+          "Maxs": "2,2,2"
+        },
         "TimeBetweenSuccessfulAttempts": 1,
         "World": null
       },
@@ -48,7 +51,6 @@
       },
       {
         "__type": "SandcubePlayerController",
-        "__enabled": false,
         "AnimationHelper": null,
         "Body": null,
         "CameraParent": {
