@@ -32,4 +32,17 @@ public static class BBoxExtensions
             return @this.Value.AddBBox(bbox);
         return bbox;
     }
+
+    public static BBox GetIntersection(this BBox @this, BBox other)
+    {
+        if(!@this.Overlaps(other))
+            return new(Vector3Int.Zero, Vector3Int.Zero);
+
+        BBox result = new()
+        {
+            Mins = @this.Mins.ComponentMax(other.Mins),
+            Maxs = @this.Maxs.ComponentMin(other.Maxs)
+        };
+        return result;
+    }
 }

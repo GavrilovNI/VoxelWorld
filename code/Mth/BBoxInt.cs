@@ -216,6 +216,20 @@ public struct BBoxInt : IEquatable<BBoxInt>
         Mins.y < b.Maxs.y && b.Mins.y < Maxs.y &&
         Mins.z < b.Maxs.z && b.Mins.z < Maxs.z;
 
+    public readonly BBox GetIntersection(BBox other) => other.GetIntersection(this);
+    public readonly BBoxInt GetIntersection(BBoxInt other)
+    {
+        if(!Overlaps(other))
+            return new(Vector3Int.Zero, Vector3Int.Zero);
+
+        BBoxInt result = new()
+        {
+            Mins = Mins.ComponentMax(other.Mins),
+            Maxs = Maxs.ComponentMin(other.Maxs)
+        };
+        return result;
+    }
+
     public readonly BBox AddPoint(in Vector3 point)
     {
         BBox result = this;
