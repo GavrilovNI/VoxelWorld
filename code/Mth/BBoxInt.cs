@@ -323,6 +323,16 @@ public struct BBoxInt : IEquatable<BBoxInt>
         return c1;
     }
 
+    public static BBoxInt operator -(BBoxInt c1, in Vector3Int c2)
+    {
+        c1.Mins -= c2;
+        c1.Maxs -= c2;
+        return c1;
+    }
+
+    public static BBox operator +(BBoxInt c1, in Vector3 c2) => new(c1.Mins + c2, c1.Maxs + c2);
+    public static BBox operator -(BBoxInt c1, in Vector3 c2) => new(c1.Mins - c2, c1.Maxs - c2);
+
     public readonly bool Trace(in Ray ray, float distance, out float hitDistance)
     {
         hitDistance = 0f;
