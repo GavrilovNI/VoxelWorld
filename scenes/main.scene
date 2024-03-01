@@ -192,6 +192,7 @@
               },
               "ChunkSize": "16,16,16",
               "EntitiesParent": null,
+              "IsService": true,
               "Limits": {
                 "Mins": "-50000,-50000,-256",
                 "Maxs": "50000,50000,255"

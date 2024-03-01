@@ -8,6 +8,7 @@ using Sandcube.Interfaces;
 using Sandcube.IO;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
+using Sandcube.Registries;
 using Sandcube.Threading;
 using Sandcube.Worlds.Loading;
 using System;
@@ -27,8 +28,13 @@ public class World : Component, IWorldAccessor, ITickable
     [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
     [Property] public BBoxInt Limits { get; private set; } = new BBoxInt(new Vector3Int(-50000, -50000, -256), new Vector3Int(50000, 50000, 255));
     [Property] protected bool TickByItself { get; set; } = true;
+    [Property] protected bool IsService { get; set; } = false;
 
     [Property] protected GameObject EntitiesParent { get; set; } = null!;
+
+    public bool Initialized { get; private set; }
+    public ModedId Id { get; private set; }
+
 
     private bool IsSceneRunning => !Scene.IsEditor;
 
@@ -38,11 +44,32 @@ public class World : Component, IWorldAccessor, ITickable
     protected readonly Dictionary<Guid, Entity> Entities = new();
 
 
+    public void Initialize(ModedId id)
+    {
+        if(Initialized)
+            throw new InvalidOperationException($"{nameof(World)} {this} was already initialized");
+        if(IsService)
+            throw new InvalidOperationException($"{nameof(World)} {this} is service, it can't be initialized");
+        Initialized = true;
+
+        Id = id;
+    }
+
     protected override void OnAwake()
     {
         Chunks = new(DestroyChunk, Vector3Int.XYZIterationComparer);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
+    }
+
+    protected override void OnStart()
+    {
+        if(!Initialized && !IsService)
+        {
+            Log.Warning($"{nameof(World)} {this} was not initialized before OnStart, destroying...");
+            GameObject.Destroy();
+            return;
+        }
     }
 
     protected override void OnDestroy()

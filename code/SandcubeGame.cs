@@ -178,12 +178,13 @@ public sealed class SandcubeGame : Component
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 
 
-    private World CreateWorld(string name, string savePath, bool enable = true)
+    private World CreateWorld(ModedId id, string savePath, bool enable = true)
     {
-        var cloneConfig = new CloneConfig(Transform.World, WorldsParent, false, $"World {name}");
+        var cloneConfig = new CloneConfig(Transform.World, WorldsParent, false, $"World {id}");
         var worldGameObject = WorldPrefab.Clone(cloneConfig);
         worldGameObject.BreakFromPrefab();
         var world = worldGameObject.Components.Get<World>(true);
+        world.Initialize(id);
 
         foreach(var savePathInitializable in worldGameObject.Components.GetAll<ISavePathInitializable>(FindMode.EverythingInSelf))
             savePathInitializable.InitizlizeSavePath(savePath);

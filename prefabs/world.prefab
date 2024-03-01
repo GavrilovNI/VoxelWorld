@@ -37,6 +37,7 @@
           "_type": "gameobject",
           "go": "1f2de40c-01fc-4b07-a921-ac1d0b417cb4"
         },
+        "IsService": false,
         "Limits": {
           "Mins": "-50000,-50000,-256",
           "Maxs": "50000,50000,255"
