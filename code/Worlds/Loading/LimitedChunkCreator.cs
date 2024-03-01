@@ -30,15 +30,15 @@ public class LimitedChunkCreator : ChunkCreator
         return taskCompletionSource.Task;
     }
 
-    protected override void OnUpdateInner()
+    protected override void OnUpdate()
     {
-        base.OnUpdateInner();
+        base.OnUpdate();
         CreateQueuedChunks();
     }
 
-    protected override void OnDestroyInner()
+    protected override void OnDestroy()
     {
-        base.OnDestroyInner();
+        base.OnDestroy();
         CommonCancellationTokenSource.Cancel();
         CommonCancellationTokenSource.Dispose();
     }

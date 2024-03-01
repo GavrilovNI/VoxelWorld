@@ -8,13 +8,12 @@ using Sandcube.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class ChunkModelUpdater : ThreadHelpComponent
+public class ChunkModelUpdater : Component
 {
     [Property] public Chunk Chunk { get; set; } = null!;
 
@@ -132,7 +131,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
             CancelModelUpdate();
     }
 
-    protected override void OnUpdateInner()
+    protected override void OnUpdate()
     {
         if(!Chunk.Enabled)
             return;
@@ -144,7 +143,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
         }
     }
 
-    protected override void OnDestroyInner()
+    protected override void OnDestroy()
     {
         lock(ModelUpdateLock)
         {
@@ -238,7 +237,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
             await GenerateMeshes(builders, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
-            await RunInGameThread(ct =>
+            await Task.RunInMainThreadAsync(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 ApplyMeshes(builders, cancellationToken);
@@ -256,7 +255,7 @@ public class ChunkModelUpdater : ThreadHelpComponent
                         throw new InvalidOperationException($"Can't finish model update task on chunk {Chunk.Position}");
                     }
                 }
-            }, cancellationToken);
+            });
         });
 
         return oldModelUpdateTaskSource.Task;

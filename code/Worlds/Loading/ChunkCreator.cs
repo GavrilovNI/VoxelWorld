@@ -11,7 +11,7 @@ using System;
 
 namespace Sandcube.Worlds.Loading;
 
-public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
+public class ChunkCreator : Component, ISavePathInitializable
 {
     [Property] protected GameObject ChunksParent { get; set; } = null!;
     [Property] public GameObject ChunkPrefab { get; set; } = null!;
@@ -56,7 +56,7 @@ public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
             if(creationData.EnableOnCreate)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await RunInGameThread(() => {
+                await Task.RunInMainThreadAsync(() => {
                     cancellationToken.ThrowIfCancellationRequested();
                     chunk.GameObject.Enabled = true;
                 });

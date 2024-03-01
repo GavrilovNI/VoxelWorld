@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class World : ThreadHelpComponent, IWorldAccessor, ITickable
+public class World : Component, IWorldAccessor, ITickable
 {
     public event Action<Vector3Int>? ChunkLoaded;
     public event Action<Vector3Int>? ChunkUnloaded;
@@ -45,14 +45,14 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         Chunks.ChunkUnloaded += OnChunkUnloaded;
     }
 
-    protected override void OnDestroyInner()
+    protected override void OnDestroy()
     {
         Clear();
         Chunks.ChunkLoaded -= OnChunkLoaded;
         Chunks.ChunkUnloaded -= OnChunkUnloaded;
     }
 
-    protected override void OnUpdateInner()
+    protected override void OnUpdate()
     {
         if(TickByItself)
             TickInternal();
@@ -147,10 +147,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
             World = this
         };
 
-        var chunk = await RunInGameThread(async c =>
-        {
-            return await ChunkCreator.CreateChunk(creationData, cancellationToken);
-        });
+        var chunk = await Task.RunInMainThreadAsync(() => ChunkCreator.CreateChunk(creationData, cancellationToken));
 
         var positionsToClear = chunk.Size.GetPositionsFromZero().Where(p => !Limits.Contains(p));
         await chunk.SetBlockStates(positionsToClear.ToDictionary(p => p, p => BlockState.Air));
@@ -185,7 +182,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     // Thread safe
     protected virtual void OnChunkLoaded(Chunk chunk)
     {
-        _ = RunInGameThread(ct =>
+        _ = Task.RunInMainThreadAsync(() =>
         {
             if(!chunk.IsValid)
                 return;
@@ -200,7 +197,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
     // Thread safe
     protected virtual void OnChunkUnloaded(Chunk chunk)
     {
-        _ = RunInGameThread(ct => ChunkUnloaded?.Invoke(chunk.Position));
+        _ = Task.RunInMainThreadAsync(() => ChunkUnloaded?.Invoke(chunk.Position));
     }
 
     protected virtual void OnChunkDestroyed(Chunk chunk)
@@ -357,7 +354,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         if(!chunk.IsValid())
             return;
 
-        _ = RunInGameThread((ct) =>
+        _ = Task.RunInMainThreadAsync(() =>
         {
             if(chunk.IsValid())
                 chunk.GameObject.Destroy();

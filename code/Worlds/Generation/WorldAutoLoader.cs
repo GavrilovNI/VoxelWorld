@@ -1,14 +1,12 @@
 ﻿using Sandbox;
 using Sandcube.Mth;
-using Sandcube.Threading;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds.Generation;
 
-public class WorldAutoLoader : ThreadHelpComponent, IWorldInitializable
+public class WorldAutoLoader : Component, IWorldInitializable
 {
     [Property] public World? World { get; set; } = null;
     [Property] public BBoxInt Bounds { get; set; } = BBoxInt.FromPositionAndRadius(Vector3Int.Zero, 2);
@@ -21,7 +19,7 @@ public class WorldAutoLoader : ThreadHelpComponent, IWorldInitializable
 
     public void InitializeWorld(World world) => World = world;
 
-    protected override void OnUpdateInner()
+    protected override void OnUpdate()
     {
         bool worldIsLoaded = SandcubeGame.LoadingStatus == LoadingStatus.Loaded && World is not null;
         if(worldIsLoaded && !IsStarted)
@@ -40,7 +38,7 @@ public class WorldAutoLoader : ThreadHelpComponent, IWorldInitializable
         LoadingTask = LoadChunks(chunkPositionsToLoad);
     }
 
-    protected override void OnDestroyInner()
+    protected override void OnDestroy()
     {
         StopLoading();
     }

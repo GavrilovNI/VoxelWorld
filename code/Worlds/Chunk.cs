@@ -6,15 +6,13 @@ using Sandcube.Interfaces;
 using Sandcube.IO;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
-using Sandcube.Threading;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sandcube.Worlds;
 
-public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvider, ITickable
+public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITickable
 {
     public event Action<Chunk>? Destroyed = null;
 
@@ -62,7 +60,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
         Initialized = true;
     }
 
-    protected override void OnDestroyInner()
+    protected override void OnDestroy()
     {
         Destroyed?.Invoke(this);
     }
