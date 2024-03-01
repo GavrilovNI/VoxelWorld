@@ -5,6 +5,7 @@ using Sandcube.Mods.Base;
 using Sandcube.Mth;
 using Sandcube.Players;
 using Sandcube.Worlds;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace Sandcube.Base;
 
 public class PlayerSpawner : Component
 {
+    [Property] protected BBoxInt PreloadRange { get; set; } = BBoxInt.FromPositionAndRadius(0, new Vector3Int(2, 2, 3));
     [Property] protected BBoxInt SafeBounds { get; set; } = BBoxInt.FromMinsAndSize(0, new Vector3Int(1, 1, 2));
     protected static EntityType PlayerEntityType => SandcubeBaseMod.Instance!.Entities.Player;
 
@@ -37,6 +39,8 @@ public class PlayerSpawner : Component
                 return null;
 
             spawnConfig.Transform.Position = spawnPosition;
+
+            await PreloadChunks(world, PreloadRange, spawnPosition);
         }
 
         var player =  PlayerEntityType.CreateEntity(spawnConfig);
@@ -83,5 +87,12 @@ public class PlayerSpawner : Component
                 return false;
         }
         return true;
+    }
+
+    protected virtual Task PreloadChunks(IWorldAccessor world, BBoxInt range, Vector3 spawnPosition)
+    {
+        Vector3Int centerChunkPosition = world.GetChunkPosition(spawnPosition);
+        var positionsToLoad = (range + centerChunkPosition).GetPositions().ToHashSet();
+        return world.LoadChunksSimultaneously(positionsToLoad, true);
     }
 }
