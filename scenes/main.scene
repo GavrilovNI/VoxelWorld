@@ -39,6 +39,11 @@
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
           },
           "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
+          "PlayerSpawner": {
+            "_type": "component",
+            "go": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
+            "component_type": "PlayerSpawner"
+          },
           "ShouldAnimateBlockTextures": true,
           "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat",
           "WorldPrefab": {
@@ -52,7 +57,10 @@
         },
         {
           "__type": "PlayerSpawner",
-          "ClickToSpawnPlayer": false,
+          "PreloadRange": {
+            "Mins": "-2,-2,-3",
+            "Maxs": "2,2,3"
+          },
           "SafeBounds": {
             "Maxs": "1,1,2"
           }
@@ -280,6 +288,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-01T18:39:34.0327986\u002B01:00",
+  "LastSaved": "2024-03-02T00:04:34.0709535\u002B01:00",
   "__references": []
 }

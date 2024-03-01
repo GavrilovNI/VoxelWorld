@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Base;
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
@@ -43,6 +44,8 @@ public sealed class SandcubeGame : Component
     [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
+    [Property] public PlayerSpawner PlayerSpawner { get; private set; } = null!;
+
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
     [Property] public Material OpaqueVoxelsMaterial { get; private set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; private set; } = null!;

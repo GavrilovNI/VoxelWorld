@@ -1,9 +1,12 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
+using Sandcube.Entities;
 using Sandcube.Mods.Base.Blocks;
 using Sandcube.Mods.Base.Entities;
 using Sandcube.Mods.Base.Items;
 using Sandcube.Registries;
+using Sandcube.Worlds;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sandcube.Mods.Base;
@@ -19,18 +22,33 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
     public SandcubeItems Items { get; private set; } = null!;
     public SandcubeEntities Entities { get; private set; } = null!;
 
-    public void OnLoaded() { }
+    private readonly ModedId _mainWorldId = new(ModName, "main");
+
+    protected override void OnAwake()
+    {
+        Blocks = new();
+        Items = new();
+        Entities = Components.Get<SandcubeEntities>(true);
+    }
+
+    public void OnLoaded()
+    {
+        SandcubeGame.WorldAdded += OnWorldAdded;
+        if(SandcubeGame.Instance!.Worlds.TryGetWorld(_mainWorldId, out var world))
+            OnWorldAdded(world);
+    }
+    public void OnUnloaded()
+    {
+        SandcubeGame.WorldAdded -= OnWorldAdded;
+    }
 
     public async Task RegisterValues(RegistriesContainer registries)
     {
         RegistriesContainer container = new();
 
-        Blocks = new();
         await Blocks.Register(registries);
         SandcubeGame.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
-        Items = new();
         await Items.Register(registries);
-        Entities = Components.Get<SandcubeEntities>(true);
         await Entities.Register(registries);
 
         registries.Add(container);
@@ -38,6 +56,15 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
 
     public void OnGameLoaded()
     {
-        SandcubeGame.Instance!.TryAddWorld(new ModedId(ModName, "main"), out _);
+        SandcubeGame.Instance!.TryAddWorld(_mainWorldId, out _);
+    }
+
+    private void OnWorldAdded(World world)
+    {
+        if(world.Id != _mainWorldId)
+            return;
+
+        EntitySpawnConfig spawnConfig = new(world, true);
+        _ = SandcubeGame.Instance!.PlayerSpawner.SpawnPlayer(spawnConfig, CancellationToken.None);
     }
 }

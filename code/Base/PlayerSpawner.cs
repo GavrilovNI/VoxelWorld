@@ -1,13 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Data.Enumarating;
 using Sandcube.Entities;
 using Sandcube.Entities.Types;
 using Sandcube.Mods.Base;
 using Sandcube.Mth;
-using Sandcube.Mth.Enums;
 using Sandcube.Players;
 using Sandcube.Worlds;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +15,6 @@ public class PlayerSpawner : Component
     [Property] protected BBoxInt SafeBounds { get; set; } = BBoxInt.FromMinsAndSize(0, new Vector3Int(1, 1, 2));
     protected static EntityType PlayerEntityType => SandcubeBaseMod.Instance!.Entities.Player;
 
-    [Property] protected bool ClickToSpawnPlayer { get; set; } = false;
 
     public virtual async Task<Entity?> SpawnPlayer(EntitySpawnConfig spawnConfig, CancellationToken cancellationToken)
     {
@@ -42,7 +38,18 @@ public class PlayerSpawner : Component
 
             spawnConfig.Transform.Position = spawnPosition;
         }
-        return PlayerEntityType.CreateEntity(spawnConfig);
+
+        var player =  PlayerEntityType.CreateEntity(spawnConfig);
+
+        foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerInitializable>(FindMode.EverythingInSelfAndDescendants))
+            localPlayerInitializable.InitializeLocalPlayer(player);
+
+        if(world is not null)
+        {
+            foreach(var worldInitializable in player.GameObject.Components.GetAll<IWorldInitializable>(FindMode.EverythingInSelfAndDescendants))
+                worldInitializable.InitializeWorld(world);
+        }
+        return player;
     }
 
     public virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
@@ -76,39 +83,5 @@ public class PlayerSpawner : Component
                 return false;
         }
         return true;
-    }
-
-    protected override void OnUpdate()
-    {
-        if(ClickToSpawnPlayer)
-        {
-            ClickToSpawnPlayer = false;
-            _ = SpawnTestPlayer();
-        }
-    }
-
-    protected async Task SpawnTestPlayer()
-    {
-        var worlds = SandcubeGame.Instance!.Worlds;
-        var world = worlds.Count == 0 ? null : worlds.First().Value;
-
-        Vector3 position = world.IsValid() ? world.GetBlockGlobalPosition(new Vector3Int(0, 0, world.Limits.Maxs.z + 1)) : Vector3.Zero;
-        EntitySpawnConfig spawnConfig = new(new Transform(position), world, false);
-
-        var player = await SpawnPlayer(spawnConfig, CancellationToken.None);
-
-        if(!player.IsValid())
-            return;
-
-        foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerInitializable>(FindMode.EverythingInSelfAndDescendants))
-            localPlayerInitializable.InitializeLocalPlayer(player);
-
-        if(world.IsValid())
-        {
-            foreach(var worldInitializable in player.GameObject.Components.GetAll<IWorldInitializable>(FindMode.EverythingInSelfAndDescendants))
-                worldInitializable.InitializeWorld(world);
-        }
-
-        player.Enabled = true;
     }
 }
