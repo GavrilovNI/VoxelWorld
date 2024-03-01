@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,31 +58,28 @@ public class LimitedChunkCreator : ChunkCreator
     }
 
     // Call only in game thread
-    protected virtual Task<Chunk> CreateChunk(ChunkCreatingData creatingData)
+    protected virtual async Task<Chunk> CreateChunk(ChunkCreatingData creatingData)
     {
         ThreadSafe.AssertIsMainThread();
 
         Interlocked.Increment(ref ActiveCreatingChunkCount);
-
-        var position = creatingData.CreationData.Position;
         var cancellationToken = creatingData.CancellationTokenSource.Token;
 
-        var task = base.CreateChunk(creatingData.CreationData, cancellationToken)
-            .ContinueWith(t =>
-            {
-                Interlocked.Decrement(ref ActiveCreatingChunkCount);
-
-                if(t.IsCompletedSuccessfully)
-                    creatingData.TaskCompletionSource.TrySetResult(t.Result);
-                else
-                    creatingData.TaskCompletionSource.TrySetCanceled();
-                creatingData.CancellationTokenSource.Dispose();
-
-                cancellationToken.ThrowIfCancellationRequested();
-                return t.Result;
-            });
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return task;
+        Chunk chunk;
+        try
+        {
+            chunk = await base.CreateChunk(creatingData.CreationData, cancellationToken);
+            Interlocked.Decrement(ref ActiveCreatingChunkCount);
+            creatingData.CancellationTokenSource.Dispose();
+            creatingData.TaskCompletionSource.TrySetResult(chunk);
+        }
+        catch (OperationCanceledException)
+        {
+            Interlocked.Decrement(ref ActiveCreatingChunkCount);
+            creatingData.CancellationTokenSource.Dispose();
+            creatingData.TaskCompletionSource.TrySetCanceled();
+            throw;
+        }
+        return chunk;
     }
 }

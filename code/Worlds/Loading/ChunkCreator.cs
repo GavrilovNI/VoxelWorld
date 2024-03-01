@@ -28,40 +28,46 @@ public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
     }
 
     // Call only in game thread
-    public virtual Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
+    public virtual async Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
     {
         ThreadSafe.AssertIsMainThread();
 
         cancellationToken.ThrowIfCancellationRequested();
         var chunk = CreateChunkObject(creationData with { EnableOnCreate = false });
-
-        return Task.RunInThreadAsync(async () =>
+        
+        try
         {
-            if(!TryLoadChunk(chunk)) // TODO: load all region and cache it?
+            cancellationToken.ThrowIfCancellationRequested();
+            await Task.RunInThreadAsync(async () =>
             {
-                if(Generator.IsValid())
+                cancellationToken.ThrowIfCancellationRequested();
+                if(!TryLoadChunk(chunk)) // TODO: load all region and cache it?
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    await GenerateChunk(chunk, cancellationToken);
+                    if(Generator.IsValid())
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        await GenerateChunk(chunk, cancellationToken);
+                    }
                 }
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+            });
 
             if(creationData.EnableOnCreate)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await RunInGameThread(ct => chunk.GameObject.Enabled = true, cancellationToken);
+                await RunInGameThread(() => {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    chunk.GameObject.Enabled = true;
+                });
             }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            return chunk;
-        }).ContinueWith(t =>
+        }
+        catch (OperationCanceledException)
         {
-            if(!t.IsCompletedSuccessfully)
-                chunk.GameObject.Destroy();
-
-            cancellationToken.ThrowIfCancellationRequested();
-            return t.Result;
-        });
+            chunk.GameObject.Destroy();
+            throw;
+        }
+        return chunk;
     }
 
     // Call only in game thread

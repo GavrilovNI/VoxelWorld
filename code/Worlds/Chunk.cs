@@ -127,7 +127,7 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
     }
 
     // Thread safe
-    public Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
+    public async Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
@@ -137,21 +137,26 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
 
         BlockStateChangingResult result;
 
+        Task modelUpdateTask;
         lock(Blocks)
         {
             result = Blocks.PlaceBlock(localPosition, blockState, flags.HasFlag(BlockSetFlags.MarkDirty));
-            return GetModelUpdateTask(flags, result.Changed).ContinueWith(t => result);
+            modelUpdateTask = GetModelUpdateTask(flags, result.Changed);
         }
+        await modelUpdateTask;
+        return result;
     }
 
     // Thread safe
-    public Task<bool> SetBlockStates(IDictionary<Vector3Int, BlockState> blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
+    public async Task<bool> SetBlockStates(IDictionary<Vector3Int, BlockState> blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
 
         bool modified = false;
         bool markDirty = flags.HasFlag(BlockSetFlags.MarkDirty);
+
+        Task modelUpdateTask;
         lock(Blocks)
         {
             foreach(var (position, blockState) in blockStates)
@@ -162,22 +167,27 @@ public class Chunk : ThreadHelpComponent, IBlockStateAccessor, IBlockEntityProvi
                 modified |= Blocks.PlaceBlock(position, blockState, markDirty);
             }
 
-            return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
+            modelUpdateTask = GetModelUpdateTask(flags, modified);
         }
+        await modelUpdateTask;
+        return modified;
     }
 
-    public virtual Task<bool> Clear(BlockSetFlags flags = BlockSetFlags.Default)
+    public virtual async Task<bool> Clear(BlockSetFlags flags = BlockSetFlags.Default)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
 
         bool modified = false;
 
+        Task modelUpdateTask;
         lock(Blocks)
         {
             modified = Blocks.Clear(flags.HasFlag(BlockSetFlags.MarkDirty));
-            return GetModelUpdateTask(flags, modified).ContinueWith(t => modified);
+            modelUpdateTask = GetModelUpdateTask(flags, modified);
         }
+        await modelUpdateTask;
+        return modified;
     }
 
     public virtual bool IsInBounds(Vector3Int localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));

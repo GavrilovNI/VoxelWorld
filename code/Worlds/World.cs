@@ -265,7 +265,7 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
         }
 
         if(flags.HasFlag(BlockSetFlags.AwaitModelUpdate))
-            return await chunk.GetModelUpdateTask().ContinueWith(t => result);
+            await chunk.GetModelUpdateTask();
 
         return result;
     }

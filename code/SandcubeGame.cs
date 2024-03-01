@@ -127,7 +127,9 @@ public sealed class SandcubeGame : Component
     {
         AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
 
-        List<Task<(Id modId, RegistriesContainer registries)>> registeringTasks = new();
+        Dictionary<Id, RegistriesContainer> modRegistries = new();
+        
+        List<Task> registeringTasks = new();
         foreach(var mod in mods)
         {
             if(_mods.ContainsKey(mod.Id))
@@ -137,13 +139,14 @@ public sealed class SandcubeGame : Component
                 modComponent.GameObject.Parent = ModsParent;
 
             RegistriesContainer registries = new();
-            var task = mod.RegisterValues(registries).ContinueWith(t => (mod.Id, registries));
+            var task = mod.RegisterValues(registries);
             registeringTasks.Add(task);
+            modRegistries.Add(mod.Id, registries);
         }
         await Task.WhenAll(registeringTasks);
 
         var regsiteredMods = mods.ToDictionary(m => m.Id, m => m);
-        foreach(var (modId, registries) in registeringTasks.Select(t => t.Result))
+        foreach(var (modId, registries) in modRegistries)
         {
             var usedIdsFromMod = 
                 registries.All(registry => registry.Value.All.All(registerable => registerable.Key.ModId == modId));
