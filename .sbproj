@@ -199,6 +199,107 @@
         }
       ]
     },
-    "StartupScene": "scenes/mainmenu.scene"
+    "StartupScene": "scenes/mainmenu.scene",
+    "Collision": {
+      "Defaults": {
+        "solid": "Collide",
+        "trigger": "Trigger",
+        "world": "Collide",
+        "entity": "Collide",
+        "player": "Collide"
+      },
+      "Pairs": [
+        {
+          "a": "solid",
+          "b": "solid",
+          "r": "Collide"
+        },
+        {
+          "a": "trigger",
+          "b": "playerclip",
+          "r": "Ignore"
+        },
+        {
+          "a": "trigger",
+          "b": "solid",
+          "r": "Trigger"
+        },
+        {
+          "a": "solid",
+          "b": "trigger",
+          "r": "Collide"
+        },
+        {
+          "a": "playerclip",
+          "b": "solid",
+          "r": "Collide"
+        },
+        {
+          "a": "solid",
+          "b": "world",
+          "r": "Collide"
+        },
+        {
+          "a": "trigger",
+          "b": "world",
+          "r": "Trigger"
+        },
+        {
+          "a": "player",
+          "b": "player",
+          "r": "Trigger"
+        },
+        {
+          "a": "world",
+          "b": "world",
+          "r": "Collide"
+        },
+        {
+          "a": "solid",
+          "b": "entity",
+          "r": "Collide"
+        },
+        {
+          "a": "trigger",
+          "b": "entity",
+          "r": "Trigger"
+        },
+        {
+          "a": "entity",
+          "b": "player",
+          "r": "Trigger"
+        },
+        {
+          "a": "world",
+          "b": "entity",
+          "r": "Collide"
+        },
+        {
+          "a": "entity",
+          "b": "entity",
+          "r": "Collide"
+        },
+        {
+          "a": "world",
+          "b": "player",
+          "r": "Collide"
+        },
+        {
+          "a": "trigger",
+          "b": "trigger",
+          "r": "Ignore"
+        },
+        {
+          "a": "trigger",
+          "b": "player",
+          "r": "Trigger"
+        },
+        {
+          "a": "solid",
+          "b": "player",
+          "r": "Collide"
+        }
+      ]
+    }
   }
 }
