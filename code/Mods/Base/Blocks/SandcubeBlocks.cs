@@ -56,4 +56,7 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
     public DoorBlock Door { get; } = new(MakeId("door"),
         BlockTexturesLoader.AllSides.LoadTextureUvs(TextureMap, GetBlockPathPart("door_bottom"), Direction.AllSet.Except(new[] { Direction.Up }).ToHashSet()),
         BlockTexturesLoader.AllSides.LoadTextureUvs(TextureMap, GetBlockPathPart("door_top"), Direction.AllSet.Except(new[] { Direction.Down }).ToHashSet()));
+
+    public PhysicsBlock Sand { get; } = new(MakeId("sand"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("sand")}.png"));
+
 }
