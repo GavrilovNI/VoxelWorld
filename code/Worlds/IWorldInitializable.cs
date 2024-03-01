@@ -4,5 +4,5 @@ namespace Sandcube.Worlds;
 
 public interface IWorldInitializable
 {
-    void InitializeWorld(World world);
+    void InitializeWorld(IWorldAccessor world);
 }

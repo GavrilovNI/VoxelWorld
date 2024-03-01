@@ -8,7 +8,7 @@ namespace Sandcube.Worlds.Generation;
 
 public class WorldAutoLoader : Component, IWorldInitializable
 {
-    [Property] public World? World { get; set; } = null;
+    [Property] public IWorldAccessor? World { get; set; } = null;
     [Property] public BBoxInt Bounds { get; set; } = BBoxInt.FromPositionAndRadius(Vector3Int.Zero, 2);
     [Property] public float TimeBetweenSuccessfulAttempts { get; set; } = 1f;
 
@@ -17,7 +17,7 @@ public class WorldAutoLoader : Component, IWorldInitializable
 
     protected bool IsStarted = false;
 
-    public void InitializeWorld(World world) => World = world;
+    public void InitializeWorld(IWorldAccessor world) => World = world;
 
     protected override void OnUpdate()
     {
