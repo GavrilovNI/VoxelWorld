@@ -2,7 +2,6 @@
 using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.Items;
-using Sandcube.Registries;
 using Sandcube.Worlds;
 using System.Linq;
 
@@ -49,8 +48,7 @@ public class WorldInteractor : Component
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        IWorldAccessor? world = traceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
-        if(world is null)
+        if(!World.TryFind(traceResult.Body?.GetGameObject(), out var world))
             return InteractionResult.Pass;
 
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
@@ -179,8 +177,7 @@ public class WorldInteractor : Component
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        IWorldAccessor? world = traceResult.Body?.GetGameObject()?.Components?.Get<IWorldAccessor>();
-        if(world is null)
+        if(!World.TryFind(traceResult.Body?.GetGameObject(), out var world))
             return InteractionResult.Pass;
 
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);

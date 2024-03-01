@@ -371,4 +371,17 @@ public class World : ThreadHelpComponent, IWorldAccessor, ITickable
 
         return chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
     }
+
+    public static bool TryFind(GameObject? gameObject, out IWorldAccessor world)
+    {
+        if(!gameObject.IsValid())
+        {
+            world = default!;
+            return false;
+        }
+
+        world = gameObject.Components.Get<IWorldAccessor>();
+        world ??= gameObject.Components.Get<IWorldProxy>()?.World!;
+        return world is not null;
+    }
 }
