@@ -58,6 +58,14 @@
           "go": "17a80f85-558a-4f16-83a3-c18996fb7136"
         },
         "Gravity": "0,0,800"
+      },
+      {
+        "__type": "HotbarController",
+        "Inventory": {
+          "_type": "component",
+          "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+          "component_type": "PlayerInventory"
+        }
       }
     ],
     "Children": [
