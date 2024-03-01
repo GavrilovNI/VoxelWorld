@@ -11,4 +11,7 @@ public interface ISidedMeshPart<V> : IMeshPart<V> where V : unmanaged, IVertex
 
     void AddAsCollisionMesh(ModelBuilder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default);
     void IMeshPart<V>.AddAsCollisionMesh(ModelBuilder builder, Vector3 offset) => AddAsCollisionMesh(builder, Direction.AllSet, offset);
+
+    void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default);
+    void IMeshPart<V>.AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset) => AddAsCollisionHull(builder, center, rotation, Direction.AllSet, offset);
 }

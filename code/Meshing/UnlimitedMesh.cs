@@ -133,6 +133,20 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         builder.AddCollisionMesh(vertices, indices);
     }
 
+    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default)
+    {
+        IEnumerable<Vector3> vertices = Enumerable.Empty<Vector3>();
+        for(int i = 0; i < PartsCount; ++i)
+            vertices.Concat(_vertices[i].Select(v => v.GetPosition() + offset));
+        builder.AddCollisionHull(vertices.ToArray(), center, rotation);
+    }
+
+    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, int partIndex, Vector3 offset = default)
+    {
+        var vertices = _vertices[partIndex].Select(v => v.GetPosition() + offset).ToArray();
+        builder.AddCollisionHull(vertices, center, rotation);
+    }
+
     public UnlimitedMesh<T> Convert<T>(Func<V, T> vertexConvertor) where T : unmanaged, IVertex
     {
         UnlimitedMesh<T> result = new();
@@ -376,6 +390,12 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         public virtual void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => Mesh.AddAsCollisionMesh(builder, offset);
         // thread safe if builder is not being changed during execution
         public virtual void AddAsCollisionMesh(ModelBuilder builder, int partIndex, Vector3 offset = default) => Mesh.AddAsCollisionMesh(builder, partIndex, offset);
+        
+        // thread safe if builder is not being changed during execution
+        public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) => Mesh.AddAsCollisionHull(builder, center, rotation, offset);
+        // thread safe if builder is not being changed during execution
+        public void AddAsCollisionHull(ModelBuilder builder, int partIndex, Vector3 center, Rotation rotation, Vector3 offset = default) => Mesh.AddAsCollisionHull(builder, center, rotation, partIndex, offset);
+
 
         public UnlimitedMesh<V> Build() => new(Mesh._vertices, Mesh._indices, Bounds);
     }

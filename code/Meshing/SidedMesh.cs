@@ -2,6 +2,7 @@
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sandcube.Meshing;
 
@@ -101,6 +102,22 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
     // thread safe
     public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => AddAsCollisionMesh(builder, Direction.AllSet, offset);
 
+    // thread safe
+    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
+    {
+        var vertices = _notSidedElements.CombineVertices();
+        foreach(var direction in sidesToAdd)
+        {
+            if(_sidedElements.TryGetValue(direction, out var sidedElement))
+                vertices.AddRange(sidedElement.CombineVertices());
+        }
+
+        var verticesResult = vertices.Select(v => v.GetPosition() + offset).ToArray();
+        builder.AddCollisionHull(verticesResult, center, rotation);
+    }
+    // thread safe
+    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) => AddAsCollisionHull(builder, center, rotation, Direction.AllSet, offset);
+
 
     public class Builder : ISidedMeshPart<V>
     {
@@ -162,6 +179,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         // thread safe if builder is not being changed during execution
         public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) =>
             Mesh.AddAsCollisionMesh(builder, offset);
+
+        // thread safe if builder is not being changed during execution
+        public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
+            Mesh.AddAsCollisionHull(builder, center, rotation, sidesToAdd, offset);
+
+        // thread safe if builder is not being changed during execution
+        public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) =>
+            Mesh.AddAsCollisionHull(builder, center, rotation, offset);
 
 
         public SidedMesh<V> Build() => new(Mesh._sidedElements, Mesh._notSidedElements, Bounds);

@@ -9,4 +9,5 @@ public interface IMeshPart<V> where V : unmanaged, IVertex
     void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default);
 
     void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default);
+    void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default);
 }
