@@ -1,8 +1,10 @@
 ﻿using Sandbox;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Sandbox.Package;
 
 namespace Sandcube.Meshing;
 
@@ -20,21 +22,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
 
     public SidedMesh(Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements, UnlimitedMesh<V>.Builder notSidedElements)
     {
-        BBox? bounds = null;
-        foreach(var sidedElementEntry in sidedElements)
+        foreach(var (direction, sidedElement) in sidedElements)
         {
-            var builder = new UnlimitedMesh<V>.Builder().Add(sidedElementEntry.Value);
-            _sidedElements[sidedElementEntry.Key] = builder;
-
-            if(!builder.IsEmpty())
-                bounds = bounds.AddOrCreate(builder.Bounds);
+            var builder = new UnlimitedMesh<V>.Builder().Add(sidedElement);
+            _sidedElements[direction] = builder;
         }
         _notSidedElements = new UnlimitedMesh<V>.Builder().Add(notSidedElements);
 
-        if(!_notSidedElements.IsEmpty())
-            bounds = bounds.AddOrCreate(_notSidedElements.Bounds);
-
-        Bounds = bounds ?? new();
+        RecalculateBounds();
     }
 
     private SidedMesh(Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements,
@@ -60,6 +55,22 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         return _notSidedElements.IsEmpty();
     }
 
+    public SidedMesh<T> Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
+    {
+        var sidedElements = _sidedElements.ToDictionary(e => e.Key, e => e.Value.Convert(vertexChanger));
+        var notSidedElements = _notSidedElements.Convert(vertexChanger);
+
+        return new SidedMesh<T>(sidedElements, notSidedElements);
+    }
+
+    public SidedMesh<V> Scale(Vector3 center, float scale) => Convert((v) =>
+    {
+        var position = v.GetPosition();
+        var offset = position - center;
+        v.SetPosition(position + offset * scale);
+        return v;
+    });
+
     public SidedMesh<V> RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
     {
         if(rightAngleRotation == RightAngle.Angle0)
@@ -80,12 +91,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
     public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
     {
         builder.Add(_notSidedElements, offset);
-
         foreach(var face in sidesToAdd)
-        {
-            if(_sidedElements.TryGetValue(face, out var element))
-                builder.Add(element, offset);
-        }
+            AddSideToBuilder(builder, face, offset);
+    }
+
+    public void AddSideToBuilder(UnlimitedMesh<V>.Builder builder, Direction sideToAdd, Vector3 offset = default)
+    {
+        if(_sidedElements.TryGetValue(sideToAdd, out var element))
+            builder.Add(element, offset);
     }
 
     public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) => AddToBuilder(builder, Direction.AllSet, offset);
@@ -99,6 +112,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
                 sidedElement.AddAsCollisionMesh(builder, offset);
         }
     }
+
     // thread safe
     public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => AddAsCollisionMesh(builder, Direction.AllSet, offset);
 
@@ -118,6 +132,19 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
     // thread safe
     public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) => AddAsCollisionHull(builder, center, rotation, Direction.AllSet, offset);
 
+    private void RecalculateBounds()
+    {
+        BBox? bounds = null;
+        foreach(var (direction, sidedElement) in _sidedElements)
+        {
+            if(!sidedElement.IsEmpty())
+                bounds = bounds.AddOrCreate(sidedElement.Bounds);
+        }
+        if(!_notSidedElements.IsEmpty())
+            bounds = bounds.AddOrCreate(_notSidedElements.Bounds);
+
+        Bounds = bounds ?? new();
+    }
 
     public class Builder : ISidedMeshPart<V>
     {
@@ -144,10 +171,62 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         }
         public virtual bool IsEmpty() => Mesh.IsEmpty();
 
+
+        public virtual SidedMesh<T>.Builder Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
+        {
+            SidedMesh<T>.Builder result = new()
+            {
+                Mesh = Mesh.Convert(vertexChanger)
+            };
+
+            result.BuildingBounds = result.Mesh.IsEmpty() ? null : Mesh.Bounds;
+            return result;
+        }
+
+        public virtual Builder ChangeEveryVertex(Func<V, V> vertexChanger)
+        {
+            Mesh = Mesh.Convert(vertexChanger);
+            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            return this;
+        }
+
+        public virtual Builder Scale(Vector3 center, float scale) => ChangeEveryVertex((v) =>
+        {
+            var position = v.GetPosition();
+            var offset = position - center;
+            v.SetPosition(center + offset * scale);
+            return v;
+        });
+
         public virtual Builder RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
         {
             Mesh = Mesh.RotateAround(rightAngleRotation, lookDirection, center);
             BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            return this;
+        }
+
+        public Builder Add(IMeshPart<V> part, Vector3 offset = default)
+        {
+            part.AddToBuilder(Mesh._notSidedElements, offset);
+            return this;
+        }
+
+        public Builder Add(ISidedMeshPart<V> part, Vector3 offset = default)
+        {
+            foreach(var direction in Direction.All)
+                part.AddSideToBuilder(GetOrCreateSidedBuilder(direction), direction, offset);
+            return this;
+        }
+
+        public Builder Add(SidedMesh<V>.Builder builder)
+        {
+            Mesh._notSidedElements.Add(builder.Mesh._notSidedElements);
+
+            foreach(var (direction, sidedElement) in builder.Mesh._sidedElements)
+                Mesh._sidedElements[direction].Add(sidedElement);
+
+            if(!builder.IsEmpty())
+                BuildingBounds = BuildingBounds.AddOrCreate(builder.Bounds);
             return this;
         }
 
@@ -169,6 +248,8 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
 
         public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
             Mesh.AddToBuilder(builder, sidesToAdd, offset);
+        public void AddSideToBuilder(UnlimitedMesh<V>.Builder builder, Direction sideToAdd, Vector3 offset = default) =>
+            Mesh.AddSideToBuilder(builder, sideToAdd, offset);
         public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) =>
             Mesh.AddToBuilder(builder, offset);
 

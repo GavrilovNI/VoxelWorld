@@ -6,6 +6,7 @@ namespace Sandcube.Meshing;
 
 public interface ISidedMeshPart<V> : IMeshPart<V> where V : unmanaged, IVertex
 {
+    void AddSideToBuilder(UnlimitedMesh<V>.Builder builder, Direction sideToAdd, Vector3 offset = default);
     void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default);
     void IMeshPart<V>.AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset) => AddToBuilder(builder, Direction.AllSet, offset);
 

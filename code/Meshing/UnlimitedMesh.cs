@@ -38,21 +38,43 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         Bounds = mesh.Bounds;
     }
 
+    public UnlimitedMesh<T> Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
+    {
+        var result = new UnlimitedMesh<T>();
+
+        foreach(var vertices in _vertices)
+            result._vertices.Add(vertices.Select(vertexChanger).ToList());
+
+        foreach(var indices in _indices)
+            result._indices.Add(new List<ushort>(indices));
+
+        result.RecalculateBounds();
+        return result;
+    }
+
+    public UnlimitedMesh<V> Scale(Vector3 center, float scale) => Convert((v) =>
+    {
+        var position = v.GetPosition();
+        var offset = position - center;
+        v.SetPosition(position + offset * scale);
+        return v;
+    });
+
     public UnlimitedMesh<V> RotateAround(Rotation rotation, Vector3 center)
     {
         var indices = _indices.Select(l => new List<ushort>(l)).ToList();
 
-        BBox bounds = IsEmpty() ? default : BBox.FromPositionAndSize(_vertices.First(v => v.Count > 0)[0].GetPosition(), 0f);
+        BBox? bounds = IsEmpty() ? null : BBox.FromPositionAndSize(_vertices.First(v => v.Count > 0)[0].GetPosition(), 0f);
         var vertices = _vertices.Select(l => new List<V>(l.Select(v =>
         {
             var result = v;
             var newPosition = (result.GetPosition() - center) * rotation + center;
             result.SetPosition(newPosition);
-            bounds = bounds.AddPoint(newPosition);
+            bounds = bounds.AddOrCreate(newPosition);
             return result;
         }))).ToList();
 
-        return new(vertices, indices, bounds);
+        return new(vertices, indices, bounds ?? new());
     }
 
     public bool IsEmpty()
@@ -147,19 +169,17 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         builder.AddCollisionHull(vertices, center, rotation);
     }
 
-    public UnlimitedMesh<T> Convert<T>(Func<V, T> vertexConvertor) where T : unmanaged, IVertex
+    private void RecalculateBounds()
     {
-        UnlimitedMesh<T> result = new();
-
+        BBox? bounds = null;
         foreach(var vertices in _vertices)
-            result._vertices.Add(vertices.Select(vertexConvertor).ToList());
-
-        foreach(var indices in _indices)
-            result._indices.Add(new List<ushort>(indices));
-
-        result.Bounds = Bounds;
-
-        return result;
+        {
+            foreach(var vertex in vertices)
+            {
+                bounds = bounds.AddOrCreate(vertex.GetPosition());
+            }
+        }
+        Bounds = bounds ?? new();
     }
 
     public class Builder : IMeshPart<V>
@@ -191,6 +211,37 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             BuildingBounds = null;
             return this;
         }
+
+        public virtual UnlimitedMesh<T>.Builder Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
+        {
+            UnlimitedMesh<T>.Builder result = new()
+            {
+                Mesh = Mesh.Convert(vertexChanger)
+            };
+
+            result.CurrentVertices = result.Vertices.Count == 0 ? null : result.Vertices[^1];
+            result.CurrentIndices = result.Indices.Count == 0 ? null : result.Indices[^1];
+            result.BuildingBounds = result.Mesh.Bounds;
+            return result;
+        }
+
+        public virtual Builder ChangeEveryVertex(Func<V, V> vertexChanger)
+        {
+            Mesh = Mesh.Convert(vertexChanger);
+
+            CurrentVertices = Vertices.Count == 0 ? null : Vertices[^1];
+            CurrentIndices = Indices.Count == 0 ? null : Indices[^1];
+            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            return this;
+        }
+
+        public virtual Builder Scale(Vector3 center, float scale) => ChangeEveryVertex((v) =>
+        {
+            var position = v.GetPosition();
+            var offset = position - center;
+            v.SetPosition(center + offset * scale);
+            return v;
+        });
 
         public virtual Builder RotateAround(Rotation rotation, Vector3 center)
         {
