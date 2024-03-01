@@ -24,6 +24,8 @@ public abstract class Entity : Component
             throw new InvalidOperationException($"{nameof(Entity)} {this} was already initialized");
         Initialized = true;
 
+        Tags.Add("entity");
+
         TypeId = typeId;
         ChangeWorld(world);
     }
