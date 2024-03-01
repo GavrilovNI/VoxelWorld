@@ -97,12 +97,12 @@ public class ChunkCreator : Component, ISavePathInitializable
     protected virtual Task GenerateChunk(Chunk chunk, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return Task.RunInThreadAsync(() =>
+        return Task.RunInThreadAsync(async () =>
         {
             cancellationToken.ThrowIfCancellationRequested();
             var states = Generator!.Generate(chunk.BlockOffset, chunk.Size);
             cancellationToken.ThrowIfCancellationRequested();
-            chunk.SetBlockStates(states, BlockSetFlags.UpdateModel);
+            await chunk.SetBlockStates(states, BlockSetFlags.UpdateModel);
             cancellationToken.ThrowIfCancellationRequested();
         });
     }
