@@ -114,15 +114,12 @@ public class ChunkModelUpdater : Component
         }
     }
 
-    public virtual void UpdateTexture(Texture texture)
-    {
-        foreach(var modelRenderer in ModelRenderers)
-            modelRenderer.SceneObject.Attributes.Set("color", texture);
-    }
-
     protected override void OnStart()
     {
-        BlockMeshMap = SandcubeGame.Instance!.BlockMeshes;
+        var game = SandcubeGame.Instance!;
+        BlockMeshMap = game.BlockMeshes;
+        OpaqueVoxelsMaterial = game.OpaqueVoxelsMaterial;
+        TranslucentVoxelsMaterial = game.TranslucentVoxelsMaterial;
     }
 
     protected override void OnDisabled()

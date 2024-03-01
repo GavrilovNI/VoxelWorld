@@ -38,11 +38,13 @@
             "_type": "gameobject",
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
           },
+          "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
           "PlayerPrefab": {
             "_type": "gameobject",
             "prefab": "prefabs/player.prefab"
           },
           "ShouldAnimateBlockTextures": true,
+          "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat",
           "WorldPrefab": {
             "_type": "gameobject",
             "prefab": "prefabs/world.prefab"

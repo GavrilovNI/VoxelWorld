@@ -95,13 +95,6 @@ public class World : Component, IWorldAccessor, ITickable
         var entityId = entity.GameObject.Id;
         Entities.Remove(entityId);
     }
-
-
-    public virtual void UpdateTexture(Texture texture)
-    {
-        foreach(var (_, chunk) in Chunks)
-            chunk.UpdateTexture(texture);
-    }
     
     // Thread safe
     public virtual bool IsChunkInLimits(Vector3Int chunkPosition)

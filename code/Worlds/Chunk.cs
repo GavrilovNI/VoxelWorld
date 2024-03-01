@@ -83,8 +83,6 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return Task.CompletedTask;
     }
 
-    public virtual void UpdateTexture(Texture texture) => ModelUpdater.UpdateTexture(texture);
-
 
     public virtual void Tick()
     {

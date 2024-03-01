@@ -43,7 +43,9 @@ public sealed class SandcubeGame : Component
     [Property] public GameObject PlayerPrefab { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
-    
+    [Property] public Material OpaqueVoxelsMaterial { get; private set; } = null!;
+    [Property] public Material TranslucentVoxelsMaterial { get; private set; } = null!;
+
 
     private readonly WorldsContainer _worlds = new(); // TODO: make readonly?
     public IReadOnlyWorldsContainer Worlds => _worlds;
@@ -250,10 +252,7 @@ public sealed class SandcubeGame : Component
     private void AnimateBlockTextures()
     {
         if(BlocksTextureMap.UpdateAnimatedTextures())
-        {
-            foreach(var (_, world) in Worlds)
-                world.UpdateTexture(BlocksTextureMap.Texture);
-        }
+            OpaqueVoxelsMaterial.Attributes.Set("color", BlocksTextureMap.Texture);
     }
 
     public void RebuildBlockMeshes(IEnumerable<Block> blocks) =>
