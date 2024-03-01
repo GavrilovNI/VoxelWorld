@@ -14,6 +14,11 @@ public class Player : Entity
     [Property] public float ReachDistance { get; private set; } = 39.37f * 5;
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
 
+    protected override void OnAwake()
+    {
+        Tags.Add("player");
+    }
+
     public IMenu CreateInventoryMenu()
     {
         if(IsCreative)
