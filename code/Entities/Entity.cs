@@ -66,6 +66,11 @@ public abstract class Entity : Component
 
     }
 
+    public new void Destroy()
+    {
+        Enabled = false;
+        GameObject.Destroy();
+    }
 
     protected sealed override void OnDestroy()
     {
