@@ -111,7 +111,7 @@ public sealed class SandcubeGame : Component
         AssertLoadingStatus(LoadingStatus.Loaded);
 
         if(_worlds.TryGetWorld(id, out world))
-            return true;
+            return false;
 
         if(CurrentGameSaveHelper is null)
         {
