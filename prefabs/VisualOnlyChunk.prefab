@@ -56,7 +56,7 @@
           {
             "__type": "WorldProxy",
             "DoNotEnableIfWorldIsNotValid": true,
-            "World": null
+            "WorldComponent": null
           },
           {
             "__type": "ModelCollider",

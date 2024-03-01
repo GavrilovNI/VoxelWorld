@@ -81,7 +81,7 @@ public class ChunkCreator : ThreadHelpComponent, ISavePathInitializable
         {
             var proxies = chunkGameObject.Components.GetAll<WorldProxy>(FindMode.DisabledInSelfAndDescendants);
             foreach(var proxy in proxies)
-                proxy.World = creationData.World;
+                proxy.WorldComponent = creationData.World;
         }
 
         chunkGameObject.Enabled = creationData.EnableOnCreate;
