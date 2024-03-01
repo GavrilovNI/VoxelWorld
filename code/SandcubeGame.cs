@@ -231,6 +231,9 @@ public sealed class SandcubeGame : Component
         if(Instance.IsValid() && Instance != this)
             return;
 
+        foreach(var (_, mod) in _mods)
+            mod.OnUnloaded();
+
         if(IsValid)
         {
             Log.Warning($"{nameof(SandcubeGame)} was disabled. It's fine if it being destroyed or scene is unloading. Destroying {this} ...");

@@ -5,11 +5,12 @@ namespace Sandcube.Mods;
 
 public interface ISandcubeMod
 {
-    public Id Id { get; }
+    Id Id { get; }
 
-    public Task RegisterValues(RegistriesContainer registries) => Task.CompletedTask;
+    Task RegisterValues(RegistriesContainer registries) => Task.CompletedTask;
 
-    public void OnLoaded() { }
+    void OnLoaded() { }
+    void OnUnloaded() { }
 
-    public void OnGameLoaded() { }
+    void OnGameLoaded() { }
 }
