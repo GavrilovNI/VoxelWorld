@@ -6,11 +6,11 @@ namespace Sandcube.Entities;
 public record struct EntitySpawnConfig
 {
     public Transform Transform;
-    public World? World;
+    public IWorldAccessor? World;
     public bool StartEnabled;
     public string? Name;
 
-    public EntitySpawnConfig(Transform transform, World? world = null, bool startEnabled = true, string name = null)
+    public EntitySpawnConfig(Transform transform, IWorldAccessor? world = null, bool startEnabled = true, string? name = null)
     {
         Transform = transform;
         World = world;
@@ -18,7 +18,7 @@ public record struct EntitySpawnConfig
         Name = name;
     }
 
-    public EntitySpawnConfig(World? world = null, bool startEnabled = true, string name = null)
+    public EntitySpawnConfig(IWorldAccessor? world = null, bool startEnabled = true, string? name = null)
     {
         Transform = Transform.Zero;
         World = world;

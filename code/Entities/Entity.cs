@@ -10,7 +10,7 @@ public abstract class Entity : Component
 {
     public bool Initialized { get; private set; }
     public ModedId TypeId { get; private set; }
-    public World? World { get; private set; }
+    public IWorldAccessor? World { get; private set; }
 
     public new bool Enabled
     {
@@ -18,7 +18,7 @@ public abstract class Entity : Component
         set => GameObject.Enabled = value;
     }
 
-    public void Initialize(ModedId typeId, World? world = null)
+    public void Initialize(ModedId typeId, IWorldAccessor? world = null)
     {
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Entity)} {this} was already initialized");
@@ -28,7 +28,7 @@ public abstract class Entity : Component
         ChangeWorld(world);
     }
 
-    public bool ChangeWorld(World? newWorld)
+    public bool ChangeWorld(IWorldAccessor? newWorld)
     {
         if(object.ReferenceEquals(World, newWorld))
             return false;

@@ -23,7 +23,7 @@ public class PlayerSpawner : Component
     public virtual async Task<Entity?> SpawnPlayer(EntitySpawnConfig spawnConfig, CancellationToken cancellationToken)
     {
         var world = spawnConfig.World;
-        if(world.IsValid())
+        if(world is not null)
         {
             var spawnPosition = spawnConfig.Transform.Position;
             var spawnBlockPosition = world.GetBlockPosition(spawnPosition);
@@ -45,7 +45,7 @@ public class PlayerSpawner : Component
         return PlayerEntityType.CreateEntity(spawnConfig);
     }
 
-    public virtual async Task<Vector3Int> FindSafePosition(World world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
+    public virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
     {
         while(!await IsEmpty(world, range + startPosition, cancellationToken))
             startPosition += Vector3Int.Up;
@@ -56,7 +56,7 @@ public class PlayerSpawner : Component
         return startPosition + Vector3Int.Up;
     }
 
-    public virtual async Task<bool> IsEmpty(World world, BBoxInt range, CancellationToken cancellationToken)
+    public virtual async Task<bool> IsEmpty(IWorldAccessor world, BBoxInt range, CancellationToken cancellationToken)
     {
         var limits = world.Limits;
         var blockMeshes = SandcubeGame.Instance!.BlockMeshes;
