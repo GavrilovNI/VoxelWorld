@@ -39,10 +39,6 @@
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
           },
           "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
-          "PlayerPrefab": {
-            "_type": "gameobject",
-            "prefab": "prefabs/player.prefab"
-          },
           "ShouldAnimateBlockTextures": true,
           "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat",
           "WorldPrefab": {
@@ -283,6 +279,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-02-29T18:02:05.6221058\u002B01:00",
+  "LastSaved": "2024-03-01T18:39:34.0327986\u002B01:00",
   "__references": []
 }

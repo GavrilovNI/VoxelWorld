@@ -40,7 +40,6 @@ public sealed class SandcubeGame : Component
     [Property] public GameObject WorldsParent { get; private set; } = null!;
     [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
-    [Property] public GameObject PlayerPrefab { get; private set; } = null!;
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
     [Property] public Material OpaqueVoxelsMaterial { get; private set; } = null!;
