@@ -57,6 +57,7 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected override void OnAwake()
     {
+        Tags.Add("world");
         Chunks = new(DestroyChunk, Vector3Int.XYZIterationComparer);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
