@@ -11,7 +11,7 @@
           "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
           "component_type": "PlayerInventory"
         },
-        "IsCreative": false,
+        "IsCreative": true,
         "ReachDistance": 196.84999
       },
       {
