@@ -20,6 +20,8 @@ namespace Sandcube;
 public sealed class SandcubeGame : Component
 {
     public static event Action? Initialized;
+    public static event Action<World>? WorldAdded;
+
     public static InitalizationStatus InitalizationStatus { get; private set; } = InitalizationStatus.NotInitialized;
     public static LoadingStatus LoadingStatus { get; private set; } = LoadingStatus.NotLoaded;
 
@@ -121,6 +123,7 @@ public sealed class SandcubeGame : Component
 
         world = CreateWorld(id, worldFileSystem.GetPathFromData("/"));
         _worlds.AddWorld(id, world);
+        WorldAdded?.Invoke(world);
         return true;
     }
 
