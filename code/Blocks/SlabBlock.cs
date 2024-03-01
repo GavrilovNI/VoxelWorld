@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
@@ -90,17 +91,17 @@ public class SlabBlock : SimpleBlock
         return DefaultBlockState.With(SlabTypeProperty, slabType);
     }
 
-    public override void Break(in BlockActionContext context)
+    public override async Task Break(BlockActionContext context)
     {
         var currentSlabType = context.BlockState.GetValue(SlabTypeProperty);
         if(currentSlabType != SlabType.Double)
         {
-            base.Break(context);
+            await base.Break(context);
             return;
         }
 
         var slabType = GetSlabPart(context.World, context.Position, context.TraceResult, SlabType.Bottom);
-        context.World.SetBlockState(context.Position, DefaultBlockState.With(SlabTypeProperty, slabType.GetOpposite()));
+        await context.World.SetBlockState(context.Position, DefaultBlockState.With(SlabTypeProperty, slabType.GetOpposite()));
     }
 
     public override ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState)

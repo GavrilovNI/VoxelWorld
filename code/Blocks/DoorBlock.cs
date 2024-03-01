@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
@@ -67,10 +68,10 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
         return DefaultBlockState.With(DirectionProperty, direction).With(HingeProperty, isLeftHinge ? DoorHingeSide.Left : DoorHingeSide.Right);
     }
 
-    public override InteractionResult OnInteract(in BlockActionContext context)
+    public override async Task<InteractionResult> OnInteract(BlockActionContext context)
     {
         bool isOpen = context.BlockState.GetValue(OpenedProperty);
-        context.World.SetBlockState(context.Position, context.BlockState.With(OpenedProperty, !isOpen));
+        await context.World.SetBlockState(context.Position, context.BlockState.With(OpenedProperty, !isOpen));
         return InteractionResult.Success;
     }
 

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
@@ -61,9 +62,9 @@ public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReada
     public virtual bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState) => IsAir();
     public virtual void OnPlaced(in BlockActionContext context, BlockState placedBlockState) { }
 
-    public virtual InteractionResult OnAttack(in BlockActionContext context) => InteractionResult.Pass;
-    public virtual InteractionResult OnInteract(in BlockActionContext context) => InteractionResult.Pass;
-    public virtual void Break(in BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
+    public virtual Task<InteractionResult> OnAttack(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
+    public virtual Task<InteractionResult> OnInteract(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
+    public virtual Task Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
 
     public virtual bool CanStay(IWorldAccessor world, Vector3Int position, BlockState blockState) => true;
 

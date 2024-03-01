@@ -7,6 +7,7 @@ using Sandcube.Registries;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Sandcube.Items;
 
@@ -29,8 +30,8 @@ public class Item : IRegisterable, IStackValue<Item>
 
     public virtual int GetStackLimit() => StackLimit;
 
-    public virtual InteractionResult OnAttack(in ItemActionContext context) => InteractionResult.Pass;
-    public virtual InteractionResult OnUse(in ItemActionContext context) => InteractionResult.Pass;
+    public virtual Task<InteractionResult> OnAttack(ItemActionContext context) => Task.FromResult(InteractionResult.Pass);
+    public virtual Task<InteractionResult> OnUse(ItemActionContext context) => Task.FromResult(InteractionResult.Pass);
 
     public override int GetHashCode() => HashCode.Combine(Id, StackLimit);
 

@@ -13,6 +13,7 @@ using Sandcube.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
@@ -45,15 +46,15 @@ public class ItemStorageBlock : SimpleBlock, IEntityBlock
         StorageStackLimit = storageStackLimit;
     }
 
-    public override InteractionResult OnInteract(in BlockActionContext context)
+    public override Task<InteractionResult> OnInteract(BlockActionContext context)
     {
         if(context.World.GetBlockEntity(context.Position) is ItemStorageBlockEntity blockEntity)
         {
             var menu = blockEntity.CreateMenu(context.Player);
             MenuController.Instance!.Open(menu);
-            return InteractionResult.Success;
+            return Task.FromResult(InteractionResult.Success);
         }
-        return InteractionResult.Fail;
+        return Task.FromResult(InteractionResult.Fail);
     }
 
     public virtual BlockEntity? CreateEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => new ItemStorageBlockEntity(world, position, StorageSize, StorageStackLimit);

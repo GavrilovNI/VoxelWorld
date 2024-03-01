@@ -2,6 +2,7 @@
 using Sandcube.Blocks;
 using Sandcube.Interactions;
 using Sandcube.Mth.Enums;
+using System.Threading.Tasks;
 
 namespace Sandcube.Items;
 
@@ -14,7 +15,7 @@ public class BlockItem : Item
         Block = block;
     }
 
-    public override InteractionResult OnUse(in ItemActionContext context)
+    public override async Task<InteractionResult> OnUse(ItemActionContext context)
     {
         var traceResult = context.TraceResult;
 
@@ -24,17 +25,17 @@ public class BlockItem : Item
         if(!BlockActionContext.TryMakeFromItemActionContext(context, out var blockContext))
             return InteractionResult.Pass;
 
-        if(!TryPlace(blockContext))
+        if(!await TryPlace(blockContext))
         {
             blockContext += Direction.ClosestTo(blockContext.TraceResult.Normal);
-            if(!TryPlace(blockContext))
+            if(!await TryPlace(blockContext))
                 return InteractionResult.Fail;
         }
 
         return InteractionResult.Success;
     }
 
-    protected virtual bool TryPlace(in BlockActionContext context)
+    protected virtual async Task<bool> TryPlace(BlockActionContext context)
     {
         var currentBlockState = context.BlockState;
 
@@ -50,9 +51,11 @@ public class BlockItem : Item
             return false;
 
         var contextCopy = context;
-        context.World.SetBlockState(context.Position, stateToPlace)
-            .ContinueWith(t => block.OnPlaced(contextCopy, stateToPlace));
 
-        return true;
+        var changed = await context.World.SetBlockState(context.Position, stateToPlace);
+        if(changed)
+            block.OnPlaced(contextCopy, stateToPlace);
+
+        return changed;
     }
 }
