@@ -53,7 +53,7 @@ public class ChunkModelUpdater : Component
         }
     }
 
-    public BBox Bounds { get; protected set; }
+    public BBox ModelBounds { get; protected set; }
 
 
     protected BlockMeshMap BlockMeshMap = null!;
@@ -414,9 +414,7 @@ public class ChunkModelUpdater : Component
             if(!currentBounds.Size.AlmostEqual(0))
                 result = result.AddOrCreate(currentBounds);
         }
-        result ??= new BBox();
-
-        Bounds = result.Value.Translate(Transform.Position);
+        ModelBounds = result ?? new BBox();
     }
 
 
