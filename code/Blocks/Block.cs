@@ -59,7 +59,7 @@ public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReada
 
 
     public virtual BlockState GetStateForPlacement(in BlockActionContext context) => DefaultBlockState;
-    public virtual bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState) => IsAir();
+    public virtual bool CanBeReplaced(BlockState currentBlockState, BlockState placingBlockState) => IsAir();
     public virtual void OnPlaced(in BlockActionContext context, BlockState placedBlockState) { }
 
     public virtual Task<InteractionResult> OnAttack(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);

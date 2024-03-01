@@ -55,12 +55,12 @@ public class SlabBlock : SimpleBlock
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(SlabTypeProperty, SlabType.Bottom);
 
-    public override bool CanBeReplaced(in BlockActionContext context, BlockState placingBlockState)
+    public override bool CanBeReplaced(BlockState currentBlockState, BlockState placingBlockState)
     {
         if(placingBlockState.Block != this)
             return false;
 
-        var currentSlabType = context.BlockState.GetValue(SlabTypeProperty);
+        var currentSlabType = currentBlockState.GetValue(SlabTypeProperty);
         if(currentSlabType == SlabType.Double)
             return false;
 

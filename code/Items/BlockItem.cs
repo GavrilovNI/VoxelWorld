@@ -42,7 +42,7 @@ public class BlockItem : Item
         var stateToPlace = Block.GetStateForPlacement(context);
         var block = stateToPlace.Block;
 
-        bool canReplace = currentBlockState.Block.CanBeReplaced(context, stateToPlace);
+        bool canReplace = currentBlockState.Block.CanBeReplaced(context.BlockState, stateToPlace);
         if(!canReplace)
             return false;
 

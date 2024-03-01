@@ -51,7 +51,7 @@ public abstract class TwoPartBlock : Block
         var secondPartState = firstPartState.Change(PartTypeProperty, part => part.GetOpposite());
         var secondPartContext = context + secondPartPlaceDirection;
 
-        bool canReplace = secondPartContext.BlockState.Block.CanBeReplaced(secondPartContext, secondPartState);
+        bool canReplace = secondPartContext.BlockState.Block.CanBeReplaced(secondPartContext.BlockState, secondPartState);
         if(!canReplace)
             return;
 
