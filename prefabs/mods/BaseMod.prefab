@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "00458465-149e-4d28-a919-a4e59e0bed11",
+    "Id": "20c62964-6a22-4255-9629-a4566c49e81c",
     "Name": "basemod",
     "Enabled": true,
     "Components": [
@@ -9,6 +9,10 @@
       },
       {
         "__type": "SandcubeEntities",
+        "PhysicsBlockPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/entities/physicsblockentity.prefab"
+        },
         "PlayerPrefab": {
           "_type": "gameobject",
           "prefab": "prefabs/entities/player.prefab"

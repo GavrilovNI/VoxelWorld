@@ -10,4 +10,7 @@ public sealed class SandcubeEntities : ModEntities
 
     [Property] private PrefabScene PlayerPrefab { get; set; } = null!;
     [AutoPrefabEntityType(SandcubeBaseMod.ModName)] public EntityType Player { get; private set; } = null!;
+
+    [Property] private PrefabScene PhysicsBlockPrefab { get; set; } = null!;
+    [AutoPrefabEntityType(SandcubeBaseMod.ModName)] public EntityType PhysicsBlock { get; private set; } = null!;
 }
