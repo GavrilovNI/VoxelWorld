@@ -16,7 +16,10 @@
       },
       {
         "__type": "WorldAutoLoader",
-        "Distance": "2,2,1",
+        "Bounds": {
+          "Mins": "-2,-2,-2",
+          "Maxs": "2,2,2"
+        },
         "TimeBetweenSuccessfulAttempts": 1,
         "World": null
       }
