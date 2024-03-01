@@ -52,7 +52,7 @@ public class PlayerSpawner : Component
         return player;
     }
 
-    public virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
+    protected virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
     {
         while(!await IsEmpty(world, range + startPosition, cancellationToken))
             startPosition += Vector3Int.Up;
@@ -63,7 +63,7 @@ public class PlayerSpawner : Component
         return startPosition + Vector3Int.Up;
     }
 
-    public virtual async Task<bool> IsEmpty(IWorldAccessor world, BBoxInt range, CancellationToken cancellationToken)
+    protected virtual async Task<bool> IsEmpty(IWorldAccessor world, BBoxInt range, CancellationToken cancellationToken)
     {
         var limits = world.Limits;
         var blockMeshes = SandcubeGame.Instance!.BlockMeshes;
