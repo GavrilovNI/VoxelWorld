@@ -11,7 +11,7 @@
         "__type": "SandcubeEntities",
         "PlayerPrefab": {
           "_type": "gameobject",
-          "prefab": "prefabs/player.prefab"
+          "prefab": "prefabs/entities/player.prefab"
         }
       },
       {
