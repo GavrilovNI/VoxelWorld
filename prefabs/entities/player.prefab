@@ -98,29 +98,8 @@
                 "ZNear": 1
               },
               {
-                "__type": "FilmGrain",
-                "Intensity": 0.03,
-                "Response": 1
-              },
-              {
-                "__type": "Vignette",
-                "Center": "0.5,0.5",
-                "Color": "0,0,0,0.38",
-                "Intensity": 1,
-                "Roundness": 0.5,
-                "Smoothness": 1
-              },
-              {
-                "__type": "ChromaticAberration",
-                "Offset": "4,6,4.049999",
-                "Scale": 0.2
-              },
-              {
                 "__type": "Sharpen",
                 "Scale": 1
-              },
-              {
-                "__type": "Highlight"
               },
               {
                 "__type": "Bloom",
