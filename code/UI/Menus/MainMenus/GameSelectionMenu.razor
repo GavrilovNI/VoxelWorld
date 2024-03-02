@@ -30,12 +30,12 @@
                     @foreach(var (path, info) in saves)
                     {
                         <div class="button" onclick="@(() => _ = TryLoadGame(path))">
-                            <div class ="world-icon-container">
-                                <div class="world-icon"></div>
+                            <div class="game-icon-container">
+                                <div class="game-icon"></div>
                             </div>
-                            <div class="world-info">
-                                <AdaptiveLabel class="world-name">@info.Name</AdaptiveLabel>
-                                <AdaptiveLabel class="world-path">@($"{SavesPath}/{path}")</AdaptiveLabel>
+                            <div class="game-info">
+                                <AdaptiveLabel class="game-name">@info.Name</AdaptiveLabel>
+                                <AdaptiveLabel class="game-path">@($"{SavesPath}/{path}")</AdaptiveLabel>
                             </div>
                         </div>
                     }
@@ -55,7 +55,6 @@
 
 @code
 {
-    // <AdaptiveLabel class="world-path" FontSize=20% Text=@($"{SavesPath}/{path}") />
     [Property] protected MainMenuController MainMenuController { get; set; } = null!;
     [Property] protected CreateGameMenu CreateGameMenu { get; set; } = null!;
     [Property] protected string SavesPath { get; set; } = "saves";

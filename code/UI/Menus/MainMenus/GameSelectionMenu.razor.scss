@@ -70,11 +70,11 @@ GameSelectionMenu {
                 aspect-ratio: 5;
                 min-height: 100px;
 
-                .world-icon-container {
+                .game-icon-container {
                     height: 100%;
                     aspect-ratio: 1;
 
-                    .world-icon {
+                    .game-icon {
                         left: 5%;
                         top: 5%;
                         height: 90%;
@@ -83,17 +83,20 @@ GameSelectionMenu {
                     }
                 }
 
-                .world-info {
+                .game-info {
                     margin-left: 1%;
                     flex-direction: column;
 
-                    .world-name {
+                    .game-name {
                         overflow: hidden;
                         font-size: 35%;
+                        text-align: left;
                     }
 
-                    .world-path {
+                    .game-path {
                         font-size: 20%;
+                        text-align: left;
+                    }
                     }
                 }
             }
