@@ -2,23 +2,6 @@
   "Id": "8c0250af-c367-4bb3-ab12-5cf36779a6ca",
   "GameObjects": [
     {
-      "Id": "e9aebd45-7f85-4fff-8f75-cfcb5ac9bb38",
-      "Name": "Directional Light",
-      "Rotation": "0.4351622,0.4351622,-0.5573454,0.5573453",
-      "Tags": "light_directional,light",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "DirectionalLight",
-          "FogMode": "Enabled",
-          "FogStrength": 1,
-          "LightColor": "0.91373,0.98039,1,1",
-          "Shadows": true,
-          "SkyColor": "0.05882,0.07451,0.08235,1"
-        }
-      ]
-    },
-    {
       "Id": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
       "Name": "Sandcube Game",
       "Enabled": true,
@@ -288,6 +271,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-02T00:47:35.4114929\u002B01:00",
+  "LastSaved": "2024-03-02T00:51:56.7007941\u002B01:00",
   "__references": []
 }
