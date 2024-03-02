@@ -14,10 +14,10 @@
 
 <root>
     @{
-        <div class="center">
+        <div class="centered-content flex-column fill-parent">
             <AdaptiveLabel class="title">Create Game</AdaptiveLabel>
             <div class="options-container">
-                <div class="options">
+                <div class="options centered-content flex-column">
                     <div class="option">
                         <div class="info">
                             <AdaptiveLabel class="label">Name:</AdaptiveLabel>
@@ -26,9 +26,9 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
-                <div class="button create-game" onclick="@(() => TryCreateGame())">
-                    <AdaptiveLabel class="label">Create</AdaptiveLabel>
+            <div class="bottom-buttons centered-content">
+                <div class="button create-game centered-content" onclick="@(() => TryCreateGame())">
+                    <AdaptiveLabel class="label centered-content">Create</AdaptiveLabel>
                 </div>
             </div>
         </div>

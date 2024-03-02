@@ -17,19 +17,19 @@
         var saves = GetAllSaves().OrderBy(s => s.Value.Name);
         var savesCount = saves.Count();
 
-        <div class="center">
-            <AdaptiveLabel class="title">Your Games</AdaptiveLabel>
+        <div class="centered-content flex-column fill-parent">
+            <AdaptiveLabel class="title centered-content">Your Games</AdaptiveLabel>
 
-            @if(savesCount == 0)
-            {
-                <AdaptiveLabel class="no-games-info">You have not any saved game</AdaptiveLabel>
-            }
 
             <div class="buttons-container">
-                <div class="buttons">
+                <div class="buttons centered-content flex-column">
+                    @if(savesCount == 0)
+                    {
+                        <AdaptiveLabel class="no-games-info centered-content">You have not any saved game</AdaptiveLabel>
+                    }
                     @foreach(var (path, info) in saves)
                     {
-                        <div class="button load-button" onclick="@(() => _ = TryLoadGame(path))">
+                        <div class="button" onclick="@(() => _ = TryLoadGame(path))">
                             <div class ="world-icon-container">
                                 <div class="world-icon"></div>
                             </div>
@@ -39,23 +39,13 @@
                             </div>
                         </div>
                     }
-
-                    @if(savesCount == 0)
-                    {
-                        <div class="button create-game" onclick="@(() => OpenCreateGameMenu())">
-                            <AdaptiveLabel class="label">Create Game</AdaptiveLabel>
-                        </div>
-                    }
                 </div>
             </div>
 
-            <div class="bottom-buttons">
-                @if(savesCount > 0)
-                {
-                    <div class="button create-game" onclick="@(() => OpenCreateGameMenu())">
-                        <AdaptiveLabel class="label">Create New Game</AdaptiveLabel>
-                    </div>
-                }
+            <div class="bottom-buttons centered-content">
+                <div class="button create-game" onclick="@(() => OpenCreateGameMenu())">
+                    <AdaptiveLabel class="label">Create New Game</AdaptiveLabel>
+                </div>
             </div>
         </div>
     }
