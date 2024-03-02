@@ -66,8 +66,7 @@
         if(string.IsNullOrWhiteSpace(name))
             return (false, string.Empty);
 
-        var seed = string.IsNullOrWhiteSpace(SeedTextEntry.Text) ? new Guid().GetHashCode() : SeedTextEntry.Text.GetHashCode();
-
+        int seed = GetSeed();
         _isLoadingGame = true;
 
         GameInfo gameInfo = new() { Name = name, Seed = seed };
@@ -76,6 +75,18 @@
 
         _isLoadingGame = false;
         return (loaded, path);
+    }
+
+    protected int GetSeed()
+    {
+        string seedStr = SeedTextEntry.Text?.Trim();
+        if(string.IsNullOrWhiteSpace(seedStr))
+            return Guid.NewGuid().GetHashCode();
+
+        if (int.TryParse(seedStr, out var seed))
+            return seed;
+
+        return seedStr.GetHashCode();
     }
 
     public void Close()
