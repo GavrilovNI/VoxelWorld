@@ -68,6 +68,7 @@ public sealed class SandcubeGame : Component
     private readonly Dictionary<Id, ISandcubeMod> _mods = new();
 
     private Task<bool>? _savingTask = null;
+    private bool _wasClosingGame = false;
 
 
     public async Task Initialize()
@@ -258,6 +259,10 @@ public sealed class SandcubeGame : Component
 
         if(ShouldAnimateBlockTextures)
             AnimateBlockTextures();
+
+        if(!_wasClosingGame && Game.IsClosing && _savingTask is null)
+            _ = SaveGame();
+        _wasClosingGame = Game.IsClosing;
     }
 
     protected override void OnDisabled()
