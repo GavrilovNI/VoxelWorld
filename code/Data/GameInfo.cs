@@ -1,13 +1,11 @@
 ﻿using Sandcube.IO;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 
 namespace Sandcube.Data;
 
 public readonly record struct GameInfo : IBinaryWritable, IBinaryStaticReadable<GameInfo>
 {
-    [Required]
-    public string Name { get; init; }
+    public required string Name { get; init; }
 
 
 
