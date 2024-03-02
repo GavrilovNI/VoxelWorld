@@ -63,9 +63,14 @@ public class ChunkModelUpdater : Component
     protected readonly object ModelUpdateLock = new();
     // Should be locked
     protected ModelUpdateStates ModelUpdateState { get; set; } = ModelUpdateStates.Updated;
-    protected TaskCompletionSource ModelUpdateTaskSource = new();
+    protected TaskCompletionSource ModelUpdateTaskSource;
     protected CancellationTokenSource? ModelUpdateCancellationTokenSource;
 
+    public ChunkModelUpdater()
+    {
+        ModelUpdateTaskSource = new();
+        ModelUpdateTaskSource.SetResult();
+    }
 
     protected enum ModelUpdateStates
     {
