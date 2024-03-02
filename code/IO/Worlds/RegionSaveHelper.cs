@@ -11,7 +11,7 @@ namespace Sandcube.IO.Worlds;
 
 public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 {
-    protected readonly WorldSaveOptions WorldSaveOptions;
+    protected readonly WorldOptions WorldOptions;
 
     protected BlockStatePalette BlockStatePalette;
     protected readonly int MaxChunksCount;
@@ -19,13 +19,13 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected readonly Dictionary<Vector3Int, BlocksData> Chunks = new();
 
-    protected virtual IEnumerable<Vector3Int> AllBlockPositionsInChunk => WorldSaveOptions.ChunkSize.GetPositionsFromZero(false);
+    protected virtual IEnumerable<Vector3Int> AllBlockPositionsInChunk => WorldOptions.ChunkSize.GetPositionsFromZero(false);
 
-    public RegionSaveHelper(in WorldSaveOptions worldSaveOptions)
+    public RegionSaveHelper(in WorldOptions worldOptions)
     {
-        WorldSaveOptions = worldSaveOptions;
+        WorldOptions = worldOptions;
 
-        var regionSize = WorldSaveOptions.RegionSize;
+        var regionSize = WorldOptions.RegionSize;
         MaxChunksCount = regionSize.x * regionSize.y * regionSize.z;
         Bounds = BBoxInt.FromMinsAndSize(0, regionSize);
 
@@ -232,13 +232,13 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 
     protected virtual int GetChunkIndex(Vector3Int chunkPosition)
     {
-        var regionSize = WorldSaveOptions.RegionSize;
+        var regionSize = WorldOptions.RegionSize;
         return chunkPosition.z + regionSize.z * (chunkPosition.y + chunkPosition.x * regionSize.y);
     }
 
     protected virtual Vector3Int GetChunkPosition(int chunkIndex)
     {
-        var regionSize = WorldSaveOptions.RegionSize;
+        var regionSize = WorldOptions.RegionSize;
         int z = chunkIndex % regionSize.z;
         chunkIndex /= regionSize.z;
         int y = chunkIndex % regionSize.y;

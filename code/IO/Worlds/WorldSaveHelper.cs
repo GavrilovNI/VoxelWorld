@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Data;
 using Sandcube.Mth;
 using System.Collections.Generic;
 using System.IO;
@@ -16,24 +17,24 @@ public class WorldSaveHelper
         RegionsFileSystem = worldFileSystem.CreateDirectoryAndSubSystem("regions");
     }
 
-    public virtual void SaveWorldOptions(in WorldSaveOptions options)
+    public virtual void SaveWorldOptions(in WorldOptions worldOptions)
     {
         using var stream = WorldFileSystem.OpenWrite("world.options");
         using var writer = new BinaryWriter(stream);
-        options.Write(writer);
+        worldOptions.Write(writer);
     }
 
-    public virtual bool TryReadWorldOptions(out WorldSaveOptions options)
+    public virtual bool TryReadWorldOptions(out WorldOptions worldOptions)
     {
         if(!WorldFileSystem.FileExists("world.options"))
         {
-            options = default;
+            worldOptions = default;
             return false;
         }
 
         using var stream = WorldFileSystem.OpenRead("world.options");
         using var reader = new BinaryReader(stream);
-        options = WorldSaveOptions.Read(reader);
+        worldOptions = WorldOptions.Read(reader);
         return true;
     }
 

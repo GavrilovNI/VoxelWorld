@@ -17,6 +17,10 @@
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
+          "DefaultWorldOptions": {
+            "ChunkSize": "16,16,16",
+            "RegionSize": "4,4,4"
+          },
           "ModsParent": {
             "_type": "gameobject",
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
@@ -181,14 +185,17 @@
                 "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
                 "component_type": "ChunkCreator"
               },
-              "ChunkSize": "16,16,16",
               "EntitiesParent": null,
               "IsService": true,
               "Limits": {
                 "Mins": "-50000,-50000,-256",
                 "Maxs": "50000,50000,255"
               },
-              "TickByItself": true
+              "TickByItself": true,
+              "WorldOptions": {
+                "ChunkSize": "16,16,16",
+                "RegionSize": "4,4,4"
+              }
             },
             {
               "__type": "ChunkCreator",
@@ -199,7 +206,11 @@
               },
               "ChunksParent": null,
               "Generator": null,
-              "SavePath": ""
+              "World": {
+                "_type": "component",
+                "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+                "component_type": "World"
+              }
             }
           ]
         },
@@ -271,6 +282,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-02T00:51:56.7007941\u002B01:00",
+  "LastSaved": "2024-03-02T04:34:47.1110467\u002B01:00",
   "__references": []
 }

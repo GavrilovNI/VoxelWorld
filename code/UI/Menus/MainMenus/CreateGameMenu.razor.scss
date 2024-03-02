@@ -71,6 +71,10 @@ CreateGameMenu {
                     width: 70%;
                     text-align: left;
                     background-color: #444;
+
+                    .placeholder {
+                        color: #888888ff;
+                    }
                 }
             }
         }

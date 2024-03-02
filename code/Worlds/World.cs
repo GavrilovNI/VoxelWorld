@@ -6,6 +6,7 @@ using Sandcube.Entities;
 using Sandcube.Exceptions;
 using Sandcube.Interfaces;
 using Sandcube.IO;
+using Sandcube.IO.Worlds;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Registries;
@@ -24,7 +25,10 @@ public class World : Component, IWorldAccessor, ITickable
     public event Action<Vector3Int>? ChunkLoaded;
     public event Action<Vector3Int>? ChunkUnloaded;
 
-    [Property, HideIf(nameof(IsSceneRunning), true)] public Vector3Int ChunkSize { get; init; } = 16;
+
+    [Property, HideIf(nameof(IsSceneRunning), true)]
+    public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 4 };
+    
     [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
     [Property] public BBoxInt Limits { get; private set; } = new BBoxInt(new Vector3Int(-50000, -50000, -256), new Vector3Int(50000, 50000, 255));
     [Property] protected bool TickByItself { get; set; } = true;
@@ -34,6 +38,8 @@ public class World : Component, IWorldAccessor, ITickable
 
     public bool Initialized { get; private set; }
     public ModedId Id { get; private set; }
+    public BaseFileSystem? WorldFileSystem { get; private set; }
+    public Vector3Int ChunkSize => WorldOptions.ChunkSize;
 
 
     private bool IsSceneRunning => !Scene.IsEditor;
@@ -44,7 +50,7 @@ public class World : Component, IWorldAccessor, ITickable
     protected readonly Dictionary<Guid, Entity> Entities = new();
 
 
-    public void Initialize(ModedId id)
+    public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
     {
         if(Initialized)
             throw new InvalidOperationException($"{nameof(World)} {this} was already initialized");
@@ -53,6 +59,18 @@ public class World : Component, IWorldAccessor, ITickable
         Initialized = true;
 
         Id = id;
+        WorldFileSystem = fileSystem;
+
+        WorldSaveHelper saveHelper = new(WorldFileSystem);
+        if(saveHelper.TryReadWorldOptions(out var worldOptions))
+        {
+            WorldOptions = worldOptions;
+        }
+        else
+        {
+            WorldOptions = defaultWorldOptions;
+            saveHelper.SaveWorldOptions(WorldOptions);
+        }
     }
 
     protected override void OnAwake()
@@ -165,7 +183,7 @@ public class World : Component, IWorldAccessor, ITickable
             Position = chunkPosition,
             Size = ChunkSize,
             EnableOnCreate = false,
-            World = this
+            World = this,
         };
 
         var chunk = await Task.RunInMainThreadAsync(() => ChunkCreator.CreateChunk(creationData, cancellationToken));

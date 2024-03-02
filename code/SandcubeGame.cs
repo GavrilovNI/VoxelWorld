@@ -43,6 +43,7 @@ public sealed class SandcubeGame : Component
     [Property] public GameObject WorldsParent { get; private set; } = null!;
     [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
+    [Property] public WorldOptions DefaultWorldOptions { get; private set; } = new() { ChunkSize = 16, RegionSize = 4 };
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public PlayerSpawner PlayerSpawner { get; private set; } = null!;
 
@@ -65,6 +66,9 @@ public sealed class SandcubeGame : Component
     public SandcubeBaseMod BaseMod { get; private set; } = null!;
 
     private readonly Dictionary<Id, ISandcubeMod> _mods = new();
+
+    private Task<bool>? _savingTask = null;
+
 
     public async Task Initialize()
     {
@@ -109,6 +113,30 @@ public sealed class SandcubeGame : Component
         return true;
     }
 
+    public async Task<bool> SaveGame()
+    {
+        ThreadSafe.AssertIsMainThread();
+        AssertInitalizationStatus(InitalizationStatus.Initialized);
+        AssertLoadingStatus(LoadingStatus.Loaded);
+
+        if(_savingTask is not null)
+            return await _savingTask;
+
+        var savers = Scene.Components.GetAll<ISaver>(FindMode.EnabledInSelfAndDescendants);
+
+        List<Task<bool>> tasks = new();
+        foreach(var saver in savers)
+            tasks.Add(saver.Save());
+
+        TaskCompletionSource<bool> taskCompletionSource = new();
+        _savingTask = taskCompletionSource.Task;
+        var results = await Task.WhenAll(tasks);
+        var result = results.All(saved => saved);
+        taskCompletionSource.SetResult(result);
+        _savingTask = null;
+        return result;
+    }
+
     public bool TryAddWorld(ModedId id, out World world)
     {
         AssertLoadingStatus(LoadingStatus.Loaded);
@@ -124,7 +152,7 @@ public sealed class SandcubeGame : Component
 
         var worldFileSystem = CurrentGameSaveHelper.GetOrCreateWorldFileSystem(id);
 
-        world = CreateWorld(id, worldFileSystem.GetPathFromData("/"));
+        world = CreateWorld(id, worldFileSystem);
         _worlds.AddWorld(id, world);
         WorldAdded?.Invoke(world);
         return true;
@@ -184,16 +212,15 @@ public sealed class SandcubeGame : Component
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 
 
-    private World CreateWorld(ModedId id, string savePath, bool enable = true)
+    private World CreateWorld(ModedId id, BaseFileSystem fileSystem, bool enable = true)
     {
         var cloneConfig = new CloneConfig(Transform.World, WorldsParent, false, $"World {id}");
         var worldGameObject = WorldPrefab.Clone(cloneConfig);
         worldGameObject.BreakFromPrefab();
         var world = worldGameObject.Components.Get<World>(true);
-        world.Initialize(id);
 
-        foreach(var savePathInitializable in worldGameObject.Components.GetAll<ISavePathInitializable>(FindMode.EverythingInSelf))
-            savePathInitializable.InitizlizeSavePath(savePath);
+        var worldOptions = DefaultWorldOptions with { Seed = CurrentGameInfo!.Value.Seed + id.GetHashCode() };
+        world.Initialize(id, fileSystem, worldOptions);
 
         worldGameObject.Enabled = enable;
         return world;

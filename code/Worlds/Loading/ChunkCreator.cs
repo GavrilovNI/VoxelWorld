@@ -8,23 +8,30 @@ using Sandcube.IO;
 using Sandcube.IO.Worlds;
 using System.IO;
 using System;
+using Sandcube.Data;
 
 namespace Sandcube.Worlds.Loading;
 
-public class ChunkCreator : Component, ISavePathInitializable
+public class ChunkCreator : Component
 {
+    [Property] protected World World { get; set; } = null!;
     [Property] protected GameObject ChunksParent { get; set; } = null!;
-    [Property] public GameObject ChunkPrefab { get; set; } = null!;
-    [Property] public WorldGenerator? Generator { get; set; }
-    [Property] protected string SavePath { get; set; } = string.Empty;
+    [Property] public GameObject ChunkPrefab { get; protected set; } = null!;
+    [Property] public WorldGenerator? Generator { get; protected set; }
+
+    protected BaseFileSystem? WorldFileSystem => World.WorldFileSystem;
+    protected WorldOptions WorldOptions => World.WorldOptions;
 
     [Property, Category("Debug")] public bool BreakFromPrefab { get; set; } = true;
-
-    public virtual void InitizlizeSavePath(string savePath) => SavePath = savePath;
 
     protected override void OnAwake()
     {
         ChunksParent ??= GameObject;
+    }
+
+    protected override void OnStart()
+    {
+        Generator?.SetSeed(WorldOptions.Seed);
     }
 
     // Call only in game thread
@@ -109,37 +116,25 @@ public class ChunkCreator : Component, ISavePathInitializable
 
     public virtual bool TryLoadChunk(Chunk chunk)
     {
-        if(string.IsNullOrWhiteSpace(SavePath))
+        if(WorldFileSystem is null)
             return false;
 
-        return TryLoadChunk(FileSystem.Data.CreateDirectoryAndSubSystem(SavePath), chunk);
-    }
+        if(WorldOptions.ChunkSize != chunk.Size)
+            throw new InvalidOperationException($"Can't load chunk, saved chunk size {WorldOptions.ChunkSize} is not equal to chunk size {chunk.Size}");
 
-    protected virtual bool TryLoadChunk(BaseFileSystem fileSystem, Chunk chunk)
-    {
-        var helper = new WorldSaveHelper(fileSystem);
-        if(helper.TryReadWorldOptions(out var options))
-        {
-            if(options.ChunkSize != chunk.Size)
-                throw new InvalidOperationException($"Can't load chunk, saved chunk size {options.ChunkSize} is not equal to chunk size {chunk.Size}");
-        }
-        else
-        {
-            return false;
-        }
+        var regionPosition = (1f * chunk.Position / WorldOptions.RegionSize).Floor();
+        var localChunkPosition = chunk.Position - regionPosition * WorldOptions.RegionSize;
 
-        var regionPosition = (1f * chunk.Position / options.RegionSize).Floor();
-        var localChunkPosition = chunk.Position - regionPosition * options.RegionSize;
-
-        var regionHelper = new RegionSaveHelper(options);
-        if(helper.HasRegionFile(regionPosition))
+        var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
+        var regionSaveHelper = new RegionSaveHelper(WorldOptions);
+        if(worldSaveHelper.HasRegionFile(regionPosition))
         {
-            using(var regionReadStream = helper.OpenRegionRead(regionPosition))
+            using(var regionReadStream = worldSaveHelper.OpenRegionRead(regionPosition))
             {
                 using var reader = new BinaryReader(regionReadStream);
-                if(regionHelper.ReadOnlyOneChunk(reader, localChunkPosition))
+                if(regionSaveHelper.ReadOnlyOneChunk(reader, localChunkPosition))
                 {
-                    var blocksData = regionHelper.GetChunkData(localChunkPosition)!;
+                    var blocksData = regionSaveHelper.GetChunkData(localChunkPosition)!;
                     if(blocksData is not null)
                     {
                         chunk.Load(blocksData);

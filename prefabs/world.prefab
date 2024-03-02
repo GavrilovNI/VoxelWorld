@@ -6,6 +6,28 @@
     "Enabled": true,
     "Components": [
       {
+        "__type": "World",
+        "ChunkCreator": {
+          "_type": "component",
+          "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
+          "component_type": "LimitedChunkCreator"
+        },
+        "EntitiesParent": {
+          "_type": "gameobject",
+          "go": "1f2de40c-01fc-4b07-a921-ac1d0b417cb4"
+        },
+        "IsService": false,
+        "Limits": {
+          "Mins": "-50000,-50000,-256",
+          "Maxs": "50000,50000,255"
+        },
+        "TickByItself": true,
+        "WorldOptions": {
+          "ChunkSize": "16,16,16",
+          "RegionSize": "4,4,4"
+        }
+      },
+      {
         "__type": "LimitedChunkCreator",
         "ActiveCreatingChunks": 0,
         "BreakFromPrefab": false,
@@ -23,26 +45,11 @@
           "component_type": "WorldGenerator"
         },
         "MaxChunksToCreateAtTime": 5,
-        "SavePath": ""
-      },
-      {
-        "__type": "World",
-        "ChunkCreator": {
+        "World": {
           "_type": "component",
           "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
-          "component_type": "LimitedChunkCreator"
-        },
-        "ChunkSize": "16,16,16",
-        "EntitiesParent": {
-          "_type": "gameobject",
-          "go": "1f2de40c-01fc-4b07-a921-ac1d0b417cb4"
-        },
-        "IsService": false,
-        "Limits": {
-          "Mins": "-50000,-50000,-256",
-          "Maxs": "50000,50000,255"
-        },
-        "TickByItself": true
+          "component_type": "World"
+        }
       },
       {
         "__type": "WorldGenerator",
@@ -104,9 +111,6 @@
       },
       {
         "__type": "WorldSaver",
-        "ClickToSave": false,
-        "RegionSize": "5,5,5",
-        "SavePath": "",
         "World": {
           "_type": "component",
           "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",

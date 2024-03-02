@@ -15,6 +15,12 @@ public class WorldGenerator : Component
     [Property] public Curve HeightSurfaceCurve { get; set; }
     [Property] public Curve AdditiveDensityFromHeightCurve { get; set; }
 
+    public void SetSeed(int seed)
+    {
+        HeightNoiseSettings = HeightNoiseSettings with { Seed = seed };
+        DensityNoiseSettings = DensityNoiseSettings with { Seed = seed };
+    }
+
     protected bool ShouldPlaceBlock(in Vector3Int position, float surfaceHeight)
     {
         const int surfaceModifactionsHeight = 4;

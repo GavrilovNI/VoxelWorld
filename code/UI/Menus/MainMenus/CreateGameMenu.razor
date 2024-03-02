@@ -22,7 +22,13 @@
                         <div class="info">
                             <AdaptiveLabel class="label">Name:</AdaptiveLabel>
                         </div>
-                        <AdaptiveTextEntry type="text" class="text-entry" @ref=NameTextEntry Text="New World" MaxLength=@(20)>
+                        <AdaptiveTextEntry type="text" class="text-entry" @ref=NameTextEntry Text="New World" MaxLength=@(20) />
+                    </div>
+                    <div class="option">
+                        <div class="info">
+                            <AdaptiveLabel class="label">Seed:</AdaptiveLabel>
+                        </div>
+                        <AdaptiveTextEntry type="text" class="text-entry" @ref=SeedTextEntry Placeholder="Random" MaxLength=@(20) />
                     </div>
                 </div>
             </div>
@@ -45,6 +51,7 @@
     [Property] protected GameLoader GameLoader { get; set; } = null!;
 
     protected TextEntry NameTextEntry { get; set; }
+    protected TextEntry SeedTextEntry { get; set; }
 
     private bool _isLoadingGame = false;
 
@@ -59,9 +66,11 @@
         if(string.IsNullOrWhiteSpace(name))
             return (false, string.Empty);
 
+        var seed = string.IsNullOrWhiteSpace(SeedTextEntry.Text) ? new Guid().GetHashCode() : SeedTextEntry.Text.GetHashCode();
+
         _isLoadingGame = true;
 
-        GameInfo gameInfo = new() { Name = name };
+        GameInfo gameInfo = new() { Name = name, Seed = seed };
 
         (bool loaded, string path) = await GameLoader.TryCreateNewGame(SavesFileSystem, gameInfo);
 
