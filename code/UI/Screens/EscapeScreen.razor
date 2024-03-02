@@ -2,6 +2,7 @@
 @using Sandbox.UI
 @using Sandcube.Menus
 @using Sandcube.Players
+@using System.Threading.Tasks
 @using System.Linq
 
 @namespace Sandcube.UI.Screens
@@ -10,15 +11,30 @@
 
 <root>
 	<div class="buttons">
-		<div id="leave-game-button" class="button" onclick="@(LeaveGame)">Leave to main menu</div>
+		<div id="leave-game-button" class="button" onclick="@(() => _ = SaveAndLeaveGame())">Save and Leave</div>
 	</div>
 </root>
 
 
 @code
 {
-	protected void LeaveGame()
+	protected bool Saving = false;
+
+	protected async Task SaveAndLeaveGame()
 	{
+		if (Saving)
+			return;
+
+		Saving = true;
+		if(SandcubeGame.InitalizationStatus == InitalizationStatus.Initialized &&
+			SandcubeGame.LoadingStatus == LoadingStatus.Loaded)
+		{
+			var saved = await SandcubeGame.Instance!.SaveGame();
+			if (!saved)
+				Log.Warning("Couldn't save something");
+		}
+
 		GameManager.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
+		Saving = false;
 	}
 }
