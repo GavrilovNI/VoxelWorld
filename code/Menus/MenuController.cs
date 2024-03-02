@@ -73,8 +73,17 @@ public class MenuController : Component, ILocalPlayerInitializable
             }
         }
 
-        if(!Player.IsValid() || CurrentMenu is not null && !CurrentMenu.IsStillValid(Player!))
-            CloseMenu();
+        if(CurrentMenu is not null)
+        {
+            bool shouldClose;
+            if(Player.IsValid())
+                shouldClose = !CurrentMenu.IsStillValid(Player!);
+            else
+                shouldClose = CurrentScreen is not null && CurrentScreen != EscapeScreen;
+
+            if(shouldClose)
+                CloseMenu();
+        }
     }
 
     public virtual void Open(IMenu menu)
