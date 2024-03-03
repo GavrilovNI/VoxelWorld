@@ -13,6 +13,7 @@ namespace Sandcube.Players;
 
 public class Player : Entity
 {
+    [Property] public GameObject Eye { get; private set; } = null!;
     [Property] public bool IsCreative { get; private set; } = false;
     [Property] public float ReachDistance { get; private set; } = 39.37f * 5;
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
@@ -55,6 +56,7 @@ public class Player : Entity
     protected override void WriteAdditional(BinaryWriter writer)
     {
         base.WriteAdditional(writer);
+        writer.Write(Eye.Transform.Local);
         writer.Write(IsCreative);
         writer.Write(ReachDistance);
         Inventory.Write(writer);
@@ -63,6 +65,7 @@ public class Player : Entity
     protected override void ReadAdditional(BinaryReader reader)
     {
         base.ReadAdditional(reader);
+        Eye.Transform.Local = reader.ReadTransform();
         IsCreative = reader.ReadBoolean();
         ReachDistance = reader.ReadSingle();
         Inventory.Read(reader);

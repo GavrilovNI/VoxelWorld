@@ -6,6 +6,10 @@
     "Components": [
       {
         "__type": "Player",
+        "Eye": {
+          "_type": "gameobject",
+          "go": "ac866174-265e-4073-bcc3-99ecd452e436"
+        },
         "Inventory": {
           "_type": "component",
           "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
