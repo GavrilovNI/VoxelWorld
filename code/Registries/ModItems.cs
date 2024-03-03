@@ -60,7 +60,7 @@ public class ModItems : ModRegisterables<Item>
             object blockItem;
             try
             {
-                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, model, texture });
+                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, model, texture, autoAttribute.StackLimit });
             }
             catch(MissingMethodException)
             {

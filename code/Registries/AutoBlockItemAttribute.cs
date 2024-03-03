@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Mth;
 using System;
 
 namespace Sandcube.Registries;
@@ -10,13 +11,15 @@ public class AutoBlockItemAttribute : Attribute
     public readonly string? BlockId;
     public readonly bool UseRawTexture = false;
     public readonly string? RawTexturePath;
+    public readonly int StackLimit;
 
-    public AutoBlockItemAttribute(string modId, string? blockId = null, string? rawTexturePath = null)
+    public AutoBlockItemAttribute(string modId, string? blockId = null, string? rawTexturePath = null, int stackLimit = 0)
     {
         ModId = modId;
         BlockId = blockId;
         UseRawTexture = rawTexturePath != null;
         RawTexturePath = rawTexturePath;
+        StackLimit = stackLimit <= 0 ? DefaultValues.ItemStackLimit : stackLimit;
     }
 
     public bool TryGetModedId(PropertyDescription property, out ModedId modedId)
