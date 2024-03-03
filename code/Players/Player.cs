@@ -14,6 +14,16 @@ public class Player : Entity
     [Property] public float ReachDistance { get; private set; } = 39.37f * 5;
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
 
+    [Property] public ulong SteamId { get; private set; } = 0;
+
+    public void SetSteamId(ulong steamId)
+    {
+        if(SteamId != 0)
+            throw new InvalidOperationException($"steamId was already set");
+
+        SteamId = steamId;
+    }
+
     protected override void OnAwake()
     {
         Tags.Add("player");

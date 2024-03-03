@@ -18,7 +18,7 @@ public class PlayerSpawner : Component
     protected static EntityType PlayerEntityType => SandcubeBaseMod.Instance!.Entities.Player;
 
 
-    public virtual async Task<Entity?> SpawnPlayer(EntitySpawnConfig spawnConfig, CancellationToken cancellationToken)
+    public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig spawnConfig, CancellationToken cancellationToken)
     {
         var world = spawnConfig.World;
         if(world is not null)
@@ -41,9 +41,13 @@ public class PlayerSpawner : Component
             spawnConfig.Transform.Position = spawnPosition;
 
             await PreloadChunks(world, PreloadRange, spawnPosition);
+
+            if(cancellationToken.IsCancellationRequested)
+                return null;
         }
 
-        var player =  PlayerEntityType.CreateEntity(spawnConfig);
+        var player = (PlayerEntityType.CreateEntity(spawnConfig) as Player)!;
+        player.SetSteamId(steamId);
 
         foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerInitializable>(FindMode.EverythingInSelfAndDescendants))
             localPlayerInitializable.InitializeLocalPlayer(player);

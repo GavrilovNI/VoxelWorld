@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.Utility;
 using Sandcube.Blocks;
 using Sandcube.Entities;
 using Sandcube.Mods.Base.Blocks;
@@ -65,6 +66,6 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
             return;
 
         EntitySpawnConfig spawnConfig = new(world, true);
-        _ = SandcubeGame.Instance!.PlayerSpawner.SpawnPlayer(spawnConfig, CancellationToken.None);
+        _ = SandcubeGame.Instance!.PlayerSpawner.SpawnPlayer(Steam.SteamId, spawnConfig, CancellationToken.None);
     }
 }

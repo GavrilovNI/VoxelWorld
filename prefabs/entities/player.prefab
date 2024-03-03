@@ -12,7 +12,8 @@
           "component_type": "PlayerInventory"
         },
         "IsCreative": true,
-        "ReachDistance": 196.84999
+        "ReachDistance": 196.84999,
+        "SteamId": 0
       },
       {
         "__type": "PlayerInventory"
