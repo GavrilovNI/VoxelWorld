@@ -16,7 +16,7 @@ public readonly record struct Id : IBinaryWritable, IBinaryStaticReadable<Id>
     public Id(string name)
     {
         if(!IsValidString(name))
-            throw new ArgumentException($"{nameof(name)} should match {nameof(Regex)}");
+            throw new ArgumentException($"{nameof(name)} {name} should match {nameof(Regex)}");
         Name = name;
     }
 
