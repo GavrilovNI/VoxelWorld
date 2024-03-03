@@ -154,7 +154,7 @@ public sealed class SandcubeGame : Component
         var worldFileSystem = CurrentGameSaveHelper.GetOrCreateWorldFileSystem(id);
 
         world = CreateWorld(id, worldFileSystem);
-        _worlds.AddWorld(id, world);
+        _worlds.AddWorld(world);
         WorldAdded?.Invoke(world);
         return true;
     }

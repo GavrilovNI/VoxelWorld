@@ -13,19 +13,22 @@ public class WorldsContainer : IReadOnlyWorldsContainer
 
     public int Count => _worlds.Count;
 
-    public bool TryAddWorld(ModedId id, World world)
+    public bool TryAddWorld(World world)
     {
-        if(HasWorld(id))
+        if(!world.Initialized)
+            throw new InvalidOperationException($"{nameof(World)} {world} wasn't initialized");
+
+        if(HasWorld(world.Id))
             return false;
 
-        _worlds[id] = world;
+        _worlds[world.Id] = world;
         return true;
     }
 
-    public void AddWorld(ModedId id, World world)
+    public void AddWorld(World world)
     {
-        if(!TryAddWorld(id, world))
-            throw new ArgumentException($"{id} was already presented");
+        if(!TryAddWorld(world))
+            throw new ArgumentException($"{world.Id} was already presented");
     }
 
     public bool HasWorld(ModedId id) => TryGetValidWorldOrRemove(id, out _);
@@ -41,13 +44,13 @@ public class WorldsContainer : IReadOnlyWorldsContainer
         return world;
     }
 
-    public IEnumerator<KeyValuePair<ModedId, World>> GetEnumerator()
+    public IEnumerator<World> GetEnumerator()
     {
-        foreach(var pair in _worlds)
+        foreach(var (_, world) in _worlds)
         {
-            if(!pair.Value.IsValid())
+            if(!world.IsValid())
                 continue;
-            yield return pair;
+            yield return world;
         }
     }
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Sandcube.Data;
 
-public interface IReadOnlyWorldsContainer : IEnumerable<KeyValuePair<ModedId, World>>
+public interface IReadOnlyWorldsContainer : IEnumerable<World>
 {
 	int Count { get; }
 
