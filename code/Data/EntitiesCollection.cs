@@ -27,8 +27,14 @@ public class EntitiesCollection : IEnumerable<Entity>
     {
         lock(Locker)
         {
-            return Entities.TryGetValue(entityId, out entity!) && entity.IsValid;
+            if(Entities.TryGetValue(entityId, out entity!))
+            {
+                if(entity.IsValid)
+                    return true;
+            }
         }
+        entity = null!;
+        return false;
     }
 
     public bool Has(Guid entityId) => TryGet(entityId, out _);
