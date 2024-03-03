@@ -12,6 +12,8 @@ public abstract class Entity : Component
     public ModedId TypeId { get; private set; }
     public IWorldAccessor? World { get; private set; }
 
+    public Guid Id => GameObject.Id;
+
     public new bool Enabled
     {
         get => GameObject.Enabled;
