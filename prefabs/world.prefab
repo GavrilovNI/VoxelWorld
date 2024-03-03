@@ -12,6 +12,11 @@
           "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
           "component_type": "LimitedChunkCreator"
         },
+        "EntitiesCreator": {
+          "_type": "component",
+          "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
+          "component_type": "EntitiesCreator"
+        },
         "EntitiesParent": {
           "_type": "gameobject",
           "go": "1f2de40c-01fc-4b07-a921-ac1d0b417cb4"
@@ -45,6 +50,19 @@
           "component_type": "WorldGenerator"
         },
         "MaxChunksToCreateAtTime": 5,
+        "World": {
+          "_type": "component",
+          "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
+          "component_type": "World"
+        }
+      },
+      {
+        "__type": "EntitiesCreator",
+        "BreakFromPrefab": true,
+        "EntitiesParent": {
+          "_type": "gameobject",
+          "go": "1f2de40c-01fc-4b07-a921-ac1d0b417cb4"
+        },
         "World": {
           "_type": "component",
           "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",

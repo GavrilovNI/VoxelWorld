@@ -1,8 +1,10 @@
 ﻿using Sandbox;
+using Sandbox.Utility;
 using Sandcube.Base;
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
+using Sandcube.Entities;
 using Sandcube.Exceptions;
 using Sandcube.IO;
 using Sandcube.IO.Helpers;
@@ -15,6 +17,7 @@ using Sandcube.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sandcube;
@@ -157,6 +160,13 @@ public sealed class SandcubeGame : Component
         world = CreateWorld(id, worldFileSystem);
         _worlds.AddWorld(world);
         WorldAdded?.Invoke(world);
+
+        if(_worlds.Count == 1)
+        {
+            EntitySpawnConfig spawnConfig = new(world, true);
+            _ = PlayerSpawner.SpawnPlayer(Steam.SteamId, spawnConfig, CancellationToken.None);
+        }
+
         return true;
     }
 

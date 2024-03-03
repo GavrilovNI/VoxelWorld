@@ -10,11 +10,13 @@ public class GameSaveHelper
 {
     public readonly BaseFileSystem GameFileSystem;
     public readonly BaseFileSystem WorldsFileSystem;
+    public readonly BaseFileSystem PlayersFileSystem;
 
     public GameSaveHelper(BaseFileSystem gameFileSystem)
     {
         GameFileSystem = gameFileSystem;
         WorldsFileSystem = gameFileSystem.CreateDirectoryAndSubSystem("worlds");
+        PlayersFileSystem = gameFileSystem.CreateDirectoryAndSubSystem("players");
     }
 
     public static Dictionary<string, GameInfo> GetAllSaves(BaseFileSystem savesFileSystem)

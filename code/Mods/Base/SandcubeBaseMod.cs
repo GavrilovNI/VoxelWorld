@@ -32,17 +32,6 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
         Entities = Components.Get<SandcubeEntities>(true);
     }
 
-    public void OnLoaded()
-    {
-        SandcubeGame.WorldAdded += OnWorldAdded;
-        if(SandcubeGame.Instance!.Worlds.TryGetWorld(_mainWorldId, out var world))
-            OnWorldAdded(world);
-    }
-    public void OnUnloaded()
-    {
-        SandcubeGame.WorldAdded -= OnWorldAdded;
-    }
-
     public async Task RegisterValues(RegistriesContainer registries)
     {
         RegistriesContainer container = new();
@@ -58,14 +47,5 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
     public void OnGameLoaded()
     {
         SandcubeGame.Instance!.TryAddWorld(_mainWorldId, out _);
-    }
-
-    private void OnWorldAdded(World world)
-    {
-        if(world.Id != _mainWorldId)
-            return;
-
-        EntitySpawnConfig spawnConfig = new(world, true);
-        _ = SandcubeGame.Instance!.PlayerSpawner.SpawnPlayer(Steam.SteamId, spawnConfig, CancellationToken.None);
     }
 }

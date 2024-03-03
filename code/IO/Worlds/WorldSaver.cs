@@ -15,6 +15,7 @@ public class WorldSaver : Component, ISaver
 {
     [Property] private World World { get; set; } = null!;
 
+    protected GameSaveHelper GameSaveHelper => SandcubeGame.Instance!.CurrentGameSaveHelper!;
     protected BaseFileSystem WorldFileSystem => World.WorldFileSystem!;
     protected WorldOptions WorldOptions => World.WorldOptions;
 
@@ -32,8 +33,12 @@ public class WorldSaver : Component, ISaver
         var blocksTask = SaveRegionData(worldSaveHelper.GetRegions(WorldSaveHelper.BlocksRegionName),
             new RegionSaveHelper(WorldOptions), worldData.Chunks);
 
-        var results = await Task.WhenAll(blocksTask);
+        var entitiesTask = SaveRegionData(worldSaveHelper.GetRegions(WorldSaveHelper.EntitiesRegionName),
+            new EntitiesSaveHelper(WorldOptions.RegionSize), worldData.Entities);
 
+        var playersTask = SavePlayers(new PlayerSaveHelper(GameSaveHelper.PlayersFileSystem), worldData.Players);
+
+        var results = await Task.WhenAll(blocksTask, entitiesTask, playersTask);
         bool saved = results.All(saved => saved);
         
         if(saved)
@@ -72,7 +77,17 @@ public class WorldSaver : Component, ISaver
         }
         return Task.FromResult(true);
     }
+
+    protected virtual Task<bool> SavePlayers(PlayerSaveHelper playersSaveHelper,
+        IReadOnlyDictionary<ulong, PlayerData> playersData)
+    {
+        foreach(var (steamId, data) in playersData)
+        {
+            using var stream = playersSaveHelper.OpenRegionWrite(steamId);
+            using var writer = new BinaryWriter(stream);
+            data.Write(writer);
         }
+
         return Task.FromResult(true);
     }
 }

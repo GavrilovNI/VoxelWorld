@@ -9,6 +9,7 @@ using Sandcube.IO;
 using Sandcube.IO.Helpers;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
+using Sandcube.Players;
 using Sandcube.Registries;
 using Sandcube.Threading;
 using Sandcube.Worlds.Loading;
@@ -30,6 +31,7 @@ public class World : Component, IWorldAccessor, ITickable
     public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 4 };
     
     [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
+    [Property] protected EntitiesCreator? EntitiesCreator { get; set; }
     [Property] public BBoxInt Limits { get; private set; } = new BBoxInt(new Vector3Int(-50000, -50000, -256), new Vector3Int(50000, 50000, 255));
     [Property] protected bool TickByItself { get; set; } = true;
     [Property] protected bool IsService { get; set; } = false;
@@ -220,6 +222,9 @@ public class World : Component, IWorldAccessor, ITickable
 
             chunk.GameObject.Enabled = true;
             chunk.Destroyed += OnChunkDestroyed;
+
+            EntitiesCreator?.CreateEntitiesForChunk(chunk.Position);
+
             ChunkLoaded?.Invoke(chunk.Position);
             UpdateNeighboringChunks(chunk.Position);
         });
@@ -392,13 +397,30 @@ public class World : Component, IWorldAccessor, ITickable
         });
     }
 
-    public Dictionary<Vector3Int, BlocksData> Save(IReadOnlySaveMarker saveMarker)
+    public WorldData Save(IReadOnlySaveMarker saveMarker)
     {
+        ThreadSafe.AssertIsMainThread();
+
+        WorldData result = new();
+
         var chunksToSave = Chunks.Where(pair => !pair.Value.IsSaved)
                 .Select(pair => pair.Value);
 
-        return chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
+        result.Chunks = chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
+
+        foreach(var entity in Entities.Where(e => e is not Player))
+        {
+            var entityPosition = entity.Transform.Position;
+            var chunkPosition = GetChunkPosition(entityPosition);
+            result.Entities.GetOrCreate(chunkPosition).AddData(entity);
+        }
+
+        foreach(var player in Entities.Where(e => e is Player).Cast<Player>())
+            result.Players[player.SteamId] = new PlayerData(player);
+
+        return result;
     }
+
 
     public static bool TryFind(GameObject? gameObject, out IWorldAccessor world)
     {
