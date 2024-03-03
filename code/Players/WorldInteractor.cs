@@ -84,13 +84,13 @@ public class WorldInteractor : Component
 
             var oldMainHandIndex = invenory.MainHandIndex;
             invenory.MainHandIndex = emptySlotIndex;
-            bool set = invenory.TrySetHandItem(HandType.Main, new Inventories.Stack<Item>(item));
+            bool set = invenory.TrySetHandItem(HandType.Main, new Stack<Item>(item));
             if(!set)
                 invenory.MainHandIndex = oldMainHandIndex;
             return set ? InteractionResult.Success : InteractionResult.Fail;
         }
 
-        var combinedCapability = new CombinedIndexedCapability<Inventories.Stack<Item>>(invenory.Main, invenory.SecondaryHand);
+        var combinedCapability = new CombinedIndexedCapability<Stack<Item>>(invenory.Main, invenory.SecondaryHand);
 
         int index = 0;
         foreach(var itemStack in combinedCapability)
