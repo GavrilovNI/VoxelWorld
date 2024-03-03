@@ -62,6 +62,7 @@ public class WorldsContainer : IReadOnlyWorldsContainer
             if(!world.IsValid())
             {
                 _worlds.Remove(id);
+                world = null!;
                 return false;
             }
             return true;
