@@ -2,6 +2,7 @@
 using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.IO;
+using Sandcube.Meshing;
 using Sandcube.Mth;
 using Sandcube.Registries;
 using System;
@@ -14,17 +15,19 @@ namespace Sandcube.Items;
 public class Item : IRegisterable, IStackValue<Item>
 {
     public ModedId Id { get; }
+    public IMeshPart<ComplexVertex> Model { get; }
     public Texture Texture { get; }
     public int StackLimit { get; }
 
-    public Item(in ModedId id, Texture texture, int stackLimit)
+    public Item(in ModedId id, IMeshPart<ComplexVertex> model, Texture texture, int stackLimit)
     {
         Id = id;
+        Model = model;
         Texture = texture;
         StackLimit = stackLimit;
     }
 
-    public Item(in ModedId id, Texture texture) : this(id, texture, DefaultValues.ItemStackLimit)
+    public Item(in ModedId id, IMeshPart<ComplexVertex> model, Texture texture) : this(id, model, texture, DefaultValues.ItemStackLimit)
     {
     }
 

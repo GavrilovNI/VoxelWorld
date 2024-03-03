@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Interactions;
+using Sandcube.Meshing;
 using Sandcube.Mth.Enums;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ public class BlockItem : Item
 {
     public readonly Block Block;
 
-    public BlockItem(Block block, Texture texture) : base(block.Id, texture)
+    public BlockItem(Block block, IMeshPart<ComplexVertex> model, Texture texture) : base(block.Id, model, texture)
     {
         Block = block;
     }

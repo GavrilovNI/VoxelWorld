@@ -2,6 +2,7 @@
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
 using Sandcube.Items;
+using Sandcube.Meshing;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,19 +47,8 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
-            object blockItem;
-
-            Texture texture;
-            if(autoAttribute.UseRawTexture)
-            {
-                texture = Texture.Load(FileSystem.Mounted, autoAttribute.RawTexturePath, true);
-            }
-            else
-            {
-                (var textureMade, texture) = await MakeBlockItemTexture(block.DefaultBlockState);
-                if(!textureMade)
-                    Log.Warning($"Couldn't create texture for item {thisType.FullName}.{property.Name} of block with id '{block.Id}'");
-            }
+            Texture texture = await GetTexture(autoAttribute, block.DefaultBlockState);
+            IMeshPart<ComplexVertex> model = SandcubeGame.Instance!.BlockMeshes.GetVisual(block.DefaultBlockState)!;
 
             var propertyType = property.PropertyType;
             if(propertyType.IsGenericType)
@@ -67,9 +57,10 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
+            object blockItem;
             try
             {
-                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, texture });
+                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, model, texture });
             }
             catch(MissingMethodException)
             {
@@ -79,6 +70,22 @@ public class ModItems : ModRegisterables<Item>
 
             property.SetValue(this, blockItem);
         }
+    }
+
+    protected virtual async Task<Texture> GetTexture(AutoBlockItemAttribute autoAttribute, BlockState blockState)
+    {
+        Texture texture;
+        if(autoAttribute.UseRawTexture)
+        {
+            texture = Texture.Load(FileSystem.Mounted, autoAttribute.RawTexturePath, true);
+        }
+        else
+        {
+            (var textureMade, texture) = await MakeBlockItemTexture(blockState);
+            if(!textureMade)
+                Log.Warning($"Couldn't create texture for {nameof(BlockState)} {blockState}");
+        }
+        return texture;
     }
 
     protected virtual async Task<(bool, Texture)> MakeBlockItemTexture(BlockState blockState)
