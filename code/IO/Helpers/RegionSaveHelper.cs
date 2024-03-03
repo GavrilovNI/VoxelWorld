@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Sandcube.IO.Worlds;
+namespace Sandcube.IO.Helpers;
 
 public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
 {

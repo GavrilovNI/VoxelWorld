@@ -4,7 +4,7 @@ using Sandcube.Registries;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Sandcube.IO;
+namespace Sandcube.IO.Helpers;
 
 public class GameSaveHelper
 {
