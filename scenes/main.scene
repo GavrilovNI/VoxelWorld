@@ -180,11 +180,12 @@
           "Components": [
             {
               "__type": "World",
-              "ChunkCreator": {
+              "ChunksCreator": {
                 "_type": "component",
                 "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
-                "component_type": "ChunkCreator"
+                "component_type": "ChunksCreator"
               },
+              "EntitiesCreator": null,
               "EntitiesParent": null,
               "IsService": true,
               "Limits": {
@@ -198,7 +199,7 @@
               }
             },
             {
-              "__type": "ChunkCreator",
+              "__type": "ChunksCreator",
               "BreakFromPrefab": true,
               "ChunkPrefab": {
                 "_type": "gameobject",
@@ -282,6 +283,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-02T04:34:47.1110467\u002B01:00",
+  "LastSaved": "2024-03-03T22:14:36.1442797\u002B01:00",
   "__references": []
 }

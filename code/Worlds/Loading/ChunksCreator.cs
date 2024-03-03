@@ -11,7 +11,7 @@ using Sandcube.Data;
 
 namespace Sandcube.Worlds.Loading;
 
-public class ChunkCreator : Component
+public class ChunksCreator : Component
 {
     [Property] protected World World { get; set; } = null!;
     [Property] protected GameObject ChunksParent { get; set; } = null!;

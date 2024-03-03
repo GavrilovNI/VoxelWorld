@@ -30,7 +30,7 @@ public class World : Component, IWorldAccessor, ITickable
     [Property, HideIf(nameof(IsSceneRunning), true)]
     public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 4 };
     
-    [Property] protected ChunkCreator ChunkCreator { get; set; } = null!;
+    [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
     [Property] protected EntitiesCreator? EntitiesCreator { get; set; }
     [Property] public BBoxInt Limits { get; private set; } = new BBoxInt(new Vector3Int(-50000, -50000, -256), new Vector3Int(50000, 50000, 255));
     [Property] protected bool TickByItself { get; set; } = true;
@@ -180,7 +180,7 @@ public class World : Component, IWorldAccessor, ITickable
             World = this,
         };
 
-        var chunk = await Task.RunInMainThreadAsync(() => ChunkCreator.LoadOrCreateChunk(creationData, cancellationToken));
+        var chunk = await Task.RunInMainThreadAsync(() => ChunksCreator.LoadOrCreateChunk(creationData, cancellationToken));
 
         var positionsToClear = chunk.Size.GetPositionsFromZero().Where(p => !Limits.Contains(p));
         await chunk.SetBlockStates(positionsToClear.ToDictionary(p => p, p => BlockState.Air));

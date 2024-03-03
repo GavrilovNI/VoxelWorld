@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Worlds.Loading;
 
-public class LimitedChunkCreator : ChunkCreator
+public class LimitedChunksCreator : ChunksCreator
 {
     [Property] public int MaxChunksToCreateAtTime { get; set; } = 15;
 

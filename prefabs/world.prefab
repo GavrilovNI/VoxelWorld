@@ -7,10 +7,10 @@
     "Components": [
       {
         "__type": "World",
-        "ChunkCreator": {
+        "ChunksCreator": {
           "_type": "component",
           "go": "abfff34c-f45d-43d3-b275-4f14535c2d15",
-          "component_type": "LimitedChunkCreator"
+          "component_type": "LimitedChunksCreator"
         },
         "EntitiesCreator": {
           "_type": "component",
@@ -33,7 +33,7 @@
         }
       },
       {
-        "__type": "LimitedChunkCreator",
+        "__type": "LimitedChunksCreator",
         "ActiveCreatingChunks": 0,
         "BreakFromPrefab": false,
         "ChunkPrefab": {
