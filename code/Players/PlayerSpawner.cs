@@ -5,14 +5,13 @@ using Sandcube.Entities.Types;
 using Sandcube.IO.Helpers;
 using Sandcube.Mods.Base;
 using Sandcube.Mth;
-using Sandcube.Players;
 using Sandcube.Worlds;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Base;
+namespace Sandcube.Players;
 
 public class PlayerSpawner : Component
 {
