@@ -79,6 +79,8 @@ public class World : Component, IWorldAccessor, ITickable
         Chunks = new(DestroyChunk, Vector3Int.XYZIterationComparer);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
+
+        EntitiesParent ??= GameObject;
     }
 
     protected override void OnStart()
@@ -125,6 +127,7 @@ public class World : Component, IWorldAccessor, ITickable
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
         Entities.Add(entity);
+        entity.GameObject.Parent = EntitiesParent;
     }
 
     public bool RemoveEntity(Guid id) => Entities.Remove(id);
