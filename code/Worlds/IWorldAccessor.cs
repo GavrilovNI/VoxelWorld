@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.Entities;
 using Sandcube.Mth;
+using Sandcube.Registries;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Sandcube.Worlds;
 
 public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor
 {
+    ModedId Id { get; }
     GameObject GameObject { get; }
 
     Task LoadChunk(Vector3Int chunkPosition, bool awaitModelUpdate = false);
