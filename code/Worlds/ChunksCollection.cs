@@ -72,8 +72,11 @@ public class ChunksCollection : IEnumerable<KeyValuePair<Vector3Int, Chunk>>, ID
     {
         lock(Locker)
         {
-            if(TryGet(chunk.Position, out var realChunk) && realChunk == chunk)
-                return Chunks.Remove(chunk.Position);
+            if(Chunks.TryGetValue(chunk.Position, out var realChunk) && realChunk == chunk)
+            {
+                Chunks.Remove(realChunk.Position);
+                return realChunk.IsValid;
+            }
         }
         return false;
     }
@@ -82,8 +85,13 @@ public class ChunksCollection : IEnumerable<KeyValuePair<Vector3Int, Chunk>>, ID
     {
         lock(Locker)
         {
-            return Chunks.Remove(position);
+            if(Chunks.TryGetValue(position, out var chunk))
+            {
+                Chunks.Remove(position);
+                return chunk.IsValid;
+            }
         }
+        return false;
     }
 
     public bool HasLoaded(Vector3Int position)
