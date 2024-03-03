@@ -1,13 +1,14 @@
 ﻿using Sandbox;
 using Sandcube.Mth;
 using Sandcube.Threading;
+using Sandcube.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds;
+namespace Sandcube.Data;
 
 public class ChunksCollection : IEnumerable<KeyValuePair<Vector3Int, Chunk>>, IDisposable
 {
