@@ -34,7 +34,7 @@ public class ChunkCreator : Component
     }
 
     // Call only in game thread
-    public virtual async Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
+    public virtual async Task<Chunk> LoadOrCreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
     {
         ThreadSafe.AssertIsMainThread();
 

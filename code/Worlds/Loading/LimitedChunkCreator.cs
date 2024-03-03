@@ -19,7 +19,7 @@ public class LimitedChunkCreator : ChunkCreator
     protected readonly CancellationTokenSource CommonCancellationTokenSource = new();
 
 
-    public override Task<Chunk> CreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
+    public override Task<Chunk> LoadOrCreateChunk(ChunkCreationData creationData, CancellationToken cancellationToken)
     {
         TaskCompletionSource<Chunk> taskCompletionSource = new();
         CancellationTokenSource cancellationTokenSource =
@@ -68,7 +68,7 @@ public class LimitedChunkCreator : ChunkCreator
         Chunk chunk;
         try
         {
-            chunk = await base.CreateChunk(creatingData.CreationData, cancellationToken);
+            chunk = await base.LoadOrCreateChunk(creatingData.CreationData, cancellationToken);
             Interlocked.Decrement(ref ActiveCreatingChunkCount);
             creatingData.CancellationTokenSource.Dispose();
             creatingData.TaskCompletionSource.TrySetResult(chunk);

@@ -18,7 +18,7 @@ public class EntitiesCreator : Component
 
     [Property, Category("Debug")] public bool BreakFromPrefab { get; set; } = true;
 
-    public List<Entity> CreateEntitiesForChunk(Vector3Int chunkPosition, bool enableEntities = true)
+    public List<Entity> LoadOrCreateEntitiesForChunk(Vector3Int chunkPosition, bool enableEntities = true)
     {
         ThreadSafe.AssertIsMainThread();
 

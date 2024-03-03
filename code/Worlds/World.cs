@@ -180,7 +180,7 @@ public class World : Component, IWorldAccessor, ITickable
             World = this,
         };
 
-        var chunk = await Task.RunInMainThreadAsync(() => ChunkCreator.CreateChunk(creationData, cancellationToken));
+        var chunk = await Task.RunInMainThreadAsync(() => ChunkCreator.LoadOrCreateChunk(creationData, cancellationToken));
 
         var positionsToClear = chunk.Size.GetPositionsFromZero().Where(p => !Limits.Contains(p));
         await chunk.SetBlockStates(positionsToClear.ToDictionary(p => p, p => BlockState.Air));
@@ -223,7 +223,7 @@ public class World : Component, IWorldAccessor, ITickable
             chunk.GameObject.Enabled = true;
             chunk.Destroyed += OnChunkDestroyed;
 
-            EntitiesCreator?.CreateEntitiesForChunk(chunk.Position);
+            EntitiesCreator?.LoadOrCreateEntitiesForChunk(chunk.Position);
 
             ChunkLoaded?.Invoke(chunk.Position);
             UpdateNeighboringChunks(chunk.Position);
