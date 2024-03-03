@@ -47,7 +47,7 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected ChunksCollection Chunks { get; private set; } = null!;
 
-    protected readonly Dictionary<Guid, Entity> Entities = new();
+    protected EntitiesCollection Entities { get; private set; } = new();
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -124,24 +124,13 @@ public class World : Component, IWorldAccessor, ITickable
         if(!object.ReferenceEquals(this, entity.World))
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
-        var entityGameObject = entity.GameObject;
-        var entityId = entityGameObject.Id;
-        if(Entities.ContainsKey(entityId))
-            throw new InvalidOperationException($"{nameof(Entity)} {entity} is already added to {nameof(World)} {this}");
-
-        Entities[entityId] = entity;
-        entityGameObject.Parent = EntitiesParent;
+        Entities.Add(entity);
     }
 
-    public void RemoveEntity(Entity entity)
-    {
-        if(object.ReferenceEquals(this, entity.World))
-            throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was still set to {nameof(World)} {this}");
+    public bool RemoveEntity(Guid id) => Entities.Remove(id);
 
-        var entityId = entity.GameObject.Id;
-        Entities.Remove(entityId);
-    }
-    
+    public bool RemoveEntity(Entity entity) => Entities.Remove(entity);
+
     // Thread safe
     public virtual bool IsChunkInLimits(Vector3Int chunkPosition)
     {
