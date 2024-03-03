@@ -47,7 +47,7 @@ public class RegionSaveHelper : IBinaryWritable, IBinaryReadable
         Chunks[localChunkPosition] = blocksData;
     }
 
-    public virtual bool RemoveChunksData(Vector3Int localChunkPosition, BlocksData blocksData) =>
+    public virtual bool RemoveChunksData(Vector3Int localChunkPosition) =>
         Chunks.Remove(localChunkPosition);
 
     public virtual BlocksData? GetChunkData(Vector3Int localChunkPosition)
