@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "faa05274-45f8-4747-b98a-6132ac09b0e5",
+    "Id": "60498ea1-e3a1-47f3-b3b5-6e0a37750af1",
     "Name": "visualonlychunk",
     "Tags": "world",
     "Components": [
@@ -8,7 +8,7 @@
         "__type": "Chunk",
         "ModelUpdater": {
           "_type": "component",
-          "go": "faa05274-45f8-4747-b98a-6132ac09b0e5",
+          "go": "60498ea1-e3a1-47f3-b3b5-6e0a37750af1",
           "component_type": "ChunkModelUpdater"
         },
         "Position": "0,0,0",
@@ -18,19 +18,19 @@
         "__type": "ChunkModelUpdater",
         "Chunk": {
           "_type": "component",
-          "go": "faa05274-45f8-4747-b98a-6132ac09b0e5",
+          "go": "60498ea1-e3a1-47f3-b3b5-6e0a37750af1",
           "component_type": "Chunk"
         },
         "InteractionCollider": {
           "_type": "component",
-          "go": "e88c20de-05ce-426f-ac46-2372854bfbe8",
+          "go": "d82a085f-a25d-402d-949d-25c45263f7f9",
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": false,
         "OpaqueVoxelsMaterial": null,
         "PhysicsCollider": {
           "_type": "component",
-          "go": "faa05274-45f8-4747-b98a-6132ac09b0e5",
+          "go": "60498ea1-e3a1-47f3-b3b5-6e0a37750af1",
           "component_type": "ModelCollider"
         },
         "PhysicsEnabled": false,
@@ -48,7 +48,7 @@
     ],
     "Children": [
       {
-        "Id": "e88c20de-05ce-426f-ac46-2372854bfbe8",
+        "Id": "d82a085f-a25d-402d-949d-25c45263f7f9",
         "Name": "Interactable",
         "Tags": "interactable",
         "Enabled": true,

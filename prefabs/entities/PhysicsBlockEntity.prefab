@@ -1,7 +1,7 @@
 {
   "RootObject": {
     "Id": "09ca0739-f949-47de-a034-c4eb3e80ab08",
-    "Name": "PhysicsBlockEntity",
+    "Name": "physicsblockentity",
     "Enabled": true,
     "Components": [
       {
@@ -38,7 +38,8 @@
         "Static": false,
         "Surface": null
       }
-    ]
+    ],
+    "Children": []
   },
   "ShowInMenu": false,
   "MenuPath": null,

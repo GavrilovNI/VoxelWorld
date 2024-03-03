@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+    "Id": "32c69da9-6853-40dd-b15b-8b0ad984dbbb",
     "Name": "player",
     "Enabled": true,
     "Components": [
@@ -8,11 +8,11 @@
         "__type": "Player",
         "Eye": {
           "_type": "gameobject",
-          "go": "ac866174-265e-4073-bcc3-99ecd452e436"
+          "go": "4d31f54e-ff12-4487-8186-77622965edf5"
         },
         "Inventory": {
           "_type": "component",
-          "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+          "go": "32c69da9-6853-40dd-b15b-8b0ad984dbbb",
           "component_type": "PlayerInventory"
         },
         "IsCreative": true,
@@ -26,12 +26,12 @@
         "__type": "WorldInteractor",
         "Eye": {
           "_type": "gameobject",
-          "go": "de14f3b2-5b8b-4a8b-9984-c257fd919ba5"
+          "go": "f5f966b7-52d4-4bbe-aa36-1904adf6f85d"
         },
         "InteractionTag": "interactable",
         "Player": {
           "_type": "component",
-          "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+          "go": "32c69da9-6853-40dd-b15b-8b0ad984dbbb",
           "component_type": "Player"
         }
       },
@@ -60,7 +60,7 @@
         "Body": null,
         "CameraParent": {
           "_type": "gameobject",
-          "go": "17a80f85-558a-4f16-83a3-c18996fb7136"
+          "go": "4d31f54e-ff12-4487-8186-77622965edf5"
         },
         "Gravity": "0,0,800"
       },
@@ -68,20 +68,20 @@
         "__type": "HotbarController",
         "Inventory": {
           "_type": "component",
-          "go": "77e6ecde-82bc-4729-bd54-00fbeb361778",
+          "go": "32c69da9-6853-40dd-b15b-8b0ad984dbbb",
           "component_type": "PlayerInventory"
         }
       }
     ],
     "Children": [
       {
-        "Id": "17a80f85-558a-4f16-83a3-c18996fb7136",
+        "Id": "4d31f54e-ff12-4487-8186-77622965edf5",
         "Name": "EyePos",
         "Position": "0,0,64",
         "Enabled": true,
         "Children": [
           {
-            "Id": "de14f3b2-5b8b-4a8b-9984-c257fd919ba5",
+            "Id": "f5f966b7-52d4-4bbe-aa36-1904adf6f85d",
             "Name": "Camera",
             "Position": "8,0,0",
             "Enabled": true,
