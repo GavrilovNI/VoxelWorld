@@ -21,6 +21,39 @@ public static class BinaryReaderWriterExtensions
         value.Write(writer);
     }
 
+    public static Transform ReadTransform(this BinaryReader reader)
+    {
+        Vector3 position = reader.ReadVector3();
+        Rotation rotation = reader.ReadRotation();
+        Vector3 scale = reader.ReadVector3();
+        return new(position, rotation, scale);
+    }
+
+    public static void Write(this BinaryWriter writer, in Transform value)
+    {
+        writer.Write(value.Position);
+        writer.Write(value.Rotation);
+        writer.Write(value.Scale);
+    }
+
+
+    public static Rotation ReadRotation(this BinaryReader reader)
+    {
+        float x = reader.ReadSingle();
+        float y = reader.ReadSingle();
+        float z = reader.ReadSingle();
+        float w = reader.ReadSingle();
+        return new(x, y, z, w);
+    }
+
+    public static void Write(this BinaryWriter writer, in Rotation value)
+    {
+        writer.Write(value.x);
+        writer.Write(value.y);
+        writer.Write(value.z);
+        writer.Write(value.w);
+    }
+
 
     public static Vector3 ReadVector3(this BinaryReader reader)
     {
