@@ -2,9 +2,12 @@
 using Sandcube.Entities;
 using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
+using Sandcube.IO;
 using Sandcube.Items;
 using Sandcube.Menus;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Sandcube.Players;
 
@@ -47,5 +50,21 @@ public class Player : Entity
                 Inventory.Hotbar
             });
         }
+    }
+
+    protected override void WriteAdditional(BinaryWriter writer)
+    {
+        base.WriteAdditional(writer);
+        writer.Write(IsCreative);
+        writer.Write(ReachDistance);
+        Inventory.Write(writer);
+    }
+
+    protected override void ReadAdditional(BinaryReader reader)
+    {
+        base.ReadAdditional(reader);
+        IsCreative = reader.ReadBoolean();
+        ReachDistance = reader.ReadSingle();
+        Inventory.Read(reader);
     }
 }

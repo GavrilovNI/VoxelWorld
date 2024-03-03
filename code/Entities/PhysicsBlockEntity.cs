@@ -1,11 +1,13 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
+using Sandcube.IO;
 using Sandcube.Meshing;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Sandcube.Entities;
@@ -125,5 +127,18 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
             if(physicsBlock.ShouldConvertToEntity(World, blockPosition, currentBlockkState))
                 physicsBlock.ConvertToEntity(World, blockPosition, currentBlockkState);
         }
+    }
+
+    protected override void WriteAdditional(BinaryWriter writer)
+    {
+        base.WriteAdditional(writer);
+        writer.Write(BlockState ?? BlockState.Air);
+    }
+
+    protected override void ReadAdditional(BinaryReader reader)
+    {
+        base.ReadAdditional(reader);
+        var blockState = BlockState.Read(reader);
+        SetBlockState(blockState);
     }
 }
