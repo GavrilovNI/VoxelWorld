@@ -29,7 +29,8 @@ public class WorldSaver : Component, ISaver
 
         var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
 
-        var blocksTask = SaveBlocks(worldSaveHelper, worldData.Chunks);
+        var blocksTask = SaveRegionData(worldSaveHelper.GetRegions(WorldSaveHelper.BlocksRegionName),
+            new RegionSaveHelper(WorldOptions), worldData.Chunks);
 
         var results = await Task.WhenAll(blocksTask);
 
@@ -41,20 +42,20 @@ public class WorldSaver : Component, ISaver
         return saved;
     }
 
-    protected virtual Task<bool> SaveBlocks(WorldSaveHelper worldSaveHelper, IReadOnlyDictionary<Vector3Int, BlocksData> chunksData)
+    protected virtual Task<bool> SaveRegionData<T>(WorldRegions worldRegions,
+        RegionalChunkedSaveHelper<T> regionalHelper, IReadOnlyDictionary<Vector3Int, T> chunksData) where T : class
     {
-        var regions = chunksData.GroupBy(c => (1f * c.Key / WorldOptions.RegionSize).Floor());
+        var regionedData = chunksData.GroupBy(c => (1f * c.Key / WorldOptions.RegionSize).Floor());
 
-        var regionSaveHelper = new RegionSaveHelper(WorldOptions);
-        foreach(var region in regions)
+        foreach(var region in regionedData)
         {
             var regionPosition = region.Key;
-            if(worldSaveHelper.HasRegionFile(regionPosition))
+            if(worldRegions.HasRegionFile(regionPosition))
             {
-                using(var regionReadStream = worldSaveHelper.OpenRegionRead(regionPosition))
+                using(var regionReadStream = worldRegions.OpenRegionRead(regionPosition))
                 {
                     using var reader = new BinaryReader(regionReadStream);
-                    regionSaveHelper.Read(reader);
+                    regionalHelper.Read(reader);
                 }
             }
 
@@ -62,12 +63,15 @@ public class WorldSaver : Component, ISaver
             foreach(var (chunkPosition, chunkData) in region)
             {
                 var chunkLocalPosition = chunkPosition - firstChunkPosition;
-                regionSaveHelper.SetChunkData(chunkLocalPosition, chunkData);
+                regionalHelper.SetChunkData(chunkLocalPosition, chunkData);
             }
 
-            using var regionWriteStream = worldSaveHelper.OpenRegionWrite(regionPosition);
+            using var regionWriteStream = worldRegions.OpenRegionWrite(regionPosition);
             using var writer = new BinaryWriter(regionWriteStream);
-            regionSaveHelper.Write(writer);
+            regionalHelper.Write(writer);
+        }
+        return Task.FromResult(true);
+    }
         }
         return Task.FromResult(true);
     }

@@ -126,9 +126,11 @@ public class ChunkCreator : Component
 
         var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
         var regionSaveHelper = new RegionSaveHelper(WorldOptions);
-        if(worldSaveHelper.HasRegionFile(regionPosition))
+        var blocksRegions = worldSaveHelper.GetRegions(WorldSaveHelper.BlocksRegionName);
+
+        if(blocksRegions.HasRegionFile(regionPosition))
         {
-            using(var regionReadStream = worldSaveHelper.OpenRegionRead(regionPosition))
+            using(var regionReadStream = blocksRegions.OpenRegionRead(regionPosition))
             {
                 using var reader = new BinaryReader(regionReadStream);
                 if(regionSaveHelper.ReadOnlyOneChunk(reader, localChunkPosition))
