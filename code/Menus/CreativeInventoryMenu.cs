@@ -1,6 +1,6 @@
-﻿using Sandcube.Inventories;
+﻿using Sandcube.Entities;
+using Sandcube.Inventories;
 using Sandcube.Items;
-using Sandcube.Players;
 using System.Collections.Generic;
 
 namespace Sandcube.Menus;

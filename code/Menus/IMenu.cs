@@ -1,5 +1,5 @@
 ﻿using Sandbox;
-using Sandcube.Players;
+using Sandcube.Entities;
 
 namespace Sandcube.Menus;
 

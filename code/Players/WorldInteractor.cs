@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandcube.Entities;
 using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.Items;

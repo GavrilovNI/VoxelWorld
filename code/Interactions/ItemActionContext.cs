@@ -1,6 +1,6 @@
 ﻿using Sandbox;
+using Sandcube.Entities;
 using Sandcube.Items;
-using Sandcube.Players;
 
 namespace Sandcube.Interactions;
 
