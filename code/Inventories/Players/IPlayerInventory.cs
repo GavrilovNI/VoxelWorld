@@ -1,12 +1,10 @@
-﻿using Sandcube.Interactions;
-using Sandcube.Items;
-using System;
+﻿using Sandcube.IO;
 
 namespace Sandcube.Inventories.Players;
 
-public interface IPlayerInventory : IHotbarAccessor, IHandsAccessor
+public interface IPlayerInventory : IHotbarAccessor, IHandsAccessor, IBinaryWritable, IBinaryReadable
 {
-	public IIndexedCapability<Stack<Item>> Main { get; }
-	public IIndexedCapability<Stack<Item>> SecondaryHand { get; }
+	public ItemStackInventory Main { get; }
+	public ItemStackInventory SecondaryHand { get; }
 	int MainHandIndex { get; set; }
 }

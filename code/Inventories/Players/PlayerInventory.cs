@@ -1,15 +1,17 @@
 ﻿using Sandbox;
 using Sandcube.Interactions;
+using Sandcube.IO;
 using Sandcube.Items;
 using System;
+using System.IO;
 
 namespace Sandcube.Inventories.Players;
 
 public class PlayerInventory : Component, IPlayerInventory
 {
-    public IIndexedCapability<Stack<Item>> Main { get; }
-    public IIndexedCapability<Stack<Item>> Hotbar { get; }
-    public IIndexedCapability<Stack<Item>> SecondaryHand { get; }
+    public ItemStackInventory Main { get; private set; }
+    public ItemStackInventory Hotbar { get; private set; }
+    public ItemStackInventory SecondaryHand { get; private set; }
 
     protected int _mainHandIndex = 0;
     public virtual int MainHandIndex
@@ -58,4 +60,20 @@ public class PlayerInventory : Component, IPlayerInventory
     }
 
     public override int GetHashCode() => HashCode.Combine(Hotbar, SecondaryHand, Main, _mainHandIndex);
+
+    public virtual void Write(BinaryWriter writer)
+    {
+        writer.Write(Main);
+        writer.Write(Hotbar);
+        writer.Write(SecondaryHand);
+        writer.Write(MainHandIndex);
+    }
+
+    public virtual void Read(BinaryReader reader)
+    {
+        Main = ItemStackInventory.Read(reader);
+        Hotbar = ItemStackInventory.Read(reader);
+        SecondaryHand = ItemStackInventory.Read(reader);
+        MainHandIndex = reader.ReadInt32();
+    }
 }
