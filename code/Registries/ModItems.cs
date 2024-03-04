@@ -49,6 +49,7 @@ public class ModItems : ModRegisterables<Item>
 
             Texture texture = await GetTexture(autoAttribute, block.DefaultBlockState);
             IMeshPart<ComplexVertex> model = SandcubeGame.Instance!.BlockMeshes.GetVisual(block.DefaultBlockState)!;
+            model = new UnlimitedMesh<ComplexVertex>.Builder().Add(model).Scale(Vector3.Zero, 0.3f).Build();
 
             var propertyType = property.PropertyType;
             if(propertyType.IsGenericType)
