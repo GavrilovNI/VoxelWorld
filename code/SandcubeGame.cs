@@ -303,8 +303,7 @@ public sealed class SandcubeGame : Component
 
     private void AnimateBlockTextures()
     {
-        if(BlocksTextureMap.UpdateAnimatedTextures())
-            OpaqueVoxelsMaterial.Attributes.Set("color", BlocksTextureMap.Texture);
+        BlocksTextureMap.UpdateAnimatedTextures();
     }
 
     public void RebuildBlockMeshes(IEnumerable<Block> blocks) =>
