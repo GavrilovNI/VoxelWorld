@@ -45,7 +45,7 @@
             </div>
 
             <div class="bottom-buttons centered-content">
-                <div class="button create-game" onclick="@(() => OpenCreateGameMenu())">
+                <div class="button create-game" onclick="@(() => OpenGameCreationMenu())">
                     <AdaptiveLabel class="label">Create New Game</AdaptiveLabel>
                 </div>
             </div>
@@ -58,7 +58,7 @@
 @code
 {
     [Property] protected MainMenuController MainMenuController { get; set; } = null!;
-    [Property] protected CreateGameMenu CreateGameMenu { get; set; } = null!;
+    [Property] protected GameCreationMenu GameCreationMenu { get; set; } = null!;
     [Property] protected string SavesPath { get; set; } = "saves";
     [Property] protected GameLoader GameLoader { get; set; } = null!;
 
@@ -84,11 +84,11 @@
         return loaded;
     }
 
-    public void OpenCreateGameMenu()
+    public void OpenGameCreationMenu()
     {
         if(_isLoadingGame)
             return;
-        MainMenuController.OpenMenu(CreateGameMenu);
+        MainMenuController.OpenMenu(GameCreationMenu);
     }
 
     public void Close()
