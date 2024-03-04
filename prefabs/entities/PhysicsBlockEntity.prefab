@@ -2,6 +2,7 @@
   "RootObject": {
     "Id": "09ca0739-f949-47de-a034-c4eb3e80ab08",
     "Name": "physicsblockentity",
+    "Tags": "entity,no_entity_collide",
     "Enabled": true,
     "Components": [
       {

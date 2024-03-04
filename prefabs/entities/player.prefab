@@ -2,6 +2,7 @@
   "RootObject": {
     "Id": "32c69da9-6853-40dd-b15b-8b0ad984dbbb",
     "Name": "player",
+    "Tags": "entity,player,no_entity_collide",
     "Enabled": true,
     "Components": [
       {

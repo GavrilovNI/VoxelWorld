@@ -204,9 +204,9 @@
       "Defaults": {
         "solid": "Collide",
         "trigger": "Trigger",
-        "world": "Collide",
-        "entity": "Collide",
-        "player": "Collide"
+        "world": "Unset",
+        "entity": "Unset",
+        "no_entity_collide": "Unset"
       },
       "Pairs": [
         {
@@ -236,38 +236,23 @@
         },
         {
           "a": "solid",
-          "b": "world",
-          "r": "Collide"
+          "b": "world"
         },
         {
           "a": "trigger",
-          "b": "world",
-          "r": "Trigger"
-        },
-        {
-          "a": "player",
-          "b": "player",
-          "r": "Trigger"
+          "b": "world"
         },
         {
           "a": "world",
-          "b": "world",
-          "r": "Collide"
+          "b": "world"
         },
         {
           "a": "solid",
-          "b": "entity",
-          "r": "Collide"
+          "b": "entity"
         },
         {
           "a": "trigger",
-          "b": "entity",
-          "r": "Trigger"
-        },
-        {
-          "a": "entity",
-          "b": "player",
-          "r": "Trigger"
+          "b": "entity"
         },
         {
           "a": "world",
@@ -277,11 +262,6 @@
         {
           "a": "entity",
           "b": "entity",
-          "r": "Collide"
-        },
-        {
-          "a": "world",
-          "b": "player",
           "r": "Collide"
         },
         {
@@ -290,13 +270,17 @@
           "r": "Ignore"
         },
         {
-          "a": "trigger",
-          "b": "player",
-          "r": "Trigger"
+          "a": "solid",
+          "b": "no_entity_collide"
         },
         {
-          "a": "solid",
-          "b": "player",
+          "a": "entity",
+          "b": "no_entity_collide",
+          "r": "Ignore"
+        },
+        {
+          "a": "world",
+          "b": "no_entity_collide",
           "r": "Collide"
         }
       ]
