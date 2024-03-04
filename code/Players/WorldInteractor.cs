@@ -79,8 +79,7 @@ public class WorldInteractor : Component
 
         if(Player.IsCreative)
         {
-            var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().FirstOrDefault(i => i is BlockItem blockItem && blockItem.Block == block, null);
-            if(item is null)
+            if(!BlockItem.TryFind(block, out var item))
                 return InteractionResult.Fail;
 
             var oldMainHandIndex = invenory.MainHandIndex;
