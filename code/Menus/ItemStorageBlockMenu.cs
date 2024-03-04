@@ -13,20 +13,20 @@ public class ItemStorageBlockMenu : ItemCapabilitiesMenu
     public ItemStorageBlockEntity BlockEntity { get; }
     public IPlayerInventory PlayerInventory { get; }
 
-    public ItemStorageBlockMenu(ItemStorageBlockEntity blockEntity, IPlayerInventory playerInventory) : base(new List<IIndexedCapability<Inventories.Stack<Item>>>()
+    public ItemStorageBlockMenu(ItemStorageBlockEntity blockEntity, Player player) : base(new List<IIndexedCapability<Inventories.Stack<Item>>>()
     {
         blockEntity.Capability,
-        playerInventory.Main,
-        playerInventory.Hotbar
-    })
+        player.Inventory.Main,
+        player.Inventory.Hotbar
+    }, player)
     {
         BlockEntity = blockEntity;
-        PlayerInventory = playerInventory;
+        PlayerInventory = player.Inventory;
     }
 
-    public override bool IsStillValid(Player player)
+    public override bool IsStillValid()
     {
-        if(PlayerInventory != player.Inventory)
+        if(PlayerInventory != Player.Inventory)
             return false;
         if(!BlockEntity.IsValid)
             return false;
@@ -34,7 +34,7 @@ public class ItemStorageBlockMenu : ItemCapabilitiesMenu
         var globalPosition = BlockEntity.GlobalPosition;
         var bbox = new BBox(globalPosition, globalPosition + new Vector3(MathV.UnitsInMeter));
         var closestPoint = bbox.ClosestPoint(globalPosition);
-        var distanceSquared = closestPoint.DistanceSquared(player.Transform.Position);
-        return distanceSquared <= player.ReachDistance * player.ReachDistance;
+        var distanceSquared = closestPoint.DistanceSquared(Player.Transform.Position);
+        return distanceSquared <= Player.ReachDistance * Player.ReachDistance;
     }
 }

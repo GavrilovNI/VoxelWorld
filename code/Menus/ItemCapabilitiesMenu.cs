@@ -19,16 +19,20 @@ public class ItemCapabilitiesMenu : IMenu
     protected IIndexedCapability<ItemStack>? CapabilityTakenFrom = null;
     protected int IndexTakenFrom = -1;
 
+    public Player Player { get; }
+
     public int CapabilitiesCount => Capabilities.Count;
 
-    public ItemCapabilitiesMenu()
+    public ItemCapabilitiesMenu(Player player)
     {
         Capabilities = new List<IIndexedCapability<ItemStack>>();
+        Player = player;
     }
 
-    public ItemCapabilitiesMenu(IEnumerable<IIndexedCapability<ItemStack>> capabilities)
+    public ItemCapabilitiesMenu(IEnumerable<IIndexedCapability<ItemStack>> capabilities, Player player)
     {
         Capabilities = new List<IIndexedCapability<ItemStack>>(capabilities);
+        Player = player;
     }
 
     public IReadOnlyIndexedCapability<ItemStack> GetCapability(int capabilityIndex) => Capabilities[capabilityIndex];
@@ -123,9 +127,9 @@ public class ItemCapabilitiesMenu : IMenu
     }
 
 
-    public virtual bool IsStillValid(Player player) => true;
+    public virtual bool IsStillValid() => true;
 
-    public virtual GameObject CreateScreen(Player player)
+    public virtual GameObject CreateScreen()
     {
         var gameObject = new GameObject();
         var screen = gameObject.Components.Create<ItemCapabilitiesScreen>();

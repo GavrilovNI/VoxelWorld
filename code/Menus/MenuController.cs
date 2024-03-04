@@ -77,7 +77,7 @@ public class MenuController : Component, ILocalPlayerInitializable
         {
             bool shouldClose;
             if(Player.IsValid())
-                shouldClose = !CurrentMenu.IsStillValid(Player!);
+                shouldClose = !CurrentMenu.IsStillValid();
             else
                 shouldClose = CurrentScreen is not null && CurrentScreen != EscapeScreen;
 
@@ -92,7 +92,7 @@ public class MenuController : Component, ILocalPlayerInitializable
             return;
         CloseMenu();
         CurrentMenu = menu;
-        OpenScreen(menu.CreateScreen(Player!), true);
+        OpenScreen(menu.CreateScreen(), true);
     }
 
     public virtual void CloseMenu()

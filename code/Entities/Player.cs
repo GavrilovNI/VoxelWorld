@@ -40,7 +40,7 @@ public class Player : Entity
             return new CreativeInventoryMenu(new List<IIndexedCapability<Inventories.Stack<Item>>>()
             {
                 Inventory.Hotbar
-            });
+            }, this);
         }
         else
         {
@@ -49,7 +49,7 @@ public class Player : Entity
                 Inventory.SecondaryHand,
                 Inventory.Main,
                 Inventory.Hotbar
-            });
+            }, this);
         }
     }
 

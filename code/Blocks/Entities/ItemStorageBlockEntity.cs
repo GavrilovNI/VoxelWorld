@@ -26,7 +26,7 @@ public class ItemStorageBlockEntity : BlockEntity
 
     public IMenu CreateMenu(Player player)
     {
-        return new ItemStorageBlockMenu(this, player.Inventory);
+        return new ItemStorageBlockMenu(this, player);
     }
 
     protected override void OnDestroyedInternal()
