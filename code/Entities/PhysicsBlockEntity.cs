@@ -133,6 +133,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
     {
         base.WriteAdditional(writer);
         writer.Write(BlockState ?? BlockState.Air);
+        writer.Write(Rigidbody.Velocity);
     }
 
     protected override void ReadAdditional(BinaryReader reader)
@@ -140,5 +141,6 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         base.ReadAdditional(reader);
         var blockState = BlockState.Read(reader);
         SetBlockState(blockState);
+        Rigidbody.Velocity = reader.ReadVector3();
     }
 }
