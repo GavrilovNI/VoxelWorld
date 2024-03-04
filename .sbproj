@@ -206,7 +206,8 @@
         "trigger": "Trigger",
         "world": "Unset",
         "entity": "Unset",
-        "no_entity_collide": "Unset"
+        "no_entity_collide": "Unset",
+        "interactable": "Ignore"
       },
       "Pairs": [
         {
@@ -282,6 +283,36 @@
           "a": "world",
           "b": "no_entity_collide",
           "r": "Collide"
+        },
+        {
+          "a": "interactable",
+          "b": "interactable",
+          "r": "Ignore"
+        },
+        {
+          "a": "no_entity_collide",
+          "b": "interactable",
+          "r": "Ignore"
+        },
+        {
+          "a": "entity",
+          "b": "interactable",
+          "r": "Ignore"
+        },
+        {
+          "a": "world",
+          "b": "interactable",
+          "r": "Ignore"
+        },
+        {
+          "a": "trigger",
+          "b": "interactable",
+          "r": "Ignore"
+        },
+        {
+          "a": "solid",
+          "b": "interactable",
+          "r": "Ignore"
         }
       ]
     }

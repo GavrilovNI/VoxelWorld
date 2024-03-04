@@ -49,7 +49,7 @@
       {
         "Id": "4a9dd1e9-6e1d-469d-8a16-973cb6e913b8",
         "Name": "Interactable",
-        "Tags": "interactable",
+        "Tags": "interactable,no_entity_collide",
         "Enabled": true,
         "Components": [
           {
