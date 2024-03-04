@@ -56,7 +56,7 @@
         "Bounciness": 0.3,
         "GroundAngle": 45,
         "Height": 64,
-        "IgnoreLayers": "",
+        "IgnoreLayers": "no_entity_collide,interactable,trigger",
         "Radius": 16,
         "StepHeight": 18
       },
