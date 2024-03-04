@@ -96,6 +96,7 @@ public class ChunksCreator : Component
                 proxy.WorldComponent = creationData.World;
         }
 
+        chunkGameObject.Tags.Add("world");
         chunkGameObject.Enabled = creationData.EnableOnCreate;
         return chunk;
     }

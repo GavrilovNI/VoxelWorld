@@ -2,7 +2,6 @@
   "RootObject": {
     "Id": "69a60b12-6e22-4380-8267-115809658a6f",
     "Name": "world",
-    "Tags": "world",
     "Enabled": true,
     "Components": [
       {
