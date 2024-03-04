@@ -62,7 +62,7 @@ public abstract class StackInventory<T> : IndexedCapability<T>, IBinaryWritable,
         var limit = GetSlotLimit(index, stack);
         var maxCountToSet = Math.Min(limit, stack.Count);
         if(!simulate)
-            Set(index, stack);
+            Set(index, stack.WithCount(maxCountToSet));
 
         return maxCountToSet;
     }
