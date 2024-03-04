@@ -1,7 +1,9 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
+using Sandcube.Inventories;
 using Sandcube.IO;
+using Sandcube.Items;
 using Sandcube.Meshing;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mth;
@@ -114,8 +116,12 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         var state = World.GetBlockState(blockPosition);
         if(!state.Block.CanBeReplaced(state, BlockState))
         {
-            //TODO: drop
-            Log.Info("drop");
+            if(!BlockItem.TryFind(BlockState.Block, out var item))
+                return;
+
+            var dropPosition = Transform.Position + ModelBounds.Center;
+            EntitySpawnConfig spawnConfig = new(new(dropPosition), World);
+            ItemStackEntity.Create(new Inventories.Stack<Item>(item), spawnConfig);
             return;
         }
 
