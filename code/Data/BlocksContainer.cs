@@ -17,7 +17,7 @@ public class BlocksContainer : ISaveStatusMarkable
     private readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
     private readonly SortedDictionary<Vector3Int, BlockEntity> _blockEntities = new(Vector3Int.XYZIterationComparer);
 
-    protected readonly IWorldProvider WorldProvider;
+    protected readonly IWorldAccessor World;
     protected readonly Vector3Int ChunkPosition;
     protected readonly Vector3Int ChunkSize;
 
@@ -45,9 +45,9 @@ public class BlocksContainer : ISaveStatusMarkable
         }
     }
 
-    public BlocksContainer(IWorldProvider worldProvider, Vector3Int chunkPosition, Vector3Int chunkSize)
+    public BlocksContainer(IWorldAccessor worldProvider, Vector3Int chunkPosition, Vector3Int chunkSize)
     {
-        WorldProvider = worldProvider;
+        World = worldProvider;
         ChunkPosition = chunkPosition;
         ChunkSize = chunkSize;
     }
@@ -121,14 +121,14 @@ public class BlocksContainer : ISaveStatusMarkable
 
         if(blockState.Block is IEntityBlock entityBlock)
         {
-            var globalPosition = WorldProvider.GetBlockWorldPosition(ChunkPosition, position);
+            var globalPosition = World.GetBlockWorldPosition(ChunkPosition, position);
 
-            if(entityBlock.HasEntity(WorldProvider, globalPosition, blockState))
+            if(entityBlock.HasEntity(World, globalPosition, blockState))
             {
                 var oldBlockEntity = GetBlockEntity(position);
 
                 bool isValid = oldBlockEntity is not null &&
-                    entityBlock.IsValidEntity(WorldProvider, globalPosition, blockState, oldBlockEntity);
+                    entityBlock.IsValidEntity(World, globalPosition, blockState, oldBlockEntity);
 
                 if(isValid)
                 {
@@ -138,7 +138,7 @@ public class BlocksContainer : ISaveStatusMarkable
                 {
                     RemoveBlockEntity(position, false);
 
-                    var newBlockEntity = entityBlock.CreateEntity(WorldProvider, globalPosition, blockState);
+                    var newBlockEntity = entityBlock.CreateEntity(World, globalPosition, blockState);
                     if(newBlockEntity is null)
                         throw new InvalidOperationException($"Couldn't create {typeof(BlockEntity)} for {blockState}");
 

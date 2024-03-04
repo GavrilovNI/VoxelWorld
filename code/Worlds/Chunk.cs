@@ -22,7 +22,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     public bool Initialized { get; private set; } = false;
 
-    public IWorldProvider WorldProvider { get; internal set; } = null!;
+    public IWorldAccessor World { get; internal set; } = null!;
 
     public BBox ModelBounds => ModelUpdater.ModelBounds;
 
@@ -41,18 +41,18 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     protected BlocksContainer Blocks = null!;
 
-    public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldProvider worldProvider)
+    public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldAccessor world)
     {
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Chunk)} {this} was already initialized or enabled");
-        ArgumentNullException.ThrowIfNull(worldProvider);
+        ArgumentNullException.ThrowIfNull(world);
 
         Initialized = true;
 
         Position = position;
         Size = size;
-        WorldProvider = worldProvider;
-        Blocks = new(worldProvider, position, size);
+        World = world;
+        Blocks = new(world, position, size);
     }
 
     protected override void OnEnabled()
@@ -193,15 +193,15 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         if(IsInBounds(localPosition))
             return GetBlockEntity(localPosition);
 
-        Vector3Int globalPosition = WorldProvider.GetBlockWorldPosition(Position, localPosition);
-        return WorldProvider.GetBlockEntity(globalPosition);
+        Vector3Int globalPosition = World.GetBlockWorldPosition(Position, localPosition);
+        return World.GetBlockEntity(globalPosition);
     }
 
     public virtual void OnNeighbouringChunkEdgeUpdated(Direction directionToNeighbouringChunk,
         Vector3Int updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
     {
         var sidedBlockPosition = updatedBlockPosition - directionToNeighbouringChunk;
-        var sidedLocalBlockPosition = WorldProvider.GetBlockPositionInChunk(sidedBlockPosition);
+        var sidedLocalBlockPosition = World.GetBlockPositionInChunk(sidedBlockPosition);
         var sidedBlockState = GetBlockState(sidedLocalBlockPosition);
         if(sidedBlockState.IsAir())
             return;
@@ -247,11 +247,11 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
 public static class ComponentListChunkExtensions
 {
-    public static T Create<T>(this ComponentList components, Vector3Int position, Vector3Int size, IWorldProvider worldProvider, bool startEnabled = true) where T : Chunk, new()
+    public static T Create<T>(this ComponentList components, Vector3Int position, Vector3Int size, IWorldAccessor world, bool startEnabled = true) where T : Chunk, new()
     {
         var chunk = components.Create<T>(false);
 
-        chunk.Initialize(position, size, worldProvider);
+        chunk.Initialize(position, size, world);
         chunk.Enabled = startEnabled;
         return chunk;
     }

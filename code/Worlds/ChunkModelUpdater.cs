@@ -187,7 +187,7 @@ public class ChunkModelUpdater : Component
         if(Chunk.IsInBounds(localPosition))
             return Chunk.GetBlockState(localPosition);
 
-        var world = Chunk.WorldProvider;
+        var world = Chunk.World;
         Vector3Int worldPosition = world.GetBlockWorldPosition(Chunk.Position, localPosition);
         var chunkPosition = world.GetChunkPosition(worldPosition);
         if(!world.HasChunk(chunkPosition))

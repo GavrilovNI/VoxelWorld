@@ -15,7 +15,7 @@ public class ItemStorageBlockEntity : BlockEntity
 
     protected override bool IsSavedInternal => Capability.IsSaved;
 
-    public ItemStorageBlockEntity(IWorldProvider world, Vector3Int position, int storageSize, int slotLimit = DefaultValues.ItemStackLimit) : base(world, position)
+    public ItemStorageBlockEntity(IWorldAccessor world, Vector3Int position, int storageSize, int slotLimit = DefaultValues.ItemStackLimit) : base(world, position)
     {
         if(storageSize < 0)
             throw new ArgumentOutOfRangeException(nameof(storageSize));

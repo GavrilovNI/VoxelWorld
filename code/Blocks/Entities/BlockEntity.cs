@@ -12,7 +12,7 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
 {
     public Vector3Int Position { get; }
     public Vector3 GlobalPosition => World.GetBlockGlobalPosition(Position);
-    public IWorldProvider World { get; }
+    public IWorldAccessor World { get; }
 
     public BlockState BlockState => World.GetBlockState(Position);
 
@@ -35,7 +35,7 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
     protected virtual bool IsSavedInternal => true;
 
 
-    public BlockEntity(IWorldProvider world, Vector3Int position)
+    public BlockEntity(IWorldAccessor world, Vector3Int position)
     {
         Position = position;
         World = world;
