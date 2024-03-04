@@ -123,7 +123,7 @@ public class ItemCapabilitiesMenu : IMenu
 
         TakenStack = TakenStack.Subtract(maxCount);
 
-        Log.Info($"Drop: {stackToDrop}"); //TODO
+        Player.ItemDropper.Drop(stackToDrop);
     }
 
 

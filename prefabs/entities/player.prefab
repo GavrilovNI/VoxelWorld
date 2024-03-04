@@ -16,6 +16,11 @@
           "component_type": "PlayerInventory"
         },
         "IsCreative": true,
+        "ItemDropper": {
+          "_type": "component",
+          "go": "0b8d346c-5a52-431e-8750-b9f14377b23b",
+          "component_type": "ItemDropper"
+        },
         "ReachDistance": 196.84999,
         "SteamId": 0
       },
@@ -134,6 +139,18 @@
                 "Strength": 1,
                 "Threshold": 0.3,
                 "ThresholdWidth": 2
+              }
+            ]
+          },
+          {
+            "Id": "0b8d346c-5a52-431e-8750-b9f14377b23b",
+            "Name": "ItemDropper",
+            "Position": "13,0,0",
+            "Enabled": true,
+            "Components": [
+              {
+                "__type": "ItemDropper",
+                "Velocity": 100
               }
             ]
           }

@@ -5,6 +5,7 @@ using Sandcube.Inventories.Players;
 using Sandcube.IO;
 using Sandcube.Items;
 using Sandcube.Menus;
+using Sandcube.Players;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +15,7 @@ namespace Sandcube.Entities;
 public class Player : Entity
 {
     [Property] public GameObject Eye { get; private set; } = null!;
+    [Property] public ItemDropper ItemDropper { get; private set; } = null!;
     [Property] public bool IsCreative { get; private set; } = false;
     [Property] public float ReachDistance { get; private set; } = 39.37f * 5;
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
