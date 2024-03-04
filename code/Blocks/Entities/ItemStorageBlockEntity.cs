@@ -31,7 +31,12 @@ public class ItemStorageBlockEntity : BlockEntity
 
     protected override void OnDestroyedInternal()
     {
-        // TODO: drop items;
+        BBox boxDropPosition = new BBox(GlobalPosition, GlobalPosition + MathV.UnitsInMeter).Grow(-MathV.UnitsInMeter / 4);
+        foreach(var itemStack in Capability)
+        {
+            EntitySpawnConfig spawnConfig = new(new Transform(boxDropPosition.RandomPointInside), World);
+            ItemStackEntity.Create(itemStack, spawnConfig);
+        }
     }
 
     protected override void WriteAdditional(BinaryWriter writer)
