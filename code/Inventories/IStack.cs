@@ -1,4 +1,5 @@
 ﻿using Sandcube.IO;
+using System;
 
 namespace Sandcube.Inventories;
 
@@ -22,11 +23,17 @@ public static class IStackExtensions
 {
     public static T Subtract<T>(this IStack<T> stack, int count) where T : class, IStack<T>
     {
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count), count, "can't be less than 0");
+
         return stack.WithCount(stack.Count - count);
     }
 
     public static T Add<T>(this IStack<T> stack, int count) where T : class, IStack<T>
     {
+        if(count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count), count, "can't be less than 0");
+
         return stack.WithCount(stack.Count + count);
     }
 }
