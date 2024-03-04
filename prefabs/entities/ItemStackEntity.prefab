@@ -1,0 +1,50 @@
+{
+  "RootObject": {
+    "Id": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
+    "Name": "itemstackentity",
+    "Tags": "entity,no_entity_collide",
+    "Enabled": true,
+    "Components": [
+      {
+        "__type": "ItemStackEntity",
+        "Collider": {
+          "_type": "component",
+          "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
+          "component_type": "BoxCollider"
+        },
+        "Rigidbody": {
+          "_type": "component",
+          "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
+          "component_type": "Rigidbody"
+        }
+      },
+      {
+        "__type": "Rigidbody",
+        "AngularDamping": 0,
+        "Gravity": true,
+        "LinearDamping": 0,
+        "Locking": {
+          "Pitch": true,
+          "Yaw": true,
+          "Roll": true
+        },
+        "MassOverride": 0,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
+      },
+      {
+        "__type": "BoxCollider",
+        "Center": "25,25,25",
+        "IsTrigger": false,
+        "Scale": "50,50,50",
+        "Static": false,
+        "Surface": null
+      }
+    ],
+    "Children": []
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "__references": []
+}

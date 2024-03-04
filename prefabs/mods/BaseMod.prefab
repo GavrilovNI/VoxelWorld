@@ -9,6 +9,10 @@
       },
       {
         "__type": "SandcubeEntities",
+        "ItemStackPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/entities/itemstackentity.prefab"
+        },
         "PhysicsBlockPrefab": {
           "_type": "gameobject",
           "prefab": "prefabs/entities/physicsblockentity.prefab"
