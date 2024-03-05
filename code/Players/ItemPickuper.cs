@@ -17,19 +17,13 @@ public class ItemPickuper : Component, Component.ITriggerListener
     public void OnTriggerEnter(Collider other)
     {
         if(other.Components.TryGet<ItemStackEntity>(out var entity))
-        {
-            Log.Info($"Entered {entity}");
             Entities.Add(entity, 0);
-        }
     }
 
     public void OnTriggerExit(Collider other)
     {
         if(other.Components.TryGet<ItemStackEntity>(out var entity))
-        {
-            Log.Info($"Exit {entity}");
             Entities.Remove(entity);
-        }
     }
 
     protected virtual bool TryPickup(ItemStackEntity entity)
