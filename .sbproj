@@ -253,7 +253,8 @@
         },
         {
           "a": "trigger",
-          "b": "entity"
+          "b": "entity",
+          "r": "Trigger"
         },
         {
           "a": "world",
@@ -277,7 +278,7 @@
         {
           "a": "entity",
           "b": "no_entity_collide",
-          "r": "Ignore"
+          "r": "Trigger"
         },
         {
           "a": "world",
@@ -313,6 +314,11 @@
           "a": "solid",
           "b": "interactable",
           "r": "Ignore"
+        },
+        {
+          "a": "trigger",
+          "b": "no_entity_collide",
+          "r": "Trigger"
         }
       ]
     }
