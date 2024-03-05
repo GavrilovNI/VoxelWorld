@@ -214,7 +214,7 @@ public class World : Component, IWorldAccessor, ITickable
     // Thread safe
     protected virtual void OnChunkLoaded(Chunk chunk)
     {
-        _ = Task.RunInMainThreadAsync(() =>
+        _ = Task.RunInMainThreadAsync(async () =>
         {
             if(!chunk.IsValid)
                 return;
@@ -222,10 +222,12 @@ public class World : Component, IWorldAccessor, ITickable
             chunk.GameObject.Enabled = true;
             chunk.Destroyed += OnChunkDestroyed;
 
+            UpdateNeighboringChunks(chunk.Position);
+
+            await chunk.GetModelUpdateTask();
             EntitiesCreator?.LoadOrCreateEntitiesForChunk(chunk.Position);
 
             ChunkLoaded?.Invoke(chunk.Position);
-            UpdateNeighboringChunks(chunk.Position);
         });
     }
 
