@@ -13,6 +13,8 @@ public class PlayerInventory : Component, IPlayerInventory
     public ItemStackInventory Hotbar { get; private set; }
     public ItemStackInventory SecondaryHand { get; private set; }
 
+    public IIndexedCapability<Stack<Item>> Combined => new CombinedIndexedCapability<Stack<Item>>(Hotbar, Main, SecondaryHand);
+
     protected int _mainHandIndex = 0;
     public virtual int MainHandIndex
     {
