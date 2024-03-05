@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "e3dd7ad3-abb3-4876-9d35-830f839a2d31",
+    "Id": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
     "Name": "player",
     "Tags": "entity,player,no_entity_collide",
     "Enabled": true,
@@ -9,17 +9,17 @@
         "__type": "Player",
         "Eye": {
           "_type": "gameobject",
-          "go": "7dba7eeb-7de5-4a18-807a-d51353ba6043"
+          "go": "cb1532d7-742c-4cb4-a079-e276a068cf05"
         },
         "Inventory": {
           "_type": "component",
-          "go": "e3dd7ad3-abb3-4876-9d35-830f839a2d31",
+          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
           "component_type": "PlayerInventory"
         },
         "IsCreative": true,
         "ItemDropper": {
           "_type": "component",
-          "go": "67075e82-44b5-44d7-8706-dbbaba3a1b9f",
+          "go": "1c41b226-51ca-456c-8748-69a3fe5278b1",
           "component_type": "ItemDropper"
         },
         "ReachDistance": 196.84999,
@@ -32,12 +32,12 @@
         "__type": "WorldInteractor",
         "Eye": {
           "_type": "gameobject",
-          "go": "438eefa2-38da-47d1-98b9-62b613fd424d"
+          "go": "3b77530d-a4ba-476e-8846-065637dcce4d"
         },
         "InteractionTag": "interactable",
         "Player": {
           "_type": "component",
-          "go": "e3dd7ad3-abb3-4876-9d35-830f839a2d31",
+          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
           "component_type": "Player"
         }
       },
@@ -66,7 +66,7 @@
         "Body": null,
         "CameraParent": {
           "_type": "gameobject",
-          "go": "7dba7eeb-7de5-4a18-807a-d51353ba6043"
+          "go": "cb1532d7-742c-4cb4-a079-e276a068cf05"
         },
         "Gravity": "0,0,800"
       },
@@ -74,20 +74,25 @@
         "__type": "HotbarController",
         "Inventory": {
           "_type": "component",
-          "go": "e3dd7ad3-abb3-4876-9d35-830f839a2d31",
+          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
           "component_type": "PlayerInventory"
+        },
+        "Player": {
+          "_type": "component",
+          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+          "component_type": "Player"
         }
       }
     ],
     "Children": [
       {
-        "Id": "7dba7eeb-7de5-4a18-807a-d51353ba6043",
+        "Id": "cb1532d7-742c-4cb4-a079-e276a068cf05",
         "Name": "EyePos",
         "Position": "0,0,64",
         "Enabled": true,
         "Children": [
           {
-            "Id": "438eefa2-38da-47d1-98b9-62b613fd424d",
+            "Id": "3b77530d-a4ba-476e-8846-065637dcce4d",
             "Name": "Camera",
             "Position": "8,0,0",
             "Enabled": true,
@@ -144,7 +149,7 @@
             ]
           },
           {
-            "Id": "67075e82-44b5-44d7-8706-dbbaba3a1b9f",
+            "Id": "1c41b226-51ca-456c-8748-69a3fe5278b1",
             "Name": "ItemDropper",
             "Position": "13,0,0",
             "Enabled": true,
@@ -158,7 +163,7 @@
         ]
       },
       {
-        "Id": "b204bc5f-dc70-4c96-9f8f-04d57ff36639",
+        "Id": "66c3141a-54dd-4806-a89d-16800af7794c",
         "Name": "ItemPickuper",
         "Tags": "trigger",
         "Enabled": true,
@@ -167,7 +172,7 @@
             "__type": "ItemPickuper",
             "Inventory": {
               "_type": "component",
-              "go": "e3dd7ad3-abb3-4876-9d35-830f839a2d31",
+              "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
               "component_type": "PlayerInventory"
             },
             "PickupTime": 1

@@ -1,11 +1,14 @@
 ﻿using Sandbox;
+using Sandcube.Entities;
 using Sandcube.Interactions;
+using Sandcube.Items;
 using Sandcube.Menus;
 
 namespace Sandcube.Inventories.Players;
 
 public class HotbarController : Component
 {
+    [Property] public Player Player { get; private set; } = null!;
     [Property] public PlayerInventory Inventory { get; private set; } = null!; // TODO: change to IPlayerInventory
 
     protected override void OnAwake()
@@ -22,6 +25,9 @@ public class HotbarController : Component
 
             if(Input.Pressed("HandSwap"))
                 SwapHands();
+
+            if(Input.Pressed("Drop"))
+                DropHoldingItem();
         }
     }
 
@@ -60,5 +66,26 @@ public class HotbarController : Component
         }
 
         return canSwap;
+    }
+
+    protected virtual bool DropHoldingItem()
+    {
+        var handToDrop = HandType.Main;
+        var itemStack = Inventory.GetHandItem(handToDrop);
+        if(itemStack.IsEmpty)
+        {
+            handToDrop = HandType.Secondary;
+            itemStack = Inventory.GetHandItem(handToDrop);
+
+            if(itemStack.IsEmpty)
+                return false;
+        }
+
+        int droppingCount = 1;
+        bool dropping = Inventory.TrySetHandItem(handToDrop, itemStack.Subtract(droppingCount), false);
+        if(dropping)
+            Player.ItemDropper.Drop(itemStack.WithCount(droppingCount));
+
+        return dropping;
     }
 }
