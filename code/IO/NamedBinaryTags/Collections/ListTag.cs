@@ -123,6 +123,9 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
 
     public void Add<T>(T value) where T : INbtWritable => Add(value.Write());
 
+    public void Add<T>(T value, bool unused = false) where T : struct, Enum =>
+        Add(Array.IndexOf(Enum.GetValues<T>(), value));
+
 
 
     public void Insert(int index, BinaryTag tag)
@@ -160,4 +163,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
     public void Insert(int index, string value) => Insert(index, new StringTag(value));
 
     public void Insert<T>(int index, T value) where T : INbtWritable => Insert(index, value.Write());
+
+    public void Insert<T>(int index, T value, bool unused = false) where T : struct, Enum =>
+        Insert(index, Array.IndexOf(Enum.GetValues<T>(), value));
 }

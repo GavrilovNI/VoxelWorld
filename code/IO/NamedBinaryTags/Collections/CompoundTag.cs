@@ -114,4 +114,7 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
     public void Set(string key, string value) => Set(key, new StringTag(value));
 
     public void Set<T>(string key, T value) where T : INbtWritable => Set(key, value.Write());
+
+    public void Set<T>(string key, T value, bool unused = false) where T : struct, Enum =>
+        Set(key, Array.IndexOf(Enum.GetValues<T>(), value));
 }

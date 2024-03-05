@@ -137,6 +137,13 @@ public abstract class NbtReadCollection<TKey> : BinaryTag
         return defaultValue;
     }
 
+    public T Get<T>(TKey key, T defaultValue) where T : struct, Enum
+    {
+        if(TryGet(key, out var tag) && tag is IntTag intTag)
+            return Enum.GetValues<T>()[intTag.Value];
+        return defaultValue;
+    }
+
     // TODO: uncomment/implement when get whitelisted
     //public T? Get<T>(TKey key, T? defaultValue = default) where T : INbtStaticReadable<T>
     //{
