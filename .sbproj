@@ -165,7 +165,7 @@
         {
           "Name": "Drop",
           "KeyboardCode": "q",
-          "GroupName": "Other"
+          "GroupName": "Inventory"
         },
         {
           "Name": "Score",
@@ -195,7 +195,7 @@
         {
           "Name": "SwapInteractionOrder",
           "KeyboardCode": "SHIFT",
-          "GroupName": "Other"
+          "GroupName": "Actions"
         }
       ]
     },
