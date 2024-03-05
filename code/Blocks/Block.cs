@@ -64,11 +64,16 @@ public abstract class Block : IRegisterable, IBinaryWritable, IBinaryStaticReada
 
     public virtual Task<InteractionResult> OnAttack(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
     public virtual Task<InteractionResult> OnInteract(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
-    public virtual Task Break(BlockActionContext context) => context.World.SetBlockState(context.Position, BlockState.Air);
+    public virtual Task Break(BlockActionContext context) => Break(context.World, context.Position, context.BlockState);
+    public virtual Task Break(IWorldAccessor world, Vector3Int position, BlockState blockState) => world.SetBlockState(position, BlockState.Air);
 
     public virtual bool CanStay(IWorldAccessor world, Vector3Int position, BlockState blockState) => true;
 
-    public virtual void OnNeighbourChanged(in NeighbourChangedContext context) { }
+    public virtual void OnNeighbourChanged(in NeighbourChangedContext context)
+    {
+        if(!CanStay(context.World, context.ThisPosition, context.ThisBlockState))
+            Break(context.World, context.ThisPosition, context.ThisBlockState);
+    }
 
 
     // Thread safe
