@@ -6,11 +6,13 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Sandcube.IO;
 using System.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 namespace Sandcube.Mth.Enums;
 
 
-public abstract class CustomEnum : IBinaryWritable
+public abstract class CustomEnum : IBinaryWritable, INbtWritable
 {
     public int Ordinal { get; init; }
     public string Name { get; init; }
@@ -46,9 +48,20 @@ public abstract class CustomEnum : IBinaryWritable
         var ordinal = reader.ReadInt32();
         return GetValues(enumType).ElementAt(ordinal);
     }
+
+
+    public BinaryTag Write() => new IntTag(Ordinal);
+
+    public static CustomEnum Read<T>(BinaryTag tag) => Read(tag, typeof(T));
+
+    public static CustomEnum Read(BinaryTag tag, Type enumType)
+    {
+        var ordinal = ((IntTag)tag).Value;
+        return GetValues(enumType).ElementAt(ordinal);
+    }
 }
 
-public abstract class CustomEnum<T> : CustomEnum, IBinaryWritable, IBinaryStaticReadable<T> where T : CustomEnum<T>, ICustomEnum<T>
+public abstract class CustomEnum<T> : CustomEnum, INbtStaticReadable<T>, IBinaryWritable, IBinaryStaticReadable<T> where T : CustomEnum<T>, ICustomEnum<T>
 {
     [Obsolete("For serialization only", true)]
     public CustomEnum()
@@ -85,6 +98,8 @@ public abstract class CustomEnum<T> : CustomEnum, IBinaryWritable, IBinaryStatic
     public sealed override int GetHashCode() => Ordinal;
 
     public override string ToString() => Name;
+
+    public static T Read(BinaryTag tag) => (T)CustomEnum.Read<T>(tag);
 
     public static T Read(BinaryReader reader) => (T)CustomEnum.Read<T>(reader);
 

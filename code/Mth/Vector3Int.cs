@@ -1,5 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ using System.Text.Json.Serialization;
 namespace Sandcube.Mth;
 
 [JsonConverter(typeof(Vector3IntJsonConverter))]
-public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, IBinaryWritable, IBinaryStaticReadable<Vector3Int>
+public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, INbtWritable, INbtStaticReadable<Vector3Int>, IBinaryWritable, IBinaryStaticReadable<Vector3Int>
 {
     public static readonly Vector3Int One = new(1);
     public static readonly Vector3Int Zero = new(0);
@@ -413,6 +415,21 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, IBinar
         defaultInterpolatedStringHandler.AppendLiteral(",");
         defaultInterpolatedStringHandler.AppendFormatted(z, valueFormat);
         return defaultInterpolatedStringHandler.ToStringAndClear();
+    }
+
+    public readonly BinaryTag Write()
+    {
+        var result = new CompoundTag();
+        result.Set("x", x);
+        result.Set("y", y);
+        result.Set("z", z);
+        return result;
+    }
+
+    public static Vector3Int Read(BinaryTag tag)
+    {
+        var compoundTag = (CompoundTag)tag;
+        return new(compoundTag.Get<int>("x"), compoundTag.Get<int>("y"), compoundTag.Get<int>("z"));
     }
 
     public class Vector3IntJsonConverter : JsonConverter<Vector3Int>

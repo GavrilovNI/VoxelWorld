@@ -1,5 +1,7 @@
 ﻿using Sandbox;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth.Enums;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ using System.Text.Json.Serialization;
 namespace Sandcube.Mth;
 
 [JsonConverter(typeof(Vector2IntJsonConverter))]
-public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, IBinaryWritable, IBinaryStaticReadable<Vector2Int>
+public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWritable, INbtStaticReadable<Vector2Int>, IBinaryWritable, IBinaryStaticReadable<Vector2Int>
 {
     public static readonly Vector2Int One = new(1);
     public static readonly Vector2Int Zero = new(0);
@@ -304,6 +306,20 @@ public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, IBinar
         defaultInterpolatedStringHandler.AppendLiteral(",");
         defaultInterpolatedStringHandler.AppendFormatted(y, valueFormat);
         return defaultInterpolatedStringHandler.ToStringAndClear();
+    }
+
+    public readonly BinaryTag Write()
+    {
+        var result = new CompoundTag();
+        result.Set("x", x);
+        result.Set("y", y);
+        return result;
+    }
+
+    public static Vector2Int Read(BinaryTag tag)
+    {
+        var compoundTag = (CompoundTag)tag;
+        return new(compoundTag.Get<int>("x"), compoundTag.Get<int>("y"));
     }
 
     public class Vector2IntJsonConverter : JsonConverter<Vector2Int>

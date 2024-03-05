@@ -1,11 +1,13 @@
 ﻿using Sandbox;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Sandcube.Mth;
 
-public struct BBoxInt : IEquatable<BBoxInt>
+public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BBoxInt>
 {
     [JsonInclude]
     public Vector3Int Mins;
@@ -419,4 +421,19 @@ public struct BBoxInt : IEquatable<BBoxInt>
         Mins.AlmostEqual(other.Mins, delta) && Maxs.AlmostEqual(other.Maxs, delta);
 
     public override readonly int GetHashCode() => HashCode.Combine(Mins, Maxs);
+
+
+    public readonly BinaryTag Write()
+    {
+        var result = new CompoundTag();
+        result.Set("mins", Mins);
+        result.Set("maxs", Maxs);
+        return result;
+    }
+
+    public static BBoxInt Read(BinaryTag tag)
+    {
+        var compoundTag = (CompoundTag)tag;
+        return new(Vector3Int.Read(compoundTag.GetTag("mins")), Vector3Int.Read(compoundTag.GetTag("maxs")));
+    }
 }
