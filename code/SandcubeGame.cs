@@ -67,8 +67,6 @@ public sealed class SandcubeGame : Component
     public PathedTextureMap BlocksTextureMap { get; } = new("textures/", 3, new Color32(255, 0, 255), 4);
     public BlockMeshMap BlockMeshes { get; } = new();
 
-    public SandcubeBaseMod BaseMod { get; private set; } = null!;
-
     private readonly Dictionary<Id, ISandcubeMod> _mods = new();
 
     private Task<bool>? _savingTask = null;
@@ -86,8 +84,7 @@ public sealed class SandcubeGame : Component
         if(!loaded)
             throw new InvalidOperationException($"couldn't create {nameof(SandcubeBaseMod)}");
 
-        BaseMod = baseMod;
-        await LoadMods(new ISandcubeMod[] { BaseMod });
+        await LoadMods(new ISandcubeMod[] { baseMod });
 
         InitalizationStatus = InitalizationStatus.Initialized;
         Initialized?.Invoke();

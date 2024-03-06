@@ -2,20 +2,26 @@
 using Sandbox.ModelEditor.Nodes;
 using Sandcube.Blocks.States;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth;
+using Sandcube.Registries;
 using Sandcube.Worlds;
+using System;
 using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
 public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
 {
-    public Vector3Int Position { get; }
+    public BlockEntityType Type { get; }
+    public Vector3Int Position { get; private set; }
     public Vector3 GlobalPosition => World.GetBlockGlobalPosition(Position);
-    public IWorldAccessor World { get; }
+    public IWorldAccessor World { get; private set; } = null!;
 
     public BlockState BlockState => World.GetBlockState(Position);
 
+    public bool Initialized { get; private set; } = false;
     public bool IsValid { get; private set; }
 
     private IReadOnlySaveMarker _saveMarker = SaveMarker.Saved;
@@ -34,12 +40,21 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
     }
     protected virtual bool IsSavedInternal => true;
 
-
-    public BlockEntity(IWorldAccessor world, Vector3Int position)
+    public BlockEntity(BlockEntityType type)
     {
-        Position = position;
-        World = world;
+        Type = type;
         IsValid = true;
+        Initialized = false;
+    }
+
+    public void Initialize(IWorldAccessor world, Vector3Int position)
+    {
+        if(Initialized)
+            throw new InvalidOperationException($"{GetType().Name} {this} was alread initialized");
+
+        Initialized = true;
+        World = world;
+        Position = position;
     }
 
     public virtual void OnCreated()

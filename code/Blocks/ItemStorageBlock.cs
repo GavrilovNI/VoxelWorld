@@ -2,8 +2,6 @@
 using Sandcube.Blocks.Interfaces;
 using Sandcube.Blocks.States;
 using Sandcube.Interactions;
-using Sandcube.Inventories;
-using Sandcube.Items;
 using Sandcube.Menus;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
@@ -19,29 +17,34 @@ namespace Sandcube.Blocks;
 
 public class ItemStorageBlock : SimpleBlock, IEntityBlock
 {
+    public readonly BlockEntityType BlockEntityType;
     public readonly int StorageSize;
     public readonly int StorageStackLimit;
 
     [SetsRequiredMembers]
-    public ItemStorageBlock(in ModedId id, IUvProvider uvProvider,
+    public ItemStorageBlock(in ModedId id, BlockEntityType blockEntityType, IUvProvider uvProvider,
         int storageSize, int storageStackLimit = DefaultValues.ItemStackLimit) : base(id, uvProvider)
     {
         if(storageSize < 0)
             throw new ArgumentOutOfRangeException(nameof(storageSize));
         if(storageStackLimit < 0)
             throw new ArgumentOutOfRangeException(nameof(storageStackLimit));
+
+        BlockEntityType = blockEntityType;
         StorageSize = storageSize;
         StorageStackLimit = storageStackLimit;
     }
 
     [SetsRequiredMembers]
-    public ItemStorageBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders,
+    public ItemStorageBlock(in ModedId id, BlockEntityType blockEntityType, IReadOnlyDictionary<Direction, IUvProvider> uvProviders,
         int storageSize, int storageStackLimit = DefaultValues.ItemStackLimit) : base(id, uvProviders)
     {
         if(storageSize < 0)
             throw new ArgumentOutOfRangeException(nameof(storageSize));
         if(storageStackLimit < 0)
             throw new ArgumentOutOfRangeException(nameof(storageStackLimit));
+
+        BlockEntityType = blockEntityType;
         StorageSize = storageSize;
         StorageStackLimit = storageStackLimit;
     }
@@ -57,7 +60,9 @@ public class ItemStorageBlock : SimpleBlock, IEntityBlock
         return Task.FromResult(InteractionResult.Fail);
     }
 
-    public virtual BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState) => new ItemStorageBlockEntity(world, position, StorageSize, StorageStackLimit);
+    public virtual BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState) =>
+        BlockEntityType.CreateBlockEntity(world, position);
+
     public virtual bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => true;
     public virtual bool IsValidEntity(IWorldProvider world, Vector3Int position, BlockState blockState, BlockEntity blockEntity) => blockEntity is ItemStorageBlockEntity;
 }

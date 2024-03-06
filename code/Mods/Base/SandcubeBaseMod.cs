@@ -1,13 +1,10 @@
 ﻿using Sandbox;
-using Sandbox.Utility;
 using Sandcube.Blocks;
-using Sandcube.Entities;
 using Sandcube.Mods.Base.Blocks;
+using Sandcube.Mods.Base.Blocks.Entities;
 using Sandcube.Mods.Base.Entities;
 using Sandcube.Mods.Base.Items;
 using Sandcube.Registries;
-using Sandcube.Worlds;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sandcube.Mods.Base;
@@ -15,11 +12,12 @@ namespace Sandcube.Mods.Base;
 public sealed class SandcubeBaseMod : Component, ISandcubeMod
 {
     public const string ModName = "sandcube";
-    public static SandcubeBaseMod? Instance => SandcubeGame.Instance?.BaseMod;
+    public static SandcubeBaseMod? Instance { get; private set; }
 
     public Id Id { get; } = new(ModName);
 
     public SandcubeBlocks Blocks { get; private set; } = null!;
+    public SandcubeBlockEntities BlockEntities { get; private set; } = null!;
     public SandcubeItems Items { get; private set; } = null!;
     public SandcubeEntities Entities { get; private set; } = null!;
 
@@ -27,9 +25,27 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
 
     protected override void OnAwake()
     {
+        if(Instance is not null)
+        {
+            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(SandcubeGame)}. Destroying {this}...");
+            Destroy();
+            return;
+        }
+
+        Instance = this;
+
         Blocks = new();
+        BlockEntities = new();
         Items = new();
         Entities = Components.Get<SandcubeEntities>(true);
+    }
+
+    protected override void OnDestroy()
+    {
+        if(Instance != this)
+            return;
+
+        Instance = null;
     }
 
     public async Task RegisterValues(RegistriesContainer registries)
@@ -37,6 +53,7 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
         RegistriesContainer container = new();
 
         await Blocks.Register(registries);
+        await BlockEntities.Register(registries);
         SandcubeGame.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
         await Items.Register(registries);
         await Entities.Register(registries);

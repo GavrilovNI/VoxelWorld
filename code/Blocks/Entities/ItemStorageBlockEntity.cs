@@ -1,6 +1,8 @@
 ﻿using Sandcube.Entities;
 using Sandcube.Inventories;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Menus;
 using Sandcube.Mth;
 using Sandcube.Worlds;
@@ -15,7 +17,8 @@ public class ItemStorageBlockEntity : BlockEntity
 
     protected override bool IsSavedInternal => Capability.IsSaved;
 
-    public ItemStorageBlockEntity(IWorldAccessor world, Vector3Int position, int storageSize, int slotLimit = DefaultValues.ItemStackLimit) : base(world, position)
+    public ItemStorageBlockEntity(BlockEntityType type, int storageSize,
+        int slotLimit = DefaultValues.ItemStackLimit) : base(type)
     {
         if(storageSize < 0)
             throw new ArgumentOutOfRangeException(nameof(storageSize));
@@ -47,6 +50,19 @@ public class ItemStorageBlockEntity : BlockEntity
     protected override void ReadAdditional(BinaryReader reader)
     {
         Capability = ItemStackInventory.Read(reader);
+    }
+
+    protected override BinaryTag WriteAdditional()
+    {
+        CompoundTag tag = new();
+        tag.Set("capability", Capability);
+        return tag;
+    }
+
+    protected override void ReadAdditional(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        Capability = ItemStackInventory.Read(compoundTag.GetTag("capability"));
     }
 
     protected override void MarkSavedInternal(IReadOnlySaveMarker saveMarker) => Capability.MarkSaved(saveMarker);
