@@ -1,8 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
 using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
+using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 using Sandcube.Items;
 using Sandcube.Menus;
 using Sandcube.Players;
@@ -53,6 +55,25 @@ public class Player : Entity
                 Inventory.Hotbar
             }, this);
         }
+    }
+
+    protected override BinaryTag WriteAdditional()
+    {
+        CompoundTag tag = new();
+        tag.Set("eye", Eye.Transform.Local);
+        tag.Set("creative", IsCreative);
+        tag.Set("reach_distance", ReachDistance);
+        tag.Set("invetory", Inventory);
+        return tag;
+    }
+
+    protected override void ReadAdditional(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        Eye.Transform.Local = compoundTag.Get<Transform>("eye");
+        IsCreative = compoundTag.Get<bool>("creative");
+        ReachDistance = compoundTag.Get<float>("reach_distance");
+        Inventory.Read(compoundTag.GetTag("invetory"));
     }
 
     protected override void WriteAdditional(BinaryWriter writer)

@@ -1,6 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
+using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 using Sandcube.Items;
 using Sandcube.Meshing;
 using Sandcube.Mods.Base;
@@ -93,6 +95,23 @@ public class ItemStackEntity : Entity
         var itemStack = Inventories.ItemStack.Read(reader);
         SetItemStack(itemStack);
         Rigidbody.Velocity = reader.ReadVector3();
+    }
+
+    protected override BinaryTag WriteAdditional()
+    {
+        CompoundTag tag = new();
+        tag.Set("item_stack", ItemStack ?? Inventories.Stack<Item>.Empty);
+        tag.Set("velocity", Rigidbody.Velocity);
+        return tag;
+    }
+
+    protected override void ReadAdditional(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+
+        var itemStack = Inventories.ItemStack.Read(compoundTag.GetTag("item_stack"));
+        SetItemStack(itemStack);
+        Rigidbody.Velocity = compoundTag.Get<Vector3>("velocity");
     }
 
     protected override void DrawGizmos()

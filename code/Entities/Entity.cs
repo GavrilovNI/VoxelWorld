@@ -1,6 +1,9 @@
 ﻿using Sandbox;
 using Sandcube.Entities.Types;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
+using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 using Sandcube.Registries;
 using Sandcube.Worlds;
 using System;
@@ -93,9 +96,43 @@ public abstract class Entity : Component
 
     }
 
-    protected virtual void WriteAdditional(BinaryWriter writer) { }
+    protected virtual BinaryTag WriteAdditional() => new CompoundTag();
+    protected virtual void ReadAdditional(BinaryTag tag) { }
 
+    protected virtual void WriteAdditional(BinaryWriter writer) { }
     protected virtual void ReadAdditional(BinaryReader reader) { }
+
+    public BinaryTag Write()
+    {
+        CompoundTag tag = new();
+        tag.Set("type_id", TypeId);
+        var transform = World!.GameObject.Transform.World.ToLocal(Transform.World);
+        tag.Set("transform", transform);
+
+        var additionalData = WriteAdditional();
+        if(!additionalData.IsEmpty)
+            tag.Set("data", additionalData);
+        return tag;
+    }
+
+    public static Entity Read(BinaryTag tag, IWorldAccessor world, bool enable = true)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
+
+        var entityType = SandcubeGame.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
+        EntitySpawnConfig spawnConfig = new(world, false);
+        var entity = entityType.CreateEntity(spawnConfig);
+
+        var transform = compoundTag.Get<Transform>("transform");
+        entity.Transform.World = world.GameObject.Transform.Local.ToWorld(transform);
+
+        if(compoundTag.HasTag("data"))
+            entity.ReadAdditional(compoundTag.GetTag("data"));
+
+        entity.Enabled = enable;
+        return entity;
+    }
 
     public void Write(BinaryWriter writer)
     {

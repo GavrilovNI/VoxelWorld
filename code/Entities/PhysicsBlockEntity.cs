@@ -1,8 +1,10 @@
 ﻿using Sandbox;
 using Sandcube.Blocks;
 using Sandcube.Blocks.States;
-using Sandcube.Inventories;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
+using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 using Sandcube.Items;
 using Sandcube.Meshing;
 using Sandcube.Meshing.Blocks;
@@ -133,6 +135,21 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
             if(physicsBlock.ShouldConvertToEntity(World, blockPosition, currentBlockkState))
                 physicsBlock.ConvertToEntity(World, blockPosition, currentBlockkState);
         }
+    }
+
+    protected override BinaryTag WriteAdditional()
+    {
+        CompoundTag tag = new();
+        tag.Set("blockstate", BlockState ?? BlockState.Air);
+        tag.Set("velocity", Rigidbody.Velocity);
+        return tag;
+    }
+
+    protected override void ReadAdditional(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        SetBlockState(BlockState.Read(compoundTag.GetTag("blockstate")));
+        Rigidbody.Velocity = compoundTag.Get<Vector3>("velocity");
     }
 
     protected override void WriteAdditional(BinaryWriter writer)
