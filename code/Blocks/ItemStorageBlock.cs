@@ -8,45 +8,22 @@ using Sandcube.Mth.Enums;
 using Sandcube.Registries;
 using Sandcube.Texturing;
 using Sandcube.Worlds;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
-public class ItemStorageBlock : SimpleBlock, IEntityBlock
+public abstract class ItemStorageBlock : SimpleBlock, IEntityBlock
 {
-    public readonly BlockEntityType BlockEntityType;
-    public readonly int StorageSize;
-    public readonly int StorageStackLimit;
-
     [SetsRequiredMembers]
-    public ItemStorageBlock(in ModedId id, BlockEntityType blockEntityType, IUvProvider uvProvider,
-        int storageSize, int storageStackLimit = DefaultValues.ItemStackLimit) : base(id, uvProvider)
+    public ItemStorageBlock(in ModedId id, IUvProvider uvProvider) : base(id, uvProvider)
     {
-        if(storageSize < 0)
-            throw new ArgumentOutOfRangeException(nameof(storageSize));
-        if(storageStackLimit < 0)
-            throw new ArgumentOutOfRangeException(nameof(storageStackLimit));
-
-        BlockEntityType = blockEntityType;
-        StorageSize = storageSize;
-        StorageStackLimit = storageStackLimit;
     }
 
     [SetsRequiredMembers]
-    public ItemStorageBlock(in ModedId id, BlockEntityType blockEntityType, IReadOnlyDictionary<Direction, IUvProvider> uvProviders,
-        int storageSize, int storageStackLimit = DefaultValues.ItemStackLimit) : base(id, uvProviders)
+    public ItemStorageBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
-        if(storageSize < 0)
-            throw new ArgumentOutOfRangeException(nameof(storageSize));
-        if(storageStackLimit < 0)
-            throw new ArgumentOutOfRangeException(nameof(storageStackLimit));
-
-        BlockEntityType = blockEntityType;
-        StorageSize = storageSize;
-        StorageStackLimit = storageStackLimit;
     }
 
     public override Task<InteractionResult> OnInteract(BlockActionContext context)
@@ -60,9 +37,7 @@ public class ItemStorageBlock : SimpleBlock, IEntityBlock
         return Task.FromResult(InteractionResult.Fail);
     }
 
-    public virtual BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState) =>
-        BlockEntityType.CreateBlockEntity(world, position);
-
-    public virtual bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => true;
-    public virtual bool IsValidEntity(IWorldProvider world, Vector3Int position, BlockState blockState, BlockEntity blockEntity) => blockEntity is ItemStorageBlockEntity;
+    public abstract BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState);
+    public abstract bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState);
+    public abstract bool IsValidEntity(IWorldProvider world, Vector3Int position, BlockState blockState, BlockEntity blockEntity);
 }

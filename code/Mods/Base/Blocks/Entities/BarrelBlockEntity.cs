@@ -1,6 +1,6 @@
-﻿using Sandcube.Mods.Base;
+﻿using Sandcube.Blocks.Entities;
 
-namespace Sandcube.Blocks.Entities;
+namespace Sandcube.Mods.Base.Blocks.Entities;
 
 public sealed class BarrelBlockEntity : ItemStorageBlockEntity
 {

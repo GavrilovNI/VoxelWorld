@@ -49,9 +49,7 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
         }
     };
 
-    public ItemStorageBlock Barrel { get; } = new(MakeId("barrel"), SandcubeBaseMod.Instance!.BlockEntities.Barrel,
-        BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("barrel")),
-        18);
+    public BarrelBlock Barrel { get; } = new(MakeId("barrel"), BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("barrel")));
 
     public DoorBlock Door { get; } = new(MakeId("door"),
         BlockTexturesLoader.AllSides.LoadTextureUvs(TextureMap, GetBlockPathPart("door_bottom"), Direction.AllSet.Except(new[] { Direction.Up }).ToHashSet()),
