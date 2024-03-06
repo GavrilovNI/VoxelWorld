@@ -8,6 +8,6 @@ public sealed class ShortTag : UnmanagedTag<short>
     {
     }
 
-    public override void Write(BinaryWriter writer) => writer.Write(Value);
-    public override void Read(BinaryReader reader) => Value = reader.ReadInt16();
+    public override void WriteData(BinaryWriter writer) => writer.Write(Value);
+    public override void ReadData(BinaryReader reader) => Value = reader.ReadInt16();
 }

@@ -8,6 +8,6 @@ public sealed class BoolTag : UnmanagedTag<bool>
     {
     }
 
-    public override void Write(BinaryWriter writer) => writer.Write(Value);
-    public override void Read(BinaryReader reader) => Value = reader.ReadBoolean();
+    public override void WriteData(BinaryWriter writer) => writer.Write(Value);
+    public override void ReadData(BinaryReader reader) => Value = reader.ReadBoolean();
 }

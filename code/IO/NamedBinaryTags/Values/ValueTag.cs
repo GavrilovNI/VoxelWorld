@@ -1,17 +1,13 @@
 ﻿using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
-using System.IO;
 
 namespace Sandcube.IO.NamedBinaryTags.Values;
 
-public abstract class ValueTag : BinaryTag, IBinaryReadable
+public abstract class ValueTag : BinaryTag
 {
     protected internal ValueTag(BinaryTagType type) : base(type)
     {
     }
-
-    public abstract void Read(BinaryReader reader);
-
 
     public static bool IsValueType(BinaryTagType type)
     {
@@ -35,7 +31,7 @@ public abstract class ValueTag : BinaryTag, IBinaryReadable
         };
     }
     
-    public static ValueTag Create(BinaryTagType type)
+    public static ValueTag CreateValueTag(BinaryTagType type)
     {
         return type switch
         {

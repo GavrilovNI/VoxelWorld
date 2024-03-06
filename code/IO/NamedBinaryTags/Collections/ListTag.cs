@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Sandcube.IO.NamedBinaryTags.Collections;
 
-public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IBinaryStaticReadable<ListTag>
+public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 {
     public BinaryTagType? TagsType { get; private set; }
 
@@ -33,6 +33,12 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
             TagsType = null;
     }
 
+    public void Clear()
+    {
+        _tags.Clear();
+        TagsType = null;
+    }
+
     public BinaryTag this[int index]
     {
         get => _tags[index];
@@ -44,7 +50,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
         }
     }
 
-    public override void Write(BinaryWriter writer)
+    public override void WriteData(BinaryWriter writer)
     {
         long startPosition = writer.BaseStream.Position;
         writer.Write(0L); // writing size
@@ -52,9 +58,9 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
         writer.Write(_tags.Count);
         if(_tags.Count > 0)
         {
-            writer.Write((byte)TagsType);
+            BinaryTag.WriteType(writer, TagsType!.Value);
             foreach(var tag in _tags)
-                tag.Write(writer);
+                tag.WriteData(writer);
         }
 
         long size = writer.BaseStream.Position - startPosition - 8;
@@ -65,23 +71,22 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
         }
     }
 
-    public static ListTag Read(BinaryReader reader)
+    public override void ReadData(BinaryReader reader)
     {
+        Clear();
+
         long _ = reader.ReadInt64(); // reading size
 
         int tagsCount = reader.ReadInt32();
         if(tagsCount == 0)
-            return new ListTag();
+            return;
 
-        BinaryTagType type = (BinaryTagType)reader.ReadByte();
-        ListTag result = new(type);
+        TagsType = BinaryTag.ReadType(reader);
         for(int i = 0; i < tagsCount; ++i)
         {
-            var tag = BinaryTag.ReadTag(reader);
-            result.Add(tag);
+            var tag = BinaryTag.Read(reader, TagsType.Value);
+            Add(tag);
         }
-
-        return result;
     }
 
     public static void Skip(BinaryReader reader)
@@ -134,7 +139,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
 
     public void Add<T>(T value) where T : INbtWritable => Add(value.Write());
 
-    public void Add<T>(T value, bool unused = false) where T : struct, Enum =>
+    public void Add<T>(T value, bool _ = false) where T : struct, Enum =>
         Add(Array.IndexOf(Enum.GetValues<T>(), value));
 
 
@@ -180,7 +185,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
 
     public void Insert<T>(int index, T value) where T : INbtWritable => Insert(index, value.Write());
 
-    public void Insert<T>(int index, T value, bool unused = false) where T : struct, Enum =>
+    public void Insert<T>(int index, T value, bool _ = false) where T : struct, Enum =>
         Insert(index, Array.IndexOf(Enum.GetValues<T>(), value));
 
 

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Sandcube.IO.NamedBinaryTags;
 
-public abstract class BinaryTag : IBinaryWritable
+public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryTag>
 {
     public BinaryTagType Type { get; }
 
@@ -16,30 +16,43 @@ public abstract class BinaryTag : IBinaryWritable
         Type = type;
     }
 
-    public abstract void Write(BinaryWriter writer);
+    public abstract void WriteData(BinaryWriter writer);
+    public abstract void ReadData(BinaryReader reader);
 
 
-    public static BinaryTag ReadTag(BinaryReader reader)
+    public static void WriteType(BinaryWriter writer, BinaryTagType type) => writer.Write((byte)type);
+    public static BinaryTagType ReadType(BinaryReader reader) => (BinaryTagType)reader.ReadByte();
+
+    public void Write(BinaryWriter writer)
     {
-        BinaryTagType type = (BinaryTagType)reader.ReadByte();
-        return ReadTag(reader, type);
+        BinaryTag.WriteType(writer, Type);
+        WriteData(writer);
     }
 
-    public static BinaryTag ReadTag(BinaryReader reader, BinaryTagType type)
+    public static BinaryTag Read(BinaryReader reader)
+    {
+        var type = ReadType(reader);
+        return Read(reader, type);
+    }
+
+    public static BinaryTag Read(BinaryReader reader, BinaryTagType type)
+    {
+        var tag = CreateTag(type);
+        tag.ReadData(reader);
+        return tag;
+    }
+
+    public static BinaryTag CreateTag(BinaryTagType type)
     {
         if(ValueTag.IsValueType(type))
-        {
-            var tag = ValueTag.Create(type);
-            tag.Read(reader);
-            return tag;
-        }
+            return ValueTag.CreateValueTag(type);
 
         if(type == BinaryTagType.Compound)
-            return CompoundTag.ReadTag(reader);
+            return new CompoundTag();
 
         if(type == BinaryTagType.List)
-            return ListTag.ReadTag(reader);
+            return new ListTag();
 
-        throw new NotSupportedException($"{type} is not supported");
+        throw new NotSupportedException($"{nameof(BinaryTagType)} {type} is not supported");
     }
 }

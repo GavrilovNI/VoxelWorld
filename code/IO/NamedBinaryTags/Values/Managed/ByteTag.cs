@@ -8,6 +8,6 @@ public sealed class ByteTag : UnmanagedTag<byte>
     {
     }
 
-    public override void Write(BinaryWriter writer) => writer.Write(Value);
-    public override void Read(BinaryReader reader) => Value = reader.ReadByte();
+    public override void WriteData(BinaryWriter writer) => writer.Write(Value);
+    public override void ReadData(BinaryReader reader) => Value = reader.ReadByte();
 }

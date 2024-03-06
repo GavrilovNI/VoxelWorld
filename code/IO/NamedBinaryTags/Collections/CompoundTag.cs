@@ -1,4 +1,5 @@
-﻿using Sandcube.IO.NamedBinaryTags.Values;
+﻿using Sandbox;
+using Sandcube.IO.NamedBinaryTags.Values;
 using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
 using System.Collections;
@@ -7,7 +8,7 @@ using System.IO;
 
 namespace Sandcube.IO.NamedBinaryTags.Collections;
 
-public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValuePair<string, BinaryTag>>, IBinaryStaticReadable<CompoundTag>
+public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValuePair<string, BinaryTag>>
 {
     private readonly Dictionary<string, BinaryTag> _tags = new();
 
@@ -26,13 +27,15 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
         return _tags.Remove(key);
     }
 
+    public void Clear() => _tags.Clear();
+
     public BinaryTag this[string key]
     {
         get => _tags[key];
         set => _tags[key] = value;
     }
 
-    public override void Write(BinaryWriter writer)
+    public override void WriteData(BinaryWriter writer)
     {
         long startPosition = writer.BaseStream.Position;
         writer.Write(0L); // writing size
@@ -41,8 +44,7 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
         foreach(var (key, tag) in _tags)
         {
             writer.Write(key);
-            writer.Write((byte)tag.Type);
-            writer.Write(tag);
+            tag.Write(writer);
         }
 
         long size = writer.BaseStream.Position - startPosition - 8;
@@ -53,21 +55,18 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
         }
     }
 
-    public static CompoundTag Read(BinaryReader reader)
+    public override void ReadData(BinaryReader reader)
     {
-        CompoundTag result = new();
-
+        Clear();
         long _ = reader.ReadInt64(); // reading size
 
         int tagsCount = reader.ReadInt32();
         for(int i = 0; i < tagsCount; ++i)
         {
             string key = reader.ReadString();
-            var tag = BinaryTag.ReadTag(reader);
-            result.Set(key, tag);
+            var tag = BinaryTag.Read(reader);
+            Set(key, tag);
         }
-
-        return result;
     }
 
     public static void Skip(BinaryReader reader)
@@ -118,6 +117,6 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
 
     public void Set<T>(string key, T value) where T : INbtWritable => Set(key, value.Write());
 
-    public void Set<T>(string key, T value, bool unused = false) where T : struct, Enum =>
+    public void Set<T>(string key, T value, bool _ = false) where T : struct, Enum =>
         Set(key, Array.IndexOf(Enum.GetValues<T>(), value));
 }
