@@ -10,14 +10,14 @@ namespace Sandcube.IO.NamedBinaryTags.Collections;
 
 public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IBinaryStaticReadable<ListTag>
 {
-    public BinaryTagType TagsType { get; }
+    public BinaryTagType? TagsType { get; private set; }
 
     public int Count => _tags.Count;
     public override bool IsEmpty => Count == 0;
 
     private readonly List<BinaryTag> _tags = new();
 
-    public ListTag(BinaryTagType valueType) : base(BinaryTagType.List)
+    public ListTag(BinaryTagType? valueType = null) : base(BinaryTagType.List)
     {
         TagsType = valueType;
     }
@@ -29,6 +29,8 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
     {
         AssertIndex(index, false);
         _tags.RemoveAt(index);
+        if(_tags.Count == 0)
+            TagsType = null;
     }
 
     public BinaryTag this[int index]
@@ -47,10 +49,13 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
         long startPosition = writer.BaseStream.Position;
         writer.Write(0L); // writing size
 
-        writer.Write((byte)TagsType);
         writer.Write(_tags.Count);
-        foreach(var tag in _tags)
-            tag.Write(writer);
+        if(_tags.Count > 0)
+        {
+            writer.Write((byte)TagsType);
+            foreach(var tag in _tags)
+                tag.Write(writer);
+        }
 
         long size = writer.BaseStream.Position - startPosition - 8;
         using(StreamPositionRememberer rememberer = writer)
@@ -64,10 +69,12 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
     {
         long _ = reader.ReadInt64(); // reading size
 
+        int tagsCount = reader.ReadInt32();
+        if(tagsCount == 0)
+            return new ListTag();
+
         BinaryTagType type = (BinaryTagType)reader.ReadByte();
         ListTag result = new(type);
-
-        int tagsCount = reader.ReadInt32();
         for(int i = 0; i < tagsCount; ++i)
         {
             var tag = BinaryTag.ReadTag(reader);
@@ -83,12 +90,6 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
         reader.BaseStream.Position += size;
     }
 
-    private void AssertType(BinaryTag tag)
-    {
-        if(tag.Type != TagsType)
-            throw new InvalidOperationException($"{tag}'s type ({tag.Type}) is not {TagsType}");
-    }
-
     public IEnumerator<BinaryTag> GetEnumerator() => _tags.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -96,6 +97,9 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
 
     public void Add(BinaryTag tag)
     {
+        if(!TagsType.HasValue)
+            TagsType = tag.Type;
+
         AssertType(tag);
         _tags.Add(tag);
     }
@@ -139,6 +143,10 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
     {
         AssertIndex(index, true);
         AssertType(tag);
+
+        if(!TagsType.HasValue)
+            TagsType = tag.Type;
+
         _tags.Insert(index, tag);
     }
 
@@ -180,5 +188,14 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
     {
         if(index < 0 || (inserting ? index > Count : index >= Count))
             throw new ArgumentOutOfRangeException(paramName);
+    }
+
+    private void AssertType(BinaryTag tag, [CallerArgumentExpression(nameof(tag))] string? paramName = null)
+    {
+        if(!TagsType.HasValue)
+            return;
+
+        if(tag.Type != TagsType)
+            throw new ArgumentException($"{paramName}'s type ({tag.Type}) is not {TagsType}", paramName);
     }
 }
