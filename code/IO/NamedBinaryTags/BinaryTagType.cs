@@ -4,25 +4,26 @@ namespace Sandcube.IO.NamedBinaryTags;
 
 public enum BinaryTagType : byte
 {
+    Empty = 0,
     //Unmanaged
-    Byte = 0,
-    SByte = 1,
-    Short = 2,
-    UShort = 3,
-    Int = 4,
-    UInt = 5,
-    Long = 6,
-    ULong = 7,
-    Float = 8,
-    Double = 9,
-    Decimal = 10,
-    Bool = 11,
-    Char = 12,
+    Byte = 1,
+    SByte = 2,
+    Short = 3,
+    UShort = 4,
+    Int = 5,
+    UInt = 6,
+    Long = 7,
+    ULong = 8,
+    Float = 9,
+    Double = 10,
+    Decimal = 11,
+    Bool = 12,
+    Char = 13,
 
     //String
-    String = 13,
+    String = 14,
 
-    //Complex
-    Compound = 14,
-    List = 15,
+    //Collections
+    Compound = 15,
+    List = 16,
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Sandcube.IO.NamedBinaryTags.Collections;
 
@@ -13,7 +14,7 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
     private readonly Dictionary<string, BinaryTag> _tags = new();
 
     public int Count => _tags.Count;
-    public override bool IsEmpty => Count == 0;
+    public override bool IsDataEmpty => Count == 0 || _tags.Values.All(t => t.IsDataEmpty);
 
     public CompoundTag() : base(BinaryTagType.Compound)
     {

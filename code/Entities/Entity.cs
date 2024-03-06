@@ -110,7 +110,7 @@ public abstract class Entity : Component
         tag.Set("transform", transform);
 
         var additionalData = WriteAdditional();
-        if(!additionalData.IsEmpty)
+        if(!additionalData.IsDataEmpty)
             tag.Set("data", additionalData);
         return tag;
     }

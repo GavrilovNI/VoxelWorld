@@ -13,7 +13,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public BinaryTagType? TagsType { get; private set; }
 
     public int Count => _tags.Count;
-    public override bool IsEmpty => Count == 0;
+    public override bool IsDataEmpty => Count == 0 || _tags.Values.All(t => t.IsDataEmpty);
 
     private readonly List<BinaryTag> _tags = new();
 

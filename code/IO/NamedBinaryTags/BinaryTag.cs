@@ -9,7 +9,7 @@ public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryT
 {
     public BinaryTagType Type { get; }
 
-    public abstract bool IsEmpty { get; }
+    public abstract bool IsDataEmpty { get; }
 
     protected internal BinaryTag(BinaryTagType type)
     {
@@ -44,14 +44,17 @@ public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryT
 
     public static BinaryTag CreateTag(BinaryTagType type)
     {
-        if(ValueTag.IsValueType(type))
-            return ValueTag.CreateValueTag(type);
-
         if(type == BinaryTagType.Compound)
             return new CompoundTag();
 
         if(type == BinaryTagType.List)
             return new ListTag();
+
+        if(ValueTag.IsValueType(type))
+            return ValueTag.CreateValueTag(type);
+
+        if(type == BinaryTagType.Empty)
+            return new EmptyTag();
 
         throw new NotSupportedException($"{nameof(BinaryTagType)} {type} is not supported");
     }

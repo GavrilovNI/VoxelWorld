@@ -4,7 +4,7 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public abstract class UnmanagedTag<T> : ValueTag<T> where T : unmanaged, IEquatable<T>
 {
-    public override bool IsEmpty => Value.Equals(default);
+    public override bool IsDataEmpty => Value.Equals(default);
 
     public byte Size { get; }
 

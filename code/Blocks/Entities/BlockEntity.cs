@@ -117,7 +117,7 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, I
         tag.Set("type_id", Type.Id);
 
         var additionalData = WriteAdditional();
-        if(!additionalData.IsEmpty)
+        if(!additionalData.IsDataEmpty)
             tag.Set("data", additionalData);
 
         return tag;
