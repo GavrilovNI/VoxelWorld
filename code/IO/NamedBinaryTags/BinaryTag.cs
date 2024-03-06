@@ -9,6 +9,8 @@ public abstract class BinaryTag : IBinaryWritable
 {
     public BinaryTagType Type { get; }
 
+    public abstract bool IsEmpty { get; }
+
     protected internal BinaryTag(BinaryTagType type)
     {
         Type = type;

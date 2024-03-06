@@ -11,6 +11,9 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
 {
     private readonly Dictionary<string, BinaryTag> _tags = new();
 
+    public int Count => _tags.Count;
+    public override bool IsEmpty => Count == 0;
+
     public CompoundTag() : base(BinaryTagType.Compound)
     {
     }
