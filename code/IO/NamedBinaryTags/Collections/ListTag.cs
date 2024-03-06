@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Sandcube.IO.NamedBinaryTags.Collections;
 
@@ -24,13 +25,18 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
     public override bool HasTag(int key) => key >= 0 && key < _tags.Count;
     public override BinaryTag GetTag(int key) => _tags[key];
 
-    public void RemoveAt(int index) => _tags.RemoveAt(index);
+    public void RemoveAt(int index)
+    {
+        AssertIndex(index, false);
+        _tags.RemoveAt(index);
+    }
 
     public BinaryTag this[int index]
     {
         get => _tags[index];
         set
         {
+            AssertIndex(index, false);
             AssertType(value);
             _tags[index] = value;
         }
@@ -131,6 +137,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
 
     public void Insert(int index, BinaryTag tag)
     {
+        AssertIndex(index, true);
         AssertType(tag);
         _tags.Insert(index, tag);
     }
@@ -167,4 +174,11 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>, IB
 
     public void Insert<T>(int index, T value, bool unused = false) where T : struct, Enum =>
         Insert(index, Array.IndexOf(Enum.GetValues<T>(), value));
+
+
+    private void AssertIndex(int index, bool inserting, [CallerArgumentExpression(nameof(index))] string? paramName = null)
+    {
+        if(index < 0 || (inserting ? index > Count : index >= Count))
+            throw new ArgumentOutOfRangeException(paramName);
+    }
 }
