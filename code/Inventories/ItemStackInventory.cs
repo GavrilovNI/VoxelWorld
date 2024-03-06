@@ -1,13 +1,16 @@
 ﻿using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Items;
 using System;
+using System.Drawing;
 using System.IO;
 
 namespace Sandcube.Inventories;
 
 // TODO: remove when access T.Empty (Stack<Item>.Empty) will be whitelisted
 [Obsolete("to remove when access T.Empty (Stack<Item>.Empty) will be whitelisted")]
-public class ItemStackInventory : StackInventory<Stack<Item>>, IBinaryStaticReadable<ItemStackInventory>
+public class ItemStackInventory : StackInventory<Stack<Item>>, INbtStaticReadable<ItemStackInventory>, IBinaryStaticReadable<ItemStackInventory>
 {
     public ItemStackInventory(int size, int slotLimit = int.MaxValue) : base(size, slotLimit)
     {
@@ -15,6 +18,21 @@ public class ItemStackInventory : StackInventory<Stack<Item>>, IBinaryStaticRead
 
     [Obsolete("to remove when access to T.Empty will be whitelisted")]
     protected sealed override Stack<Item> GetEmpty() => Stack<Item>.Empty;
+
+    public static ItemStackInventory Read(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+
+        int slotLimit = compoundTag.Get<int>("slot_limit");
+
+        ListTag slotsTag = (ListTag)compoundTag.GetTag("slots");
+        ItemStackInventory result = new(slotsTag.Count, slotLimit);
+
+        for(int i = 0; i < slotsTag.Count; ++i)
+            result.Set(i, ItemStack.Read(slotsTag.GetTag(i)));
+
+        return result;
+    }
 
     public static ItemStackInventory Read(BinaryReader reader)
     {
