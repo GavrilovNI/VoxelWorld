@@ -134,6 +134,10 @@ public sealed class SandcubeGame : Component
         _savingTask = taskCompletionSource.Task;
         var results = await Task.WhenAll(tasks);
         var result = results.All(saved => saved);
+
+        if(!result)
+            Log.Warning("Couldn't save game");
+
         taskCompletionSource.SetResult(result);
         _savingTask = null;
         return result;
