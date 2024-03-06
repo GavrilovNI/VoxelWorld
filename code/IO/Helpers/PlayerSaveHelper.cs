@@ -43,7 +43,7 @@ public class PlayerSaveHelper
         return FileSystem.OpenRead(fileName, fileMode);
     }
 
-    public virtual Stream OpenRegionWrite(ulong steamId, FileMode fileMode = FileMode.Create)
+    public virtual Stream OpenPlayerWrite(ulong steamId, FileMode fileMode = FileMode.Create)
     {
         string fileName = GetPlayerFile(steamId);
         return FileSystem.OpenWrite(fileName, fileMode);
