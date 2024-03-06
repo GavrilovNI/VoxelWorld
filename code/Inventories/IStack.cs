@@ -1,10 +1,12 @@
 ﻿using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
 using System;
 
 namespace Sandcube.Inventories;
 
 //TODO: implement IBinaryStaticReadable<T> when T.Read get whitelisted
-public interface IStack<T> : IBinaryWritable where T : class, IStack<T>
+//TODO: implement INbtStaticReadable<T> when T.Read get whitelisted
+public interface IStack<T> : INbtWritable, IBinaryWritable where T : class, IStack<T>
 {
 #pragma warning disable SB3000 // Hotloading not supported
     public abstract static T Empty { get; }

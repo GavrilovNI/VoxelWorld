@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
-public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
+public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, INbtStaticReadable<BlockEntity>, IBinaryWritable
 {
     public BlockEntityType Type { get; }
     public Vector3Int Position { get; private set; }
@@ -104,5 +104,36 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, IBinaryWritable
     protected void Read(BinaryReader reader)
     {
         ReadAdditional(reader);
+    }
+
+
+    protected virtual BinaryTag WriteAdditional() => new CompoundTag();
+    protected virtual void ReadAdditional(BinaryTag tag) { }
+
+
+    public BinaryTag Write()
+    {
+        CompoundTag tag = new();
+        tag.Set("type_id", Type.Id);
+
+        var additionalData = WriteAdditional();
+        if(!additionalData.IsEmpty)
+            tag.Set("data", additionalData);
+
+        return tag;
+    }
+
+    public static BlockEntity Read(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
+        var registry = SandcubeGame.Instance!.Registries.GetRegistry<BlockEntityType>();
+        var entityType = registry.Get(typeId)!;
+        var entity = entityType.CreateBlockEntity();
+
+        if(compoundTag.HasTag("data"))
+            entity.ReadAdditional(compoundTag.GetTag("data"));
+
+        return entity;
     }
 }

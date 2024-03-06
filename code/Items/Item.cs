@@ -2,6 +2,7 @@
 using Sandcube.Interactions;
 using Sandcube.Inventories;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Meshing;
 using Sandcube.Mth;
 using Sandcube.Registries;
@@ -37,6 +38,18 @@ public class Item : IRegisterable, IStackValue<Item>
     public virtual Task<InteractionResult> OnUse(ItemActionContext context) => Task.FromResult(InteractionResult.Pass);
 
     public override int GetHashCode() => HashCode.Combine(Id, StackLimit);
+
+    public BinaryTag Write() => Id.Write();
+    public static Item Read(BinaryTag tag)
+    {
+        var id = ModedId.Read(tag);
+
+        var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().Get(id);
+        if(item is null)
+            throw new KeyNotFoundException($"Item with id {id} not found");
+
+        return item;
+    }
 
     public void Write(BinaryWriter writer)
     {

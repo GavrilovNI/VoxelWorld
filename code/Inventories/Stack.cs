@@ -1,7 +1,10 @@
 ﻿using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Items;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Sandcube.Inventories;
 
@@ -47,6 +50,15 @@ public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue<T>
 
     public override int GetHashCode() => HashCode.Combine(Value, Count);
 
+    public BinaryTag Write()
+    {
+        CompoundTag tag = new();
+        tag.Set("count", Count);
+        if(Count > 0)
+            tag.Set("value", Value!);
+        return tag;
+    }
+
     public void Write(BinaryWriter writer)
     {
         writer.Write(Count);
@@ -55,7 +67,7 @@ public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue<T>
     }
 }
 
-public record class ItemStack : Stack<Item>, IBinaryStaticReadable<ItemStack>
+public record class ItemStack : Stack<Item>, INbtStaticReadable<ItemStack>, IBinaryStaticReadable<ItemStack>
 {
 #pragma warning disable SB3000 // Hotloading not supported
     public static new ItemStack Empty { get; } = new(null!, 0);
@@ -63,6 +75,17 @@ public record class ItemStack : Stack<Item>, IBinaryStaticReadable<ItemStack>
 
     public ItemStack(Item value, int count = 1) : base(value, count)
     {
+    }
+
+    public static ItemStack Read(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        int count = compoundTag.Get<int>("count");
+        if(count <= 0)
+            return Empty;
+
+        var item = Item.Read(compoundTag.GetTag("value"));
+        return new(item, count);
     }
 
     public static ItemStack Read(BinaryReader reader)

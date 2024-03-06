@@ -1,11 +1,14 @@
-﻿using Sandcube.IO;
+﻿using Sandcube.Blocks.States;
+using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mods.Base;
 using System;
 using System.IO;
 
 namespace Sandcube.Registries;
 
-public readonly record struct ModedId : IBinaryWritable, IBinaryStaticReadable<ModedId>
+public readonly record struct ModedId : INbtWritable, INbtStaticReadable<ModedId>, IBinaryWritable, IBinaryStaticReadable<ModedId>
 {
     public readonly Id ModId { get; init; }
     public readonly Id Name { get; init; }
@@ -79,5 +82,19 @@ public readonly record struct ModedId : IBinaryWritable, IBinaryStaticReadable<M
         var modId = Id.Read(reader);
         var name = Id.Read(reader);
         return new(modId, name);
+    }
+
+    public BinaryTag Write()
+    {
+        CompoundTag result = new();
+        result.Set("mod", ModId);
+        result.Set("name", Name);
+        return result;
+    }
+
+    public static ModedId Read(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        return new ModedId(Id.Read(compoundTag.GetTag("mod")), Id.Read(compoundTag.GetTag("name")));
     }
 }

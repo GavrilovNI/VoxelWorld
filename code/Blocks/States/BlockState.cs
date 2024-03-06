@@ -7,10 +7,12 @@ using System.Text;
 using Sandcube.IO;
 using System.IO;
 using Sandcube.Mods.Base;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 
 namespace Sandcube.Blocks.States;
 
-public sealed class BlockState : IBinaryWritable, IBinaryStaticReadable<BlockState>
+public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>, IBinaryWritable, IBinaryStaticReadable<BlockState>
 {
     public static BlockState Air => SandcubeBaseMod.Instance!.Blocks.Air.DefaultBlockState;
 
@@ -71,6 +73,49 @@ public sealed class BlockState : IBinaryWritable, IBinaryStaticReadable<BlockSta
 
     public T GetValue<T>(BlockProperty<T> blockProperty) where T : CustomEnum<T>, ICustomEnum<T> =>
         (GetValue((BlockProperty)blockProperty) as T)!;
+
+
+    public BinaryTag Write()
+    {
+        CompoundTag result = new();
+        result.Set("block", Block);
+
+        ListTag propertiesTag = new(BinaryTagType.Compound);
+        result.Set("properties", propertiesTag);
+
+        foreach(var (property, propertyValue) in _properties)
+        {
+            CompoundTag propertyTag = new();
+            propertiesTag.Add(propertyTag);
+
+            propertyTag.Set("id", property.Id);
+            propertyTag.Set("value", propertyValue);
+        }
+
+        return result;
+    }
+
+    public static BlockState Read(BinaryTag tag)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+
+        var block = Block.Read(compoundTag.GetTag("block"));
+        var blockState = block.DefaultBlockState;
+
+        ListTag propertiesTag = (ListTag)compoundTag.GetTag("properties");
+        foreach(var propertyBinaryTag in propertiesTag)
+        {
+            var propertyTag = (CompoundTag)propertyBinaryTag;
+            var propertyId = Id.Read(propertyTag.GetTag("id"));
+            var property = blockState._properties.First(kv => kv.Key.Id == propertyId).Key;
+
+            var propertyValue = CustomEnum.Read(propertyTag.GetTag("value"), property.PropertyType);
+#pragma warning disable CS0618 // Type or member is obsolete
+            blockState = blockState.With(property, propertyValue);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+        return blockState;
+    }
 
 
     public void Write(BinaryWriter writer)
