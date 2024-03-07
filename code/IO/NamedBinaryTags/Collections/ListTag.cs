@@ -39,7 +39,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
             return tag;
 
         tag = BinaryTag.CreateTag(TagsType!.Value);
-        Insert(index, tag);
+        this[index] = tag;
         return tag;
     }
 
@@ -125,7 +125,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         {
             var tag = BinaryTag.ReadTagData(reader, TagsType.Value);
             if(!tag.IsDataEmpty)
-                Insert(i, tag);
+                this[i] = tag;
         }
 
         if(TagsType == BinaryTagType.Empty)
