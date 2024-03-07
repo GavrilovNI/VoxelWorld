@@ -32,10 +32,10 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 
     public override BinaryTag GetTag(int index)
     {
-        if(Count == 0)
+        if(!TagsType.HasValue)
             return new EmptyTag();
 
-        if(_tags.TryGetValue(index, out var tag))
+        if(_tags.TryGetValue(index, out var tag) && tag is not EmptyTag)
             return tag;
 
         tag = BinaryTag.CreateTag(TagsType!.Value);
@@ -70,11 +70,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public BinaryTag this[int index]
     {
         get => GetTag(index);
-        set
-        {
-            AssertType(value);
-            Insert(index, value);
-        }
+        set => Insert(index, value);
     }
 
     public override void WriteData(BinaryWriter writer)
@@ -115,6 +111,9 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
             if(!tag.IsDataEmpty)
                 Insert(i, tag);
         }
+
+        if(TagsType == BinaryTagType.Empty)
+            Clear();
     }
 
     public static void Skip(BinaryReader reader)
@@ -174,7 +173,11 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         if(index < 0)
             throw new ArgumentOutOfRangeException(nameof(index), index, $"index can't be less than 0");
 
-        AssertType(tag);
+        if(tag is EmptyTag)
+            return;
+
+        if(TagsType.HasValue && tag.Type != TagsType)
+            throw new ArgumentException($"{nameof(tag)}'s type ({tag.Type}) is not {TagsType}", nameof(tag));
 
         for(int i = Count; i > index; i--)
         {
@@ -222,13 +225,4 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public void Insert<T>(int index, T value, bool _ = false) where T : struct, Enum =>
         Insert(index, Array.IndexOf(Enum.GetValues<T>(), value));
 
-
-    private void AssertType(BinaryTag tag, [CallerArgumentExpression(nameof(tag))] string? paramName = null)
-    {
-        if(!TagsType.HasValue)
-            return;
-
-        if(tag.Type != TagsType)
-            throw new ArgumentException($"{paramName}'s type ({tag.Type}) is not {TagsType}", paramName);
-    }
 }
