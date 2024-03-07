@@ -56,7 +56,7 @@ public abstract class ValueTag : BinaryTag
 
 public abstract class ValueTag<T> : ValueTag, IEquatable<T>
 {
-    public T Value;
+    public virtual T Value { get; set; } 
 
     protected internal ValueTag(BinaryTagType type, T value) : base(type)
     {

@@ -4,6 +4,8 @@ namespace Sandcube.IO.NamedBinaryTags.Values;
 
 public sealed class StringTag : ValueTag<string>
 {
+    public override string Value { get => base.Value; set => base.Value = value ?? string.Empty; }
+
     public override bool IsDataEmpty => Value.Length == 0;
 
     public StringTag() : this(string.Empty)
