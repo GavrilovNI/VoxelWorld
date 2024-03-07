@@ -106,6 +106,7 @@ public abstract class Entity : Component
     {
         CompoundTag tag = new();
         tag.Set("type_id", TypeId);
+        tag.Set("world_id", World!.Id);
         var transform = World!.GameObject.Transform.World.ToLocal(Transform.World);
         tag.Set("transform", transform);
 
@@ -131,6 +132,30 @@ public abstract class Entity : Component
 
         entity.Enabled = enable;
         return entity;
+    }
+
+    public static bool TryReadWithWorld(BinaryTag tag, out Entity entity, bool enable = true)
+    {
+        CompoundTag compoundTag = (CompoundTag)tag;
+        var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
+        var worldId = ModedId.Read(compoundTag.GetTag("world_id"));
+        if(!SandcubeGame.Instance!.Worlds.TryGetWorld(worldId, out World world))
+        {
+            entity = null!;
+            return false;
+        }
+
+        var entityType = SandcubeGame.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
+        EntitySpawnConfig spawnConfig = new(world, false);
+        entity = entityType.CreateEntity(spawnConfig);
+
+        var transform = compoundTag.Get<Transform>("transform");
+        entity.Transform.World = world.GameObject.Transform.Local.ToWorld(transform);
+
+        entity.ReadAdditional(compoundTag.GetTag("data"));
+
+        entity.Enabled = enable;
+        return true;
     }
 
     public void Write(BinaryWriter writer)
