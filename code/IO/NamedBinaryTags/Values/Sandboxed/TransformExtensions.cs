@@ -26,10 +26,10 @@ public static class TransformExtensions
 
 
     public static Transform Get<T>(this CompoundTag collection, string key) where T : IEquatable<Transform> =>
-        ((CompoundTag)collection.GetTag(key)).To<T>();
+        collection.GetTag(key).To<CompoundTag>().To<T>();
 
     public static Transform Get<T>(this ListTag collection, int index) where T : IEquatable<Transform> =>
-        ((CompoundTag)collection.GetTag(index)).To<T>();
+        collection.GetTag(index).To<CompoundTag>().To<T>();
 
     public static Transform To<T>(this CompoundTag tag) where T : IEquatable<Transform> =>
         new(tag.Get<Vector3>("position"), tag.Get<Rotation>("rotation"), tag.Get<Vector3>("scale"));

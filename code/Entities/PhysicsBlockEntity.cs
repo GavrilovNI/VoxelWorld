@@ -147,7 +147,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
 
     protected override void ReadAdditional(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         SetBlockState(BlockState.Read(compoundTag.GetTag("blockstate")));
         Rigidbody.Velocity = compoundTag.Get<Vector3>("velocity");
     }

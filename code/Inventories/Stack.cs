@@ -79,7 +79,7 @@ public record class ItemStack : Stack<Item>, INbtStaticReadable<ItemStack>, IBin
 
     public static ItemStack Read(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         int count = compoundTag.Get<int>("count");
         if(count <= 0)
             return Empty;

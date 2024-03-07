@@ -97,15 +97,15 @@ public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>, I
 
     public static BlockState Read(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
 
         var block = Block.Read(compoundTag.GetTag("block"));
         var blockState = block.DefaultBlockState;
 
-        ListTag propertiesTag = (ListTag)compoundTag.GetTag("properties");
+        ListTag propertiesTag = compoundTag.GetTag("properties").To<ListTag>();
         foreach(var propertyBinaryTag in propertiesTag)
         {
-            var propertyTag = (CompoundTag)propertyBinaryTag;
+            var propertyTag = propertyBinaryTag.To<CompoundTag>();
             var propertyId = Id.Read(propertyTag.GetTag("id"));
             var property = blockState._properties.First(kv => kv.Key.Id == propertyId).Key;
 

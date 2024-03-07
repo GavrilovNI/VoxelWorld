@@ -60,7 +60,7 @@ public class ItemStorageBlockEntity : BlockEntity
 
     protected override void ReadAdditional(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         Capability = ItemStackInventory.Read(compoundTag.GetTag("capability"));
     }
 

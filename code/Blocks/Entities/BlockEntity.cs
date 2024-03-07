@@ -125,7 +125,7 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, I
 
     public static BlockEntity Read(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
         var registry = SandcubeGame.Instance!.Registries.GetRegistry<BlockEntityType>();
         var entityType = registry.Get(typeId)!;

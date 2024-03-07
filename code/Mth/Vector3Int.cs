@@ -428,7 +428,7 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, INbtWr
 
     public static Vector3Int Read(BinaryTag tag)
     {
-        var compoundTag = (CompoundTag)tag;
+        var compoundTag = tag.To<CompoundTag>();
         return new(compoundTag.Get<int>("x"), compoundTag.Get<int>("y"), compoundTag.Get<int>("z"));
     }
 

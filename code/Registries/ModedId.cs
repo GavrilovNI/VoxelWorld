@@ -94,7 +94,7 @@ public readonly record struct ModedId : INbtWritable, INbtStaticReadable<ModedId
 
     public static ModedId Read(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         return new ModedId(Id.Read(compoundTag.GetTag("mod")), Id.Read(compoundTag.GetTag("name")));
     }
 }

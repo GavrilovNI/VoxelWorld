@@ -77,7 +77,7 @@ public class PlayerInventory : Component, IPlayerInventory, INbtWritable, INbtRe
 
     public virtual void Read(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         Main = ItemStackInventory.Read(compoundTag.GetTag("main"));
         Hotbar = ItemStackInventory.Read(compoundTag.GetTag("hotbar"));
         SecondaryHand = ItemStackInventory.Read(compoundTag.GetTag("secondary_hand"));

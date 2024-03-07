@@ -56,7 +56,7 @@ public abstract class CustomEnum : IBinaryWritable, INbtWritable
 
     public static CustomEnum Read(BinaryTag tag, Type enumType)
     {
-        var ordinal = ((IntTag)tag).Value;
+        var ordinal = tag.To<IntTag>().Value;
         return GetValues(enumType).ElementAt(ordinal);
     }
 }

@@ -65,5 +65,5 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>, IBinary
 
 
     public BinaryTag Write() => new StringTag(Name);
-    public static Id Read(BinaryTag tag) => new(((StringTag)tag).Value);
+    public static Id Read(BinaryTag tag) => new(tag.To<StringTag>().Value);
 }

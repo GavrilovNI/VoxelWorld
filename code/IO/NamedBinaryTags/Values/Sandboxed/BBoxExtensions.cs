@@ -25,10 +25,10 @@ public static class BBoxExtensions
 
 
     public static BBox Get<T>(this CompoundTag collection, string key) where T : IEquatable<BBox> =>
-        ((CompoundTag)collection.GetTag(key)).To<T>();
+        collection.GetTag(key).To<CompoundTag>().To<T>();
 
     public static BBox Get<T>(this ListTag collection, int index) where T : IEquatable<BBox> =>
-        ((CompoundTag)collection.GetTag(index)).To<T>();
+        collection.GetTag(index).To<CompoundTag>().To<T>();
 
     public static BBox To<T>(this CompoundTag tag) where T : IEquatable<BBox> =>
         new(tag.Get<Vector3>("mins"), tag.Get<Vector3>("maxs"));

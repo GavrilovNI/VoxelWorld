@@ -69,7 +69,7 @@ public class Player : Entity
 
     protected override void ReadAdditional(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         Eye.Transform.Local = compoundTag.Get<Transform>("eye");
         IsCreative = compoundTag.Get<bool>("creative");
         ReachDistance = compoundTag.Get<float>("reach_distance");

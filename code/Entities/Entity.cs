@@ -118,7 +118,7 @@ public abstract class Entity : Component
 
     public static Entity Read(BinaryTag tag, IWorldAccessor world, bool enable = true)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
 
         var entityType = SandcubeGame.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
@@ -136,7 +136,7 @@ public abstract class Entity : Component
 
     public static bool TryReadWithWorld(BinaryTag tag, out Entity entity, bool enable = true)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
         var worldId = ModedId.Read(compoundTag.GetTag("world_id"));
         if(!SandcubeGame.Instance!.Worlds.TryGetWorld(worldId, out World world))

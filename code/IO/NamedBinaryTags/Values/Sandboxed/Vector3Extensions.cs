@@ -26,10 +26,10 @@ public static class Vector3Extensions
 
 
     public static Vector3 Get<T>(this CompoundTag collection, string key) where T : IEquatable<Vector3> =>
-        ((CompoundTag)collection.GetTag(key)).To<T>();
+        collection.GetTag(key).To<CompoundTag>().To<T>();
 
     public static Vector3 Get<T>(this ListTag collection, int index) where T : IEquatable<Vector3> =>
-        ((CompoundTag)collection.GetTag(index)).To<T>();
+        collection.GetTag(index).To<CompoundTag>().To<T>();
 
     public static Vector3 To<T>(this CompoundTag tag) where T : IEquatable<Vector3> =>
         new(tag.Get<float>("x"), tag.Get<float>("y"), tag.Get<float>("z"));

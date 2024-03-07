@@ -318,7 +318,7 @@ public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWr
 
     public static Vector2Int Read(BinaryTag tag)
     {
-        var compoundTag = (CompoundTag)tag;
+        var compoundTag = tag.To<CompoundTag>();
         return new(compoundTag.Get<int>("x"), compoundTag.Get<int>("y"));
     }
 

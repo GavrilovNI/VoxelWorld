@@ -26,10 +26,10 @@ public static class Vector2Extensions
 
 
     public static Vector2 Get<T>(this CompoundTag collection, string key) where T : IEquatable<Vector2> =>
-        ((CompoundTag)collection.GetTag(key)).To<T>();
+        collection.GetTag(key).To<CompoundTag>().To<T>();
 
     public static Vector2 Get<T>(this ListTag collection, int index) where T : IEquatable<Vector2> =>
-        ((CompoundTag)collection.GetTag(index)).To<T>();
+        collection.GetTag(index).To<CompoundTag>().To<T>();
 
     public static Vector2 To<T>(this CompoundTag tag) where T : IEquatable<Vector2> =>
         new(tag.Get<float>("x"), tag.Get<float>("y"));

@@ -433,7 +433,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
 
     public static BBoxInt Read(BinaryTag tag)
     {
-        var compoundTag = (CompoundTag)tag;
+        var compoundTag = tag.To<CompoundTag>();
         return new(Vector3Int.Read(compoundTag.GetTag("mins")), Vector3Int.Read(compoundTag.GetTag("maxs")));
     }
 }
