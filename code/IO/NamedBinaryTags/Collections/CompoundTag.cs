@@ -85,7 +85,8 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
     public void Set(string key, BinaryTag tag)
     {
         ArgumentException.ThrowIfNullOrEmpty(key);
-        _tags[key] = tag;
+        if(tag is not EmptyTag)
+            _tags[key] = tag;
     }
 
     public void Set(string key, byte value) => Set(key, new ByteTag(value));
