@@ -84,6 +84,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
                 AssertType(value);
 
                 _tags[index] = value;
+                TagsType = value.Type;
             }
         }
     }
@@ -202,6 +203,9 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         }
 
         _tags[index] = tag;
+
+        if(Count == 0)
+            TagsType = tag.Type;
 
         Count = Math.Max(Count, index) + 1;
     }
