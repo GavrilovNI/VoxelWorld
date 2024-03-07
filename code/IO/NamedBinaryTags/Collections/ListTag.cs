@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Sandcube.IO.NamedBinaryTags.Collections;
@@ -12,41 +13,67 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 {
     public BinaryTagType? TagsType { get; private set; }
 
-    public int Count => _tags.Count;
+    public int Count { get; private set; } = 0;
     public override bool IsDataEmpty => Count == 0 || _tags.Values.All(t => t.IsDataEmpty);
 
-    private readonly List<BinaryTag> _tags = new();
+    private readonly Dictionary<int, BinaryTag> _tags = new();
 
-    public ListTag(BinaryTagType? valueType = null) : base(BinaryTagType.List)
+    public ListTag() : this(null)
+    {
+
+    }
+
+    public ListTag(BinaryTagType? valueType) : base(BinaryTagType.List)
     {
         TagsType = valueType;
     }
 
-    public override bool HasTag(int key) => key >= 0 && key < _tags.Count;
-    public override BinaryTag GetTag(int key) => _tags[key];
+    public override bool HasTag(int index) => index >= 0 && index < Count;
+
+    public override BinaryTag GetTag(int index)
+    {
+        if(Count == 0)
+            return new EmptyTag();
+
+        if(_tags.TryGetValue(index, out var tag))
+            return tag;
+
+        tag = BinaryTag.CreateTag(TagsType!.Value);
+        Insert(index, tag);
+        return tag;
+    }
 
     public void RemoveAt(int index)
     {
-        AssertIndex(index, false);
-        _tags.RemoveAt(index);
+        if(index < 0 || index >= Count)
+            throw new ArgumentOutOfRangeException(nameof(index), index, "out of range");
+        _tags.Remove(index);
+
         if(_tags.Count == 0)
+        {
             TagsType = null;
+            Count = 0;
+        }
+        else
+        {
+            Count = _tags.Max(t => t.Key) + 1;
+        }
     }
 
     public void Clear()
     {
         _tags.Clear();
         TagsType = null;
+        Count = 0;
     }
 
     public BinaryTag this[int index]
     {
-        get => _tags[index];
+        get => GetTag(index);
         set
         {
-            AssertIndex(index, false);
             AssertType(value);
-            _tags[index] = value;
+            Insert(index, value);
         }
     }
 
@@ -55,12 +82,12 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         long startPosition = writer.BaseStream.Position;
         writer.Write(0L); // writing size
 
-        writer.Write(_tags.Count);
-        if(_tags.Count > 0)
+        writer.Write(Count);
+        if(Count > 0)
         {
             BinaryTag.WriteType(writer, TagsType!.Value);
-            foreach(var tag in _tags)
-                tag.WriteData(writer);
+            for(int i = 0; i < Count; ++i)
+                GetTag(i).WriteData(writer);
         }
 
         long size = writer.BaseStream.Position - startPosition - 8;
@@ -77,15 +104,16 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 
         long _ = reader.ReadInt64(); // reading size
 
-        int tagsCount = reader.ReadInt32();
-        if(tagsCount == 0)
+        Count = reader.ReadInt32();
+        if(Count == 0)
             return;
 
         TagsType = BinaryTag.ReadType(reader);
-        for(int i = 0; i < tagsCount; ++i)
+        for(int i = 0; i < Count; ++i)
         {
-            var tag = BinaryTag.Read(reader, TagsType.Value);
-            Add(tag);
+            var tag = BinaryTag.ReadTagData(reader, TagsType.Value);
+            if(!tag.IsDataEmpty)
+                Insert(i, tag);
         }
     }
 
@@ -95,19 +123,16 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         reader.BaseStream.Position += size;
     }
 
-    public IEnumerator<BinaryTag> GetEnumerator() => _tags.GetEnumerator();
+    public IEnumerator<BinaryTag> GetEnumerator()
+    {
+        for(int i = 0; i < Count; ++i)
+            yield return GetTag(i);
+    }
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 
 
-    public void Add(BinaryTag tag)
-    {
-        if(!TagsType.HasValue)
-            TagsType = tag.Type;
-
-        AssertType(tag);
-        _tags.Add(tag);
-    }
+    public void Add(BinaryTag tag) => Insert(Count, tag);
 
     public void Add(byte value) => Add(new ByteTag(value));
 
@@ -146,13 +171,22 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 
     public void Insert(int index, BinaryTag tag)
     {
-        AssertIndex(index, true);
+        if(index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index), index, $"index can't be less than 0");
+
         AssertType(tag);
 
-        if(!TagsType.HasValue)
-            TagsType = tag.Type;
+        for(int i = Count; i > index; i--)
+        {
+            if(_tags.TryGetValue(i - 1, out var prevValue))
+                _tags[i] = prevValue;
+            else
+                _tags.Remove(i);
+        }
 
-        _tags.Insert(index, tag);
+        _tags[index] = tag;
+
+        Count = Math.Max(Count, index) + 1;
     }
 
     public void Insert(int index, byte value) => Insert(index, new ByteTag(value));
@@ -188,12 +222,6 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public void Insert<T>(int index, T value, bool _ = false) where T : struct, Enum =>
         Insert(index, Array.IndexOf(Enum.GetValues<T>(), value));
 
-
-    private void AssertIndex(int index, bool inserting, [CallerArgumentExpression(nameof(index))] string? paramName = null)
-    {
-        if(index < 0 || (inserting ? index > Count : index >= Count))
-            throw new ArgumentOutOfRangeException(paramName);
-    }
 
     private void AssertType(BinaryTag tag, [CallerArgumentExpression(nameof(tag))] string? paramName = null)
     {
