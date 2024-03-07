@@ -18,6 +18,13 @@ public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryT
         Type = type;
     }
 
+    public T To<T>() where T : BinaryTag, new()
+    {
+        if(this is T t)
+            return t;
+        return new T();
+    }
+
     public abstract void WriteData(BinaryWriter writer);
     public abstract void ReadData(BinaryReader reader);
 

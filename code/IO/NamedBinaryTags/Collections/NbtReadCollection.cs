@@ -12,13 +12,7 @@ public abstract class NbtReadCollection<TKey> : BinaryTag
 
     protected abstract bool TryGetTag(TKey key, out BinaryTag tag);
 
-    public T To<T>() where T : BinaryTag, new()
-    {
-        if(this is T t)
-            return t;
-        return new T();
-    }
-
+    
     public bool HasTag(TKey key) => TryGetTag(key, out _);
 
     public bool HasTag<T>(TKey key) where T : BinaryTag
