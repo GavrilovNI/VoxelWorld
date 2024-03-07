@@ -32,7 +32,7 @@ public abstract class NbtReadCollection<TKey> : BinaryTag
     {
         if(TryGetTag(key, out var tag))
             return tag;
-        return new EmptyTag();
+        return BinaryTag.Empty;
     }
 
     public T GetTag<T>(TKey key) where T : BinaryTag, new()

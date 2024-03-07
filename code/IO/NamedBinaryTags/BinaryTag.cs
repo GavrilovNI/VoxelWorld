@@ -7,6 +7,8 @@ namespace Sandcube.IO.NamedBinaryTags;
 
 public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryTag>
 {
+    public static readonly EmptyTag Empty = new();
+
     public BinaryTagType Type { get; }
 
     public abstract bool IsDataEmpty { get; }
@@ -72,7 +74,7 @@ public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryT
             return ValueTag.CreateValueTag(type);
 
         if(type == BinaryTagType.Empty)
-            return new EmptyTag();
+            return BinaryTag.Empty;
 
         throw new NotSupportedException($"{nameof(BinaryTagType)} {type} is not supported");
     }

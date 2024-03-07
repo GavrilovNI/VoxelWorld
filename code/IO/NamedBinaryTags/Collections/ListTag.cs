@@ -33,7 +33,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     private BinaryTag GetTagOrCreate(int index)
     {
         if(!TagsType.HasValue)
-            return new EmptyTag();
+            return BinaryTag.Empty;
 
         if(_tags.TryGetValue(index, out var tag))
             return tag;

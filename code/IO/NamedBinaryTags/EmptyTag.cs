@@ -4,7 +4,7 @@ namespace Sandcube.IO.NamedBinaryTags;
 
 public sealed class EmptyTag : BinaryTag
 {
-    public EmptyTag() : base(BinaryTagType.Empty)
+    internal EmptyTag() : base(BinaryTagType.Empty)
     {
     }
 
