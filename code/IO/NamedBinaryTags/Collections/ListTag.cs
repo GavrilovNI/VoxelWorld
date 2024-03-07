@@ -28,14 +28,14 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         TagsType = valueType;
     }
 
-    public override bool HasTag(int index) => index >= 0 && index < Count;
+    protected override bool TryGetTag(int index, out BinaryTag tag) => _tags.TryGetValue(index, out tag!);
 
-    public override BinaryTag GetTag(int index)
+    private BinaryTag GetTagOrCreate(int index)
     {
         if(!TagsType.HasValue)
             return new EmptyTag();
 
-        if(_tags.TryGetValue(index, out var tag) && tag is not EmptyTag)
+        if(_tags.TryGetValue(index, out var tag))
             return tag;
 
         tag = BinaryTag.CreateTag(TagsType!.Value);
@@ -69,7 +69,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 
     public BinaryTag this[int index]
     {
-        get => GetTag(index);
+        get => GetTagOrCreate(index);
         set => Insert(index, value);
     }
 
@@ -83,7 +83,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         {
             BinaryTag.WriteType(writer, TagsType!.Value);
             for(int i = 0; i < Count; ++i)
-                GetTag(i).WriteData(writer);
+                GetTagOrCreate(i).WriteData(writer);
         }
 
         long size = writer.BaseStream.Position - startPosition - 8;
@@ -125,7 +125,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public IEnumerator<BinaryTag> GetEnumerator()
     {
         for(int i = 0; i < Count; ++i)
-            yield return GetTag(i);
+            yield return GetTagOrCreate(i);
     }
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

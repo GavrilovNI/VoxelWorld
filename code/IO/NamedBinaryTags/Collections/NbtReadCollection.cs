@@ -10,34 +10,51 @@ public abstract class NbtReadCollection<TKey> : BinaryTag
     {
     }
 
-    public abstract bool HasTag(TKey key);
-    public abstract BinaryTag GetTag(TKey key);
+    protected abstract bool TryGetTag(TKey key, out BinaryTag tag);
 
-    public bool TryGetTag(TKey key, out BinaryTag tag)
+    public T To<T>() where T : BinaryTag, new()
     {
-        if(!HasTag(key))
-        {
-            tag = null!;
+        if(this is T t)
+            return t;
+        return new T();
+    }
+
+    public bool HasTag(TKey key) => TryGetTag(key, out _);
+
+    public bool HasTag<T>(TKey key) where T : BinaryTag
+    {
+        if(!TryGetTag(key, out var tag))
             return false;
-        }
-        tag = GetTag(key);
-        return true;
+        return tag is T;
     }
 
-    public BinaryTag GetTagOrDefault(TKey key, BinaryTag defaultTag)
+    public BinaryTag GetTag(TKey key)
     {
-        if(!HasTag(key))
-            return defaultTag;
-        return GetTag(key);
+        if(TryGetTag(key, out var tag))
+            return tag;
+        return new EmptyTag();
     }
 
-    public BinaryTag GetTagOrDefault(TKey key, Func<BinaryTag> defaultTagGetter)
+    public T GetTag<T>(TKey key) where T : BinaryTag, new()
     {
-        if(!HasTag(key))
-            return defaultTagGetter();
-        return GetTag(key);
+        if(TryGetTag(key, out var tag))
+            return tag as T ?? new T();
+        return new T();
     }
 
+    public T GetTag<T>(TKey key, T defaultTag) where T : BinaryTag
+    {
+        if(TryGetTag(key, out var tag))
+            return tag as T ?? defaultTag;
+        return defaultTag;
+    }
+
+    public T GetTag<T>(TKey key, Func<T> defaultTagSupplier) where T : BinaryTag
+    {
+        if(TryGetTag(key, out var tag))
+            return tag as T ?? defaultTagSupplier();
+        return defaultTagSupplier();
+    }
 
     public byte Get<T>(TKey key, byte defaultValue = default) where T : IEquatable<byte>
     {

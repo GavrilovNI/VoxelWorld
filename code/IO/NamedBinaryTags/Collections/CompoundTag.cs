@@ -20,8 +20,8 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
     {
     }
 
-    public override bool HasTag(string key) => _tags.ContainsKey(key);
-    public override BinaryTag GetTag(string key) => _tags[key];
+    protected override bool TryGetTag(string key, out BinaryTag tag) => _tags.TryGetValue(key, out tag!);
+
     public bool Remove(string key)
     {
         ArgumentException.ThrowIfNullOrEmpty(key);
@@ -29,12 +29,6 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
     }
 
     public void Clear() => _tags.Clear();
-
-    public BinaryTag this[string key]
-    {
-        get => _tags[key];
-        set => _tags[key] = value;
-    }
 
     public override void WriteData(BinaryWriter writer)
     {
@@ -78,8 +72,6 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
 
     public IEnumerator<KeyValuePair<string, BinaryTag>> GetEnumerator() => _tags.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-
 
 
     public void Set(string key, BinaryTag tag)

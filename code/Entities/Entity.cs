@@ -127,8 +127,7 @@ public abstract class Entity : Component
         var transform = compoundTag.Get<Transform>("transform");
         entity.Transform.World = world.GameObject.Transform.Local.ToWorld(transform);
 
-        if(compoundTag.HasTag("data"))
-            entity.ReadAdditional(compoundTag.GetTag("data"));
+        entity.ReadAdditional(compoundTag.GetTag("data"));
 
         entity.Enabled = enable;
         return entity;
