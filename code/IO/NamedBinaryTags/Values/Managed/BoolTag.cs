@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class BoolTag : UnmanagedTag<bool>
 {
-    public BoolTag(bool value = default) : base(BinaryTagType.Bool, 1, value)
+    public BoolTag() : this(default)
+    {
+    }
+
+    public BoolTag(bool value) : base(BinaryTagType.Bool, 1, value)
     {
     }
 

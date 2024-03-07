@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class UIntTag : UnmanagedTag<uint>
 {
-    public UIntTag(uint value = default) : base(BinaryTagType.UInt, 4, value)
+    public UIntTag() : this(default)
+    {
+    }
+
+    public UIntTag(uint value) : base(BinaryTagType.UInt, 4, value)
     {
     }
 

@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class CharTag : UnmanagedTag<char>
 {
-    public CharTag(char value = default) : base(BinaryTagType.Char, 2, value)
+    public CharTag() : this(default)
+    {
+    }
+
+    public CharTag(char value) : base(BinaryTagType.Char, 2, value)
     {
     }
 

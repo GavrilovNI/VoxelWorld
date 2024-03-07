@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class SByteTag : UnmanagedTag<sbyte>
 {
-    public SByteTag(sbyte value = default) : base(BinaryTagType.SByte, 1, value)
+    public SByteTag() : this(default)
+    {
+    }
+
+    public SByteTag(sbyte value) : base(BinaryTagType.SByte, 1, value)
     {
     }
 

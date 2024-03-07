@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class DecimalTag : UnmanagedTag<decimal>
 {
-    public DecimalTag(decimal value = default) : base(BinaryTagType.Decimal, 16, value)
+    public DecimalTag() : this(default)
+    {
+    }
+
+    public DecimalTag(decimal value) : base(BinaryTagType.Decimal, 16, value)
     {
     }
 

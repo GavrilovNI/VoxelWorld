@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class ShortTag : UnmanagedTag<short>
 {
-    public ShortTag(short value = default) : base(BinaryTagType.Short, 2, value)
+    public ShortTag() : this(default)
+    {
+    }
+
+    public ShortTag(short value) : base(BinaryTagType.Short, 2, value)
     {
     }
 

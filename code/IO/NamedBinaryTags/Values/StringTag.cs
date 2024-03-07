@@ -6,7 +6,11 @@ public sealed class StringTag : ValueTag<string>
 {
     public override bool IsDataEmpty => Value.Length == 0;
 
-    public StringTag(string value = "") : base(BinaryTagType.String, value)
+    public StringTag() : this(string.Empty)
+    {
+    }
+
+    public StringTag(string value) : base(BinaryTagType.String, value)
     {
     }
 

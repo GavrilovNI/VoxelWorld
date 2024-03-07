@@ -4,7 +4,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class DoubleTag : UnmanagedTag<double>
 {
-    public DoubleTag(double value = default) : base(BinaryTagType.Double, 8, value)
+    public DoubleTag() : this(default)
+    {
+    }
+
+    public DoubleTag(double value) : base(BinaryTagType.Double, 8, value)
     {
     }
 
