@@ -70,7 +70,22 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public BinaryTag this[int index]
     {
         get => GetTagOrCreate(index);
-        set => Insert(index, value);
+        set
+        {
+            if(index >= Count)
+            {
+                Insert(index, value);
+            }
+            else
+            {
+                if(value is EmptyTag)
+                    return;
+
+                AssertType(value);
+
+                _tags[index] = value;
+            }
+        }
     }
 
     public override void WriteData(BinaryWriter writer)
@@ -176,8 +191,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         if(tag is EmptyTag)
             return;
 
-        if(TagsType.HasValue && tag.Type != TagsType)
-            throw new ArgumentException($"{nameof(tag)}'s type ({tag.Type}) is not {TagsType}", nameof(tag));
+        AssertType(tag);
 
         for(int i = Count; i > index; i--)
         {
@@ -225,4 +239,16 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
     public void Insert<T>(int index, T value, bool _ = false) where T : struct, Enum =>
         Insert(index, Array.IndexOf(Enum.GetValues<T>(), value));
 
+
+    private void AssertType(BinaryTag tag, [CallerArgumentExpression(nameof(tag))] string? paramName = null)
+    {
+        if(tag.Type == BinaryTagType.Empty)
+            throw new ArgumentException($"can't add {nameof(EmptyTag)} to {nameof(ListTag)}", paramName);
+
+        if(!TagsType.HasValue)
+            return;
+
+        if(tag.Type != TagsType)
+            throw new ArgumentException($"{paramName}'s type ({tag.Type}) is not {nameof(ListTag)}'s type ({TagsType})", paramName);
+    }
 }
