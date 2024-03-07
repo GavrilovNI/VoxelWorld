@@ -54,7 +54,7 @@ public abstract class ValueTag : BinaryTag
     }
 }
 
-public abstract class ValueTag<T> : ValueTag
+public abstract class ValueTag<T> : ValueTag, IEquatable<T>
 {
     public T Value;
 
@@ -64,4 +64,5 @@ public abstract class ValueTag<T> : ValueTag
         Value = value;
     }
 
+    public abstract bool Equals(T? other);
 }

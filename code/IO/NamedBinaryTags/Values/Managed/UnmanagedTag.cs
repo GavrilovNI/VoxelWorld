@@ -12,4 +12,6 @@ public abstract class UnmanagedTag<T> : ValueTag<T> where T : unmanaged, IEquata
     {
         Size = size;
     }
+
+    public override bool Equals(T other) => Value.Equals(other);
 }
