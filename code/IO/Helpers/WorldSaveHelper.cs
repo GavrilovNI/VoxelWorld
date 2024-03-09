@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Data;
+using Sandcube.Mth;
 using System.IO;
 
 namespace Sandcube.IO.Helpers;
@@ -38,4 +39,6 @@ public class WorldSaveHelper
     }
 
     public virtual WorldRegions GetRegions(Id id) => new(this, id);
+    public virtual RegionalSaveHelper GetRegionalHelper(Id id, Vector3Int regionSize) =>
+        new(FileSystem.CreateDirectoryAndSubSystem(id), regionSize, id);
 }

@@ -2,8 +2,10 @@ using Sandbox;
 using Sandcube.Blocks.Entities;
 using Sandcube.Blocks.States;
 using Sandcube.Data;
+using Sandcube.Data.Blocks;
 using Sandcube.Interfaces;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using System;
@@ -39,7 +41,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    protected BlocksContainer Blocks = null!;
+    protected SizedBlocksCollection Blocks = null!;
 
     public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldAccessor world)
     {
@@ -52,7 +54,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Position = position;
         Size = size;
         World = world;
-        Blocks = new(world, position, size);
+        Blocks = new(world, World.GetBlockWorldPosition(position, Vector3Int.Zero), size);
     }
 
     protected override void OnEnabled()
@@ -214,6 +216,28 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Gizmo.Hitbox.BBox(ModelBounds);
     }
 
+
+    public virtual BinaryTag Save(IReadOnlySaveMarker saveMarker, bool unused = false)
+    {
+        lock(Blocks)
+        {
+            MarkSaved(saveMarker);
+            return Blocks.Write(true);
+        }
+    }
+
+    public virtual Task Load(BinaryTag tag, BlockSetFlags flags = BlockSetFlags.UpdateModel)
+    {
+        if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
+            throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
+
+        lock(Blocks)
+        {
+            Blocks.Read(tag);
+            return GetModelUpdateTask(flags);
+        }
+    }
+
     // thread safe
     public virtual Task Load(IReadOnlyBlocksData data, BlockSetFlags flags = BlockSetFlags.UpdateModel)
     {
@@ -222,7 +246,8 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
         lock(Blocks)
         {
-            Blocks.Load(data, Size.GetPositionsFromZero(false), flags.HasFlag(BlockSetFlags.MarkDirty));
+            throw new NotImplementedException();
+            //Blocks.Load(data, Size.GetPositionsFromZero(false), flags.HasFlag(BlockSetFlags.MarkDirty));
             return GetModelUpdateTask(flags);
         }
     }
@@ -231,8 +256,9 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     {
         lock(Blocks)
         {
+            throw new NotImplementedException();
             MarkSaved(saveMarker);
-            return Blocks.ToBlocksData();
+            //return Blocks.ToBlocksData();
         }
     }
 

@@ -7,6 +7,8 @@ using Sandcube.Exceptions;
 using Sandcube.Interfaces;
 using Sandcube.IO;
 using Sandcube.IO.Helpers;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
 using Sandcube.Players;
@@ -225,7 +227,7 @@ public class World : Component, IWorldAccessor, ITickable
             UpdateNeighboringChunks(chunk.Position);
 
             await chunk.GetModelUpdateTask();
-            EntitiesCreator?.LoadOrCreateEntitiesForChunk(chunk.Position);
+            EntitiesCreator?.LoadOrCreateEntitiesForChunk2(chunk.Position);
 
             ChunkLoaded?.Invoke(chunk.Position);
         });
@@ -422,6 +424,72 @@ public class World : Component, IWorldAccessor, ITickable
         return result;
     }
 
+    public virtual BinaryTag SaveChunkBlocks(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
+    {
+        if(!Chunks.TryGet(chunkPosition, out var chunk))
+            throw new ArgumentOutOfRangeException(nameof(chunkPosition), chunkPosition, "Chunk wasn't loaded");
+
+        return chunk.Save(saveMarker, false);
+    }
+
+    public virtual Dictionary<Vector3Int, BinaryTag> SaveBlocksInUnsavedChunks(IReadOnlySaveMarker saveMarker)
+    {
+        var unsavedChunks = Chunks.Where(c => !c.Value.IsSaved);
+
+        Dictionary<Vector3Int, BinaryTag> result = new();
+        foreach(var (chunkPosition, chunk) in unsavedChunks)
+            result[chunkPosition] = chunk.Save(saveMarker, false);
+
+        return result;
+    }
+
+    public virtual ListTag SaveEntitiesInChunk(Vector3Int chunkPosition, Func<Entity, bool> predicate)
+    {
+        ListTag result = new();
+
+        foreach(var entity in Entities.Where(predicate))
+        {
+            var entityChunkPosition = GetChunkPosition(entity.Transform.Position);
+            if(chunkPosition != entityChunkPosition)
+                continue;
+
+            result.Add(entity.Write());
+        }
+
+        return result;
+    }
+    public virtual ListTag SaveEntitiesInChunk(Vector3Int chunkPosition) => SaveEntitiesInChunk(chunkPosition, e => true);
+
+    public virtual Dictionary<Vector3Int, ListTag> SaveAllEntities(Func<Entity, bool> predicate)
+    {
+        Dictionary<Vector3Int, ListTag> result = new();
+
+        foreach(var entity in Entities.Where(predicate))
+        {
+            var chunkPosition = GetChunkPosition(entity.Transform.Position);
+
+            if(!result.TryGetValue(chunkPosition, out var tag))
+            {
+                tag = new();
+                result[chunkPosition] = tag;
+            }
+
+            tag.Add(entity.Write());
+        }
+
+        return result;
+    }
+    public virtual Dictionary<Vector3Int, ListTag> SaveAllEntities() => SaveAllEntities(e => true);
+
+    public virtual Dictionary<ulong, BinaryTag> SaveAllPlayers()
+    {
+        Dictionary<ulong, BinaryTag> result = new();
+
+        foreach(var player in Entities.Where(e => e is Player).Cast<Player>())
+            result.Add(player.SteamId, player.Write());
+
+        return result;
+    }
 
     public static bool TryFind(GameObject? gameObject, out IWorldAccessor world)
     {

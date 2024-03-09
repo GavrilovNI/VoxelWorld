@@ -3,6 +3,7 @@ using Sandcube.Data;
 using Sandcube.Entities;
 using Sandcube.Entities.Types;
 using Sandcube.IO.Helpers;
+using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Mods.Base;
 using Sandcube.Mth;
 using Sandcube.Worlds;
@@ -22,7 +23,7 @@ public class PlayerSpawner : Component
 
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)
     {
-        if(!TryLoadPlayer(steamId, out var player, false))
+        if(!TryLoadPlayer2(steamId, out var player, false))
             player = (PlayerEntityType.CreateEntity(defaultSpawnConfig with { StartEnabled = false }) as Player)!;
         player.SetSteamId(steamId);
 
@@ -83,6 +84,40 @@ public class PlayerSpawner : Component
 
         var playerData = PlayerData.Read(reader);
         player = playerData.CreatePlayer(enable);
+        return true;
+    }
+
+    protected bool TryLoadPlayer2(ulong steamId, out Player player, bool enable = true)
+    {
+        var fileSystem = SandcubeGame.Instance!.CurrentGameSaveHelper!.PlayersFileSystem;
+
+        if(!fileSystem.FileExists(steamId.ToString()))
+        {
+            player = null!;
+            return false;
+        }
+
+        BinaryTag tag;
+        using(var stream = fileSystem.OpenRead(steamId.ToString()))
+        {
+            using var reader = new BinaryReader(stream);
+            tag = BinaryTag.Read(reader);
+        }
+
+        if(!Entity.TryReadWithWorld(tag, out var entity, enable))
+        {
+            player = null!;
+            return false;
+        }
+
+        if(entity is not Player playerEntity)
+        {
+            player = null!;
+            entity.Destroy();
+            return false;
+        }
+
+        player = playerEntity;
         return true;
     }
 

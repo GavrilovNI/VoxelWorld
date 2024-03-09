@@ -107,7 +107,7 @@ public class ItemStackEntity : Entity
 
     protected override void ReadAdditional(BinaryTag tag)
     {
-        CompoundTag compoundTag = (CompoundTag)tag;
+        CompoundTag compoundTag = tag.To<CompoundTag>();
 
         var itemStack = Inventories.ItemStack.Read(compoundTag.GetTag("item_stack"));
         SetItemStack(itemStack);

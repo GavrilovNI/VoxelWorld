@@ -8,6 +8,7 @@ using Sandcube.IO.Helpers;
 using System.IO;
 using System;
 using Sandcube.Data;
+using Sandcube.IO.NamedBinaryTags.Collections;
 
 namespace Sandcube.Worlds.Loading;
 
@@ -47,7 +48,7 @@ public class ChunksCreator : Component
             await Task.RunInThreadAsync(async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if(!TryLoadChunk(chunk)) // TODO: load all region and cache it?
+                if(!await TryLoadChunkBlocks(chunk))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     if(Generator.IsValid())
@@ -147,5 +148,23 @@ public class ChunksCreator : Component
         }
 
         return false;
+    }
+
+    public virtual async Task<bool> TryLoadChunkBlocks(Chunk chunk)
+    {
+        if(WorldFileSystem is null)
+            return false;
+
+        if(WorldOptions.ChunkSize != chunk.Size)
+            throw new InvalidOperationException($"Can't load chunk, saved chunk size {WorldOptions.ChunkSize} is not equal to chunk size {chunk.Size}");
+
+        var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
+        var regionalSaveHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.BlocksRegionName, WorldOptions.RegionSize);
+
+        bool loaded = regionalSaveHelper.TryLoadOneChunkOnly(chunk.Position, out var chunkTag); // TODO: load all region and cache it?
+        if(loaded)
+            await chunk.Load(chunkTag);
+
+        return loaded;
     }
 }
