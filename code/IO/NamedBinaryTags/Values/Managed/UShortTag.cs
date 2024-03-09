@@ -12,6 +12,6 @@ public sealed class UShortTag : UnmanagedTag<ushort>
     {
     }
 
-    public override void WriteData(BinaryWriter writer) => writer.Write(Value);
-    public override void ReadData(BinaryReader reader) => Value = reader.ReadUInt16();
+    public override void WriteData(BinaryWriter writer, NbtStringPalette? palette) => writer.Write(Value);
+    public override void ReadData(BinaryReader reader, NbtStringPalette? palette) => Value = reader.ReadUInt16();
 }

@@ -12,6 +12,6 @@ public sealed class SByteTag : UnmanagedTag<sbyte>
     {
     }
 
-    public override void WriteData(BinaryWriter writer) => writer.Write(Value);
-    public override void ReadData(BinaryReader reader) => Value = reader.ReadSByte();
+    public override void WriteData(BinaryWriter writer, NbtStringPalette? palette) => writer.Write(Value);
+    public override void ReadData(BinaryReader reader, NbtStringPalette? palette) => Value = reader.ReadSByte();
 }

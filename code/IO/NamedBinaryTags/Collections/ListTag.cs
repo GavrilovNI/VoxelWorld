@@ -89,7 +89,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         }
     }
 
-    public override void WriteData(BinaryWriter writer)
+    public override void WriteData(BinaryWriter writer, NbtStringPalette? palette)
     {
         long startPosition = writer.BaseStream.Position;
         writer.Write(0L); // writing size
@@ -99,7 +99,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         {
             BinaryTag.WriteType(writer, TagsType!.Value);
             for(int i = 0; i < Count; ++i)
-                GetTagOrCreate(i).WriteData(writer);
+                GetTagOrCreate(i).WriteData(writer, palette);
         }
 
         long size = writer.BaseStream.Position - startPosition - 8;
@@ -110,7 +110,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         }
     }
 
-    public override void ReadData(BinaryReader reader)
+    public override void ReadData(BinaryReader reader, NbtStringPalette? palette)
     {
         Clear();
 
@@ -123,7 +123,7 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         TagsType = BinaryTag.ReadType(reader);
         for(int i = 0; i < Count; ++i)
         {
-            var tag = BinaryTag.ReadTagData(reader, TagsType.Value);
+            var tag = BinaryTag.ReadTagData(reader, TagsType.Value, palette);
             if(!tag.IsDataEmpty)
                 this[i] = tag;
         }

@@ -25,29 +25,63 @@ public abstract class BinaryTag
         return new T();
     }
 
-    public abstract void WriteData(BinaryWriter writer);
-    public abstract void ReadData(BinaryReader reader);
+    public abstract void WriteData(BinaryWriter writer, NbtStringPalette? palette);
+    public abstract void ReadData(BinaryReader reader, NbtStringPalette? palette);
 
 
     public static void WriteType(BinaryWriter writer, BinaryTagType type) => writer.Write((byte)type);
     public static BinaryTagType ReadType(BinaryReader reader) => (BinaryTagType)reader.ReadByte();
 
-    public void Write(BinaryWriter writer)
+    public void Write(BinaryWriter writer, bool usePallete = true)
+    {
+        writer.Write(usePallete);
+        if(!usePallete)
+        {
+            WriteTagOnly(writer, null);
+            return;
+        }
+
+        using MemoryStream memoryStream = new();
+        using BinaryWriter memoryStreamWriter = new(memoryStream);
+
+        NbtStringPalette palette = new();
+        WriteTagOnly(memoryStreamWriter, palette);
+
+        var memoryStreamBuffer = memoryStream.GetBuffer();
+        var paletteTag = palette.Write();
+
+        paletteTag.WriteTagOnly(writer, null);
+        writer.Write(memoryStreamBuffer, 0, (int)memoryStream.Length);
+    }
+
+    public void WriteTagOnly(BinaryWriter writer, NbtStringPalette? palette)
     {
         BinaryTag.WriteType(writer, Type);
-        WriteData(writer);
+        WriteData(writer, palette);
     }
 
     public static BinaryTag Read(BinaryReader reader)
     {
-        var type = ReadType(reader);
-        return ReadTagData(reader, type);
+        bool usePallete = reader.ReadBoolean();
+        if(!usePallete)
+            return ReadTagOnly(reader, null);
+
+        var paletteTag = ReadTagOnly(reader, null);
+        NbtStringPalette palette = NbtStringPalette.Read(paletteTag);
+        var tag = ReadTagOnly(reader, palette);
+        return tag;
     }
 
-    public static BinaryTag ReadTagData(BinaryReader reader, BinaryTagType type)
+    public static BinaryTag ReadTagOnly(BinaryReader reader, NbtStringPalette? palette)
+    {
+        var type = ReadType(reader);
+        return ReadTagData(reader, type, palette);
+    }
+
+    protected static BinaryTag ReadTagData(BinaryReader reader, BinaryTagType type, NbtStringPalette? palette)
     {
         var tag = CreateTag(type);
-        tag.ReadData(reader);
+        tag.ReadData(reader, palette);
         return tag;
     }
 

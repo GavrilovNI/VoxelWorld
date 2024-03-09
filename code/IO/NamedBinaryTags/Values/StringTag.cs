@@ -16,8 +16,11 @@ public sealed class StringTag : ValueTag<string>
     {
     }
 
-    public override void WriteData(BinaryWriter writer) => writer.Write(Value);
-    public override void ReadData(BinaryReader reader) => Value = reader.ReadString();
+    public override void WriteData(BinaryWriter writer, NbtStringPalette? palette) =>
+        palette.WriteId(writer, Value);
+
+    public override void ReadData(BinaryReader reader, NbtStringPalette? palette) =>
+        Value = palette.ReadValue(reader);
 
     public override bool Equals(string? other) => other is null ? Value.Length == 0 : Value.Equals(other);
 }

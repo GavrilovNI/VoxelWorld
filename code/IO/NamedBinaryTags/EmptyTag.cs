@@ -10,6 +10,6 @@ public sealed class EmptyTag : BinaryTag
 
     public override bool IsDataEmpty => true;
 
-    public override void ReadData(BinaryReader reader) { }
-    public override void WriteData(BinaryWriter writer) { }
+    public override void ReadData(BinaryReader reader, NbtStringPalette? palette) { }
+    public override void WriteData(BinaryWriter writer, NbtStringPalette? palette) { }
 }
