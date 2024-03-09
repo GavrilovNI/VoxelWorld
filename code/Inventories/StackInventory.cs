@@ -42,7 +42,7 @@ public abstract class StackInventory<T> : IndexedCapability<T>, INbtWritable, IS
     public override T Get(int index)
     {
         if(index < 0 || index >= Size)
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new ArgumentOutOfRangeException(nameof(index), index, $"out of range [0,{Size})");
 
         return _stacks.GetValueOrDefault(index, GetEmpty());
     }
