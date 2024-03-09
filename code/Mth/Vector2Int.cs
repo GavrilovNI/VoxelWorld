@@ -308,18 +308,16 @@ public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWr
         return defaultInterpolatedStringHandler.ToStringAndClear();
     }
 
-    public readonly BinaryTag Write()
+    public readonly BinaryTag Write() => new ListTag
     {
-        var result = new CompoundTag();
-        result.Set("x", x);
-        result.Set("y", y);
-        return result;
-    }
+        x,
+        y
+    };
 
     public static Vector2Int Read(BinaryTag tag)
     {
-        var compoundTag = tag.To<CompoundTag>();
-        return new(compoundTag.Get<int>("x"), compoundTag.Get<int>("y"));
+        var listTag = tag.To<ListTag>();
+        return new(listTag.Get<int>(0), listTag.Get<int>(1));
     }
 
     public class Vector2IntJsonConverter : JsonConverter<Vector2Int>

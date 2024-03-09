@@ -5,15 +5,13 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 
 public static class RotationExtensions
 {
-    public static CompoundTag Write(this Rotation value)
+    public static ListTag Write(this Rotation value) => new()
     {
-        var result = new CompoundTag();
-        result.Set("x", value.x);
-        result.Set("y", value.y);
-        result.Set("z", value.z);
-        result.Set("w", value.w);
-        return result;
-    }
+        value.x,
+        value.y,
+        value.z,
+        value.w
+    };
 
 
     public static void Set(this CompoundTag collection, string key, Rotation value) =>
@@ -27,11 +25,11 @@ public static class RotationExtensions
 
 
     public static Rotation Get<T>(this CompoundTag collection, string key) where T : IEquatable<Rotation> =>
-        collection.GetTag(key).To<CompoundTag>().To<T>();
+        collection.GetTag(key).To<ListTag>().To<T>();
 
     public static Rotation Get<T>(this ListTag collection, int index) where T : IEquatable<Rotation> =>
-        collection.GetTag(index).To<CompoundTag>().To<T>();
+        collection.GetTag(index).To<ListTag>().To<T>();
 
-    public static Rotation To<T>(this CompoundTag tag) where T : IEquatable<Rotation> =>
-        new(tag.Get<float>("x"), tag.Get<float>("y"), tag.Get<float>("z"), tag.Get<float>("w"));
+    public static Rotation To<T>(this ListTag tag) where T : IEquatable<Rotation> =>
+        new(tag.Get<float>(0), tag.Get<float>(1), tag.Get<float>(2), tag.Get<float>(3));
 }

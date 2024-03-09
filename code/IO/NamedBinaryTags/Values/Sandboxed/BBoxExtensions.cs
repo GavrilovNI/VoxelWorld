@@ -5,13 +5,15 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 
 public static class BBoxExtensions
 {
-    public static CompoundTag Write(this BBox value)
+    public static ListTag Write(this BBox value) => new()
     {
-        var result = new CompoundTag();
-        result.Set("mins", value.Mins);
-        result.Set("maxs", value.Maxs);
-        return result;
-    }
+        value.Mins.x,
+        value.Mins.y,
+        value.Mins.z,
+        value.Maxs.x,
+        value.Maxs.y,
+        value.Maxs.z
+    };
 
 
     public static void Set(this CompoundTag collection, string key, BBox value) =>
@@ -25,11 +27,12 @@ public static class BBoxExtensions
 
 
     public static BBox Get<T>(this CompoundTag collection, string key) where T : IEquatable<BBox> =>
-        collection.GetTag(key).To<CompoundTag>().To<T>();
+        collection.GetTag(key).To<ListTag>().To<T>();
 
     public static BBox Get<T>(this ListTag collection, int index) where T : IEquatable<BBox> =>
-        collection.GetTag(index).To<CompoundTag>().To<T>();
+        collection.GetTag(index).To<ListTag>().To<T>();
 
-    public static BBox To<T>(this CompoundTag tag) where T : IEquatable<BBox> =>
-        new(tag.Get<Vector3>("mins"), tag.Get<Vector3>("maxs"));
+    public static BBox To<T>(this ListTag tag) where T : IEquatable<BBox> =>
+        new(new Vector3(tag.Get<float>(0), tag.Get<float>(1), tag.Get<float>(2)),
+            new Vector3(tag.Get<float>(3), tag.Get<float>(4), tag.Get<float>(5)));
 }

@@ -5,14 +5,12 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 
 public static class AnglesExtensions
 {
-    public static CompoundTag Write(this Angles value)
+    public static ListTag Write(this Angles value) => new()
     {
-        var result = new CompoundTag();
-        result.Set("pitch", value.pitch);
-        result.Set("yaw", value.yaw);
-        result.Set("roll", value.roll);
-        return result;
-    }
+        value.pitch,
+        value.yaw,
+        value.roll
+    };
 
 
     public static void Set(this CompoundTag collection, string key, Angles value) =>
@@ -26,11 +24,11 @@ public static class AnglesExtensions
 
 
     public static Angles Get<T>(this CompoundTag collection, string key) where T : IEquatable<Angles> =>
-        collection.GetTag(key).To<CompoundTag>().To<T>();
+        collection.GetTag(key).To<ListTag>().To<T>();
 
     public static Angles Get<T>(this ListTag collection, int index) where T : IEquatable<Angles> =>
-        collection.GetTag(index).To<CompoundTag>().To<T>();
+        collection.GetTag(index).To<ListTag>().To<T>();
 
-    public static Angles To<T>(this CompoundTag tag) where T : IEquatable<Angles> =>
-        new(tag.Get<float>("pitch"), tag.Get<float>("yaw"), tag.Get<float>("roll"));
+    public static Angles To<T>(this ListTag tag) where T : IEquatable<Angles> =>
+        new(tag.Get<float>(0), tag.Get<float>(1), tag.Get<float>(2));
 }

@@ -6,13 +6,11 @@ namespace Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 
 public static class Vector2Extensions
 {
-    public static CompoundTag Write(this Vector2 value)
+    public static ListTag Write(this Vector2 value) => new()
     {
-        var result = new CompoundTag();
-        result.Set("x", value.x);
-        result.Set("y", value.y);
-        return result;
-    }
+        value.x,
+        value.y,
+    };
 
 
     public static void Set(this CompoundTag collection, string key, Vector2 value) =>
@@ -26,11 +24,11 @@ public static class Vector2Extensions
 
 
     public static Vector2 Get<T>(this CompoundTag collection, string key) where T : IEquatable<Vector2> =>
-        collection.GetTag(key).To<CompoundTag>().To<T>();
+        collection.GetTag(key).To<ListTag>().To<T>();
 
     public static Vector2 Get<T>(this ListTag collection, int index) where T : IEquatable<Vector2> =>
-        collection.GetTag(index).To<CompoundTag>().To<T>();
+        collection.GetTag(index).To<ListTag>().To<T>();
 
-    public static Vector2 To<T>(this CompoundTag tag) where T : IEquatable<Vector2> =>
-        new(tag.Get<float>("x"), tag.Get<float>("y"));
+    public static Vector2 To<T>(this ListTag tag) where T : IEquatable<Vector2> =>
+        new(tag.Get<float>(0), tag.Get<float>(1));
 }

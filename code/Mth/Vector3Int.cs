@@ -417,19 +417,17 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, INbtWr
         return defaultInterpolatedStringHandler.ToStringAndClear();
     }
 
-    public readonly BinaryTag Write()
+    public readonly BinaryTag Write() => new ListTag
     {
-        var result = new CompoundTag();
-        result.Set("x", x);
-        result.Set("y", y);
-        result.Set("z", z);
-        return result;
-    }
+        x,
+        y,
+        z
+    };
 
     public static Vector3Int Read(BinaryTag tag)
     {
-        var compoundTag = tag.To<CompoundTag>();
-        return new(compoundTag.Get<int>("x"), compoundTag.Get<int>("y"), compoundTag.Get<int>("z"));
+        var listTag = tag.To<ListTag>();
+        return new(listTag.Get<int>(0), listTag.Get<int>(1), listTag.Get<int>(2));
     }
 
     public class Vector3IntJsonConverter : JsonConverter<Vector3Int>

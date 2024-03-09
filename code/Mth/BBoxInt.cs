@@ -423,17 +423,20 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     public override readonly int GetHashCode() => HashCode.Combine(Mins, Maxs);
 
 
-    public readonly BinaryTag Write()
+    public readonly BinaryTag Write() => new ListTag()
     {
-        var result = new CompoundTag();
-        result.Set("mins", Mins);
-        result.Set("maxs", Maxs);
-        return result;
-    }
+        Mins.x,
+        Mins.y,
+        Mins.z,
+        Maxs.x,
+        Maxs.y,
+        Maxs.z
+    };
 
     public static BBoxInt Read(BinaryTag tag)
     {
-        var compoundTag = tag.To<CompoundTag>();
-        return new(Vector3Int.Read(compoundTag.GetTag("mins")), Vector3Int.Read(compoundTag.GetTag("maxs")));
+        var listTag = tag.To<ListTag>();
+        return new(new Vector3Int(listTag.Get<int>(0), listTag.Get<int>(1), listTag.Get<int>(2)),
+            new Vector3Int(listTag.Get<int>(3), listTag.Get<int>(4), listTag.Get<int>(5)));
     }
 }
