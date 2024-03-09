@@ -105,6 +105,7 @@ public abstract class StackInventory<T> : IndexedCapability<T>, INbtWritable, IS
     {
         CompoundTag tag = new();
         tag.Set("slot_limit", SlotLimit);
+        tag.Set("size", Size);
 
         ListTag slots = new();
         tag.Set("slots", slots);

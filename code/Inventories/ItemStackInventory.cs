@@ -21,10 +21,11 @@ public class ItemStackInventory : StackInventory<Stack<Item>>, INbtStaticReadabl
         CompoundTag compoundTag = tag.To<CompoundTag>();
 
         int slotLimit = compoundTag.Get<int>("slot_limit");
+        int size = compoundTag.Get<int>("size");
+
+        ItemStackInventory result = new(size, slotLimit);
 
         ListTag slotsTag = compoundTag.GetTag("slots").To<ListTag>();
-        ItemStackInventory result = new(slotsTag.Count, slotLimit);
-
         for(int i = 0; i < slotsTag.Count; ++i)
             result.Set(i, ItemStack.Read(slotsTag.GetTag(i)));
 
