@@ -23,7 +23,7 @@ public class PlayerSpawner : Component
 
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)
     {
-        if(!TryLoadPlayer2(steamId, out var player, false))
+        if(!TryLoadPlayer(steamId, out var player, false))
             player = (PlayerEntityType.CreateEntity(defaultSpawnConfig with { StartEnabled = false }) as Player)!;
         player.SetSteamId(steamId);
 
@@ -69,7 +69,7 @@ public class PlayerSpawner : Component
         return player;
     }
 
-    protected bool TryLoadPlayer2(ulong steamId, out Player player, bool enable = true)
+    protected virtual bool TryLoadPlayer(ulong steamId, out Player player, bool enable = true)
     {
         var fileSystem = SandcubeGame.Instance!.CurrentGameSaveHelper!.PlayersFileSystem;
 

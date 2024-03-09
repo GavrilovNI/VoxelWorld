@@ -217,7 +217,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
 
-    public virtual BinaryTag Save(IReadOnlySaveMarker saveMarker, bool unused = false)
+    public virtual BinaryTag Save(IReadOnlySaveMarker saveMarker)
     {
         lock(Blocks)
         {

@@ -227,7 +227,7 @@ public class World : Component, IWorldAccessor, ITickable
             UpdateNeighboringChunks(chunk.Position);
 
             await chunk.GetModelUpdateTask();
-            EntitiesCreator?.LoadOrCreateEntitiesForChunk2(chunk.Position);
+            EntitiesCreator?.LoadOrCreateEntitiesForChunk(chunk.Position);
 
             ChunkLoaded?.Invoke(chunk.Position);
         });
@@ -405,7 +405,7 @@ public class World : Component, IWorldAccessor, ITickable
         if(!Chunks.TryGet(chunkPosition, out var chunk))
             throw new ArgumentOutOfRangeException(nameof(chunkPosition), chunkPosition, "Chunk wasn't loaded");
 
-        return chunk.Save(saveMarker, false);
+        return chunk.Save(saveMarker);
     }
 
     public virtual Dictionary<Vector3Int, BinaryTag> SaveBlocksInUnsavedChunks(IReadOnlySaveMarker saveMarker)
@@ -414,7 +414,7 @@ public class World : Component, IWorldAccessor, ITickable
 
         Dictionary<Vector3Int, BinaryTag> result = new();
         foreach(var (chunkPosition, chunk) in unsavedChunks)
-            result[chunkPosition] = chunk.Save(saveMarker, false);
+            result[chunkPosition] = chunk.Save(saveMarker);
 
         return result;
     }
