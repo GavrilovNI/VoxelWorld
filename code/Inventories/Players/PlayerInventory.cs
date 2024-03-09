@@ -5,7 +5,6 @@ using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Items;
 using System;
-using System.IO;
 
 namespace Sandcube.Inventories.Players;
 
@@ -82,21 +81,5 @@ public class PlayerInventory : Component, IPlayerInventory, INbtWritable, INbtRe
         Hotbar = ItemStackInventory.Read(compoundTag.GetTag("hotbar"));
         SecondaryHand = ItemStackInventory.Read(compoundTag.GetTag("secondary_hand"));
         MainHandIndex = compoundTag.Get<int>("main_hand_index");
-    }
-
-    public virtual void Write(BinaryWriter writer)
-    {
-        writer.Write(Main);
-        writer.Write(Hotbar);
-        writer.Write(SecondaryHand);
-        writer.Write(MainHandIndex);
-    }
-
-    public virtual void Read(BinaryReader reader)
-    {
-        Main = ItemStackInventory.Read(reader);
-        Hotbar = ItemStackInventory.Read(reader);
-        SecondaryHand = ItemStackInventory.Read(reader);
-        MainHandIndex = reader.ReadInt32();
     }
 }

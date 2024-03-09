@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Data;
+using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Mth;
 using System.IO;
 
@@ -19,9 +20,10 @@ public class WorldSaveHelper
 
     public virtual void SaveWorldOptions(in WorldOptions worldOptions)
     {
+        var tag = worldOptions.Write();
         using var stream = FileSystem.OpenWrite("world.options");
         using var writer = new BinaryWriter(stream);
-        worldOptions.Write(writer);
+        tag.Write(writer);
     }
 
     public virtual bool TryReadWorldOptions(out WorldOptions worldOptions)
@@ -34,11 +36,11 @@ public class WorldSaveHelper
 
         using var stream = FileSystem.OpenRead("world.options");
         using var reader = new BinaryReader(stream);
-        worldOptions = WorldOptions.Read(reader);
+        var tag = BinaryTag.Read(reader);
+        worldOptions = WorldOptions.Read(tag);
         return true;
     }
 
-    public virtual WorldRegions GetRegions(Id id) => new(this, id);
     public virtual RegionalSaveHelper GetRegionalHelper(Id id, Vector3Int regionSize) =>
         new(FileSystem.CreateDirectoryAndSubSystem(id), regionSize, id);
 }

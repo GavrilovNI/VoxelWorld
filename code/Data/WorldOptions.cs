@@ -1,10 +1,10 @@
-﻿using Sandcube.IO;
+﻿using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth;
-using System.IO;
 
 namespace Sandcube.Data;
 
-public readonly record struct WorldOptions : IBinaryWritable, IBinaryStaticReadable<WorldOptions>
+public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<WorldOptions>
 {
     public required Vector3Int ChunkSize { get; init; }
     public required Vector3Int RegionSize { get; init; }
@@ -14,24 +14,24 @@ public readonly record struct WorldOptions : IBinaryWritable, IBinaryStaticReada
     {
     }
 
-    public static WorldOptions Read(BinaryReader reader)
+    public BinaryTag Write()
     {
-        Vector3Int chunkSize = Vector3Int.Read(reader);
-        Vector3Int regionSize = Vector3Int.Read(reader);
-        var seed = reader.ReadInt32();
-
-        return new WorldOptions()
-        {
-            ChunkSize = chunkSize,
-            RegionSize = regionSize,
-            Seed = seed,
-        };
+        CompoundTag tag = new();
+        tag.Set("chunk_size", ChunkSize);
+        tag.Set("region_size", RegionSize);
+        tag.Set("seed", Seed);
+        return tag;
     }
 
-    public readonly void Write(BinaryWriter writer)
+    public static WorldOptions Read(BinaryTag tag)
     {
-        writer.Write(ChunkSize);
-        writer.Write(RegionSize);
-        writer.Write(Seed);
+        CompoundTag compoundTag = tag.To<CompoundTag>();
+
+        return new()
+        {
+            ChunkSize = Vector3Int.Read(compoundTag.GetTag("chunk_size", DefaultValues.ChunkSize.Write)),
+            RegionSize = Vector3Int.Read(compoundTag.GetTag("region_size", DefaultValues.RegionSize.Write)),
+            Seed = compoundTag.Get<int>("seed"),
+        };
     }
 }

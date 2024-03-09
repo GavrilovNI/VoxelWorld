@@ -3,13 +3,12 @@ using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Sandcube.Inventories;
 
 //TODO: implement IBinaryStaticReadable when T.Read will be whitelisted
 //TODO: implement INbtStaticReadable when T.Read will be whitelisted
-public abstract class StackInventory<T> : IndexedCapability<T>, INbtWritable, IBinaryWritable, ISaveStatusMarkable where T : class, IStack<T>
+public abstract class StackInventory<T> : IndexedCapability<T>, INbtWritable, ISaveStatusMarkable where T : class, IStack<T>
 {
     private readonly Dictionary<int, T> _stacks = new();
     public readonly int SlotLimit;
@@ -114,14 +113,6 @@ public abstract class StackInventory<T> : IndexedCapability<T>, INbtWritable, IB
             slots.Add(Get(i));
 
         return tag;
-    }
-
-    public virtual void Write(BinaryWriter writer)
-    {
-        writer.Write(SlotLimit);
-        writer.Write(Size);
-        for(int i = 0; i < Size; ++i)
-            writer.Write(Get(i));
     }
 
     public void MarkSaved(IReadOnlySaveMarker saveMarker)

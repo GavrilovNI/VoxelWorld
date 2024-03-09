@@ -115,41 +115,6 @@ public class ChunksCreator : Component
         });
     }
 
-    public virtual bool TryLoadChunk(Chunk chunk)
-    {
-        if(WorldFileSystem is null)
-            return false;
-
-        if(WorldOptions.ChunkSize != chunk.Size)
-            throw new InvalidOperationException($"Can't load chunk, saved chunk size {WorldOptions.ChunkSize} is not equal to chunk size {chunk.Size}");
-
-        var regionPosition = (1f * chunk.Position / WorldOptions.RegionSize).Floor();
-        var localChunkPosition = chunk.Position - regionPosition * WorldOptions.RegionSize;
-
-        var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
-        var regionSaveHelper = new RegionSaveHelper(WorldOptions);
-        var blocksRegions = worldSaveHelper.GetRegions(WorldSaveHelper.BlocksRegionName);
-
-        if(blocksRegions.HasRegionFile(regionPosition))
-        {
-            using(var regionReadStream = blocksRegions.OpenRegionRead(regionPosition))
-            {
-                using var reader = new BinaryReader(regionReadStream);
-                if(regionSaveHelper.ReadOnlyOneChunk(reader, localChunkPosition))
-                {
-                    var blocksData = regionSaveHelper.GetChunkData(localChunkPosition)!;
-                    if(blocksData is not null)
-                    {
-                        chunk.Load(blocksData);
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
     public virtual async Task<bool> TryLoadChunkBlocks(Chunk chunk)
     {
         if(WorldFileSystem is null)

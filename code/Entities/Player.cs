@@ -1,7 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Inventories;
 using Sandcube.Inventories.Players;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
@@ -10,7 +9,6 @@ using Sandcube.Menus;
 using Sandcube.Players;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Sandcube.Entities;
 
@@ -74,23 +72,5 @@ public class Player : Entity
         IsCreative = compoundTag.Get<bool>("creative");
         ReachDistance = compoundTag.Get<float>("reach_distance");
         Inventory.Read(compoundTag.GetTag("invetory"));
-    }
-
-    protected override void WriteAdditional(BinaryWriter writer)
-    {
-        base.WriteAdditional(writer);
-        writer.Write(Eye.Transform.Local);
-        writer.Write(IsCreative);
-        writer.Write(ReachDistance);
-        Inventory.Write(writer);
-    }
-
-    protected override void ReadAdditional(BinaryReader reader)
-    {
-        base.ReadAdditional(reader);
-        Eye.Transform.Local = reader.ReadTransform();
-        IsCreative = reader.ReadBoolean();
-        ReachDistance = reader.ReadSingle();
-        Inventory.Read(reader);
     }
 }

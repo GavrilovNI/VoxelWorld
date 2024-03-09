@@ -2,9 +2,7 @@
 using Sandcube.Blocks.States;
 using Sandcube.Blocks.States.Properties;
 using Sandcube.Interactions;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Meshing;
 using Sandcube.Meshing.Blocks;
 using Sandcube.Mods.Base;
@@ -14,13 +12,12 @@ using Sandcube.Registries;
 using Sandcube.Worlds;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sandcube.Blocks;
 
-public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Block>, IBinaryWritable, IBinaryStaticReadable<Block>
+public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Block>
 {
     public ModedId Id { get; }
     public readonly BlockState DefaultBlockState;
@@ -95,17 +92,6 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public static Block Read(BinaryTag tag)
     {
         var id = ModedId.Read(tag);
-        var block = SandcubeGame.Instance!.Registries.GetRegistry<Block>().Get(id);
-        if(block is null)
-            throw new KeyNotFoundException($"Block with id {id} not found");
-        return block;
-    }
-
-    public void Write(BinaryWriter writer) => writer.Write<ModedId>(Id);
-
-    public static Block Read(BinaryReader reader)
-    {
-        var id = ModedId.Read(reader);
         var block = SandcubeGame.Instance!.Registries.GetRegistry<Block>().Get(id);
         if(block is null)
             throw new KeyNotFoundException($"Block with id {id} not found");

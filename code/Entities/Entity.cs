@@ -1,13 +1,11 @@
 ﻿using Sandbox;
 using Sandcube.Entities.Types;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
 using Sandcube.Registries;
 using Sandcube.Worlds;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace Sandcube.Entities;
@@ -99,9 +97,6 @@ public abstract class Entity : Component
     protected virtual BinaryTag WriteAdditional() => new CompoundTag();
     protected virtual void ReadAdditional(BinaryTag tag) { }
 
-    protected virtual void WriteAdditional(BinaryWriter writer) { }
-    protected virtual void ReadAdditional(BinaryReader reader) { }
-
     public BinaryTag Write()
     {
         CompoundTag tag = new();
@@ -156,27 +151,5 @@ public abstract class Entity : Component
 
         entity.Enabled = enable;
         return true;
-    }
-
-    public void Write(BinaryWriter writer)
-    {
-        writer.Write<ModedId>(TypeId);
-        writer.Write(Transform.Local);
-        WriteAdditional(writer);
-    }
-
-    public static Entity Read(BinaryReader reader, IWorldAccessor? world, bool enable = true)
-    {
-        var typeId = ModedId.Read(reader);
-
-        var entityType = SandcubeGame.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
-        EntitySpawnConfig spawnConfig = new(world, false);
-        var entity = entityType.CreateEntity(spawnConfig);
-
-        entity.Transform.Local = reader.ReadTransform();
-        entity.ReadAdditional(reader);
-
-        entity.Enabled = enable;
-        return entity;
     }
 }

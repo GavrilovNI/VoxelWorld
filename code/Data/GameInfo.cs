@@ -1,30 +1,30 @@
-﻿using Sandcube.IO;
-using System.IO;
+﻿using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 
 namespace Sandcube.Data;
 
-public readonly record struct GameInfo : IBinaryWritable, IBinaryStaticReadable<GameInfo>
+public readonly record struct GameInfo : INbtWritable, INbtStaticReadable<GameInfo>
 {
     public required string Name { get; init; }
     public required int Seed { get; init; }
 
 
-
-    public static GameInfo Read(BinaryReader reader)
+    public BinaryTag Write()
     {
-        var name = reader.ReadString();
-        var seed = reader.ReadInt32();
-
-        return new GameInfo()
-        {
-            Name = name,
-            Seed = seed,
-        };
+        CompoundTag tag = new();
+        tag.Set("name", Name);
+        tag.Set("seed", Seed);
+        return tag;
     }
 
-    public readonly void Write(BinaryWriter writer)
+    public static GameInfo Read(BinaryTag tag)
     {
-        writer.Write(Name);
-        writer.Write(Seed);
+        CompoundTag compoundTag = tag.To<CompoundTag>();
+
+        return new()
+        {
+            Name = compoundTag.Get<string>("name", "game name was lost"),
+            Seed = compoundTag.Get<int>("seed"),
+        };
     }
 }

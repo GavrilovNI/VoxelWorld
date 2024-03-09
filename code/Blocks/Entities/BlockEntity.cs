@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandbox.ModelEditor.Nodes;
 using Sandcube.Blocks.States;
 using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
@@ -12,7 +11,7 @@ using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
-public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, INbtStaticReadable<BlockEntity>, IBinaryWritable
+public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, INbtStaticReadable<BlockEntity>
 {
     public BlockEntityType Type { get; }
     public Vector3Int Position { get; private set; }
@@ -83,28 +82,6 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, I
         MarkSavedInternal(saveMarker);
     }
     protected virtual void MarkSavedInternal(IReadOnlySaveMarker saveMarker) { }
-
-    public void Load(BinaryReader reader)
-    {
-        Read(reader);
-        MarkSaved(SaveMarker.Saved);
-    }
-
-    public void Save(BinaryWriter writer, IReadOnlySaveMarker saveMarker)
-    {
-        Write(writer);
-        MarkSaved(saveMarker);
-    }
-
-    public void Write(BinaryWriter writer)
-    {
-        WriteAdditional(writer);
-    }
-
-    protected void Read(BinaryReader reader)
-    {
-        ReadAdditional(reader);
-    }
 
 
     protected virtual BinaryTag WriteAdditional() => new CompoundTag();

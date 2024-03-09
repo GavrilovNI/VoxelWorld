@@ -1,15 +1,12 @@
-﻿using Sandcube.IO;
-using Sandcube.IO.NamedBinaryTags;
+﻿using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Values;
-using Sandcube.Registries;
 using System;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Sandcube;
 
-public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>, IBinaryWritable, IBinaryStaticReadable<Id>
+public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
 {
     private const char Underscore = '_';
     public static readonly Regex Regex = new("^[a-z_]+$");
@@ -59,10 +56,6 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>, IBinary
     {
         return Name;
     }
-
-    public void Write(BinaryWriter writer) => writer.Write(Name);
-    public static Id Read(BinaryReader reader) => (Id)reader.ReadString();
-
 
     public BinaryTag Write() => new StringTag(Name);
     public static Id Read(BinaryTag tag) => new(tag.To<StringTag>().Value);

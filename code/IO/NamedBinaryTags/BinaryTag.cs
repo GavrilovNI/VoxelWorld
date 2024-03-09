@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Sandcube.IO.NamedBinaryTags;
 
-public abstract class BinaryTag : IBinaryWritable, IBinaryStaticReadable<BinaryTag>
+public abstract class BinaryTag
 {
     public static readonly EmptyTag Empty = new();
 

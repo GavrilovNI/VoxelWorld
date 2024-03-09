@@ -69,24 +69,6 @@ public class PlayerSpawner : Component
         return player;
     }
 
-    protected bool TryLoadPlayer(ulong steamId, out Player player, bool enable = true)
-    {
-        PlayerSaveHelper saveHelper = new(SandcubeGame.Instance!.CurrentGameSaveHelper!.PlayersFileSystem);
-
-        if(!saveHelper.HasPlayerFile(steamId))
-        {
-            player = null!;
-            return false;
-        }
-
-        using var stream = saveHelper.OpenPlayerRead(steamId);
-        using var reader = new BinaryReader(stream);
-
-        var playerData = PlayerData.Read(reader);
-        player = playerData.CreatePlayer(enable);
-        return true;
-    }
-
     protected bool TryLoadPlayer2(ulong steamId, out Player player, bool enable = true)
     {
         var fileSystem = SandcubeGame.Instance!.CurrentGameSaveHelper!.PlayersFileSystem;

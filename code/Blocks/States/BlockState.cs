@@ -4,15 +4,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using Sandcube.IO;
-using System.IO;
 using Sandcube.Mods.Base;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 
 namespace Sandcube.Blocks.States;
 
-public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>, IBinaryWritable, IBinaryStaticReadable<BlockState>
+public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
 {
     public static BlockState Air => SandcubeBaseMod.Instance!.Blocks.Air.DefaultBlockState;
 
@@ -114,39 +112,6 @@ public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>, I
             blockState = blockState.With(property, propertyValue);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
-        return blockState;
-    }
-
-
-    public void Write(BinaryWriter writer)
-    {
-        writer.Write(Block);
-
-        writer.Write(_properties.Count);
-        foreach(var (property, propertyValue) in _properties)
-        {
-            writer.Write<Id>(property.Id);
-            writer.Write(propertyValue);
-        }
-    }
-
-    public static BlockState Read(BinaryReader reader)
-    {
-        var block = Block.Read(reader);
-
-        var blockState = block.DefaultBlockState;
-
-        var propertiesCount = reader.ReadInt32();
-        for(int i = 0; i < propertiesCount; ++i)
-        {
-            var id = Id.Read(reader);
-            var property = blockState._properties.First(kv => kv.Key.Id == id).Key;
-            var propertyValue = CustomEnum.Read(reader, property.PropertyType);
-#pragma warning disable CS0618 // Type or member is obsolete
-            blockState = blockState.With(property, propertyValue);
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
-
         return blockState;
     }
 

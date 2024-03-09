@@ -109,7 +109,7 @@ public class RegionalSaveHelper
 
         using var regionWriteStream = OpenRegionWrite(regionPosition);
         using var writer = new BinaryWriter(regionWriteStream);
-        writer.Write(regionTag);
+        regionTag.Write(writer);
     }
 
     public virtual void SaveChunks(IReadOnlyDictionary<Vector3Int, BinaryTag> chunkedTags)

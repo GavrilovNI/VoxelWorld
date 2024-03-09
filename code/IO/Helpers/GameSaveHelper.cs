@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Data;
+using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Registries;
 using System.Collections.Generic;
 using System.IO;
@@ -36,9 +37,10 @@ public class GameSaveHelper
 
     public virtual void SaveGameInfo(in GameInfo gameInfo)
     {
+        var tag = gameInfo.Write();
         using var stream = GameFileSystem.OpenWrite("game.info");
         using var writer = new BinaryWriter(stream);
-        writer.Write(gameInfo);
+        tag.Write(writer);
     }
 
     public virtual bool TryReadGameInfo(out GameInfo gameInfo)
@@ -51,7 +53,8 @@ public class GameSaveHelper
 
         using var stream = GameFileSystem.OpenRead("game.info");
         using var reader = new BinaryReader(stream);
-        gameInfo = GameInfo.Read(reader);
+        var tag = BinaryTag.Read(reader);
+        gameInfo = GameInfo.Read(tag);
         return true;
     }
 

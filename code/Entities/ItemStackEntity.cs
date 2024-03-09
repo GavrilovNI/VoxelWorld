@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
@@ -7,7 +6,6 @@ using Sandcube.Items;
 using Sandcube.Meshing;
 using Sandcube.Mods.Base;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Sandcube.Entities;
 
@@ -80,21 +78,6 @@ public class ItemStackEntity : Entity
         Collider.Scale = itemModel.Bounds.Size;
         Collider.Enabled = true;
         Rigidbody.Enabled = true;
-    }
-
-    protected override void WriteAdditional(BinaryWriter writer)
-    {
-        base.WriteAdditional(writer);
-        writer.Write(ItemStack ?? Inventories.Stack<Item>.Empty);
-        writer.Write(Rigidbody.Velocity);
-    }
-
-    protected override void ReadAdditional(BinaryReader reader)
-    {
-        base.ReadAdditional(reader);
-        var itemStack = Inventories.ItemStack.Read(reader);
-        SetItemStack(itemStack);
-        Rigidbody.Velocity = reader.ReadVector3();
     }
 
     protected override BinaryTag WriteAdditional()

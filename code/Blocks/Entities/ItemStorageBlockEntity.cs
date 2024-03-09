@@ -6,7 +6,6 @@ using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Menus;
 using Sandcube.Mth;
 using System;
-using System.IO;
 
 namespace Sandcube.Blocks.Entities;
 
@@ -39,16 +38,6 @@ public class ItemStorageBlockEntity : BlockEntity
             EntitySpawnConfig spawnConfig = new(new Transform(boxDropPosition.RandomPointInside), World);
             ItemStackEntity.Create(itemStack, spawnConfig);
         }
-    }
-
-    protected override void WriteAdditional(BinaryWriter writer)
-    {
-        writer.Write(Capability);
-    }
-
-    protected override void ReadAdditional(BinaryReader reader)
-    {
-        Capability = ItemStackInventory.Read(reader);
     }
 
     protected override BinaryTag WriteAdditional()

@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth.Enums;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,7 +13,7 @@ using System.Text.Json.Serialization;
 namespace Sandcube.Mth;
 
 [JsonConverter(typeof(Vector2IntJsonConverter))]
-public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWritable, INbtStaticReadable<Vector2Int>, IBinaryWritable, IBinaryStaticReadable<Vector2Int>
+public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWritable, INbtStaticReadable<Vector2Int>
 {
     public static readonly Vector2Int One = new(1);
     public static readonly Vector2Int Zero = new(0);
@@ -148,15 +146,6 @@ public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWr
     public readonly Vector2Int SubtractDirection(Vector2Int direction, int strength = 1) => this - direction * Dot(direction) * strength;
     public readonly Vector2 SubtractDirection(Vector2 direction, float strength = 1f) => this - direction * Dot(direction) * strength;
     public readonly Vector2 SnapToGrid(float gridSize, bool sx = true, bool sy = true) => ((Vector2)this).SnapToGrid(gridSize, sx, sy);
-
-
-    public readonly void Write(BinaryWriter writer)
-    {
-        writer.Write(x);
-        writer.Write(y);
-    }
-
-    public static Vector2Int Read(BinaryReader reader) => new(reader.ReadInt32(), reader.ReadInt32());
 
     public readonly int GetAxis(Axis axis)
     {

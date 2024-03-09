@@ -1,14 +1,12 @@
 ﻿using Sandbox;
 using Sandcube.Interactions;
 using Sandcube.Inventories;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Meshing;
 using Sandcube.Mth;
 using Sandcube.Registries;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Sandcube.Items;
@@ -43,22 +41,6 @@ public class Item : IRegisterable, IStackValue<Item>
     public static Item Read(BinaryTag tag)
     {
         var id = ModedId.Read(tag);
-
-        var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().Get(id);
-        if(item is null)
-            throw new KeyNotFoundException($"Item with id {id} not found");
-
-        return item;
-    }
-
-    public void Write(BinaryWriter writer)
-    {
-        writer.Write<ModedId>(Id);
-    }
-
-    public static Item Read(BinaryReader reader)
-    {
-        var id = ModedId.Read(reader);
 
         var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().Get(id);
         if(item is null)

@@ -400,30 +400,6 @@ public class World : Component, IWorldAccessor, ITickable
         });
     }
 
-    public WorldData Save(IReadOnlySaveMarker saveMarker)
-    {
-        ThreadSafe.AssertIsMainThread();
-
-        WorldData result = new();
-
-        var chunksToSave = Chunks.Where(pair => !pair.Value.IsSaved)
-                .Select(pair => pair.Value);
-
-        result.Chunks = chunksToSave.ToDictionary(c => c.Position, c => c.Save(saveMarker));
-
-        foreach(var entity in Entities.Where(e => e is not Player))
-        {
-            var entityPosition = entity.Transform.Position;
-            var chunkPosition = GetChunkPosition(entityPosition);
-            result.Entities.GetOrCreate(chunkPosition).AddData(entity);
-        }
-
-        foreach(var player in Entities.Where(e => e is Player).Cast<Player>())
-            result.Players[player.SteamId] = new PlayerData(player);
-
-        return result;
-    }
-
     public virtual BinaryTag SaveChunkBlocks(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
     {
         if(!Chunks.TryGet(chunkPosition, out var chunk))

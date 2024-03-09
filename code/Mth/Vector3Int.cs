@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandcube.IO;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth.Enums;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,7 +13,7 @@ using System.Text.Json.Serialization;
 namespace Sandcube.Mth;
 
 [JsonConverter(typeof(Vector3IntJsonConverter))]
-public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, INbtWritable, INbtStaticReadable<Vector3Int>, IBinaryWritable, IBinaryStaticReadable<Vector3Int>
+public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, INbtWritable, INbtStaticReadable<Vector3Int>
 {
     public static readonly Vector3Int One = new(1);
     public static readonly Vector3Int Zero = new(0);
@@ -232,17 +230,6 @@ public struct Vector3Int : IEquatable<Vector3Int>, IParsable<Vector3Int>, INbtWr
 
     public static Vector3 SmoothDamp(Vector3 current, Vector3 target, ref Vector3 velocity, float smoothTime, float deltaTime) =>
         Vector3.SmoothDamp(current, target, ref velocity, smoothTime, deltaTime);
-
-
-    public readonly void Write(BinaryWriter writer)
-    {
-        writer.Write(x);
-        writer.Write(y);
-        writer.Write(z);
-    }
-
-    public static Vector3Int Read(BinaryReader reader) => new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-
 
     public static float GetAngle(Vector3 v1, Vector3 v2) => Vector3.GetAngle(v1, v2);
     public readonly float Angle(Vector3 v2) => GetAngle(this, v2);

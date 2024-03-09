@@ -238,30 +238,6 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    // thread safe
-    public virtual Task Load(IReadOnlyBlocksData data, BlockSetFlags flags = BlockSetFlags.UpdateModel)
-    {
-        if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
-            throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
-
-        lock(Blocks)
-        {
-            throw new NotImplementedException();
-            //Blocks.Load(data, Size.GetPositionsFromZero(false), flags.HasFlag(BlockSetFlags.MarkDirty));
-            return GetModelUpdateTask(flags);
-        }
-    }
-
-    public virtual BlocksData Save(IReadOnlySaveMarker saveMarker)
-    {
-        lock(Blocks)
-        {
-            throw new NotImplementedException();
-            MarkSaved(saveMarker);
-            //return Blocks.ToBlocksData();
-        }
-    }
-
     protected void MarkSaved(IReadOnlySaveMarker saveMarker)
     {
         lock(Blocks)
