@@ -1,12 +1,14 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 using Sandcube.IO;
+using Sandcube.IO.NamedBinaryTags;
+using Sandcube.IO.NamedBinaryTags.Collections;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Sandcube.Mth;
-public struct RectInt : IEquatable<RectInt>, IBinaryWritable, IBinaryStaticReadable<RectInt>
+public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<RectInt>, IBinaryWritable, IBinaryStaticReadable<RectInt>
 {
     public int Left;
 
@@ -421,5 +423,19 @@ public struct RectInt : IEquatable<RectInt>, IBinaryWritable, IBinaryStaticReada
         int right = reader.ReadInt32();
         int bottom = reader.ReadInt32();
         return FromSides(left, top, right, bottom);
+    }
+
+    public readonly BinaryTag Write() => new ListTag
+    {
+        Left,
+        Top,
+        Width,
+        Height
+    };
+
+    public static RectInt Read(BinaryTag tag)
+    {
+        var listTag = tag.To<ListTag>();
+        return new(listTag.Get<int>(0), listTag.Get<int>(1), listTag.Get<int>(2), listTag.Get<int>(3));
     }
 }
