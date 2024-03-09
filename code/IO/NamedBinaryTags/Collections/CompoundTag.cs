@@ -35,9 +35,10 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
         long startPosition = writer.BaseStream.Position;
         writer.Write(0L); // writing size
 
-        writer.Write(_tags.Count);
+        var tagsToWrite = _tags.Where(t => !t.Value.IsDataEmpty);
+        writer.Write(tagsToWrite.Count());
 
-        foreach(var (key, tag) in _tags)
+        foreach(var (key, tag) in tagsToWrite)
         {
             palette.WriteId(writer, key);
             tag.WriteTagOnly(writer, palette);
