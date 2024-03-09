@@ -44,24 +44,6 @@ public abstract class BinaryTag
         return ReadTagData(reader, type);
     }
 
-    public static T Read<T>(BinaryReader reader) where T : BinaryTag, new() =>
-        Read(reader, () => new T());
-
-    public static T Read<T>(BinaryReader reader, T defaultValue) where T : BinaryTag =>
-        Read(reader, () => defaultValue);
-
-    public static T Read<T>(BinaryReader reader, Func<T> defaultValueGetter) where T : BinaryTag
-    {
-        var type = ReadType(reader);
-        var tag = CreateTag(type);
-        if(tag is T t)
-        {
-            t.ReadData(reader);
-            return t;
-        }
-        return defaultValueGetter();
-    }
-
     public static BinaryTag ReadTagData(BinaryReader reader, BinaryTagType type)
     {
         var tag = CreateTag(type);

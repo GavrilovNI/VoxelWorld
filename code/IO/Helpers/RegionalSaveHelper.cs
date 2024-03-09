@@ -39,7 +39,7 @@ public class RegionalSaveHelper
         using(var regionReadStream = OpenRegionRead(regionPosition))
         {
             using var reader = new BinaryReader(regionReadStream);
-            regionTag = BinaryTag.Read<ListTag>(reader);
+            regionTag = BinaryTag.Read(reader).To<ListTag>();
         }
 
         var firstChunkPosition = regionPosition * RegionSize;
@@ -92,7 +92,7 @@ public class RegionalSaveHelper
         {
             using var regionReadStream = OpenRegionRead(regionPosition);
             using var reader = new BinaryReader(regionReadStream);
-            regionTag = BinaryTag.Read<ListTag>(reader);
+            regionTag = BinaryTag.Read(reader).To<ListTag>();
         }
         else
         {
