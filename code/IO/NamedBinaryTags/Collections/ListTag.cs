@@ -91,9 +91,6 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 
     public override void WriteData(BinaryWriter writer, NbtStringPalette? palette)
     {
-        long startPosition = writer.BaseStream.Position;
-        writer.Write(0L); // writing size
-
         writer.Write(Count);
         if(Count > 0)
         {
@@ -101,20 +98,11 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
             for(int i = 0; i < Count; ++i)
                 GetTagOrCreate(i).WriteData(writer, palette);
         }
-
-        long size = writer.BaseStream.Position - startPosition - 8;
-        using(StreamPositionRememberer rememberer = writer)
-        {
-            writer.BaseStream.Position = startPosition;
-            writer.Write(size);
-        }
     }
 
     public override void ReadData(BinaryReader reader, NbtStringPalette? palette)
     {
         Clear();
-
-        long _ = reader.ReadInt64(); // reading size
 
         Count = reader.ReadInt32();
         if(Count == 0)
@@ -130,12 +118,6 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
 
         if(TagsType == BinaryTagType.Empty)
             Clear();
-    }
-
-    public static void Skip(BinaryReader reader)
-    {
-        long size = reader.ReadInt64();
-        reader.BaseStream.Position += size;
     }
 
     public IEnumerator<BinaryTag> GetEnumerator()

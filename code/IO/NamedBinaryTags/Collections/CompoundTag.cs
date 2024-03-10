@@ -32,9 +32,6 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
 
     public override void WriteData(BinaryWriter writer, NbtStringPalette? palette)
     {
-        long startPosition = writer.BaseStream.Position;
-        writer.Write(0L); // writing size
-
         var tagsToWrite = _tags.Where(t => !t.Value.IsDataEmpty);
         writer.Write(tagsToWrite.Count());
 
@@ -43,19 +40,11 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
             palette.WriteId(writer, key);
             tag.WriteTagOnly(writer, palette);
         }
-
-        long size = writer.BaseStream.Position - startPosition - 8;
-        using(StreamPositionRememberer rememberer = writer)
-        {
-            writer.BaseStream.Position = startPosition;
-            writer.Write(size);
-        }
     }
 
     public override void ReadData(BinaryReader reader, NbtStringPalette? palette)
     {
         Clear();
-        long _ = reader.ReadInt64(); // reading size
 
         int tagsCount = reader.ReadInt32();
 
@@ -65,12 +54,6 @@ public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValu
             var tag = BinaryTag.ReadTagOnly(reader, palette);
             Set(key, tag);
         }
-    }
-
-    public static void Skip(BinaryReader reader)
-    {
-        long size = reader.ReadInt64();
-        reader.BaseStream.Position += size;
     }
 
     public IEnumerator<KeyValuePair<string, BinaryTag>> GetEnumerator() => _tags.GetEnumerator();
