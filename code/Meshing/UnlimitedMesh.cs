@@ -129,7 +129,9 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         var vertices = _vertices[partIndex];
         var indices = _indices[partIndex];
 
-        mesh.CreateVertexBuffer(vertices.Count, Vertex.Layout, new List<V>(vertices));
+        var layout = vertices.Count == 0 ? Array.Empty<VertexAttribute>() : vertices[0].Layout;
+
+        mesh.CreateVertexBuffer(vertices.Count, layout, new List<V>(vertices));
         mesh.CreateIndexBuffer(indices.Count, indices.Select(i => (int)i).ToList());
 
         if(!calculateBounds)

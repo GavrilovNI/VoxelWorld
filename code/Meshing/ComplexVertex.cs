@@ -16,14 +16,14 @@ public struct ComplexVertex : IVertex
 
     public Vector4 Tangent;
 
-    public static readonly VertexAttribute[] Layout = new VertexAttribute[6]
+    public readonly VertexAttribute[] Layout => new VertexAttribute[6]
     {
-            new VertexAttribute(VertexAttributeType.Position, VertexAttributeFormat.Float32),
-            new VertexAttribute(VertexAttributeType.Color, VertexAttributeFormat.UInt8, 4),
-            new VertexAttribute(VertexAttributeType.Normal, VertexAttributeFormat.Float32),
-            new VertexAttribute(VertexAttributeType.TexCoord, VertexAttributeFormat.Float32, 4),
-            new VertexAttribute(VertexAttributeType.TexCoord, VertexAttributeFormat.Float32, 4, 1),
-            new VertexAttribute(VertexAttributeType.Tangent, VertexAttributeFormat.Float32, 4)
+        new(VertexAttributeType.Position, VertexAttributeFormat.Float32),
+        new(VertexAttributeType.Color, VertexAttributeFormat.UInt8, 4),
+        new(VertexAttributeType.Normal, VertexAttributeFormat.Float32),
+        new(VertexAttributeType.TexCoord, VertexAttributeFormat.Float32, 4),
+        new(VertexAttributeType.TexCoord, VertexAttributeFormat.Float32, 4, 1),
+        new(VertexAttributeType.Tangent, VertexAttributeFormat.Float32, 4)
     };
 
     public ComplexVertex(Vector3 position)

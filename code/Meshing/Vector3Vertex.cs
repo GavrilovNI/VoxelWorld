@@ -1,4 +1,4 @@
-﻿
+﻿using Sandbox;
 
 namespace Sandcube.Meshing;
 
@@ -6,9 +6,13 @@ public struct Vector3Vertex : IVertex
 {
     public Vector3 Position;
 
+    public readonly VertexAttribute[] Layout => new VertexAttribute[1]
+    {
+        new(VertexAttributeType.Position, VertexAttributeFormat.Float32)
+    };
+
     public Vector3Vertex()
     {
-
     }
 
     public Vector3Vertex(Vector3 position)
