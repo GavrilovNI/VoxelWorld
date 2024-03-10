@@ -1,4 +1,5 @@
-﻿using Sandcube.IO.NamedBinaryTags;
+﻿using Sandcube.Data;
+using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Values;
 using System;
 using System.Text;
@@ -51,6 +52,8 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
 
     public static implicit operator string(Id id) => id.ToString();
     public static explicit operator Id(string id) => new(id);
+
+    public override int GetHashCode() => Name.GetConsistentHashCode();
 
     public readonly override string ToString()
     {
