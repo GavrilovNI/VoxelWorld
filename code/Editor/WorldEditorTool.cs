@@ -1,5 +1,6 @@
 ﻿using Editor;
 using Sandbox;
+using Sandcube.IO.Worlds;
 using Sandcube.Worlds;
 using System.Collections.Generic;
 
@@ -62,13 +63,26 @@ public class WorldEditorToolWindow : WidgetWindow
                 FixedWidth = buttonHeight,
                 Background = Color.Transparent,
                 IconSize = buttonHeight
-            }
+            },
+            new("save", SaveWorld)
+            {
+                ToolTip = "Save",
+                FixedHeight = buttonHeight,
+                FixedWidth = buttonHeight,
+                Background = Color.Transparent,
+                IconSize = buttonHeight
+            },
         };
     }
 
     protected void ClearWorld()
     {
         World?.Clear();
+    }
+
+    protected void SaveWorld()
+    {
+        World?.Components?.Get<WorldSaver>()?.Save();
     }
 
     public void ToolUpdate()
