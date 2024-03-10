@@ -13,11 +13,11 @@ public class GameLoader : Component
 
     public virtual async Task<bool> TryLoadGame(BaseFileSystem gameFileSystem)
     {
-        var sceneLoaded = GameManager.ActiveScene.LoadFromFile(GameScene);
+        var sceneLoaded = Game.ActiveScene.LoadFromFile(GameScene);
         if(!sceneLoaded)
             return false;
 
-        var scene = GameManager.ActiveScene;
+        var scene = Game.ActiveScene;
         var game = scene.Components.Get<SandcubeGame>(FindMode.EverythingInDescendants);
         if(game is null)
             throw new InvalidOperationException($"Loaded scene doesn't contain {nameof(SandcubeGame)}");
@@ -28,7 +28,7 @@ public class GameLoader : Component
         if(!gameLoaded)
         {
             Log.Warning($"Couldn't load game from {gameFileSystem.GetFullPath("/")}");
-            GameManager.ActiveScene.LoadFromFile(ErrorScene);
+            Game.ActiveScene.LoadFromFile(ErrorScene);
         }
 
         return gameLoaded;
