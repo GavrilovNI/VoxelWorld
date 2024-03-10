@@ -2,6 +2,7 @@
 using Sandcube.Data;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Registries;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -51,11 +52,20 @@ public class GameSaveHelper
             return false;
         }
 
-        using var stream = GameFileSystem.OpenRead("game.info");
-        using var reader = new BinaryReader(stream);
-        var tag = BinaryTag.Read(reader);
-        gameInfo = GameInfo.Read(tag);
-        return true;
+        try
+        {
+            using var stream = GameFileSystem.OpenRead("game.info");
+            using var reader = new BinaryReader(stream);
+            var tag = BinaryTag.Read(reader);
+            gameInfo = GameInfo.Read(tag);
+            return true;
+        }
+        catch(Exception ex)
+        {
+            Log.Warning($"Couldn't load game info {GameFileSystem.GetPathFromData("/")} ex: {ex}");
+            gameInfo = default;
+            return false;
+        }
     }
 
     public static bool TryConvertWorldDirectoryToId(string worldDirectory, out ModedId id) =>
