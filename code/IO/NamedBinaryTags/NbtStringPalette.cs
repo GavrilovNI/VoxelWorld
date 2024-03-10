@@ -1,10 +1,9 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
+﻿using Sandcube.IO.NamedBinaryTags.Collections;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Sandcube.IO;
+namespace Sandcube.IO.NamedBinaryTags;
 
 public class NbtStringPalette : INbtWritable, INbtStaticReadable<NbtStringPalette>
 {
