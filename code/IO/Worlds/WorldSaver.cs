@@ -49,6 +49,7 @@ public class WorldSaver : Component, ISaver
 
                 SavePlayers(GameSaveHelper.PlayersFileSystem, unsavedPlayers);
 
+                saveMarker.MarkSaved();
                 taskCompletionSource.SetResult(true);
             }
             catch
