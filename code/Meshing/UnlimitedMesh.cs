@@ -123,7 +123,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
     }
 
     // call only in main thread
-    public void CreateBuffersFor(Mesh mesh, int partIndex)
+    public void CreateBuffersFor(Mesh mesh, int partIndex, bool calculateBounds = true)
     {
         ThreadSafe.AssertIsMainThread();
         var vertices = _vertices[partIndex];
@@ -131,6 +131,9 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
         mesh.CreateVertexBuffer(vertices.Count, Vertex.Layout, new List<V>(vertices));
         mesh.CreateIndexBuffer(indices.Count, indices.Select(i => (int)i).ToList());
+
+        if(!calculateBounds)
+            return;
 
         BBox bounds = vertices.Count == 0 ? new() : BBox.FromPositionAndSize(vertices[0].GetPosition());
         foreach(var vertex in vertices)
@@ -435,7 +438,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         }
 
         // call only in main thread
-        public virtual void CreateBuffersFor(Mesh mesh, int partIndex) => Mesh.CreateBuffersFor(mesh, partIndex);
+        public virtual void CreateBuffersFor(Mesh mesh, int partIndex, bool calculateBounds = true) => Mesh.CreateBuffersFor(mesh, partIndex, calculateBounds);
 
         // thread safe if builder is not being changed during execution
         public virtual void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => Mesh.AddAsCollisionMesh(builder, offset);
