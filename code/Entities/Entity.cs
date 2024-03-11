@@ -13,6 +13,7 @@ namespace Sandcube.Entities;
 public abstract class Entity : Component
 {
     public event Action<Entity, Vector3, Vector3>? Moved;
+    public event Action<Entity>? Destroyed;
 
     public bool Initialized { get; private set; }
     public ModedId TypeId { get; private set; }
@@ -44,6 +45,9 @@ public abstract class Entity : Component
 
     public bool ChangeWorld(IWorldAccessor? newWorld)
     {
+        if(!IsValid && newWorld is not null)
+            throw new InvalidOperationException($"{this} is not valid, can't change world (remove is possible)");
+
         if(object.ReferenceEquals(World, newWorld))
             return false;
 
@@ -93,6 +97,7 @@ public abstract class Entity : Component
             ChangeWorld(null);
 
         OnDestroyInternal();
+        Destroyed?.Invoke(this);
     }
 
     protected virtual void OnDestroyInternal()
