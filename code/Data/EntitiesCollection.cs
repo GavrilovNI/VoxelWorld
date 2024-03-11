@@ -121,6 +121,8 @@ public class EntitiesCollection : IEnumerable<Entity>
     {
         lock(Locker)
         {
+            if(!Entities.TryGetValue(entity.Id, out var realEntity) || realEntity != entity)
+                return;
             UpdateEntityChunk(entity);
         }
     }
