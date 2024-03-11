@@ -133,6 +133,7 @@ public class World : Component, IWorldAccessor, ITickable
         entity.Moved += OnEntityMoved;
         Entities.Add(entity);
         entity.GameObject.Parent = EntitiesParent;
+        RememberEntityChunkPosition(entity);
     }
 
     public bool RemoveEntity(Guid id) => Entities.TryGet(id, out var entity) && RemoveEntity(entity);
@@ -148,6 +149,11 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     protected virtual void OnEntityMoved(Entity entity, Vector3 oldPosition, Vector3 newPosition)
+    {
+        RememberEntityChunkPosition(entity);
+    }
+
+    protected virtual void RememberEntityChunkPosition(Entity entity)
     {
         var chunkPosition = GetChunkPosition(entity.Transform.Position);
         lock(VisitedChunksByEntities)
