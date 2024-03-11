@@ -86,7 +86,6 @@ public class EntitiesCollection : IEnumerable<Entity>
         lock(Locker)
         {
             entity.Moved -= OnEntityMoved;
-            entity.Destroyed -= OnEntityDestroyed;
             Entities.Remove(entity.Id);
             ChunkedEntities.RemoveValue(entity);
             return true;
@@ -103,7 +102,6 @@ public class EntitiesCollection : IEnumerable<Entity>
             Entities.Add(entity.Id, entity);
             UpdateEntityChunk(entity);
             entity.Moved += OnEntityMoved;
-            entity.Destroyed += OnEntityDestroyed;
         }
     }
 
@@ -131,8 +129,6 @@ public class EntitiesCollection : IEnumerable<Entity>
             UpdateEntityChunk(entity);
         }
     }
-
-    protected virtual void OnEntityDestroyed(Entity entity) => Remove(entity);
 
     public virtual IReadOnlySet<Entity> GetEntitiesInChunk(Vector3Int chunkPosition)
     {
