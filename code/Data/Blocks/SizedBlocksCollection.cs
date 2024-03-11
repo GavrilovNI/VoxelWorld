@@ -15,6 +15,9 @@ namespace Sandcube.Data.Blocks;
 
 public class SizedBlocksCollection : ISaveStatusMarkable
 {
+    public event Action<BlockEntity>? BlockEntityAdded;
+    public event Action<BlockEntity>? BlockEntityRemoved;
+
     private readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
     private readonly Dictionary<Vector3Int, BlockEntity> _blockEntities = new();
 
@@ -151,10 +154,9 @@ public class SizedBlocksCollection : ISaveStatusMarkable
         if(object.ReferenceEquals(GetBlockEntity(position), blockEntity))
             return;
 
-        if(AutoDestroyOldBlockEntities && _blockEntities.TryGetValue(position, out var oldBlockEntity))
-            oldBlockEntity.OnDestroyed();
-
+        RemoveBlockEntity(position, false);
         _blockEntities[position] = blockEntity;
+        BlockEntityAdded?.Invoke(blockEntity);
 
         if(markDirty)
             MarkNotSaved();
@@ -170,6 +172,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
             if(AutoDestroyOldBlockEntities)
                 blockEntity!.OnDestroyed();
             _blockEntities.Remove(position);
+            BlockEntityRemoved?.Invoke(blockEntity!);
 
             if(markDirty)
                 MarkNotSaved();
@@ -190,6 +193,8 @@ public class SizedBlocksCollection : ISaveStatusMarkable
         }
 
         _blockStates.Clear();
+        foreach(var (_, blockEntity) in BlockEntities)
+            BlockEntityRemoved?.Invoke(blockEntity);
         _blockEntities.Clear();
 
         if(markDirty)
