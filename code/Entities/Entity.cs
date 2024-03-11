@@ -12,9 +12,13 @@ namespace Sandcube.Entities;
 
 public abstract class Entity : Component
 {
+    public event Action<Entity, Vector3, Vector3>? Moved;
+
     public bool Initialized { get; private set; }
     public ModedId TypeId { get; private set; }
     public IWorldAccessor? World { get; private set; }
+
+    private Transform _oldTransform;
 
     public Guid Id => GameObject.Id;
 
@@ -34,6 +38,8 @@ public abstract class Entity : Component
 
         TypeId = typeId;
         ChangeWorld(world);
+
+        _oldTransform = Transform.World;
     }
 
     public bool ChangeWorld(IWorldAccessor? newWorld)
@@ -90,6 +96,20 @@ public abstract class Entity : Component
     }
 
     protected virtual void OnDestroyInternal()
+    {
+
+    }
+
+    protected sealed override void OnUpdate()
+    {
+        if(Transform.Position != _oldTransform.Position)
+            Moved?.Invoke(this, _oldTransform.Position, Transform.Position);
+        _oldTransform = Transform.World;
+
+        OnUpdateInternal();
+    }
+
+    protected virtual void OnUpdateInternal()
     {
 
     }
