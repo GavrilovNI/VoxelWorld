@@ -246,6 +246,8 @@ public class World : Component, IWorldAccessor, ITickable
         {
             if(!chunk.IsValid)
                 return;
+            if(!Chunks.TryGet(chunk.Position, out var realChunk) || realChunk != chunk)
+                return;
 
             chunk.GameObject.Enabled = true;
             chunk.Destroyed += OnChunkDestroyed;
@@ -262,7 +264,12 @@ public class World : Component, IWorldAccessor, ITickable
     // Thread safe
     protected virtual void OnChunkUnloaded(Chunk chunk)
     {
-        _ = Task.RunInMainThreadAsync(() => ChunkUnloaded?.Invoke(chunk.Position));
+        _ = Task.RunInMainThreadAsync(() => {
+            if(Chunks.HasLoaded(chunk.Position))
+                return;
+
+            ChunkUnloaded?.Invoke(chunk.Position);
+        });
     }
 
     protected virtual void OnChunkDestroyed(Chunk chunk)
