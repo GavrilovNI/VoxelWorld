@@ -146,6 +146,15 @@ public class RegionalSaveHelper
     public virtual bool HasRegionFile(in Vector3Int regionPosition) =>
         FileSystem.FileExists(GetRegionFilePath(regionPosition));
 
+    public virtual bool DeleteRegionFile(in Vector3Int regionPosition)
+    {
+        var filePath = GetRegionFilePath(regionPosition);
+        bool hadFile = FileSystem.FileExists(filePath);
+        if(hadFile)
+            FileSystem.DeleteFile(filePath);
+        return hadFile;
+    }
+
     public virtual Dictionary<Vector3Int, string> GetAllRegionFiles()
     {
         var posibleFiles = FileSystem.FindFile("/", $"*.*.*.{FilesExtension}", false);
