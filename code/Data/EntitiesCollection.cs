@@ -25,11 +25,16 @@ public class EntitiesCollection : IEnumerable<Entity>
 
     public object GetLocker() => Locker;
 
-    public void Clear()
+    public void Clear(bool destroyEntities = true)
     {
         lock(Locker)
         {
-            Entities.Clear();
+            foreach(var entity in Entities.Values.ToList())
+            {
+                Remove(entity);
+                if(destroyEntities)
+                    entity.Destroy();
+            }
         }
     }
 

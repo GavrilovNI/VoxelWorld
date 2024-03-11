@@ -411,7 +411,11 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual void Clear() => Chunks.Clear();
+    public virtual void Clear()
+    {
+        Entities.Clear();
+        Chunks.Clear();
+    }
 
     protected virtual void DestroyChunk(Chunk? chunk)
     {
