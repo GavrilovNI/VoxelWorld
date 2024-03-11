@@ -43,6 +43,19 @@ public class MultiValueBiDictionary<TKey, TValue> : IReadOnlyMultiValueBiDiction
         GetOrCreateValues(key).Add(value);
     }
 
+    public void Set(TKey key, IEnumerable<TValue> values)
+    {
+        RemoveAllValues(key);
+        var valuesSet = GetOrCreateValues(key);
+        foreach(var value in values)
+        {
+            valuesSet.Add(value);
+            _valueToKey[value] = key;
+        }
+        if(valuesSet.Count == 0)
+            _keyToValues.Remove(key);
+    }
+
     public TKey GetKey(TValue value)
     {
         if(_valueToKey.TryGetValue(value, out var key))
