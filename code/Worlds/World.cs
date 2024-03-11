@@ -83,6 +83,7 @@ public class World : Component, IWorldAccessor, ITickable
         Entities = new(this);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
+        Entities.EntityMovedToAnotherChunk += OnEntityMovedToAnotherChunk;
 
         EntitiesParent ??= GameObject;
     }
@@ -102,6 +103,7 @@ public class World : Component, IWorldAccessor, ITickable
         Clear();
         Chunks.ChunkLoaded -= OnChunkLoaded;
         Chunks.ChunkUnloaded -= OnChunkUnloaded;
+        Entities.EntityMovedToAnotherChunk -= OnEntityMovedToAnotherChunk;
         Chunks.Dispose();
     }
 
@@ -131,7 +133,6 @@ public class World : Component, IWorldAccessor, ITickable
         if(!object.ReferenceEquals(this, entity.World))
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
-        entity.Moved += OnEntityMoved;
         Entities.Add(entity);
         entity.GameObject.Parent = EntitiesParent;
         RememberEntityChunkPosition(entity);
@@ -139,17 +140,9 @@ public class World : Component, IWorldAccessor, ITickable
 
     public bool RemoveEntity(Guid id) => Entities.TryGet(id, out var entity) && RemoveEntity(entity);
 
-    public bool RemoveEntity(Entity entity)
-    {
-        if(!Entities.Remove(entity))
-            return false;
+    public bool RemoveEntity(Entity entity) => Entities.Remove(entity);
 
-        entity.Moved -= OnEntityMoved;
-
-        return true;
-    }
-
-    protected virtual void OnEntityMoved(Entity entity, Vector3 oldPosition, Vector3 newPosition)
+    protected virtual void OnEntityMovedToAnotherChunk(Entity entity, Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
     {
         RememberEntityChunkPosition(entity);
     }

@@ -10,6 +10,8 @@ namespace Sandcube.Data;
 
 public class EntitiesCollection : IEnumerable<Entity>
 {
+    public event Action<Entity, Vector3Int, Vector3Int>? EntityMovedToAnotherChunk;
+
     protected readonly object Locker = new();
 
     protected readonly IWorldProvider World;
@@ -110,13 +112,15 @@ public class EntitiesCollection : IEnumerable<Entity>
         lock(Locker)
         {
             var chunkPosition = World.GetChunkPosition(entity.Transform.Position);
-            if(ChunkedEntities.TryGetKey(entity, out var oldChunkPosition))
-            {
-                if(chunkPosition == oldChunkPosition)
-                    return;
-            }
+
+            bool moved = ChunkedEntities.TryGetKey(entity, out var oldChunkPosition);
+            if(moved && chunkPosition == oldChunkPosition)
+                return;
 
             ChunkedEntities[entity] = chunkPosition;
+
+            if(moved)
+                EntityMovedToAnotherChunk?.Invoke(entity, oldChunkPosition, chunkPosition);
         }
     }
 
