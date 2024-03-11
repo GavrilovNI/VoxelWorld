@@ -87,7 +87,7 @@ public class EntitiesCollection : IEnumerable<Entity>
     {
         lock(Locker)
         {
-            entity.Moved -= OnEntityMoved;
+            entity.MovedToAnotherChunk -= OnEntityMovedToAnotherChunk;
             Entities.Remove(entity.Id);
             ChunkedEntities.RemoveValue(entity);
             return true;
@@ -102,8 +102,17 @@ public class EntitiesCollection : IEnumerable<Entity>
                 throw new InvalidOperationException($"{nameof(Entity)} with id {entity.Id} was already presented");
 
             Entities.Add(entity.Id, entity);
-            UpdateEntityChunk(entity);
-            entity.Moved += OnEntityMoved;
+            SetupEntityChunk(entity);
+            entity.MovedToAnotherChunk += OnEntityMovedToAnotherChunk;
+        }
+    }
+
+    protected virtual void SetupEntityChunk(Entity entity)
+    {
+        lock(Locker)
+        {
+            var chunkPosition = World.GetChunkPosition(entity.Transform.Position);
+            ChunkedEntities[entity] = chunkPosition;
         }
     }
 
@@ -111,27 +120,16 @@ public class EntitiesCollection : IEnumerable<Entity>
     {
         lock(Locker)
         {
+            var oldChunkPosition = ChunkedEntities[entity];
             var chunkPosition = World.GetChunkPosition(entity.Transform.Position);
-
-            bool moved = ChunkedEntities.TryGetKey(entity, out var oldChunkPosition);
-            if(moved && chunkPosition == oldChunkPosition)
-                return;
-
             ChunkedEntities[entity] = chunkPosition;
-
-            if(moved)
-                EntityMovedToAnotherChunk?.Invoke(entity, oldChunkPosition, chunkPosition);
         }
     }
 
-    protected virtual void OnEntityMoved(Entity entity, Vector3 oldPosition, Vector3 newPosition)
+    protected virtual void OnEntityMovedToAnotherChunk(Entity entity, Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
     {
-        lock(Locker)
-        {
-            if(!Entities.TryGetValue(entity.Id, out var realEntity) || realEntity != entity)
-                return;
-            UpdateEntityChunk(entity);
-        }
+        UpdateEntityChunk(entity);
+        EntityMovedToAnotherChunk?.Invoke(entity, oldChunkPosition, newChunkPosition);
     }
 
     public virtual IReadOnlySet<Entity> GetEntitiesInChunk(Vector3Int chunkPosition)
