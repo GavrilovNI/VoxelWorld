@@ -87,6 +87,12 @@ public class RegionalSaveHelper
 
     public void SaveRegion(Vector3Int regionPosition, IReadOnlyDictionary<Vector3Int, BinaryTag> localChunkedTags)
     {
+        if(localChunkedTags.All(x => x.Value.IsDataEmpty))
+        {
+            DeleteRegionFile(regionPosition);
+            return;
+        }
+
         ListTag regionTag;
         if(HasRegionFile(regionPosition))
         {
