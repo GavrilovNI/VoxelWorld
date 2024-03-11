@@ -31,7 +31,7 @@ public class WorldSaver : Component, ISaver
         SaveMarker saveMarker = SaveMarker.NewNotSaved;
 
         var unsavedChunks = World.SaveBlocksInUnsavedChunks(saveMarker);
-        var unsavedEntities = World.SaveAllEntities(e => e is not Player);
+        var unsavedEntities = World.SaveAllEntitiesNotPlayers(saveMarker);
         var unsavedPlayers = World.SaveAllPlayers();
 
         TaskCompletionSource<bool> taskCompletionSource = new();

@@ -50,8 +50,7 @@ public class World : Component, IWorldAccessor, ITickable
 
 
     protected ChunksCollection Chunks { get; private set; } = null!;
-
-    protected EntitiesCollection Entities { get; private set; } = new();
+    protected EntitiesCollection Entities { get; private set; } = null!;
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -419,30 +418,25 @@ public class World : Component, IWorldAccessor, ITickable
         return result;
     }
 
-    public virtual ListTag SaveEntitiesInChunk(Vector3Int chunkPosition, Func<Entity, bool> predicate)
+    public virtual ListTag SaveEntitiesNotPlayersInChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
     {
         ListTag result = new();
 
-        foreach(var entity in Entities.Where(predicate))
-        {
-            var entityChunkPosition = GetChunkPosition(entity.Transform.Position);
-            if(chunkPosition != entityChunkPosition)
-                continue;
-
+        var allEntities = Entities.GetEntitiesInChunk(chunkPosition).Where(e => e is not Player);
+        foreach(var entity in allEntities)
             result.Add(entity.Write());
-        }
 
         return result;
     }
-    public virtual ListTag SaveEntitiesInChunk(Vector3Int chunkPosition) => SaveEntitiesInChunk(chunkPosition, e => true);
 
-    public virtual Dictionary<Vector3Int, ListTag> SaveAllEntities(Func<Entity, bool> predicate)
+    public virtual Dictionary<Vector3Int, ListTag> SaveAllEntitiesNotPlayers(IReadOnlySaveMarker saveMarker)
     {
         Dictionary<Vector3Int, ListTag> result = new();
 
-        foreach(var entity in Entities.Where(predicate))
+        foreach(var (chunkPosition, entity) in Entities.GetChunkedEntities())
         {
-            var chunkPosition = GetChunkPosition(entity.Transform.Position);
+            if(entity is Player)
+                continue;
 
             if(!result.TryGetValue(chunkPosition, out var tag))
             {
@@ -455,7 +449,6 @@ public class World : Component, IWorldAccessor, ITickable
 
         return result;
     }
-    public virtual Dictionary<Vector3Int, ListTag> SaveAllEntities() => SaveAllEntities(e => true);
 
     public virtual Dictionary<ulong, BinaryTag> SaveAllPlayers()
     {
