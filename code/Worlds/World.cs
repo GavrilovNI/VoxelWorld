@@ -102,6 +102,7 @@ public class World : Component, IWorldAccessor, ITickable
         Clear();
         Chunks.ChunkLoaded -= OnChunkLoaded;
         Chunks.ChunkUnloaded -= OnChunkUnloaded;
+        Chunks.Dispose();
     }
 
     protected override void OnUpdate()
