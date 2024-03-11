@@ -51,6 +51,7 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected ChunksCollection Chunks { get; private set; } = null!;
     protected EntitiesCollection Entities { get; private set; } = null!;
+    protected HashSet<Vector3Int> VisitedChunksByEntities { get; private set; } = new();
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -79,6 +80,7 @@ public class World : Component, IWorldAccessor, ITickable
     protected override void OnAwake()
     {
         Chunks = new(DestroyChunk, Vector3Int.XYZIterationComparer);
+        Entities = new(this);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
 
@@ -128,13 +130,31 @@ public class World : Component, IWorldAccessor, ITickable
         if(!object.ReferenceEquals(this, entity.World))
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
+        entity.Moved += OnEntityMoved;
         Entities.Add(entity);
         entity.GameObject.Parent = EntitiesParent;
     }
 
-    public bool RemoveEntity(Guid id) => Entities.Remove(id);
+    public bool RemoveEntity(Guid id) => Entities.TryGet(id, out var entity) && RemoveEntity(entity);
 
-    public bool RemoveEntity(Entity entity) => Entities.Remove(entity);
+    public bool RemoveEntity(Entity entity)
+    {
+        if(!Entities.Remove(entity))
+            return false;
+
+        entity.Moved -= OnEntityMoved;
+
+        return true;
+    }
+
+    protected virtual void OnEntityMoved(Entity entity, Vector3 oldPosition, Vector3 newPosition)
+    {
+        var chunkPosition = GetChunkPosition(entity.Transform.Position);
+        lock(VisitedChunksByEntities)
+        {
+            VisitedChunksByEntities.Add(chunkPosition);
+        }
+    }
 
     // Thread safe
     public virtual bool IsChunkInLimits(Vector3Int chunkPosition)
@@ -445,6 +465,16 @@ public class World : Component, IWorldAccessor, ITickable
             }
 
             tag.Add(entity.Write());
+        }
+
+        lock(VisitedChunksByEntities)
+        {
+            HashSet<Vector3Int> savedEmptiedChunks = new();
+            foreach(var emptiedChunk in VisitedChunksByEntities)
+            {
+                if(result.TryAdd(emptiedChunk, new ListTag()))
+                    savedEmptiedChunks.Add(emptiedChunk);
+            }
         }
 
         return result;
