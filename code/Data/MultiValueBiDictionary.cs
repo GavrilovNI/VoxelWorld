@@ -26,6 +26,12 @@ public class MultiValueBiDictionary<TKey, TValue> : IReadOnlyMultiValueBiDiction
             Add(key, value);
     }
 
+    public void Clear()
+    {
+        _keyToValues.Clear();
+        _valueToKey.Clear();
+    }
+
     public int GetValuesCount(TKey key) => TryGetValues(key, out var values) ? values.Count : 0;
 
     public void Add(TKey key, TValue value)
