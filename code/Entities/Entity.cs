@@ -3,6 +3,7 @@ using Sandcube.Entities.Types;
 using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
+using Sandcube.Mth;
 using Sandcube.Registries;
 using Sandcube.Worlds;
 using System;
@@ -12,12 +13,15 @@ namespace Sandcube.Entities;
 
 public abstract class Entity : Component
 {
+    public event Action<Entity, IWorldAccessor?, IWorldAccessor?>? ChangedWorld;
     public event Action<Entity, Vector3, Vector3>? Moved;
+    public event Action<Entity, Vector3Int, Vector3Int>? MovedToAnotherChunk;
     public event Action<Entity>? Destroyed;
 
     public bool Initialized { get; private set; }
     public ModedId TypeId { get; private set; }
     public IWorldAccessor? World { get; private set; }
+    public Vector3Int ChunkPosition { get; private set; }
 
     private Transform _oldTransform;
 
@@ -55,7 +59,15 @@ public abstract class Entity : Component
         World = newWorld;
         oldWorld?.RemoveEntity(this);
         World?.AddEntity(this);
+        ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+        OnChangedWorld(oldWorld, World);
+        ChangedWorld?.Invoke(this, oldWorld, World);
         return true;
+    }
+
+    protected virtual void OnChangedWorld(IWorldAccessor? oldWorld, IWorldAccessor? newWorld)
+    {
+
     }
 
     protected sealed override void OnStart()
@@ -108,10 +120,35 @@ public abstract class Entity : Component
     protected sealed override void OnUpdate()
     {
         if(Transform.Position != _oldTransform.Position)
+        {
+            OnMoved(_oldTransform.Position, Transform.Position);
             Moved?.Invoke(this, _oldTransform.Position, Transform.Position);
+        }
         _oldTransform = Transform.World;
 
+        if(World is not null)
+        {
+            var newChunkPosition = World.GetChunkPosition(Transform.Position);
+            if(newChunkPosition != ChunkPosition)
+            {
+                var oldChunkPosition = ChunkPosition;
+                ChunkPosition = newChunkPosition;
+                OnMovedToAnotherChunk(oldChunkPosition, newChunkPosition);
+                MovedToAnotherChunk?.Invoke(this, oldChunkPosition, newChunkPosition);
+            }
+        }
+
         OnUpdateInternal();
+    }
+
+    protected virtual void OnMoved(Vector3 oldPosition, Vector3 newPosition)
+    {
+
+    }
+
+    protected virtual void OnMovedToAnotherChunk(Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
+    {
+
     }
 
     protected virtual void OnUpdateInternal()
