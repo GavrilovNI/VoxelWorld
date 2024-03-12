@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Sandcube.Data;
 
-public class ChunksCollection : IEnumerable<KeyValuePair<Vector3Int, Chunk>>, IDisposable
+public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 {
     public event Action<Chunk>? ChunkLoaded = null;
     public event Action<Chunk>? ChunkUnloaded = null;
@@ -124,14 +124,14 @@ public class ChunksCollection : IEnumerable<KeyValuePair<Vector3Int, Chunk>>, ID
         return false;
     }
 
-    public IEnumerator<KeyValuePair<Vector3Int, Chunk>> GetEnumerator()
+    public IEnumerator<Chunk> GetEnumerator()
     {
         lock(Locker)
         {
-            foreach(var pair in Chunks)
+            foreach(var (_, chunk) in Chunks)
             {
-                if(pair.Value.IsValid)
-                    yield return pair;
+                if(chunk.IsValid)
+                    yield return chunk;
             }
         }
     }

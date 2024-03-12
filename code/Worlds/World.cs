@@ -122,7 +122,7 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected virtual void TickInternal()
     {
-        foreach(var (_, chunk) in Chunks)
+        foreach(var chunk in Chunks)
             chunk.Tick();
     }
 
@@ -405,11 +405,9 @@ public class World : Component, IWorldAccessor, ITickable
 
     public virtual Dictionary<Vector3Int, (BinaryTag Blocks, ListTag Entities)> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
     {
-        var unsavedChunks = Chunks.Where(c => !c.Value.IsSaved);
-
         Dictionary<Vector3Int, (BinaryTag blocks, ListTag entities)> result = new();
-        foreach(var (chunkPosition, chunk) in unsavedChunks)
-            result[chunkPosition] = chunk.Save(saveMarker);
+        foreach(var chunk in Chunks.Where(c => !c.IsSaved))
+            result[chunk.Position] = chunk.Save(saveMarker);
 
         return result;
     }
