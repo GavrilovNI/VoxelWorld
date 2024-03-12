@@ -26,11 +26,13 @@ public class ChunkEntitiesLoader : ChunkCreationStage, IWorldInitializationListe
         WorldOptions = world.WorldOptions;
     }
 
-    public override Task<bool> TryProcess(Chunk chunk, CancellationToken cancellationToken)
+    public override async Task<bool> TryProcess(Chunk chunk, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if(!TryLoadEntities(chunk.Position, out var entities))
-            return Task.FromResult(false);
+
+        var entities = await TryLoadEntities(chunk.Position);
+        if(entities is null)
+            return false;
 
         cancellationToken.ThrowIfCancellationRequested();
         foreach(var entity in entities)
@@ -42,27 +44,29 @@ public class ChunkEntitiesLoader : ChunkCreationStage, IWorldInitializationListe
             }
             chunk.AddEntity(entity);
         }
-        return Task.FromResult(true);
+        return true;
     }
 
-    public virtual bool TryLoadEntities(Vector3Int chunkPosition, out List<Entity> entities, bool enableEntities = true)
+    public virtual async Task<List<Entity>?> TryLoadEntities(Vector3Int chunkPosition, bool enableEntities = true)
     {
         ThreadSafe.AssertIsMainThread();
 
         WorldSaveHelper worldSaveHelper = new(WorldFileSystem);
         RegionalSaveHelper saveHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.EntitiesRegionName, WorldOptions.RegionSize);
 
-        if(!saveHelper.TryLoadOneChunkOnly(chunkPosition, out var entitiesTags))
+        var entitiesTags = await Task.RunInThreadAsync(() =>
         {
-            entities = null!;
-            return false;
-        }
+            bool loaded = saveHelper.TryLoadOneChunkOnly(chunkPosition, out var entitiesTags);
+            return loaded ? entitiesTags : null;
+        });
 
-        entities = LoadEntitiesFromTag(entitiesTags, World, enableEntities);
-        return true;
+        if(entitiesTags is null)
+            return null;
+
+        return CreateEntitiesFromTag(entitiesTags, World, enableEntities);
     }
 
-    protected virtual List<Entity> LoadEntitiesFromTag(BinaryTag tag, IWorldAccessor world, bool enableEntities = true)
+    protected virtual List<Entity> CreateEntitiesFromTag(BinaryTag tag, IWorldAccessor world, bool enableEntities = true)
     {
         ThreadSafe.AssertIsMainThread();
 
