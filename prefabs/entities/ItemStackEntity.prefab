@@ -4,6 +4,7 @@
     "Name": "itemstackentity",
     "Tags": "entity,no_entity_collide",
     "Enabled": true,
+    "NetworkMode": 2,
     "Components": [
       {
         "__type": "ItemStackEntity",
@@ -37,8 +38,7 @@
         "Center": "25,25,25",
         "IsTrigger": false,
         "Scale": "50,50,50",
-        "Static": false,
-        "Surface": null
+        "Static": false
       }
     ],
     "Children": []

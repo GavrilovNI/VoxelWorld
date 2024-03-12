@@ -1,25 +1,26 @@
 {
   "RootObject": {
-    "Id": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+    "Id": "59266930-f233-4b11-bf24-0fb7ce8bfc9f",
     "Name": "player",
     "Tags": "entity,player,no_entity_collide",
     "Enabled": true,
+    "NetworkMode": 2,
     "Components": [
       {
         "__type": "Player",
         "Eye": {
           "_type": "gameobject",
-          "go": "cb1532d7-742c-4cb4-a079-e276a068cf05"
+          "go": "f73c03b6-9edf-45f4-a73c-5c5178efbdae"
         },
         "Inventory": {
           "_type": "component",
-          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+          "go": "59266930-f233-4b11-bf24-0fb7ce8bfc9f",
           "component_type": "PlayerInventory"
         },
         "IsCreative": true,
         "ItemDropper": {
           "_type": "component",
-          "go": "1c41b226-51ca-456c-8748-69a3fe5278b1",
+          "go": "7da6e62f-23b5-4cbc-86ad-f58f143bbdc5",
           "component_type": "ItemDropper"
         },
         "ReachDistance": 196.84999,
@@ -32,12 +33,12 @@
         "__type": "WorldInteractor",
         "Eye": {
           "_type": "gameobject",
-          "go": "3b77530d-a4ba-476e-8846-065637dcce4d"
+          "go": "b653d0b7-a841-4d96-96e4-cbd3d60d6fe7"
         },
         "InteractionTag": "interactable",
         "Player": {
           "_type": "component",
-          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+          "go": "59266930-f233-4b11-bf24-0fb7ce8bfc9f",
           "component_type": "Player"
         }
       },
@@ -47,8 +48,7 @@
           "Mins": "-2,-2,-2",
           "Maxs": "2,2,2"
         },
-        "TimeBetweenSuccessfulAttempts": 1,
-        "World": null
+        "TimeBetweenSuccessfulAttempts": 1
       },
       {
         "__type": "CharacterController",
@@ -62,11 +62,9 @@
       },
       {
         "__type": "SandcubePlayerController",
-        "AnimationHelper": null,
-        "Body": null,
         "CameraParent": {
           "_type": "gameobject",
-          "go": "cb1532d7-742c-4cb4-a079-e276a068cf05"
+          "go": "f73c03b6-9edf-45f4-a73c-5c5178efbdae"
         },
         "Gravity": "0,0,800"
       },
@@ -74,28 +72,30 @@
         "__type": "HotbarController",
         "Inventory": {
           "_type": "component",
-          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+          "go": "59266930-f233-4b11-bf24-0fb7ce8bfc9f",
           "component_type": "PlayerInventory"
         },
         "Player": {
           "_type": "component",
-          "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+          "go": "59266930-f233-4b11-bf24-0fb7ce8bfc9f",
           "component_type": "Player"
         }
       }
     ],
     "Children": [
       {
-        "Id": "cb1532d7-742c-4cb4-a079-e276a068cf05",
+        "Id": "f73c03b6-9edf-45f4-a73c-5c5178efbdae",
         "Name": "EyePos",
         "Position": "0,0,64",
         "Enabled": true,
+        "NetworkMode": 2,
         "Children": [
           {
-            "Id": "3b77530d-a4ba-476e-8846-065637dcce4d",
+            "Id": "b653d0b7-a841-4d96-96e4-cbd3d60d6fe7",
             "Name": "Camera",
             "Position": "8,0,0",
             "Enabled": true,
+            "NetworkMode": 2,
             "Components": [
               {
                 "__type": "CameraComponent",
@@ -149,10 +149,11 @@
             ]
           },
           {
-            "Id": "1c41b226-51ca-456c-8748-69a3fe5278b1",
+            "Id": "7da6e62f-23b5-4cbc-86ad-f58f143bbdc5",
             "Name": "ItemDropper",
             "Position": "13,0,0",
             "Enabled": true,
+            "NetworkMode": 2,
             "Components": [
               {
                 "__type": "ItemDropper",
@@ -163,16 +164,17 @@
         ]
       },
       {
-        "Id": "66c3141a-54dd-4806-a89d-16800af7794c",
+        "Id": "a5ca8ce4-81c9-4518-a4bf-abb5e6a7baf2",
         "Name": "ItemPickuper",
         "Tags": "trigger",
         "Enabled": true,
+        "NetworkMode": 2,
         "Components": [
           {
             "__type": "ItemPickuper",
             "Inventory": {
               "_type": "component",
-              "go": "17af7d7e-a1e0-416e-b650-02f4e27ebd8a",
+              "go": "59266930-f233-4b11-bf24-0fb7ce8bfc9f",
               "component_type": "PlayerInventory"
             },
             "PickupTime": 1
@@ -182,8 +184,7 @@
             "Center": "0,0,32",
             "IsTrigger": true,
             "Radius": 64,
-            "Static": false,
-            "Surface": null
+            "Static": false
           }
         ]
       }

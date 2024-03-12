@@ -5,6 +5,7 @@
       "Id": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
       "Name": "Sandcube Game",
       "Enabled": true,
+      "NetworkMode": 2,
       "Components": [
         {
           "__type": "SandcubeGame",
@@ -57,12 +58,14 @@
         {
           "Id": "d0115228-fd86-4a80-84c5-febd9bcadaa5",
           "Name": "Mods",
-          "Enabled": true
+          "Enabled": true,
+          "NetworkMode": 2
         },
         {
           "Id": "108bed85-7734-41fa-bcd2-22f15b326b19",
           "Name": "Worlds",
-          "Enabled": true
+          "Enabled": true,
+          "NetworkMode": 2
         }
       ]
     },
@@ -70,6 +73,7 @@
       "Id": "d5bee545-75ce-40fe-a099-4e741326dbd2",
       "Name": "Screen UI",
       "Enabled": true,
+      "NetworkMode": 2,
       "Components": [
         {
           "__type": "ScreenPanel",
@@ -83,8 +87,7 @@
           "EscapeScreen": {
             "_type": "gameobject",
             "go": "5070d320-0590-4a21-a5de-cd3007668697"
-          },
-          "Player": null
+          }
         }
       ],
       "Children": [
@@ -92,10 +95,10 @@
           "Id": "db5119fc-9118-4da7-9cea-58f77011921d",
           "Name": "Hotbar",
           "Enabled": true,
+          "NetworkMode": 2,
           "Components": [
             {
-              "__type": "HotbarUI",
-              "PlayerInventory": null
+              "__type": "HotbarUI"
             }
           ]
         },
@@ -103,6 +106,7 @@
           "Id": "5070d320-0590-4a21-a5de-cd3007668697",
           "Name": "EscapeScreen",
           "Enabled": true,
+          "NetworkMode": 2,
           "Components": [
             {
               "__type": "EscapeScreen"
@@ -113,6 +117,7 @@
           "Id": "b78083ea-7296-41cc-a8d9-bbc586956a98",
           "Name": "Crosshair",
           "Enabled": true,
+          "NetworkMode": 2,
           "Components": [
             {
               "__type": "CrosshairUI"
@@ -125,6 +130,7 @@
       "Id": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
       "Name": "BlockPhotoMaker",
       "Enabled": true,
+      "NetworkMode": 2,
       "Components": [
         {
           "__type": "BlockPhotoMaker",
@@ -153,6 +159,7 @@
           "Rotation": "0.2808902,0.1163481,-0.880145,0.3645665",
           "Tags": "maincamera",
           "Enabled": true,
+          "NetworkMode": 2,
           "Components": [
             {
               "__type": "CameraComponent",
@@ -177,6 +184,7 @@
           "Name": "World",
           "Tags": "photomaker,invisible",
           "Enabled": true,
+          "NetworkMode": 2,
           "Components": [
             {
               "__type": "World",
@@ -185,8 +193,6 @@
                 "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
                 "component_type": "ChunksCreator"
               },
-              "EntitiesCreator": null,
-              "EntitiesParent": null,
               "IsService": true,
               "Limits": {
                 "Mins": "-50000,-50000,-256",
@@ -205,8 +211,6 @@
                 "_type": "gameobject",
                 "prefab": "prefabs/visualonlychunk.prefab"
               },
-              "ChunksParent": null,
-              "Generator": null,
               "World": {
                 "_type": "component",
                 "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
@@ -221,6 +225,7 @@
           "Rotation": "0.4304596,0.4304594,-0.5609856,0.5609852",
           "Tags": "photomaker,invisible,light_directional,light",
           "Enabled": true,
+          "NetworkMode": 2,
           "Components": [
             {
               "__type": "DirectionalLight",
@@ -239,11 +244,11 @@
       "Name": "BlocksTextureMapShower",
       "Position": "0,0,800",
       "Tags": "invisible",
+      "NetworkMode": 2,
       "Components": [
         {
           "__type": "ModelRenderer",
           "BodyGroups": 18446744073709551615,
-          "MaterialGroup": null,
           "MaterialOverride": "materials/voxels_translucent.vmat",
           "Model": "models/dev/plane.vmdl",
           "RenderType": "On",
@@ -283,6 +288,6 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-03T22:14:36.1442797\u002B01:00",
+  "LastSaved": "2024-03-12T01:36:12.1430848\u002B01:00",
   "__references": []
 }

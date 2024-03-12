@@ -1,8 +1,9 @@
 {
   "RootObject": {
-    "Id": "0ce9b082-7ada-49ff-9434-3266627a0047",
+    "Id": "732368bb-866f-4d0d-9095-d00fa949bbe1",
     "Name": "basemod",
     "Enabled": true,
+    "NetworkMode": 2,
     "Components": [
       {
         "__type": "SandcubeBaseMod"
@@ -28,8 +29,7 @@
           "Mins": "-2,-2,-2",
           "Maxs": "2,2,2"
         },
-        "TimeBetweenSuccessfulAttempts": 1,
-        "World": null
+        "TimeBetweenSuccessfulAttempts": 1
       }
     ],
     "Children": []

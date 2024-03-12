@@ -1,24 +1,25 @@
 {
   "RootObject": {
-    "Id": "69a60b12-6e22-4380-8267-115809658a6f",
+    "Id": "93333bbb-78ff-49b5-8bb4-177c67143520",
     "Name": "world",
     "Enabled": true,
+    "NetworkMode": 2,
     "Components": [
       {
         "__type": "World",
         "ChunksCreator": {
           "_type": "component",
-          "go": "69a60b12-6e22-4380-8267-115809658a6f",
+          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
           "component_type": "LimitedChunksCreator"
         },
         "EntitiesCreator": {
           "_type": "component",
-          "go": "69a60b12-6e22-4380-8267-115809658a6f",
+          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
           "component_type": "EntitiesCreator"
         },
         "EntitiesParent": {
           "_type": "gameobject",
-          "go": "a6479807-1e62-4bab-81e4-6e1ff4725467"
+          "go": "21ec131b-5823-4e4f-b805-e5011d68558b"
         },
         "IsService": false,
         "Limits": {
@@ -41,17 +42,17 @@
         },
         "ChunksParent": {
           "_type": "gameobject",
-          "go": "450074f8-1203-482a-a738-c6834e3b177c"
+          "go": "674ba7f0-91c9-4e0a-9176-dafef7989a0b"
         },
         "Generator": {
           "_type": "component",
-          "go": "69a60b12-6e22-4380-8267-115809658a6f",
+          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
           "component_type": "WorldGenerator"
         },
         "MaxChunksToCreateAtTime": 5,
         "World": {
           "_type": "component",
-          "go": "69a60b12-6e22-4380-8267-115809658a6f",
+          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
           "component_type": "World"
         }
       },
@@ -60,11 +61,11 @@
         "BreakFromPrefab": true,
         "EntitiesParent": {
           "_type": "gameobject",
-          "go": "a6479807-1e62-4bab-81e4-6e1ff4725467"
+          "go": "21ec131b-5823-4e4f-b805-e5011d68558b"
         },
         "World": {
           "_type": "component",
-          "go": "69a60b12-6e22-4380-8267-115809658a6f",
+          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
           "component_type": "World"
         }
       },
@@ -130,28 +131,31 @@
         "__type": "WorldSaver",
         "World": {
           "_type": "component",
-          "go": "69a60b12-6e22-4380-8267-115809658a6f",
+          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
           "component_type": "World"
         }
       }
     ],
     "Children": [
       {
-        "Id": "450074f8-1203-482a-a738-c6834e3b177c",
+        "Id": "674ba7f0-91c9-4e0a-9176-dafef7989a0b",
         "Name": "Chunks",
-        "Enabled": true
+        "Enabled": true,
+        "NetworkMode": 2
       },
       {
-        "Id": "a6479807-1e62-4bab-81e4-6e1ff4725467",
+        "Id": "21ec131b-5823-4e4f-b805-e5011d68558b",
         "Name": "Entities",
-        "Enabled": true
+        "Enabled": true,
+        "NetworkMode": 2
       },
       {
-        "Id": "608de3ce-f070-4cf1-9977-38464f3d808f",
+        "Id": "5da049d4-2d86-4264-892b-92ebf5a7bd8e",
         "Name": "Sun",
         "Rotation": "-0.1464466,0.3535534,0.3535534,0.8535534",
         "Tags": "light_directional,light",
         "Enabled": true,
+        "NetworkMode": 2,
         "Components": [
           {
             "__type": "DirectionalLight",

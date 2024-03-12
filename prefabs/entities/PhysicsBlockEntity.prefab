@@ -4,6 +4,7 @@
     "Name": "physicsblockentity",
     "Tags": "entity,no_entity_collide",
     "Enabled": true,
+    "NetworkMode": 2,
     "Components": [
       {
         "__type": "PhysicsBlockEntity",
@@ -35,9 +36,7 @@
       {
         "__type": "ModelCollider",
         "IsTrigger": false,
-        "Model": null,
-        "Static": false,
-        "Surface": null
+        "Static": false
       }
     ],
     "Children": []

@@ -5,6 +5,7 @@
       "Id": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
       "Name": "Screen UI",
       "Enabled": true,
+      "NetworkMode": 2,
       "Components": [
         {
           "__type": "ScreenPanel",
@@ -78,6 +79,7 @@
       "Id": "a8e8cdec-7dfd-4b1f-9071-9f08d3018010",
       "Name": "Camera",
       "Enabled": true,
+      "NetworkMode": 2,
       "Components": [
         {
           "__type": "CameraComponent",
@@ -121,6 +123,6 @@
   },
   "Title": "mainmenu",
   "Description": "",
-  "LastSaved": "2024-03-04T21:54:18.7572852\u002B01:00",
+  "LastSaved": "2024-03-12T01:36:10.1533979\u002B01:00",
   "__references": []
 }

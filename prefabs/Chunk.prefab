@@ -1,14 +1,15 @@
 {
   "RootObject": {
-    "Id": "1ce9c04a-c4c3-4e7b-864d-39896d8ed47a",
+    "Id": "4e1f0709-eca4-4789-b7a1-a310d972c21d",
     "Name": "chunk",
     "Tags": "world",
+    "NetworkMode": 2,
     "Components": [
       {
         "__type": "Chunk",
         "ModelUpdater": {
           "_type": "component",
-          "go": "1ce9c04a-c4c3-4e7b-864d-39896d8ed47a",
+          "go": "4e1f0709-eca4-4789-b7a1-a310d972c21d",
           "component_type": "ChunkModelUpdater"
         },
         "Position": "0,0,0",
@@ -18,51 +19,45 @@
         "__type": "ChunkModelUpdater",
         "Chunk": {
           "_type": "component",
-          "go": "1ce9c04a-c4c3-4e7b-864d-39896d8ed47a",
+          "go": "4e1f0709-eca4-4789-b7a1-a310d972c21d",
           "component_type": "Chunk"
         },
         "InteractionCollider": {
           "_type": "component",
-          "go": "4a9dd1e9-6e1d-469d-8a16-973cb6e913b8",
+          "go": "00b74a9c-2694-4e56-8b4c-6d8a9cde1864",
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": true,
-        "OpaqueVoxelsMaterial": null,
         "PhysicsCollider": {
           "_type": "component",
-          "go": "1ce9c04a-c4c3-4e7b-864d-39896d8ed47a",
+          "go": "4e1f0709-eca4-4789-b7a1-a310d972c21d",
           "component_type": "ModelCollider"
         },
         "PhysicsEnabled": true,
-        "RenderingEnabled": true,
-        "TranslucentVoxelsMaterial": null
+        "RenderingEnabled": true
       },
       {
         "__type": "ModelCollider",
         "IsTrigger": false,
-        "Model": null,
-        "Static": true,
-        "Surface": null
+        "Static": true
       }
     ],
     "Children": [
       {
-        "Id": "4a9dd1e9-6e1d-469d-8a16-973cb6e913b8",
+        "Id": "00b74a9c-2694-4e56-8b4c-6d8a9cde1864",
         "Name": "Interactable",
         "Tags": "interactable,no_entity_collide",
         "Enabled": true,
+        "NetworkMode": 2,
         "Components": [
           {
             "__type": "WorldProxy",
-            "DoNotEnableIfWorldIsNotValid": true,
-            "WorldComponent": null
+            "DoNotEnableIfWorldIsNotValid": true
           },
           {
             "__type": "ModelCollider",
             "IsTrigger": false,
-            "Model": null,
-            "Static": true,
-            "Surface": null
+            "Static": true
           }
         ]
       }
