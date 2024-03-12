@@ -32,10 +32,18 @@ public class ChunkLoader : ChunkCreationStage, IWorldInitializationListener
         var regionalSaveHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.BlocksRegionName, WorldOptions.RegionSize);
 
         cancellationToken.ThrowIfCancellationRequested();
-        bool loaded = regionalSaveHelper.TryLoadOneChunkOnly(chunk.Position, out var chunkTag); // TODO: load all region and cache it?
-        cancellationToken.ThrowIfCancellationRequested();
-        if(loaded)
-            await chunk.Load(chunkTag);
+
+        var loaded = await Task.RunInThreadAsync(async () =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            bool loaded = regionalSaveHelper.TryLoadOneChunkOnly(chunk.Position, out var chunkTag);// TODO: load all region and cache it?
+
+            cancellationToken.ThrowIfCancellationRequested();
+            if(loaded)
+                await chunk.Load(chunkTag);
+
+            return loaded;
+        });
 
         return loaded;
     }
