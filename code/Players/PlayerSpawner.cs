@@ -7,6 +7,7 @@ using Sandcube.IO.NamedBinaryTags;
 using Sandcube.Mods.Base;
 using Sandcube.Mth;
 using Sandcube.Worlds;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -43,7 +44,7 @@ public class PlayerSpawner : Component
             if(cancellationToken.IsCancellationRequested)
                 return null;
 
-            await world.LoadChunk(world.GetChunkPosition(spawnBlockPosition + Vector3Int.Down), true);
+            await world.CreateChunk(world.GetChunkPosition(spawnBlockPosition + Vector3Int.Down));
 
             if(cancellationToken.IsCancellationRequested)
                 return null;
@@ -127,7 +128,7 @@ public class PlayerSpawner : Component
                 continue;
 
             var chunkPosition = world.GetChunkPosition(position);
-            await world.LoadChunk(chunkPosition);
+            await world.CreateChunk(chunkPosition);
             var state = world.GetBlockState(position);
 
             if(!state.IsAir() && !blockMeshes.GetPhysics(state)!.Bounds.Size.AlmostEqual(Vector3.Zero))
@@ -140,6 +141,11 @@ public class PlayerSpawner : Component
     {
         Vector3Int centerChunkPosition = world.GetChunkPosition(spawnPosition);
         var positionsToLoad = (range + centerChunkPosition).GetPositions().ToHashSet();
-        return world.LoadChunksSimultaneously(positionsToLoad, true);
+
+        List<Task> tasks = new();
+        foreach(var position in positionsToLoad)
+            tasks.Add(world.CreateChunk(position));
+
+        return Task.WhenAll(tasks);
     }
 }

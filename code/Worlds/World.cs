@@ -11,10 +11,9 @@ using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
-using Sandcube.Players;
 using Sandcube.Registries;
 using Sandcube.Threading;
-using Sandcube.Worlds.Loading;
+using Sandcube.Worlds.Creation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +31,10 @@ public class World : Component, IWorldAccessor, ITickable
     [Property, HideIf(nameof(IsSceneRunning), true)]
     public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 4 };
     
+    [Property] protected GameObject? ChunksParent { get; set; }
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
-    [Property] protected EntitiesCreator? EntitiesCreator { get; set; }
-    [Property] public BBoxInt Limits { get; private set; } = new BBoxInt(new Vector3Int(-50000, -50000, -256), new Vector3Int(50000, 50000, 255));
+    [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3Int(-10000, -10000, -16), new Vector3Int(10000, 10000, 16));
+    [Property] public BBoxInt Limits => LimitsInChunks * WorldOptions.ChunkSize;
     [Property] protected bool TickByItself { get; set; } = true;
     [Property] protected bool IsService { get; set; } = false;
 
@@ -49,9 +49,8 @@ public class World : Component, IWorldAccessor, ITickable
     private bool IsSceneRunning => !Scene.IsEditor;
 
 
+    private readonly Dictionary<ulong, Player> _players = new();
     protected ChunksCollection Chunks { get; private set; } = null!;
-    protected EntitiesCollection Entities { get; private set; } = null!;
-    protected HashSet<Vector3Int> VisitedChunksByEntities { get; private set; } = new();
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -75,16 +74,18 @@ public class World : Component, IWorldAccessor, ITickable
             WorldOptions = defaultWorldOptions;
             saveHelper.SaveWorldOptions(WorldOptions);
         }
+
+        foreach(var listener in Components.GetAll<IWorldInitializationListener>(FindMode.EverythingInSelfAndDescendants))
+            listener.OnWorldInitialized(this);
     }
 
     protected override void OnAwake()
     {
-        Chunks = new(DestroyChunk, Vector3Int.XYZIterationComparer);
-        Entities = new(this);
+        Chunks = new(Vector3Int.XYZIterationComparer);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
-        Entities.EntityMovedToAnotherChunk += OnEntityMovedToAnotherChunk;
 
+        ChunksParent ??= GameObject;
         EntitiesParent ??= GameObject;
     }
 
@@ -103,7 +104,6 @@ public class World : Component, IWorldAccessor, ITickable
         Clear();
         Chunks.ChunkLoaded -= OnChunkLoaded;
         Chunks.ChunkUnloaded -= OnChunkUnloaded;
-        Entities.EntityMovedToAnotherChunk -= OnEntityMovedToAnotherChunk;
         Chunks.Dispose();
     }
 
@@ -126,42 +126,46 @@ public class World : Component, IWorldAccessor, ITickable
             chunk.Tick();
     }
 
-    public void AddEntity(Entity entity)
+    public async Task AddEntity(Entity entity)
     {
         ArgumentNotValidException.ThrowIfNotValid(entity);
 
         if(!object.ReferenceEquals(this, entity.World))
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
-        Entities.Add(entity);
+        var chunk = await GetOrCreateChunk(entity.ChunkPosition);
+        if(!chunk.AddEntity(entity))
+            return;
         entity.GameObject.Parent = EntitiesParent;
-        RememberEntityChunkPosition(entity);
     }
 
-    public bool RemoveEntity(Guid id) => Entities.TryGet(id, out var entity) && RemoveEntity(entity);
+    public bool RemoveEntity(Entity entity) =>
+        Chunks.TryGet(entity.ChunkPosition, out var chunk) && chunk.RemoveEntity(entity);
 
-    public bool RemoveEntity(Entity entity) => Entities.Remove(entity);
-
-    protected virtual void OnEntityMovedToAnotherChunk(Entity entity, Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
+    protected virtual void OnEntityAddedToChunk(Chunk chunk, Entity entity)
     {
-        RememberEntityChunkPosition(entity);
-    }
-
-    protected virtual void RememberEntityChunkPosition(Entity entity)
-    {
-        var chunkPosition = GetChunkPosition(entity.Transform.Position);
-        lock(VisitedChunksByEntities)
+        if(entity is Player player)
         {
-            VisitedChunksByEntities.Add(chunkPosition);
+            lock(_players)
+            {
+                _players.Add(player.SteamId, player);
+            }
+        }
+    }
+
+    protected virtual void OnEntityRemovedFromChunk(Chunk chunk, Entity entity)
+    {
+        if(entity is Player player)
+        {
+            lock(_players)
+            {
+                _players.Remove(player.SteamId);
+            }
         }
     }
 
     // Thread safe
-    public virtual bool IsChunkInLimits(Vector3Int chunkPosition)
-    {
-        var chunkFirstBlockPosition = GetBlockWorldPosition(chunkPosition, 0);
-        return Limits.Overlaps(BBoxInt.FromMinsAndSize(chunkFirstBlockPosition, ChunkSize));
-    }
+    public virtual bool IsChunkInLimits(Vector3Int chunkPosition) => LimitsInChunks.Contains(chunkPosition);
 
     // Thread safe
     public virtual bool HasChunk(Vector3Int chunkPosition)
@@ -169,106 +173,67 @@ public class World : Component, IWorldAccessor, ITickable
         if(!IsChunkInLimits(chunkPosition))
             return false;
 
-        return Chunks.HasLoaded(chunkPosition);
+        return Chunks.Contains(chunkPosition);
     }
 
     // Thread safe
-    protected virtual async Task<Chunk?> GetChunkOrLoad(Vector3Int chunkPosition, bool awaitModelUpdate = false)
+    protected virtual async Task<Chunk> GetOrCreateChunk(Vector3Int chunkPosition, bool preloadOnly = false)
     {
         if(!IsChunkInLimits(chunkPosition))
-            throw new InvalidOperationException($"Chunk position {chunkPosition} is not in Limits {Limits}");
+            throw new InvalidOperationException($"Chunk position {chunkPosition} is not in Limits {LimitsInChunks}");
 
-        var chunk = await Chunks.GetChunkOrLoad(chunkPosition, token => CreateChunk(chunkPosition, token));
+        if(Chunks.TryGet(chunkPosition, out var chunk))
+            return chunk;
 
-        if(awaitModelUpdate && chunk.IsValid())
-            await chunk.GetModelUpdateTask();
+        (var createdChunk, bool fullyLoaded) = await ChunksCreator.GetOrCreateChunk(chunkPosition, preloadOnly, CancellationToken.None);
 
-        return chunk;
-    }
-
-    // Thread safe
-    protected virtual Chunk? GetChunk(Vector3Int chunkPosition) => Chunks.Get(chunkPosition);
-
-    // Thread safe
-    protected virtual async Task<Chunk> CreateChunk(Vector3Int chunkPosition, CancellationToken cancellationToken)
-    {
-        ChunkCreationData creationData = new()
+        lock(Chunks.GetLocker())
         {
-            Position = chunkPosition,
-            Size = ChunkSize,
-            EnableOnCreate = false,
-            World = this,
-        };
+            if(Chunks.TryGet(chunkPosition, out chunk))
+                return chunk;
 
-        var chunk = await Task.RunInMainThreadAsync(() => ChunksCreator.LoadOrCreateChunk(creationData, cancellationToken));
+            if(fullyLoaded)
+                Chunks.Add(createdChunk);
 
-        var positionsToClear = chunk.Size.GetPositionsFromZero().Where(p => !Limits.Contains(p));
-        await chunk.SetBlockStates(positionsToClear.ToDictionary(p => p, p => BlockState.Air));
-
-        return chunk;
+            return createdChunk;
+        }
     }
 
     // Thread safe
-    public virtual async Task LoadChunk(Vector3Int chunkPosition, bool awaitModelUpdate = false)
+    protected virtual void OnChunkLoaded(Chunk chunk)
+    {
+        chunk.GameObject.Parent = ChunksParent;
+        foreach(var entity in chunk.Entities)
+            OnEntityAddedToChunk(chunk, entity);
+        chunk.EntityAdded += OnEntityAddedToChunk;
+        chunk.EntityRemoved += OnEntityRemovedFromChunk;
+        UpdateNeighboringChunks(chunk.Position);
+        _ = Task.RunInMainThreadAsync(() => ChunkLoaded?.Invoke(chunk.Position));
+    }
+
+    protected virtual void OnChunkUnloaded(Chunk chunk)
+    {
+        chunk.EntityAdded -= OnEntityAddedToChunk;
+        chunk.EntityRemoved -= OnEntityRemovedFromChunk;
+        chunk.GameObject.Destroy();
+        UpdateNeighboringChunks(chunk.Position);
+        _ = Task.RunInMainThreadAsync(() => ChunkUnloaded?.Invoke(chunk.Position));
+    }
+
+    // Thread safe
+    protected virtual Chunk? GetChunk(Vector3Int chunkPosition) => Chunks.GetOrDefault(chunkPosition);
+
+    // Thread safe
+    public virtual async Task CreateChunk(Vector3Int chunkPosition)
     {
         Chunk? chunk;
         do
         {
             if(!IsValid)
                 throw new OperationCanceledException();
-            chunk = await GetChunkOrLoad(chunkPosition, awaitModelUpdate);
+            chunk = await GetOrCreateChunk(chunkPosition);
         }
         while(!chunk.IsValid());
-    }
-
-    // Thread safe
-    public virtual async Task LoadChunksSimultaneously(IReadOnlySet<Vector3Int> chunkPositions, bool awaitModelUpdate = false)
-    {
-        List<Task> tasks = new();
-
-        foreach (var chunkPosition in chunkPositions)
-            tasks.Add(LoadChunk(chunkPosition, awaitModelUpdate));
-
-        await Task.WhenAll(tasks);
-    }
-
-    // Thread safe
-    protected virtual void OnChunkLoaded(Chunk chunk)
-    {
-        _ = Task.RunInMainThreadAsync(async () =>
-        {
-            if(!chunk.IsValid)
-                return;
-            if(!Chunks.TryGet(chunk.Position, out var realChunk) || realChunk != chunk)
-                return;
-
-            chunk.GameObject.Enabled = true;
-            chunk.Destroyed += OnChunkDestroyed;
-
-            UpdateNeighboringChunks(chunk.Position);
-
-            await chunk.GetModelUpdateTask();
-            EntitiesCreator?.LoadOrCreateEntitiesForChunk(chunk.Position);
-
-            ChunkLoaded?.Invoke(chunk.Position);
-        });
-    }
-
-    // Thread safe
-    protected virtual void OnChunkUnloaded(Chunk chunk)
-    {
-        _ = Task.RunInMainThreadAsync(() => {
-            if(Chunks.HasLoaded(chunk.Position))
-                return;
-
-            ChunkUnloaded?.Invoke(chunk.Position);
-        });
-    }
-
-    protected virtual void OnChunkDestroyed(Chunk chunk)
-    {
-        chunk.Destroyed -= OnChunkDestroyed;
-        Chunks.RemoveLoaded(chunk);
     }
 
     public virtual Vector3Int GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
@@ -311,7 +276,8 @@ public class World : Component, IWorldAccessor, ITickable
             return BlockStateChangingResult.NotChanged;
 
         var chunkPosition = GetChunkPosition(blockPosition);
-        var chunk = await GetChunkOrLoad(chunkPosition, false);
+        bool preload = !flags.HasFlag(BlockSetFlags.UpdateModel) && !flags.HasFlag(BlockSetFlags.AwaitModelUpdate);
+        var chunk = await GetOrCreateChunk(chunkPosition, preload);
 
         if(!chunk.IsValid())
             throw new InvalidOperationException($"Couldn't load {nameof(Chunk)} at position {chunkPosition}");
@@ -414,7 +380,6 @@ public class World : Component, IWorldAccessor, ITickable
     // Thread safe
     public virtual void Clear()
     {
-        Entities.Clear();
         Chunks.Clear();
     }
 
@@ -430,7 +395,7 @@ public class World : Component, IWorldAccessor, ITickable
         });
     }
 
-    public virtual BinaryTag SaveChunkBlocks(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
+    public virtual (BinaryTag Blocks, ListTag Entities) SaveChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
     {
         if(!Chunks.TryGet(chunkPosition, out var chunk))
             throw new ArgumentOutOfRangeException(nameof(chunkPosition), chunkPosition, "Chunk wasn't loaded");
@@ -438,55 +403,13 @@ public class World : Component, IWorldAccessor, ITickable
         return chunk.Save(saveMarker);
     }
 
-    public virtual Dictionary<Vector3Int, BinaryTag> SaveBlocksInUnsavedChunks(IReadOnlySaveMarker saveMarker)
+    public virtual Dictionary<Vector3Int, (BinaryTag Blocks, ListTag Entities)> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
     {
         var unsavedChunks = Chunks.Where(c => !c.Value.IsSaved);
 
-        Dictionary<Vector3Int, BinaryTag> result = new();
+        Dictionary<Vector3Int, (BinaryTag blocks, ListTag entities)> result = new();
         foreach(var (chunkPosition, chunk) in unsavedChunks)
             result[chunkPosition] = chunk.Save(saveMarker);
-
-        return result;
-    }
-
-    public virtual ListTag SaveEntitiesNotPlayersInChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
-    {
-        ListTag result = new();
-
-        var allEntities = Entities.GetEntitiesInChunk(chunkPosition).Where(e => e is not Player);
-        foreach(var entity in allEntities)
-            result.Add(entity.Write());
-
-        return result;
-    }
-
-    public virtual Dictionary<Vector3Int, ListTag> SaveAllEntitiesNotPlayers(IReadOnlySaveMarker saveMarker)
-    {
-        Dictionary<Vector3Int, ListTag> result = new();
-
-        foreach(var (chunkPosition, entity) in Entities.GetChunkedEntities())
-        {
-            if(entity is Player)
-                continue;
-
-            if(!result.TryGetValue(chunkPosition, out var tag))
-            {
-                tag = new();
-                result[chunkPosition] = tag;
-            }
-
-            tag.Add(entity.Write());
-        }
-
-        lock(VisitedChunksByEntities)
-        {
-            HashSet<Vector3Int> savedEmptiedChunks = new();
-            foreach(var emptiedChunk in VisitedChunksByEntities)
-            {
-                if(result.TryAdd(emptiedChunk, new ListTag()))
-                    savedEmptiedChunks.Add(emptiedChunk);
-            }
-        }
 
         return result;
     }
@@ -495,8 +418,11 @@ public class World : Component, IWorldAccessor, ITickable
     {
         Dictionary<ulong, BinaryTag> result = new();
 
-        foreach(var player in Entities.Where(e => e is Player).Cast<Player>())
-            result.Add(player.SteamId, player.Write());
+        lock(_players)
+        {
+            foreach(var (_, player) in _players)
+                result.Add(player.SteamId, player.Write());
+        }
 
         return result;
     }

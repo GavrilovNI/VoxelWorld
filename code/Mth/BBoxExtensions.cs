@@ -11,7 +11,7 @@ public static class BBoxExtensions
     public static BBoxInt Ceiling(this BBox bbox) => new(bbox.Mins.Ceiling(), bbox.Maxs.Ceiling());
     public static BBoxInt ExpandedToInt(this BBox bbox) => new(bbox.Mins.Floor(), bbox.Maxs.Ceiling());
 
-    public static BBox Expanded(this BBox bbox, in Vector3 value)
+    public static BBox Grow(this BBox bbox, in Vector3 value)
     {
         var result = bbox;
         result.Mins -= value;

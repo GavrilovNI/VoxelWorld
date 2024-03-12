@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "93333bbb-78ff-49b5-8bb4-177c67143520",
+    "Id": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
     "Name": "world",
     "Enabled": true,
     "NetworkMode": 2,
@@ -9,22 +9,25 @@
         "__type": "World",
         "ChunksCreator": {
           "_type": "component",
-          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
+          "go": "cf09da43-b8d0-4740-81d8-5f491fa96c60",
           "component_type": "LimitedChunksCreator"
         },
-        "EntitiesCreator": {
-          "_type": "component",
-          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
-          "component_type": "EntitiesCreator"
+        "ChunksParent": {
+          "_type": "gameobject",
+          "go": "de2a342c-2205-450c-a070-a998b9d2c9d6"
         },
         "EntitiesParent": {
           "_type": "gameobject",
-          "go": "21ec131b-5823-4e4f-b805-e5011d68558b"
+          "go": "cdd7556c-7d67-4f8b-bc16-4d6e5594cceb"
         },
         "IsService": false,
         "Limits": {
-          "Mins": "-50000,-50000,-256",
-          "Maxs": "50000,50000,255"
+          "Mins": "-160000,-160000,-256",
+          "Maxs": "160000,160000,256"
+        },
+        "LimitsInChunks": {
+          "Mins": "-10000,-10000,-16",
+          "Maxs": "10000,10000,16"
         },
         "TickByItself": true,
         "WorldOptions": {
@@ -33,124 +36,185 @@
         }
       },
       {
-        "__type": "LimitedChunksCreator",
-        "ActiveCreatingChunks": 0,
-        "BreakFromPrefab": false,
-        "ChunkPrefab": {
-          "_type": "gameobject",
-          "prefab": "prefabs/chunk.prefab"
-        },
-        "ChunksParent": {
-          "_type": "gameobject",
-          "go": "674ba7f0-91c9-4e0a-9176-dafef7989a0b"
-        },
-        "Generator": {
-          "_type": "component",
-          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
-          "component_type": "WorldGenerator"
-        },
-        "MaxChunksToCreateAtTime": 5,
-        "World": {
-          "_type": "component",
-          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
-          "component_type": "World"
-        }
-      },
-      {
-        "__type": "EntitiesCreator",
-        "BreakFromPrefab": true,
-        "EntitiesParent": {
-          "_type": "gameobject",
-          "go": "21ec131b-5823-4e4f-b805-e5011d68558b"
-        },
-        "World": {
-          "_type": "component",
-          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
-          "component_type": "World"
-        }
-      },
-      {
-        "__type": "WorldGenerator",
-        "AdditiveDensityFromHeightCurve": {
-          "rangey": "-1,1",
-          "frames": [
-            {
-              "y": 1,
-              "in": 0.6086956,
-              "out": -0.6086956
-            },
-            {
-              "x": 0.41369048,
-              "y": 0.5381129,
-              "in": 1.0989428,
-              "out": -1.0989428
-            },
-            {
-              "x": 0.7604167,
-              "y": 0.026405497
-            },
-            {
-              "x": 1
-            }
-          ]
-        },
-        "DensityNoiseSettings": {
-          "Scale": "20,20,20",
-          "OctavesCount": 2,
-          "Persistance": 0.5,
-          "Lacunarity": 2
-        },
-        "HeightNoiseSettings": {
-          "Scale": "50,50",
-          "OctavesCount": 2,
-          "Persistance": 0.3,
-          "Lacunarity": 2.2
-        },
-        "HeightSurfaceCurve": [
-          {
-            "in": -1.1203572,
-            "out": 1.1203572
-          },
-          {
-            "x": 0.73363096,
-            "y": 0.53349507,
-            "in": -0.59002864,
-            "out": 0.59002864
-          },
-          {
-            "x": 1,
-            "y": 1,
-            "in": -1.0212762,
-            "out": 1.0212762
-          }
-        ],
-        "MaxHeight": 120,
-        "MinHeight": 0
-      },
-      {
         "__type": "WorldSaver",
         "World": {
           "_type": "component",
-          "go": "93333bbb-78ff-49b5-8bb4-177c67143520",
+          "go": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
           "component_type": "World"
         }
       }
     ],
     "Children": [
       {
-        "Id": "674ba7f0-91c9-4e0a-9176-dafef7989a0b",
-        "Name": "Chunks",
+        "Id": "cf09da43-b8d0-4740-81d8-5f491fa96c60",
+        "Name": "ChunksCreator",
         "Enabled": true,
-        "NetworkMode": 2
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "LimitedChunksCreator",
+            "BreakFromPrefab": true,
+            "ChunkPrefab": {
+              "_type": "gameobject",
+              "prefab": "prefabs/chunk.prefab"
+            },
+            "ChunksParent": {
+              "_type": "gameobject",
+              "go": "7db9b64b-1285-4d8b-a4f3-bd4cd25a5b45"
+            },
+            "EntitiesLoader": {
+              "_type": "component",
+              "go": "927d07a7-02ff-43c7-94cc-b536b87b30be",
+              "component_type": "ChunkEntitiesLoader"
+            },
+            "LandscapeGenerator": {
+              "_type": "component",
+              "go": "6ae73275-d89e-4f94-97d6-c1cf60e82bd6",
+              "component_type": "ChunkLandscapeGenerator"
+            },
+            "Loader": {
+              "_type": "component",
+              "go": "203a3e6c-c4f2-4376-a3a5-8184ca7880a7",
+              "component_type": "ChunkLoader"
+            },
+            "MaxCountToProccess": 15,
+            "ModelAwaiter": {
+              "_type": "component",
+              "go": "1967f880-db0c-4ecb-aa39-a31b980376f9",
+              "component_type": "ChunkModelAwaiter"
+            },
+            "ProcessingCount": 0,
+            "World": {
+              "_type": "component",
+              "go": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
+              "component_type": "World"
+            }
+          }
+        ],
+        "Children": [
+          {
+            "Id": "203a3e6c-c4f2-4376-a3a5-8184ca7880a7",
+            "Name": "Loader",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkLoader",
+                "World": {
+                  "_type": "component",
+                  "go": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
+                  "component_type": "World"
+                }
+              }
+            ]
+          },
+          {
+            "Id": "6ae73275-d89e-4f94-97d6-c1cf60e82bd6",
+            "Name": "Landscape",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkLandscapeGenerator",
+                "Generator": {
+                  "_type": "component",
+                  "go": "6ae73275-d89e-4f94-97d6-c1cf60e82bd6",
+                  "component_type": "WorldGenerator"
+                }
+              },
+              {
+                "__type": "WorldGenerator",
+                "AdditiveDensityFromHeightCurve": {
+                  "rangey": "-1,1",
+                  "frames": [
+                    {
+                      "y": 1,
+                      "in": 0.6086956,
+                      "out": -0.6086956
+                    },
+                    {
+                      "x": 0.41369048,
+                      "y": 0.5381129,
+                      "in": 1.0989428,
+                      "out": -1.0989428
+                    },
+                    {
+                      "x": 0.7604167,
+                      "y": 0.026405497
+                    },
+                    {
+                      "x": 1
+                    }
+                  ]
+                },
+                "DensityNoiseSettings": {
+                  "Scale": "20,20,20",
+                  "OctavesCount": 2,
+                  "Persistance": 0.5,
+                  "Lacunarity": 2
+                },
+                "HeightNoiseSettings": {
+                  "Scale": "50,50",
+                  "OctavesCount": 2,
+                  "Persistance": 0.3,
+                  "Lacunarity": 2.2
+                },
+                "HeightSurfaceCurve": [
+                  {
+                    "in": -1.1203572,
+                    "out": 1.1203572
+                  },
+                  {
+                    "x": 0.73363096,
+                    "y": 0.53349507,
+                    "in": -0.59002864,
+                    "out": 0.59002864
+                  },
+                  {
+                    "x": 1,
+                    "y": 1,
+                    "in": -1.0212762,
+                    "out": 1.0212762
+                  }
+                ],
+                "MaxHeight": 120,
+                "MinHeight": 0
+              }
+            ]
+          },
+          {
+            "Id": "1967f880-db0c-4ecb-aa39-a31b980376f9",
+            "Name": "ModelAwaiter",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkModelAwaiter"
+              }
+            ]
+          },
+          {
+            "Id": "927d07a7-02ff-43c7-94cc-b536b87b30be",
+            "Name": "EntitiesLoader",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkEntitiesLoader",
+                "BreakFromPrefab": true
+              }
+            ]
+          },
+          {
+            "Id": "7db9b64b-1285-4d8b-a4f3-bd4cd25a5b45",
+            "Name": "CreatingChunks",
+            "Enabled": true,
+            "NetworkMode": 2
+          }
+        ]
       },
       {
-        "Id": "21ec131b-5823-4e4f-b805-e5011d68558b",
-        "Name": "Entities",
-        "Enabled": true,
-        "NetworkMode": 2
-      },
-      {
-        "Id": "5da049d4-2d86-4264-892b-92ebf5a7bd8e",
+        "Id": "201131d3-3edb-4111-9ae9-a6ed1f55a91e",
         "Name": "Sun",
         "Rotation": "-0.1464466,0.3535534,0.3535534,0.8535534",
         "Tags": "light_directional,light",
@@ -166,6 +230,18 @@
             "SkyColor": "0.05882,0.07451,0.08235,1"
           }
         ]
+      },
+      {
+        "Id": "de2a342c-2205-450c-a070-a998b9d2c9d6",
+        "Name": "Chunks",
+        "Enabled": true,
+        "NetworkMode": 2
+      },
+      {
+        "Id": "cdd7556c-7d67-4f8b-bc16-4d6e5594cceb",
+        "Name": "Entities",
+        "Enabled": true,
+        "NetworkMode": 2
       }
     ]
   },

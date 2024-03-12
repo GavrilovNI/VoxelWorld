@@ -16,7 +16,7 @@ public class WorldSaver : Component, ISaver
 {
     [Property] private World World { get; set; } = null!;
 
-    protected GameSaveHelper GameSaveHelper => SandcubeGame.Instance!.CurrentGameSaveHelper!;
+    protected static GameSaveHelper GameSaveHelper => SandcubeGame.Instance!.CurrentGameSaveHelper!;
     protected BaseFileSystem WorldFileSystem => World.WorldFileSystem!;
     protected WorldOptions WorldOptions => World.WorldOptions;
 
@@ -30,8 +30,7 @@ public class WorldSaver : Component, ISaver
 
         SaveMarker saveMarker = SaveMarker.NewNotSaved;
 
-        var unsavedChunks = World.SaveBlocksInUnsavedChunks(saveMarker);
-        var unsavedEntities = World.SaveAllEntitiesNotPlayers(saveMarker);
+        var unsavedChunks = World.SaveUnsavedChunks(saveMarker);
         var unsavedPlayers = World.SaveAllPlayers();
 
         TaskCompletionSource<bool> taskCompletionSource = new();
@@ -42,10 +41,10 @@ public class WorldSaver : Component, ISaver
             {
                 var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
                 var blocksHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.BlocksRegionName, WorldOptions.RegionSize);
-                blocksHelper.SaveChunks(unsavedChunks);
+                blocksHelper.SaveChunks(unsavedChunks.ToDictionary(kv => kv.Key, kv => kv.Value.Blocks));
 
                 var entitiesHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.EntitiesRegionName, WorldOptions.RegionSize);
-                entitiesHelper.SaveChunks(unsavedEntities.ToDictionary(kv => kv.Key, kv => (BinaryTag)kv.Value));
+                entitiesHelper.SaveChunks(unsavedChunks.ToDictionary(kv => kv.Key, kv => (BinaryTag)kv.Value.Entities));
 
                 SavePlayers(GameSaveHelper.PlayersFileSystem, unsavedPlayers);
 

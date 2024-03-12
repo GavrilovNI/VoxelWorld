@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Sandcube.Worlds.Generation;
 
-public class WorldGenerator : Component
+public class WorldGenerator : Component, IWorldInitializationListener
 {
     [Property] public PerlinNoise.Config2D HeightNoiseSettings { get; set; }
     [Property] public PerlinNoise.Config3D DensityNoiseSettings { get; set; }
@@ -20,6 +20,8 @@ public class WorldGenerator : Component
         HeightNoiseSettings = HeightNoiseSettings with { Seed = seed };
         DensityNoiseSettings = DensityNoiseSettings with { Seed = seed };
     }
+
+    public void OnWorldInitialized(World world) => SetSeed(world.WorldOptions.Seed);
 
     protected bool ShouldPlaceBlock(in Vector3Int position, float surfaceHeight)
     {

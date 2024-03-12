@@ -13,10 +13,8 @@ public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor
     ModedId Id { get; }
     GameObject GameObject { get; }
 
-    Task LoadChunk(Vector3Int chunkPosition, bool awaitModelUpdate = false);
-    Task LoadChunksSimultaneously(IReadOnlySet<Vector3Int> chunkPositions, bool awaitModelUpdate = false);
-    void AddEntity(Entity entity);
-    bool RemoveEntity(Guid entityId);
+    Task CreateChunk(Vector3Int chunkPosition);
+    Task AddEntity(Entity entity);
     bool RemoveEntity(Entity entity);
     void Tick();
 }

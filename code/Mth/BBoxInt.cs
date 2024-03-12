@@ -280,6 +280,22 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return result;
     }
 
+    public readonly BBox Grow(in Vector3 skin)
+    {
+        BBox result = this;
+        result.Mins -= skin;
+        result.Maxs += skin;
+        return result;
+    }
+
+    public readonly BBoxInt Grow(in Vector3Int skin)
+    {
+        BBoxInt result = this;
+        result.Mins -= skin;
+        result.Maxs += skin;
+        return result;
+    }
+
     public readonly BBox Grow(in float skin)
     {
         BBox result = this;
@@ -309,14 +325,12 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return new Vector3(Math.Clamp(point.x, Mins.x, Maxs.x), Math.Clamp(point.y, Mins.y, Maxs.y), Math.Clamp(point.z, Mins.z, Maxs.z));
     }
 
+    public static BBoxInt operator *(in BBoxInt c1, Vector3Int c2) => new(c1.Mins * c2, c1.Maxs * c2);
+    public static BBox operator *(in BBoxInt c1, Vector3 c2) => new(c1.Mins * c2, c1.Maxs * c2);
+
     public static BBox operator *(in BBoxInt c1, float c2) => new(c1.Mins * c2, c1.Maxs * c2);
 
-    public static BBoxInt operator *(BBoxInt c1, int c2)
-    {
-        c1.Mins *= c2;
-        c1.Maxs *= c2;
-        return c1;
-    }
+    public static BBoxInt operator *(in BBoxInt c1, int c2) => new(c1.Mins * c2, c1.Maxs * c2);
 
     public static BBoxInt operator +(BBoxInt c1, in Vector3Int c2)
     {
