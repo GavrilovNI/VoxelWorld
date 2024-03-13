@@ -14,8 +14,8 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     protected bool Disposed { get; private set; } = false;
 
-    protected readonly object Locker = new();
     protected readonly SortedDictionary<Vector3Int, Chunk> Chunks;
+
 
     public ChunksCollection(IComparer<Vector3Int>? comparer = null)
     {
@@ -37,11 +37,9 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         Clear();
     }
 
-    public object GetLocker() => Locker;
-
     public void Clear()
     {
-        lock(Locker)
+        lock(Chunks)
         {
             foreach(var (position, chunk) in Chunks)
             {
@@ -53,9 +51,20 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         }
     }
 
+    public Chunk GetOrAdd(Vector3Int position, Chunk chunk)
+    {
+        lock(Chunks)
+        {
+            if(TryGet(position, out var realChunk))
+                return realChunk;
+            Add(chunk);
+            return chunk;
+        }
+    }
+
     public void Add(Chunk chunk)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             Remove(chunk.Position);
             Chunks[chunk.Position] = chunk;
@@ -66,7 +75,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     private bool RemoveInternal(Chunk chunk)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             if(!Chunks.Remove(chunk.Position))
                 return false;
@@ -78,7 +87,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     public bool Remove(Chunk chunk)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             if(Chunks.TryGetValue(chunk.Position, out var realChunk) && realChunk == chunk)
                 return RemoveInternal(chunk);
@@ -88,7 +97,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     public bool Remove(Vector3Int position)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             if(Chunks.TryGetValue(position, out var chunk))
                 return RemoveInternal(chunk);
@@ -98,7 +107,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     public bool Contains(Vector3Int position)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             return Chunks.TryGetValue(position, out var chunk) && chunk.IsValid;
         }
@@ -106,7 +115,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     public Chunk? GetOrDefault(Vector3Int position, Chunk? defaultValue = null)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             if(Chunks.TryGetValue(position, out var chunk) && chunk.IsValid)
                 return chunk;
@@ -116,7 +125,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     public bool TryGet(Vector3Int position, out Chunk chunk)
     {
-        lock(Locker)
+        lock(Chunks)
         {
             if(Chunks.TryGetValue(position, out chunk!) && chunk.IsValid)
                 return true;
@@ -126,7 +135,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     public IEnumerator<Chunk> GetEnumerator()
     {
-        lock(Locker)
+        lock(Chunks)
         {
             foreach(var (_, chunk) in Chunks)
             {

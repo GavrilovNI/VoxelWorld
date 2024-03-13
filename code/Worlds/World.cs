@@ -187,16 +187,9 @@ public class World : Component, IWorldAccessor, ITickable
 
         (var createdChunk, bool fullyLoaded) = await ChunksCreator.GetOrCreateChunk(chunkPosition, preloadOnly, CancellationToken.None);
 
-        lock(Chunks.GetLocker())
-        {
-            if(Chunks.TryGet(chunkPosition, out chunk))
-                return chunk;
-
-            if(fullyLoaded)
-                Chunks.Add(createdChunk);
-
-            return createdChunk;
-        }
+        if(fullyLoaded)
+            return Chunks.GetOrAdd(chunkPosition, createdChunk);
+        return createdChunk;
     }
 
     // Thread safe
