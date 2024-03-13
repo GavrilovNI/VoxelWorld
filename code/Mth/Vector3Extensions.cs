@@ -6,6 +6,14 @@ namespace Sandcube.Mth;
 
 public static class Vector3Extensions
 {
+    public static float SignedAngle(this Vector3 from, in Vector3 to, in Vector3 axis)
+    {
+        var unsignedAngle = from.Angle(to);
+        var cross = from.Cross(to);
+        var sign = Math.Sign(axis.Dot(cross));
+        return unsignedAngle * sign;
+    }
+
     public static Vector3 ProjectOnPlane(this Vector3 vector, in Vector3 planeNormal)
     {
         float sqrMag = planeNormal.Dot(planeNormal);
