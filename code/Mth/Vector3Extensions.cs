@@ -6,9 +6,9 @@ namespace Sandcube.Mth;
 
 public static class Vector3Extensions
 {
-    public static Vector3 ProjectOnPlane(this Vector3 vector, Vector3 planeNormal)
+    public static Vector3 ProjectOnPlane(this Vector3 vector, in Vector3 planeNormal)
     {
-        float sqrMag = vector.Dot(planeNormal);
+        float sqrMag = planeNormal.Dot(planeNormal);
         if(sqrMag.AlmostEqual(0))
             return vector;
 
