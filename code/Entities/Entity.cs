@@ -14,8 +14,8 @@ namespace Sandcube.Entities;
 public abstract class Entity : Component
 {
     public event Action<Entity, IWorldAccessor?, IWorldAccessor?>? ChangedWorld;
-    public event Action<Entity, Vector3, Vector3>? Moved;
     public event Action<Entity, Vector3Int, Vector3Int>? MovedToAnotherChunk;
+    public event Action<Entity, Transform, Transform>? TransformChanged;
     public event Action<Entity>? Destroyed;
 
     public bool Initialized { get; private set; }
@@ -41,8 +41,6 @@ public abstract class Entity : Component
 
         TypeId = typeId;
         ChangeWorld(world);
-
-        _oldTransform = Transform.World;
     }
 
     public bool ChangeWorld(IWorldAccessor? newWorld)
@@ -71,6 +69,26 @@ public abstract class Entity : Component
     protected sealed override void OnAwake()
     {
         Tags.Add("entity");
+
+        _oldTransform = Transform.World;
+        Transform.OnTransformChanged = () =>
+        {
+            if(World is not null)
+            {
+                var newChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+                if(newChunkPosition != ChunkPosition)
+                {
+                    var oldChunkPosition = ChunkPosition;
+                    ChunkPosition = newChunkPosition;
+                    OnMovedToAnotherChunk(oldChunkPosition, newChunkPosition);
+                    MovedToAnotherChunk?.Invoke(this, oldChunkPosition, newChunkPosition);
+                }
+            }
+            var oldTransform = _oldTransform;
+            _oldTransform = Transform.World;
+            OnTransformChanged(oldTransform, Transform.World);
+            TransformChanged?.Invoke(this, oldTransform, Transform.World);
+        };
         OnAwakeInternal();
     }
 
@@ -78,6 +96,12 @@ public abstract class Entity : Component
     {
 
     }
+
+    protected virtual void OnTransformChanged(Transform oldTransform, Transform newTransform)
+    {
+
+    }
+
     protected sealed override void OnStart()
     {
         if(!Initialized)
@@ -125,41 +149,7 @@ public abstract class Entity : Component
 
     }
 
-    protected sealed override void OnUpdate()
-    {
-        if(Transform.Position != _oldTransform.Position)
-        {
-            OnMoved(_oldTransform.Position, Transform.Position);
-            Moved?.Invoke(this, _oldTransform.Position, Transform.Position);
-        }
-        _oldTransform = Transform.World;
-
-        if(World is not null)
-        {
-            var newChunkPosition = World.GetChunkPosition(Transform.Position);
-            if(newChunkPosition != ChunkPosition)
-            {
-                var oldChunkPosition = ChunkPosition;
-                ChunkPosition = newChunkPosition;
-                OnMovedToAnotherChunk(oldChunkPosition, newChunkPosition);
-                MovedToAnotherChunk?.Invoke(this, oldChunkPosition, newChunkPosition);
-            }
-        }
-
-        OnUpdateInternal();
-    }
-
-    protected virtual void OnMoved(Vector3 oldPosition, Vector3 newPosition)
-    {
-
-    }
-
     protected virtual void OnMovedToAnotherChunk(Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
-    {
-
-    }
-
-    protected virtual void OnUpdateInternal()
     {
 
     }
