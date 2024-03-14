@@ -67,8 +67,8 @@ public abstract class Entity : Component
 
     }
 
-    protected sealed override void OnEnabled() => OnEnabledInternal();
-    protected virtual void OnEnabledInternal() { }
+    protected sealed override void OnEnabled() => OnEnabledChild();
+    protected virtual void OnEnabledChild() { }
 
     protected sealed override void OnAwake()
     {
@@ -93,9 +93,9 @@ public abstract class Entity : Component
             OnTransformChanged(oldTransform, Transform.World);
             TransformChanged?.Invoke(this, oldTransform, Transform.World);
         };
-        OnAwakeInternal();
+        OnAwakeChild();
     }
-    protected virtual void OnAwakeInternal() { }
+    protected virtual void OnAwakeChild() { }
 
     protected virtual void OnTransformChanged(Transform oldTransform, Transform newTransform) { }
 
@@ -115,18 +115,18 @@ public abstract class Entity : Component
             return;
         }
 
-        OnStartInternal();
+        OnStartChild();
     }
-    protected virtual void OnStartInternal() { }
+    protected virtual void OnStartChild() { }
 
-    protected sealed override void OnUpdate() => OnUpdateInternal();
-    protected virtual void OnUpdateInternal() { }
+    protected sealed override void OnUpdate() => OnUpdateChild();
+    protected virtual void OnUpdateChild() { }
 
-    protected sealed override void OnFixedUpdate() => OnFixedUpdateInternal();
-    protected virtual void OnFixedUpdateInternal() { }
+    protected sealed override void OnFixedUpdate() => OnFixedUpdateChild();
+    protected virtual void OnFixedUpdateChild() { }
 
-    protected sealed override void OnDisabled() => OnDisabledInternal();
-    protected virtual void OnDisabledInternal() { }
+    protected sealed override void OnDisabled() => OnDisabledChild();
+    protected virtual void OnDisabledChild() { }
 
     public new void Destroy()
     {
@@ -142,27 +142,27 @@ public abstract class Entity : Component
         if(World is not null)
             ChangeWorld(null);
 
-        OnDestroyInternal();
+        OnDestroyChild();
         Destroyed?.Invoke(this);
     }
 
-    protected virtual void OnDestroyInternal() { }
+    protected virtual void OnDestroyChild() { }
 
 
-    protected sealed override void OnDirty() => OnDirtyInternal();
-    protected virtual void OnDirtyInternal() { }
-    protected sealed override Task OnLoad() => OnLoadInternal();
-    protected virtual Task OnLoadInternal() => Task.CompletedTask;
-    protected sealed override void DrawGizmos() => DrawGizmosInternal();
-    protected virtual void DrawGizmosInternal() { }
-    protected sealed override void OnParentChanged(GameObject oldParent, GameObject newParent) => OnParentChangedInternal(oldParent, newParent);
-    protected virtual void OnParentChangedInternal(GameObject oldParent, GameObject newParent) { }
-    protected sealed override void OnPreRender() => OnPreRenderInternal();
-    protected virtual void OnPreRenderInternal() { }
-    protected sealed override void OnTagsChanged() => OnTagsChangedInternal();
-    protected virtual void OnTagsChangedInternal() { }
-    protected sealed override void OnValidate() => OnValidateInternal();
-    protected virtual void OnValidateInternal() { }
+    protected sealed override void OnDirty() => OnDirtyChild();
+    protected virtual void OnDirtyChild() { }
+    protected sealed override Task OnLoad() => OnLoadChild();
+    protected virtual Task OnLoadChild() => Task.CompletedTask;
+    protected sealed override void DrawGizmos() => DrawGizmosChild();
+    protected virtual void DrawGizmosChild() { }
+    protected sealed override void OnParentChanged(GameObject oldParent, GameObject newParent) => OnParentChangedChild(oldParent, newParent);
+    protected virtual void OnParentChangedChild(GameObject oldParent, GameObject newParent) { }
+    protected sealed override void OnPreRender() => OnPreRenderChild();
+    protected virtual void OnPreRenderChild() { }
+    protected sealed override void OnTagsChanged() => OnTagsChangedChild();
+    protected virtual void OnTagsChangedChild() { }
+    protected sealed override void OnValidate() => OnValidateChild();
+    protected virtual void OnValidateChild() { }
 
 
     protected virtual void OnMovedToAnotherChunk(Vector3Int oldChunkPosition, Vector3Int newChunkPosition)

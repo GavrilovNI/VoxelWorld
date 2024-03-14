@@ -30,7 +30,7 @@ public class ItemStackEntity : Entity
     }   
 
 
-    protected override void OnAwakeInternal()
+    protected override void OnAwakeChild()
     {
         if(ItemStack is null)
             SetItemStack(Inventories.Stack<Item>.Empty);
@@ -97,7 +97,7 @@ public class ItemStackEntity : Entity
         Rigidbody.Velocity = compoundTag.Get<Vector3>("velocity");
     }
 
-    protected override void DrawGizmosInternal()
+    protected override void DrawGizmosChild()
     {
         Gizmo.Hitbox.BBox(ModelBounds);
     }

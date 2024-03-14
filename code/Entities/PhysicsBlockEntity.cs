@@ -24,7 +24,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
     public BBox ModelBounds { get; protected set; }
     public BlockState BlockState { get; private set; } = null!;
 
-    protected override void OnAwakeInternal()
+    protected override void OnAwakeChild()
     {
         if(BlockState is null)
             SetBlockState(BlockState.Air);
@@ -80,7 +80,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         RecalculateBounds(physicsMesh.Bounds, visualMeshBuilder.Bounds);
     }
 
-    protected override void DrawGizmosInternal()
+    protected override void DrawGizmosChild()
     {
         Gizmo.Hitbox.BBox(ModelBounds);
     }
