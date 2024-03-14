@@ -31,7 +31,7 @@ public class Player : Entity
         SteamId = steamId;
     }
 
-    protected override void OnAwake()
+    protected override void OnAwakeInternal()
     {
         Tags.Add("player");
     }

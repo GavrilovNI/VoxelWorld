@@ -39,8 +39,6 @@ public abstract class Entity : Component
             throw new InvalidOperationException($"{nameof(Entity)} {this} was already initialized");
         Initialized = true;
 
-        Tags.Add("entity");
-
         TypeId = typeId;
         ChangeWorld(world);
 
@@ -70,6 +68,16 @@ public abstract class Entity : Component
 
     }
 
+    protected sealed override void OnAwake()
+    {
+        Tags.Add("entity");
+        OnAwakeInternal();
+    }
+
+    protected virtual void OnAwakeInternal()
+    {
+
+    }
     protected sealed override void OnStart()
     {
         if(!Initialized)

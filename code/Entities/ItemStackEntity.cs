@@ -30,7 +30,7 @@ public class ItemStackEntity : Entity
     }   
 
 
-    protected override void OnAwake()
+    protected override void OnAwakeInternal()
     {
         if(ItemStack is null)
             SetItemStack(Inventories.Stack<Item>.Empty);

@@ -24,7 +24,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
     public BBox ModelBounds { get; protected set; }
     public BlockState BlockState { get; private set; } = null!;
 
-    protected override void OnAwake()
+    protected override void OnAwakeInternal()
     {
         if(BlockState is null)
             SetBlockState(BlockState.Air);
