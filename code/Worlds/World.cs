@@ -38,8 +38,6 @@ public class World : Component, IWorldAccessor, ITickable
     [Property] protected bool TickByItself { get; set; } = true;
     [Property] protected bool IsService { get; set; } = false;
 
-    [Property] protected GameObject EntitiesParent { get; set; } = null!;
-
     public bool Initialized { get; private set; }
     public new ModedId Id { get; private set; }
     public BaseFileSystem? WorldFileSystem { get; private set; }
@@ -86,7 +84,6 @@ public class World : Component, IWorldAccessor, ITickable
         Chunks.ChunkUnloaded += OnChunkUnloaded;
 
         ChunksParent ??= GameObject;
-        EntitiesParent ??= GameObject;
     }
 
     protected override void OnStart()
@@ -134,9 +131,7 @@ public class World : Component, IWorldAccessor, ITickable
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
         var chunk = await GetOrCreateChunk(entity.ChunkPosition);
-        if(!chunk.AddEntity(entity))
-            return;
-        entity.GameObject.Parent = EntitiesParent;
+        chunk.AddEntity(entity);
     }
 
     public bool RemoveEntity(Entity entity) =>

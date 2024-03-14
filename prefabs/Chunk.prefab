@@ -9,6 +9,10 @@
       {
         "__type": "Chunk",
         "__guid": "2ce25b2c-9c8f-43e6-baf1-e7a5d64f482d",
+        "EntitiesParent": {
+          "_type": "gameobject",
+          "go": "a40e2614-a250-43df-bae5-d4181334dc8b"
+        },
         "ModelUpdater": {
           "_type": "component",
           "component_id": "0c9ecce9-84c7-4c22-89d3-3f54f838672b",
@@ -70,6 +74,12 @@
             "Static": true
           }
         ]
+      },
+      {
+        "__guid": "a40e2614-a250-43df-bae5-d4181334dc8b",
+        "Name": "Entities",
+        "Enabled": true,
+        "NetworkMode": 2
       }
     ]
   },

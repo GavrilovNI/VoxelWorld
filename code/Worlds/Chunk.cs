@@ -9,6 +9,7 @@ using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
+using Sandcube.SandcubeExtensions;
 using Sandcube.Threading;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     public event Action<Chunk, Entity>? EntityAdded = null;
     public event Action<Chunk, Entity>? EntityRemoved = null;
 
+    [Property] protected GameObject EntitiesParent { get; set; } = null!;
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Position { get; internal set; }
     [Property, HideIf(nameof(Initialized), true)] public Vector3Int Size { get; internal set; } = 16;
     [Property] public ChunkModelUpdater ModelUpdater { get; internal set; } = null!;
@@ -78,6 +80,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Size = size;
         World = world;
         Blocks = new(world, World.GetBlockWorldPosition(position, Vector3Int.Zero), size);
+        EntitiesParent ??= GameObject;
     }
 
     public bool AddEntity(Entity entity)
@@ -92,6 +95,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
             _entities[entity.Id] = entity;
             _entitiesSaveMarker = SaveMarker.NotSaved;
+            entity.GameObject.SetParentCalmly(EntitiesParent);
             entity.Destroyed += OnEntityDestroyed;
             entity.MovedToAnotherChunk += OnEntityMovedToAnotherChunk;
             EntityAdded?.Invoke(this, entity);
