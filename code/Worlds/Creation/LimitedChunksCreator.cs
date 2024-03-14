@@ -2,7 +2,6 @@
 using Sandcube.Mth;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,47 +10,36 @@ namespace Sandcube.Worlds.Creation;
 public class LimitedChunksCreator : ChunksCreator
 {
     [Property] public int MaxCountToProccess { get; set; } = 15;
-    [Property] public int ProcessingCount
+    [Property] protected int ProcessingCountShower => ProcessingCount;
+
+    private int _processingCount = 0;
+    protected int ProcessingCount
     {
-        get
-        {
-            lock(ProcessingChunks)
-            {
-                return ProcessingChunks.Count;
-            }
-        }
+        get => Interlocked.CompareExchange(ref _processingCount, 0, 0);
+        set => Interlocked.Exchange(ref _processingCount, value);
     }
 
-    protected record class ChunkCreatingData(Vector3Int Position,
-        TaskCompletionSource<Chunk> TaskCompletionSource,
-        CancellationToken CancellationToken);
+    protected record struct ChunkPreloadingData(Vector3Int Position,
+        TaskCompletionSource<Chunk> TaskCompletionSource, CancellationToken CancellationToken);
 
-    protected record class ChunkFinishingData(Chunk Chunk,
-        TaskCompletionSource<Chunk> TaskCompletionSource,
-        CancellationToken CancellationToken);
+    protected record struct ChunkFinishingData(Chunk Chunk, bool EnableChunk,
+        TaskCompletionSource<Chunk> TaskCompletionSource, CancellationToken CancellationToken);
 
+    protected readonly ConcurrentQueue<ChunkPreloadingData> ChunksToPreload = new();
     protected readonly ConcurrentQueue<ChunkFinishingData> ChunksToFinish = new();
-    protected readonly ConcurrentQueue<ChunkCreatingData> ChunksToCreate = new();
-    protected readonly HashSet<Vector3Int> ProcessingChunks = new();
 
-    protected override Task<Chunk> CreateChunk(Vector3Int position, CancellationToken cancellationToken)
+    public override Task<Chunk> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
     {
         TaskCompletionSource<Chunk> taskCompletionSource = new();
-        ChunkCreatingData creatingData = new(position, taskCompletionSource, cancellationToken);
-        ChunksToCreate.Enqueue(creatingData);
+        ChunkPreloadingData creatingData = new(position, taskCompletionSource, cancellationToken);
+        ChunksToPreload.Enqueue(creatingData);
         return taskCompletionSource.Task;
     }
 
-    protected override Task<Chunk> FinishChunk(Chunk chunk, CancellationToken cancellationToken)
+    public override Task<Chunk> FinishChunk(Chunk chunk, CancellationToken cancellationToken, bool enableChunk = true)
     {
-        lock(ProcessingChunks)
-        {
-            if(ProcessingChunks.Contains(chunk.Position))
-                return base.FinishChunk(chunk, cancellationToken);
-        }
-
         TaskCompletionSource<Chunk> taskCompletionSource = new();
-        ChunkFinishingData finishingData = new(chunk, taskCompletionSource, cancellationToken);
+        ChunkFinishingData finishingData = new(chunk, enableChunk, taskCompletionSource, cancellationToken);
         ChunksToFinish.Enqueue(finishingData);
         return taskCompletionSource.Task;
     }
@@ -68,48 +56,38 @@ public class LimitedChunksCreator : ChunksCreator
         ThreadSafe.AssertIsMainThread();
 
         int count = ProcessingCount;
-        while(count < MaxCountToProccess && ChunksToFinish.TryDequeue(out var finishingData))
+        while(count < MaxCountToProccess && ChunksToFinish.TryDequeue(out var data))
         {
-            _ = FinishChunk(finishingData);
+            _ = FinishChunk(data);
             count++;
         }
 
-        while(count < MaxCountToProccess && ChunksToCreate.TryDequeue(out var creationData))
+        while(count < MaxCountToProccess && ChunksToPreload.TryDequeue(out var data))
         {
-            _ = CreateChunk(creationData);
+            _ = PreloadChunk(data);
             count++;
         }
     }
 
     // Call only in game thread
-    protected virtual async Task<Chunk> CreateChunk(ChunkCreatingData creatingData)
+    protected virtual async Task<Chunk> PreloadChunk(ChunkPreloadingData creatingData)
     {
         ThreadSafe.AssertIsMainThread();
 
-        var position = creatingData.Position;
-        lock(ProcessingChunks)
-        {
-            ProcessingChunks.Add(position);
-        }
         var cancellationToken = creatingData.CancellationToken;
 
+        ProcessingCount++;
         try
         {
-            var chunk = await base.CreateChunk(position, cancellationToken);
+            var chunk = await base.PreloadChunk(creatingData.Position, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
-            lock(ProcessingChunks)
-            {
-                ProcessingChunks.Remove(position);
-            }
             creatingData.TaskCompletionSource.TrySetResult(chunk);
+            ProcessingCount--;
             return chunk;
         }
         catch(OperationCanceledException)
         {
-            lock(ProcessingChunks)
-            {
-                ProcessingChunks.Remove(position);
-            }
+            ProcessingCount--;
             creatingData.TaskCompletionSource.TrySetCanceled();
             throw;
         }
@@ -120,30 +98,20 @@ public class LimitedChunksCreator : ChunksCreator
     {
         ThreadSafe.AssertIsMainThread();
 
-        var position = finishingData.Chunk.Position;
-        lock(ProcessingChunks)
-        {
-            ProcessingChunks.Add(position);
-        }
-
         var cancellationToken = finishingData.CancellationToken;
+
+        ProcessingCount++;
         try
         {
-            var chunk = await base.FinishChunk(finishingData.Chunk, cancellationToken);
+            var chunk = await base.FinishChunk(finishingData.Chunk, cancellationToken, finishingData.EnableChunk);
             cancellationToken.ThrowIfCancellationRequested();
-            lock(ProcessingChunks)
-            {
-                ProcessingChunks.Remove(position);
-            }
             finishingData.TaskCompletionSource.TrySetResult(chunk);
+            ProcessingCount--;
             return chunk;
         }
         catch(OperationCanceledException)
         {
-            lock(ProcessingChunks)
-            {
-                ProcessingChunks.Remove(position);
-            }
+            ProcessingCount--;
             finishingData.TaskCompletionSource.TrySetCanceled();
             throw;
         }

@@ -45,10 +45,14 @@ public class World : Component, IWorldAccessor, ITickable
 
 
     private bool IsSceneRunning => !Scene.IsEditor;
-
-
+    
+    
     private readonly Dictionary<ulong, Player> _players = new();
-    protected ChunksCollection Chunks { get; private set; } = null!;
+
+    protected readonly object ChunksCreationLocker = new();
+    protected CancellationTokenSource TaskCreationTokenSource = new();
+    protected readonly ChunksCollection Chunks = new(Vector3Int.XYZIterationComparer);
+    protected readonly Dictionary<Vector3Int, (Task<Chunk> ChunkTask, ChunkCreationStatus Status)> CreatingChunks = new();
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -79,10 +83,8 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected override void OnAwake()
     {
-        Chunks = new(Vector3Int.XYZIterationComparer);
         Chunks.ChunkLoaded += OnChunkLoaded;
         Chunks.ChunkUnloaded += OnChunkUnloaded;
-
         ChunksParent ??= GameObject;
     }
 
@@ -99,6 +101,12 @@ public class World : Component, IWorldAccessor, ITickable
     protected override void OnDestroy()
     {
         Clear();
+        lock(ChunksCreationLocker)
+        {
+            TaskCreationTokenSource.Cancel();
+            TaskCreationTokenSource.Dispose();
+        }
+
         Chunks.ChunkLoaded -= OnChunkLoaded;
         Chunks.ChunkUnloaded -= OnChunkUnloaded;
         Chunks.Dispose();
@@ -172,19 +180,56 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    protected virtual async Task<Chunk> GetOrCreateChunk(Vector3Int chunkPosition, bool preloadOnly = false)
+    protected virtual Task<Chunk> GetOrCreateChunk(Vector3Int chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
     {
         if(!IsChunkInLimits(chunkPosition))
             throw new InvalidOperationException($"Chunk position {chunkPosition} is not in Limits {LimitsInChunks}");
 
-        if(Chunks.TryGet(chunkPosition, out var chunk))
-            return chunk;
+        if(creationStatus != ChunkCreationStatus.Preloading && creationStatus != ChunkCreationStatus.Finishing)
+            throw new NotSupportedException($"{creationStatus} is not supported");
 
-        (var createdChunk, bool fullyLoaded) = await ChunksCreator.GetOrCreateChunk(chunkPosition, preloadOnly, CancellationToken.None);
+        lock(ChunksCreationLocker)
+        {
+            var cancellationToken = TaskCreationTokenSource.Token;
 
-        if(fullyLoaded)
-            return Chunks.GetOrAdd(chunkPosition, createdChunk);
-        return createdChunk;
+            if(Chunks.TryGet(chunkPosition, out var chunk))
+                return Task.FromResult(chunk);
+
+            ChunkCreationStatus currentStatus = ChunkCreationStatus.None;
+            Task<Chunk>? chunkTask = null;
+            if(CreatingChunks.TryGetValue(chunkPosition, out var creatingChunkData))
+            {
+                if(creatingChunkData.Status >= creationStatus)
+                    return creatingChunkData.ChunkTask;
+                currentStatus = creatingChunkData.Status;
+                chunkTask = creatingChunkData.ChunkTask;
+            }
+
+            TaskCompletionSource chunkTaskCreationTaskSource = new();
+
+            if(currentStatus < ChunkCreationStatus.Preloading)
+                chunkTask = ChunksCreator.PreloadChunk(chunkPosition, cancellationToken);
+
+            if(creationStatus == ChunkCreationStatus.Finishing)
+                chunkTask = ChunksCreator.FinishChunk(chunkTask!, cancellationToken);
+
+            chunkTask = chunkTask!.ContinueWith(async t =>
+            {
+                await chunkTaskCreationTaskSource.Task;
+                lock(ChunksCreationLocker)
+                {
+                    CreatingChunks.Remove(chunkPosition);
+                    t.ThrowIfNotCompletedSuccessfully();
+                    Chunks.Add(t.Result);
+                }
+                return t.Result;
+            }).UnwrapWhitelisted();
+
+            CreatingChunks[chunkPosition] = new(chunkTask, creationStatus);
+            chunkTaskCreationTaskSource.SetResult();
+
+            return chunkTask;
+        }
     }
 
     // Thread safe
@@ -264,8 +309,9 @@ public class World : Component, IWorldAccessor, ITickable
             return BlockStateChangingResult.NotChanged;
 
         var chunkPosition = GetChunkPosition(blockPosition);
-        bool preload = !flags.HasFlag(BlockSetFlags.UpdateModel) && !flags.HasFlag(BlockSetFlags.AwaitModelUpdate);
-        var chunk = await GetOrCreateChunk(chunkPosition, preload);
+        bool preloadOnly = !flags.HasFlag(BlockSetFlags.UpdateModel) && !flags.HasFlag(BlockSetFlags.AwaitModelUpdate);
+        var chunkCreationStatus = preloadOnly ? ChunkCreationStatus.Preloading : ChunkCreationStatus.Finishing;
+        var chunk = await GetOrCreateChunk(chunkPosition, chunkCreationStatus);
 
         if(!chunk.IsValid())
             throw new InvalidOperationException($"Couldn't load {nameof(Chunk)} at position {chunkPosition}");
@@ -368,7 +414,15 @@ public class World : Component, IWorldAccessor, ITickable
     // Thread safe
     public virtual void Clear()
     {
-        Chunks.Clear();
+        lock(ChunksCreationLocker)
+        {
+            Chunks.Clear();
+            CreatingChunks.Clear();
+
+            TaskCreationTokenSource.Cancel();
+            TaskCreationTokenSource.Dispose();
+            TaskCreationTokenSource = new();
+        }
     }
 
     protected virtual void DestroyChunk(Chunk? chunk)

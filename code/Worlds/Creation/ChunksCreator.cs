@@ -1,6 +1,5 @@
 ﻿using Sandbox;
 using Sandcube.Mth;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,74 +19,10 @@ public class ChunksCreator : Component
 
     protected CancellationTokenSource CommonTokenSource { get; set; } = new();
 
-    protected record class ChunkTaskData(Task<Chunk> Task, bool PreloadOnly);
-    protected readonly Dictionary<Vector3Int, ChunkTaskData> CreatingChunks = new();
-
     protected Vector3Int ChunkSize => World.ChunkSize;
 
 
-    public async Task<(Chunk chunk, bool fullyLoaded)> GetOrCreateChunk(Vector3Int position, bool preloadOnly, CancellationToken cancellationToken)
-    {
-        var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(CommonTokenSource.Token, cancellationToken);
-        cancellationToken = cancellationTokenSource.Token;
-
-        try
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            Task<Chunk> resultTask;
-            lock(CreatingChunks)
-            {
-                if(CreatingChunks.TryGetValue(position, out var chunkTaskData))
-                {
-                    if(chunkTaskData.PreloadOnly && !preloadOnly)
-                        resultTask = FinishChunk(chunkTaskData.Task, cancellationToken);
-                    else
-                        resultTask = chunkTaskData.Task;
-                }
-                else
-                {
-                    CreatingChunks[position] = new ChunkTaskData(null!, preloadOnly);
-                    var task = CreateChunk(position, cancellationToken);
-                    CreatingChunks[position] = CreatingChunks[position] with { Task = task };
-                    resultTask = task;
-                }
-            }
-
-            var chunk = await resultTask;
-            bool fullyLoaded = false;
-            lock(CreatingChunks)
-            {
-                fullyLoaded = !CreatingChunks.TryGetValue(position, out var chunkTasData) || !chunkTasData.PreloadOnly;
-
-                if(fullyLoaded)
-                    CreatingChunks.Remove(chunk.Position);
-            }
-
-            return (chunk, fullyLoaded);
-        }
-        finally
-        {
-            cancellationTokenSource.Dispose();
-        }
-    }
-
-    protected virtual async Task<Chunk> CreateChunk(Vector3Int position, CancellationToken cancellationToken)
-    {
-        var chunk = await PreloadChunk(position, cancellationToken);
-
-        bool preloadOnly = false;
-        lock(CreatingChunks)
-        {
-            preloadOnly = CreatingChunks[position].PreloadOnly;
-        }
-
-        if(!preloadOnly)
-            chunk = await FinishChunk(chunk, cancellationToken);
-        return chunk;
-    }
-
-    protected virtual async Task<Chunk> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
+    public virtual async Task<Chunk> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -101,19 +36,14 @@ public class ChunksCreator : Component
         return chunk;
     }
 
-    protected async Task<Chunk> FinishChunk(Task<Chunk> chunkTask, CancellationToken cancellationToken)
+    public async Task<Chunk> FinishChunk(Task<Chunk> chunkTask, CancellationToken cancellationToken)
     {
         var chunk = await chunkTask;
         return await FinishChunk(chunk, cancellationToken);
     }
-    protected virtual async Task<Chunk> FinishChunk(Chunk chunk, CancellationToken cancellationToken)
+    public virtual async Task<Chunk> FinishChunk(Chunk chunk, CancellationToken cancellationToken, bool enableChunk = true)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
-        lock(CreatingChunks)
-        {
-            CreatingChunks[chunk.Position] = CreatingChunks[chunk.Position] with { PreloadOnly = false };
-        }
 
         if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
         {
@@ -122,10 +52,9 @@ public class ChunksCreator : Component
         }
 
         await Task.MainThread();
-        chunk.GameObject.Enabled = true;
+        chunk.GameObject.Enabled = enableChunk;
         return chunk;
     }
-
 
     // Call only in game thread
     protected virtual Chunk CreateChunkObject(Vector3Int position)
