@@ -31,39 +31,45 @@ public class ChunksCreator : Component
         var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(CommonTokenSource.Token, cancellationToken);
         cancellationToken = cancellationTokenSource.Token;
 
-        cancellationToken.ThrowIfCancellationRequested();
-
-        Task<Chunk> resultTask;
-        lock(CreatingChunks)
+        try
         {
-            if(CreatingChunks.TryGetValue(position, out var chunkTaskData))
+            cancellationToken.ThrowIfCancellationRequested();
+
+            Task<Chunk> resultTask;
+            lock(CreatingChunks)
             {
-                if(chunkTaskData.PreloadOnly && !preloadOnly)
-                    resultTask = FinishChunk(chunkTaskData.Task, cancellationToken);
+                if(CreatingChunks.TryGetValue(position, out var chunkTaskData))
+                {
+                    if(chunkTaskData.PreloadOnly && !preloadOnly)
+                        resultTask = FinishChunk(chunkTaskData.Task, cancellationToken);
+                    else
+                        resultTask = chunkTaskData.Task;
+                }
                 else
-                    resultTask = chunkTaskData.Task;
+                {
+                    CreatingChunks[position] = new ChunkTaskData(null!, preloadOnly);
+                    var task = CreateChunk(position, cancellationToken);
+                    CreatingChunks[position] = CreatingChunks[position] with { Task = task };
+                    resultTask = task;
+                }
             }
-            else
+
+            var chunk = await resultTask;
+            bool fullyLoaded = false;
+            lock(CreatingChunks)
             {
-                CreatingChunks[position] = new ChunkTaskData(null!, preloadOnly);
-                var task = CreateChunk(position, cancellationToken);
-                CreatingChunks[position] = CreatingChunks[position] with { Task = task };
-                resultTask = task;
+                fullyLoaded = !CreatingChunks.TryGetValue(position, out var chunkTasData) || !chunkTasData.PreloadOnly;
+
+                if(fullyLoaded)
+                    CreatingChunks.Remove(chunk.Position);
             }
-        }
 
-        var chunk = await resultTask;
-        bool fullyLoaded = false;
-        lock(CreatingChunks)
+            return (chunk, fullyLoaded);
+        }
+        finally
         {
-            fullyLoaded = !CreatingChunks.TryGetValue(position, out var chunkTasData) || !chunkTasData.PreloadOnly;
-
-            if(fullyLoaded)
-                CreatingChunks.Remove(chunk.Position);
+            cancellationTokenSource.Dispose();
         }
-
-        cancellationTokenSource.Dispose();
-        return (chunk, fullyLoaded);
     }
 
     protected virtual async Task<Chunk> CreateChunk(Vector3Int position, CancellationToken cancellationToken)
