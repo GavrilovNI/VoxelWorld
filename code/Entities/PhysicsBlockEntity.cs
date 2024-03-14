@@ -80,7 +80,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         RecalculateBounds(physicsMesh.Bounds, visualMeshBuilder.Bounds);
     }
 
-    protected override void DrawGizmos()
+    protected override void DrawGizmosInternal()
     {
         Gizmo.Hitbox.BBox(ModelBounds);
     }

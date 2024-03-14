@@ -97,7 +97,7 @@ public class ItemStackEntity : Entity
         Rigidbody.Velocity = compoundTag.Get<Vector3>("velocity");
     }
 
-    protected override void DrawGizmos()
+    protected override void DrawGizmosInternal()
     {
         Gizmo.Hitbox.BBox(ModelBounds);
     }

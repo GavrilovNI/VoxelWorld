@@ -8,6 +8,7 @@ using Sandcube.Registries;
 using Sandcube.Worlds;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sandcube.Entities;
 
@@ -66,6 +67,9 @@ public abstract class Entity : Component
 
     }
 
+    protected sealed override void OnEnabled() => OnEnabledInternal();
+    protected virtual void OnEnabledInternal() { }
+
     protected sealed override void OnAwake()
     {
         Tags.Add("entity");
@@ -91,16 +95,9 @@ public abstract class Entity : Component
         };
         OnAwakeInternal();
     }
+    protected virtual void OnAwakeInternal() { }
 
-    protected virtual void OnAwakeInternal()
-    {
-
-    }
-
-    protected virtual void OnTransformChanged(Transform oldTransform, Transform newTransform)
-    {
-
-    }
+    protected virtual void OnTransformChanged(Transform oldTransform, Transform newTransform) { }
 
     protected sealed override void OnStart()
     {
@@ -120,11 +117,16 @@ public abstract class Entity : Component
 
         OnStartInternal();
     }
+    protected virtual void OnStartInternal() { }
 
-    protected virtual void OnStartInternal()
-    {
+    protected sealed override void OnUpdate() => OnUpdateInternal();
+    protected virtual void OnUpdateInternal() { }
 
-    }
+    protected sealed override void OnFixedUpdate() => OnFixedUpdateInternal();
+    protected virtual void OnFixedUpdateInternal() { }
+
+    protected sealed override void OnDisabled() => OnDisabledInternal();
+    protected virtual void OnDisabledInternal() { }
 
     public new void Destroy()
     {
@@ -144,10 +146,24 @@ public abstract class Entity : Component
         Destroyed?.Invoke(this);
     }
 
-    protected virtual void OnDestroyInternal()
-    {
+    protected virtual void OnDestroyInternal() { }
 
-    }
+
+    protected sealed override void OnDirty() => OnDirtyInternal();
+    protected virtual void OnDirtyInternal() { }
+    protected sealed override Task OnLoad() => OnLoadInternal();
+    protected virtual Task OnLoadInternal() => Task.CompletedTask;
+    protected sealed override void DrawGizmos() => DrawGizmosInternal();
+    protected virtual void DrawGizmosInternal() { }
+    protected sealed override void OnParentChanged(GameObject oldParent, GameObject newParent) => OnParentChangedInternal(oldParent, newParent);
+    protected virtual void OnParentChangedInternal(GameObject oldParent, GameObject newParent) { }
+    protected sealed override void OnPreRender() => OnPreRenderInternal();
+    protected virtual void OnPreRenderInternal() { }
+    protected sealed override void OnTagsChanged() => OnTagsChangedInternal();
+    protected virtual void OnTagsChangedInternal() { }
+    protected sealed override void OnValidate() => OnValidateInternal();
+    protected virtual void OnValidateInternal() { }
+
 
     protected virtual void OnMovedToAnotherChunk(Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
     {
