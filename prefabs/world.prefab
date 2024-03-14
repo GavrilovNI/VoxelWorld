@@ -1,24 +1,26 @@
 {
   "RootObject": {
-    "Id": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
+    "__guid": "2027a7eb-92fa-440b-bef0-e65bede018c7",
     "Name": "world",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
       {
         "__type": "World",
+        "__guid": "29283cb0-46bf-443c-9868-7eebb4f6ccf0",
         "ChunksCreator": {
           "_type": "component",
-          "go": "cf09da43-b8d0-4740-81d8-5f491fa96c60",
+          "component_id": "13c0896d-e32f-4c73-b816-94a4f7f3b922",
+          "go": "fd0a926f-1e51-4426-b482-ac8cdc1dc19e",
           "component_type": "LimitedChunksCreator"
         },
         "ChunksParent": {
           "_type": "gameobject",
-          "go": "de2a342c-2205-450c-a070-a998b9d2c9d6"
+          "go": "cb17ce3f-b1e9-4489-be21-9e870f4246ba"
         },
         "EntitiesParent": {
           "_type": "gameobject",
-          "go": "cdd7556c-7d67-4f8b-bc16-4d6e5594cceb"
+          "go": "781006bc-fbba-4c74-ad56-af88967f3fab"
         },
         "IsService": false,
         "Limits": {
@@ -37,22 +39,25 @@
       },
       {
         "__type": "WorldSaver",
+        "__guid": "6f9ae904-dd5e-49b7-bc63-8d0417188c4f",
         "World": {
           "_type": "component",
-          "go": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
+          "component_id": "29283cb0-46bf-443c-9868-7eebb4f6ccf0",
+          "go": "2027a7eb-92fa-440b-bef0-e65bede018c7",
           "component_type": "World"
         }
       }
     ],
     "Children": [
       {
-        "Id": "cf09da43-b8d0-4740-81d8-5f491fa96c60",
+        "__guid": "fd0a926f-1e51-4426-b482-ac8cdc1dc19e",
         "Name": "ChunksCreator",
         "Enabled": true,
         "NetworkMode": 2,
         "Components": [
           {
             "__type": "LimitedChunksCreator",
+            "__guid": "13c0896d-e32f-4c73-b816-94a4f7f3b922",
             "BreakFromPrefab": false,
             "ChunkPrefab": {
               "_type": "gameobject",
@@ -60,70 +65,80 @@
             },
             "ChunksParent": {
               "_type": "gameobject",
-              "go": "7db9b64b-1285-4d8b-a4f3-bd4cd25a5b45"
+              "go": "e0cd1c88-4534-475c-8520-2a0dd10ded24"
             },
             "EntitiesLoader": {
               "_type": "component",
-              "go": "927d07a7-02ff-43c7-94cc-b536b87b30be",
+              "component_id": "395e68d3-dc8d-4652-a231-7d1c16bbd8fc",
+              "go": "4fec60dd-9bd6-46a6-b11b-b3f1b435635b",
               "component_type": "ChunkEntitiesLoader"
             },
             "LandscapeGenerator": {
               "_type": "component",
-              "go": "6ae73275-d89e-4f94-97d6-c1cf60e82bd6",
+              "component_id": "c9ad53b6-5a95-475a-b22a-de7458f46eb2",
+              "go": "e648a3bf-0d94-43e1-b945-ccd9d68e1d73",
               "component_type": "ChunkLandscapeGenerator"
             },
             "Loader": {
               "_type": "component",
-              "go": "203a3e6c-c4f2-4376-a3a5-8184ca7880a7",
+              "component_id": "576e1925-303f-4987-8c58-2fadf35f4cb3",
+              "go": "f0173106-2a2f-4d25-aaf2-0ab26a0de480",
               "component_type": "ChunkLoader"
             },
             "MaxCountToProccess": 15,
             "ModelAwaiter": {
               "_type": "component",
-              "go": "1967f880-db0c-4ecb-aa39-a31b980376f9",
+              "component_id": "4a7fbcf2-59f0-4766-a33a-3cdc093b650d",
+              "go": "d01d2103-4d66-4269-a22b-9f12f8d984aa",
               "component_type": "ChunkModelAwaiter"
             },
             "ProcessingCount": 0,
             "World": {
               "_type": "component",
-              "go": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
+              "component_id": "29283cb0-46bf-443c-9868-7eebb4f6ccf0",
+              "go": "2027a7eb-92fa-440b-bef0-e65bede018c7",
               "component_type": "World"
             }
           }
         ],
         "Children": [
           {
-            "Id": "203a3e6c-c4f2-4376-a3a5-8184ca7880a7",
+            "__guid": "f0173106-2a2f-4d25-aaf2-0ab26a0de480",
             "Name": "Loader",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
                 "__type": "ChunkLoader",
+                "__guid": "576e1925-303f-4987-8c58-2fadf35f4cb3",
                 "World": {
                   "_type": "component",
-                  "go": "4ff65c66-f365-4c17-bcf7-4531573fd4e2",
+                  "component_id": "29283cb0-46bf-443c-9868-7eebb4f6ccf0",
+                  "go": "2027a7eb-92fa-440b-bef0-e65bede018c7",
                   "component_type": "World"
                 }
               }
             ]
           },
           {
-            "Id": "6ae73275-d89e-4f94-97d6-c1cf60e82bd6",
+            "__guid": "e648a3bf-0d94-43e1-b945-ccd9d68e1d73",
             "Name": "Landscape",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
                 "__type": "ChunkLandscapeGenerator",
+                "__guid": "c9ad53b6-5a95-475a-b22a-de7458f46eb2",
                 "Generator": {
                   "_type": "component",
-                  "go": "6ae73275-d89e-4f94-97d6-c1cf60e82bd6",
+                  "component_id": "d767abea-1aba-4cb6-ad57-b6d75a212499",
+                  "go": "e648a3bf-0d94-43e1-b945-ccd9d68e1d73",
                   "component_type": "WorldGenerator"
                 }
               },
               {
                 "__type": "WorldGenerator",
+                "__guid": "d767abea-1aba-4cb6-ad57-b6d75a212499",
                 "AdditiveDensityFromHeightCurve": {
                   "rangey": "-1,1",
                   "frames": [
@@ -183,30 +198,32 @@
             ]
           },
           {
-            "Id": "1967f880-db0c-4ecb-aa39-a31b980376f9",
+            "__guid": "d01d2103-4d66-4269-a22b-9f12f8d984aa",
             "Name": "ModelAwaiter",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ChunkModelAwaiter"
+                "__type": "ChunkModelAwaiter",
+                "__guid": "4a7fbcf2-59f0-4766-a33a-3cdc093b650d"
               }
             ]
           },
           {
-            "Id": "927d07a7-02ff-43c7-94cc-b536b87b30be",
+            "__guid": "4fec60dd-9bd6-46a6-b11b-b3f1b435635b",
             "Name": "EntitiesLoader",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
                 "__type": "ChunkEntitiesLoader",
+                "__guid": "395e68d3-dc8d-4652-a231-7d1c16bbd8fc",
                 "BreakFromPrefab": true
               }
             ]
           },
           {
-            "Id": "7db9b64b-1285-4d8b-a4f3-bd4cd25a5b45",
+            "__guid": "e0cd1c88-4534-475c-8520-2a0dd10ded24",
             "Name": "CreatingChunks",
             "Enabled": true,
             "NetworkMode": 2
@@ -214,7 +231,7 @@
         ]
       },
       {
-        "Id": "201131d3-3edb-4111-9ae9-a6ed1f55a91e",
+        "__guid": "3995a6ef-fbea-4d93-b35f-ddeda97936f8",
         "Name": "Sun",
         "Rotation": "-0.1464466,0.3535534,0.3535534,0.8535534",
         "Tags": "light_directional,light",
@@ -223,6 +240,7 @@
         "Components": [
           {
             "__type": "DirectionalLight",
+            "__guid": "7e9976f1-4bb5-456a-85ba-5e681e0a8a59",
             "FogMode": "Enabled",
             "FogStrength": 1,
             "LightColor": "0.91373,0.98039,1,1",
@@ -232,13 +250,13 @@
         ]
       },
       {
-        "Id": "de2a342c-2205-450c-a070-a998b9d2c9d6",
+        "__guid": "cb17ce3f-b1e9-4489-be21-9e870f4246ba",
         "Name": "Chunks",
         "Enabled": true,
         "NetworkMode": 2
       },
       {
-        "Id": "cdd7556c-7d67-4f8b-bc16-4d6e5594cceb",
+        "__guid": "781006bc-fbba-4c74-ad56-af88967f3fab",
         "Name": "Entities",
         "Enabled": true,
         "NetworkMode": 2
@@ -248,5 +266,7 @@
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }

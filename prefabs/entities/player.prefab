@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "8e266743-5db2-40f8-a74a-286a025b5796",
+    "__guid": "8e266743-5db2-40f8-a74a-286a025b5796",
     "Name": "player",
     "Tags": "entity,player,no_entity_collide",
     "Enabled": true,
@@ -8,8 +8,10 @@
     "Components": [
       {
         "__type": "Player",
+        "__guid": "0a8cb4bd-6fcf-4922-894d-77d148a3174a",
         "Camera": {
           "_type": "component",
+          "component_id": "b39c71e3-8ab0-456b-89bf-3ae7f541e48e",
           "go": "2a79b162-52df-485b-9add-1903e6677b52",
           "component_type": "CameraComponent"
         },
@@ -19,12 +21,14 @@
         },
         "Inventory": {
           "_type": "component",
+          "component_id": "23d798c9-221c-484a-ab5f-0fa8212535c8",
           "go": "8e266743-5db2-40f8-a74a-286a025b5796",
           "component_type": "PlayerInventory"
         },
         "IsCreative": true,
         "ItemDropper": {
           "_type": "component",
+          "component_id": "0079a434-9628-477b-91b5-87d8fffb8dae",
           "go": "5ed5ac04-9e0c-4a33-87d1-f83fda773d5a",
           "component_type": "ItemDropper"
         },
@@ -32,10 +36,12 @@
         "SteamId": 0
       },
       {
-        "__type": "PlayerInventory"
+        "__type": "PlayerInventory",
+        "__guid": "23d798c9-221c-484a-ab5f-0fa8212535c8"
       },
       {
         "__type": "WorldInteractor",
+        "__guid": "ffccece7-526b-4caa-ae7d-1ea7578bbbca",
         "Eye": {
           "_type": "gameobject",
           "go": "2a79b162-52df-485b-9add-1903e6677b52"
@@ -43,12 +49,14 @@
         "InteractionTag": "interactable",
         "Player": {
           "_type": "component",
+          "component_id": "0a8cb4bd-6fcf-4922-894d-77d148a3174a",
           "go": "8e266743-5db2-40f8-a74a-286a025b5796",
           "component_type": "Player"
         }
       },
       {
         "__type": "WorldAutoLoader",
+        "__guid": "6c572343-9fe5-41f0-8e93-75d9326d5b05",
         "Bounds": {
           "Mins": "-2,-2,-2",
           "Maxs": "2,2,2"
@@ -57,6 +65,7 @@
       },
       {
         "__type": "CharacterController",
+        "__guid": "3a71ecf8-82b8-49a3-9fd2-ace05c84d5a5",
         "Acceleration": 10,
         "Bounciness": 0.3,
         "GroundAngle": 45,
@@ -67,10 +76,12 @@
       },
       {
         "__type": "PlayerController",
+        "__guid": "f143aad7-c4e8-4c49-9d06-5aa7d2afab53",
         "AirFriction": 0.1,
         "AirWishVelocityClamp": 50,
         "CharacterController": {
           "_type": "component",
+          "component_id": "3a71ecf8-82b8-49a3-9fd2-ace05c84d5a5",
           "go": "8e266743-5db2-40f8-a74a-286a025b5796",
           "component_type": "CharacterController"
         },
@@ -87,13 +98,16 @@
       },
       {
         "__type": "HotbarController",
+        "__guid": "315d5222-9c22-4bf0-bb39-ffd1434c2eb0",
         "Inventory": {
           "_type": "component",
+          "component_id": "23d798c9-221c-484a-ab5f-0fa8212535c8",
           "go": "8e266743-5db2-40f8-a74a-286a025b5796",
           "component_type": "PlayerInventory"
         },
         "Player": {
           "_type": "component",
+          "component_id": "0a8cb4bd-6fcf-4922-894d-77d148a3174a",
           "go": "8e266743-5db2-40f8-a74a-286a025b5796",
           "component_type": "Player"
         }
@@ -101,7 +115,7 @@
     ],
     "Children": [
       {
-        "Id": "f1893460-3eff-48b2-b746-b5d674751b9e",
+        "__guid": "f1893460-3eff-48b2-b746-b5d674751b9e",
         "Name": "Eye",
         "Position": "0,0,64",
         "Enabled": true,
@@ -109,8 +123,10 @@
         "Components": [
           {
             "__type": "VerticalCameraController",
+            "__guid": "e3f5f443-ca94-4c8e-ab4b-ea803a08b588",
             "Camera": {
               "_type": "component",
+              "component_id": "b39c71e3-8ab0-456b-89bf-3ae7f541e48e",
               "go": "2a79b162-52df-485b-9add-1903e6677b52",
               "component_type": "CameraComponent"
             },
@@ -120,7 +136,7 @@
         ],
         "Children": [
           {
-            "Id": "2a79b162-52df-485b-9add-1903e6677b52",
+            "__guid": "2a79b162-52df-485b-9add-1903e6677b52",
             "Name": "Camera",
             "Position": "8,0,0",
             "Enabled": true,
@@ -128,6 +144,7 @@
             "Components": [
               {
                 "__type": "CameraComponent",
+                "__guid": "b39c71e3-8ab0-456b-89bf-3ae7f541e48e",
                 "BackgroundColor": "0.25292,0.26086,0.29703,1",
                 "ClearFlags": "All",
                 "FieldOfView": 80,
@@ -144,10 +161,12 @@
               },
               {
                 "__type": "Sharpen",
+                "__guid": "993bee62-eb1d-41cd-ac06-0e29192b00c0",
                 "Scale": 1
               },
               {
                 "__type": "Bloom",
+                "__guid": "78775ffc-c991-4034-af74-c1daa42c3a8a",
                 "BloomColor": {
                   "color": [
                     {
@@ -178,7 +197,7 @@
             ]
           },
           {
-            "Id": "5ed5ac04-9e0c-4a33-87d1-f83fda773d5a",
+            "__guid": "5ed5ac04-9e0c-4a33-87d1-f83fda773d5a",
             "Name": "ItemDropper",
             "Position": "13,0,0",
             "Enabled": true,
@@ -186,6 +205,7 @@
             "Components": [
               {
                 "__type": "ItemDropper",
+                "__guid": "0079a434-9628-477b-91b5-87d8fffb8dae",
                 "Velocity": 100
               }
             ]
@@ -193,7 +213,7 @@
         ]
       },
       {
-        "Id": "af28ee62-923a-45dc-8c31-385b94ee1dc0",
+        "__guid": "af28ee62-923a-45dc-8c31-385b94ee1dc0",
         "Name": "ItemPickuper",
         "Tags": "trigger",
         "Enabled": true,
@@ -201,8 +221,10 @@
         "Components": [
           {
             "__type": "ItemPickuper",
+            "__guid": "fb9d2d9e-5476-4441-9fcd-6e080f844b54",
             "Inventory": {
               "_type": "component",
+              "component_id": "23d798c9-221c-484a-ab5f-0fa8212535c8",
               "go": "8e266743-5db2-40f8-a74a-286a025b5796",
               "component_type": "PlayerInventory"
             },
@@ -210,6 +232,7 @@
           },
           {
             "__type": "SphereCollider",
+            "__guid": "5352be1f-6439-4d29-8595-ac06b2139081",
             "Center": "0,0,32",
             "IsTrigger": true,
             "Radius": 64,
@@ -222,5 +245,7 @@
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }

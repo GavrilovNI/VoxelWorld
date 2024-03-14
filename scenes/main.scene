@@ -1,20 +1,22 @@
 {
-  "Id": "8c0250af-c367-4bb3-ab12-5cf36779a6ca",
+  "__guid": "8c0250af-c367-4bb3-ab12-5cf36779a6ca",
   "GameObjects": [
     {
-      "Id": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
+      "__guid": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
       "Name": "Sandcube Game",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
           "__type": "SandcubeGame",
+          "__guid": "ffe37fb8-2302-45f2-90c5-317fa05eeeb5",
           "BaseModPrefab": {
             "_type": "gameobject",
             "prefab": "prefabs/mods/basemod.prefab"
           },
           "BlockPhotoMaker": {
             "_type": "component",
+            "component_id": "8bc26af7-60d4-4107-a0dc-64c35e1bedfe",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -29,6 +31,7 @@
           "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
           "PlayerSpawner": {
             "_type": "component",
+            "component_id": "51c0e7a1-af4d-4d0c-a2c2-57986fec7ee1",
             "go": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
             "component_type": "PlayerSpawner"
           },
@@ -45,6 +48,7 @@
         },
         {
           "__type": "PlayerSpawner",
+          "__guid": "51c0e7a1-af4d-4d0c-a2c2-57986fec7ee1",
           "PreloadRange": {
             "Mins": "-2,-2,-3",
             "Maxs": "2,2,3"
@@ -56,13 +60,13 @@
       ],
       "Children": [
         {
-          "Id": "d0115228-fd86-4a80-84c5-febd9bcadaa5",
+          "__guid": "d0115228-fd86-4a80-84c5-febd9bcadaa5",
           "Name": "Mods",
           "Enabled": true,
           "NetworkMode": 2
         },
         {
-          "Id": "108bed85-7734-41fa-bcd2-22f15b326b19",
+          "__guid": "108bed85-7734-41fa-bcd2-22f15b326b19",
           "Name": "Worlds",
           "Enabled": true,
           "NetworkMode": 2
@@ -70,13 +74,14 @@
       ]
     },
     {
-      "Id": "d5bee545-75ce-40fe-a099-4e741326dbd2",
+      "__guid": "d5bee545-75ce-40fe-a099-4e741326dbd2",
       "Name": "Screen UI",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
           "__type": "ScreenPanel",
+          "__guid": "8fb43bd9-75cf-472a-b8f6-2800f69e71d5",
           "AutoScreenScale": true,
           "Opacity": 1,
           "Scale": 1,
@@ -84,6 +89,7 @@
         },
         {
           "__type": "MenuController",
+          "__guid": "7c2472c4-8bf5-481a-aac7-201da111e072",
           "EscapeScreen": {
             "_type": "gameobject",
             "go": "5070d320-0590-4a21-a5de-cd3007668697"
@@ -92,49 +98,52 @@
       ],
       "Children": [
         {
-          "Id": "db5119fc-9118-4da7-9cea-58f77011921d",
+          "__guid": "db5119fc-9118-4da7-9cea-58f77011921d",
           "Name": "Hotbar",
           "Enabled": true,
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "HotbarUI"
+              "__type": "HotbarUI",
+              "__guid": "e5a60e86-aead-4235-b831-b2850f23b15f"
             }
           ]
         },
         {
-          "Id": "5070d320-0590-4a21-a5de-cd3007668697",
+          "__guid": "5070d320-0590-4a21-a5de-cd3007668697",
           "Name": "EscapeScreen",
           "Enabled": true,
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "EscapeScreen"
+              "__type": "EscapeScreen",
+              "__guid": "2a8bbb0e-2fd8-4e59-ba61-f38e0190cfca"
             }
           ]
         },
         {
-          "Id": "b78083ea-7296-41cc-a8d9-bbc586956a98",
+          "__guid": "b78083ea-7296-41cc-a8d9-bbc586956a98",
           "Name": "Crosshair",
           "Enabled": true,
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "CrosshairUI"
+              "__type": "CrosshairUI",
+              "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7"
             }
           ]
         }
       ]
     },
     {
-      "Id": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
+      "__guid": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
       "Name": "BlockPhotoMaker",
       "Enabled": true,
       "NetworkMode": 2,
       "__Prefab": "prefabs/blockphotomaker.prefab"
     },
     {
-      "Id": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
+      "__guid": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
       "Name": "BlocksTextureMapShower",
       "Position": "0,0,800",
       "Tags": "invisible",
@@ -142,6 +151,7 @@
       "Components": [
         {
           "__type": "ModelRenderer",
+          "__guid": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",
           "BodyGroups": 18446744073709551615,
           "MaterialOverride": "materials/voxels_translucent.vmat",
           "Model": "models/dev/plane.vmdl",
@@ -150,8 +160,10 @@
         },
         {
           "__type": "BlocksTextureMapShower",
+          "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
           "ModelRenderer": {
             "_type": "component",
+            "component_id": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",
             "go": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
             "component_type": "ModelRenderer"
           }
@@ -182,6 +194,8 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-12T23:49:12.4541462\u002B01:00",
+  "LastSaved": "2024-03-14T15:16:18.6189339\u002B01:00",
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }

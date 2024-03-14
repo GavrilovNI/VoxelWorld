@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "09ca0739-f949-47de-a034-c4eb3e80ab08",
+    "__guid": "09ca0739-f949-47de-a034-c4eb3e80ab08",
     "Name": "physicsblockentity",
     "Tags": "entity,no_entity_collide",
     "Enabled": true,
@@ -8,19 +8,23 @@
     "Components": [
       {
         "__type": "PhysicsBlockEntity",
+        "__guid": "f49a4bf1-3c4e-4227-96e6-21599659407f",
         "Collider": {
           "_type": "component",
+          "component_id": "3cfc2da8-d742-4dda-aad7-77dd4ee737b5",
           "go": "09ca0739-f949-47de-a034-c4eb3e80ab08",
           "component_type": "ModelCollider"
         },
         "Rigidbody": {
           "_type": "component",
+          "component_id": "fdfc2001-c4f5-4e4a-a278-274993f72926",
           "go": "09ca0739-f949-47de-a034-c4eb3e80ab08",
           "component_type": "Rigidbody"
         }
       },
       {
         "__type": "Rigidbody",
+        "__guid": "fdfc2001-c4f5-4e4a-a278-274993f72926",
         "AngularDamping": 0,
         "Gravity": true,
         "LinearDamping": 0,
@@ -30,11 +34,13 @@
           "Roll": true
         },
         "MassOverride": 0,
+        "MotionEnabled": true,
         "RigidbodyFlags": 0,
         "StartAsleep": false
       },
       {
         "__type": "ModelCollider",
+        "__guid": "3cfc2da8-d742-4dda-aad7-77dd4ee737b5",
         "IsTrigger": false,
         "Static": false
       }
@@ -44,5 +50,7 @@
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }

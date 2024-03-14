@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "92b75b3e-e86d-4858-9096-4273868519af",
+    "__guid": "92b75b3e-e86d-4858-9096-4273868519af",
     "Name": "visualonlychunk",
     "Tags": "world",
     "Enabled": true,
@@ -8,8 +8,10 @@
     "Components": [
       {
         "__type": "Chunk",
+        "__guid": "abade38b-ec40-4d26-953b-89448e5ecfdd",
         "ModelUpdater": {
           "_type": "component",
+          "component_id": "05c4a056-2eee-471f-99aa-7d0030fed1df",
           "go": "92b75b3e-e86d-4858-9096-4273868519af",
           "component_type": "ChunkModelUpdater"
         },
@@ -18,19 +20,23 @@
       },
       {
         "__type": "ChunkModelUpdater",
+        "__guid": "05c4a056-2eee-471f-99aa-7d0030fed1df",
         "Chunk": {
           "_type": "component",
+          "component_id": "abade38b-ec40-4d26-953b-89448e5ecfdd",
           "go": "92b75b3e-e86d-4858-9096-4273868519af",
           "component_type": "Chunk"
         },
         "InteractionCollider": {
           "_type": "component",
+          "component_id": "44cb271f-abc0-4447-a90c-6ecce01b90f2",
           "go": "363aa064-f39c-4bd7-a7a0-b493aee132c1",
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": false,
         "PhysicsCollider": {
           "_type": "component",
+          "component_id": "1bdfc6b8-8fdd-42ff-91dc-e16933a0f5d7",
           "go": "92b75b3e-e86d-4858-9096-4273868519af",
           "component_type": "ModelCollider"
         },
@@ -39,6 +45,7 @@
       },
       {
         "__type": "ModelCollider",
+        "__guid": "1bdfc6b8-8fdd-42ff-91dc-e16933a0f5d7",
         "__enabled": false,
         "IsTrigger": false,
         "Static": true
@@ -46,7 +53,7 @@
     ],
     "Children": [
       {
-        "Id": "363aa064-f39c-4bd7-a7a0-b493aee132c1",
+        "__guid": "363aa064-f39c-4bd7-a7a0-b493aee132c1",
         "Name": "Interactable",
         "Tags": "interactable",
         "Enabled": true,
@@ -54,10 +61,12 @@
         "Components": [
           {
             "__type": "WorldProxy",
+            "__guid": "ab777313-cb44-473e-98b7-f1e01abfe3c7",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
             "__type": "ModelCollider",
+            "__guid": "44cb271f-abc0-4447-a90c-6ecce01b90f2",
             "__enabled": false,
             "IsTrigger": false,
             "Static": true
@@ -69,5 +78,7 @@
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }

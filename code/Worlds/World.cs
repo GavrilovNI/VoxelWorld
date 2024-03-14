@@ -41,7 +41,7 @@ public class World : Component, IWorldAccessor, ITickable
     [Property] protected GameObject EntitiesParent { get; set; } = null!;
 
     public bool Initialized { get; private set; }
-    public ModedId Id { get; private set; }
+    public new ModedId Id { get; private set; }
     public BaseFileSystem? WorldFileSystem { get; private set; }
     public Vector3Int ChunkSize => WorldOptions.ChunkSize;
 

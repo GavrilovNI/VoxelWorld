@@ -1,6 +1,6 @@
 {
   "RootObject": {
-    "Id": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
+    "__guid": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
     "Name": "itemstackentity",
     "Tags": "entity,no_entity_collide",
     "Enabled": true,
@@ -8,19 +8,23 @@
     "Components": [
       {
         "__type": "ItemStackEntity",
+        "__guid": "b7903ab1-b3ac-4b80-a906-54b5b4c7e126",
         "Collider": {
           "_type": "component",
+          "component_id": "af9cef21-a36c-4d35-95e5-8daf89936faa",
           "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
           "component_type": "BoxCollider"
         },
         "Rigidbody": {
           "_type": "component",
+          "component_id": "a2891dfe-954a-485f-a9c3-a4fdda389685",
           "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
           "component_type": "Rigidbody"
         }
       },
       {
         "__type": "Rigidbody",
+        "__guid": "a2891dfe-954a-485f-a9c3-a4fdda389685",
         "AngularDamping": 0,
         "Gravity": true,
         "LinearDamping": 0,
@@ -30,11 +34,13 @@
           "Roll": true
         },
         "MassOverride": 0,
+        "MotionEnabled": true,
         "RigidbodyFlags": 0,
         "StartAsleep": false
       },
       {
         "__type": "BoxCollider",
+        "__guid": "af9cef21-a36c-4d35-95e5-8daf89936faa",
         "Center": "25,25,25",
         "IsTrigger": false,
         "Scale": "50,50,50",
@@ -46,5 +52,7 @@
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }

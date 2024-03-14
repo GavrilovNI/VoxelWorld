@@ -25,7 +25,7 @@ public abstract class Entity : Component
 
     private Transform _oldTransform;
 
-    public Guid Id => GameObject.Id;
+    public new Guid Id => GameObject.Id;
 
     public new bool Enabled
     {

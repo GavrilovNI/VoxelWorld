@@ -1,14 +1,15 @@
 {
-  "Id": "98a8a00c-2b01-4811-a8f3-9cad8e1c9a36",
+  "__guid": "9aa9e25e-b572-48a7-9dcf-a37f0fdba88a",
   "GameObjects": [
     {
-      "Id": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
+      "__guid": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
       "Name": "Screen UI",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
           "__type": "ScreenPanel",
+          "__guid": "34754562-0139-455d-aa98-7ab942cf4ed1",
           "AutoScreenScale": true,
           "Opacity": 1,
           "Scale": 1,
@@ -16,39 +17,48 @@
         },
         {
           "__type": "MainMenuController",
+          "__guid": "a6d13006-05bb-4a3f-b07c-c821973d5843",
           "MainMenu": {
             "_type": "component",
+            "component_id": "25a5e17d-9e30-4673-a0ab-b958c453891f",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "MainMenu"
           }
         },
         {
           "__type": "MainMenu",
+          "__guid": "25a5e17d-9e30-4673-a0ab-b958c453891f",
           "GameSelectionMenu": {
             "_type": "component",
+            "component_id": "4ed0e177-b8b8-47da-952d-be3d143ec72d",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "GameSelectionMenu"
           },
           "MainMenuController": {
             "_type": "component",
+            "component_id": "a6d13006-05bb-4a3f-b07c-c821973d5843",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "MainMenuController"
           }
         },
         {
           "__type": "GameSelectionMenu",
+          "__guid": "4ed0e177-b8b8-47da-952d-be3d143ec72d",
           "GameCreationMenu": {
             "_type": "component",
+            "component_id": "16e1c163-0361-44d1-8f4e-5ab87d53bcd6",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "GameCreationMenu"
           },
           "GameLoader": {
             "_type": "component",
+            "component_id": "f0a1c673-e05a-4438-9cf2-fac8c28f9594",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "GameLoader"
           },
           "MainMenuController": {
             "_type": "component",
+            "component_id": "a6d13006-05bb-4a3f-b07c-c821973d5843",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "MainMenuController"
           },
@@ -56,13 +66,16 @@
         },
         {
           "__type": "GameCreationMenu",
+          "__guid": "16e1c163-0361-44d1-8f4e-5ab87d53bcd6",
           "GameLoader": {
             "_type": "component",
+            "component_id": "f0a1c673-e05a-4438-9cf2-fac8c28f9594",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "GameLoader"
           },
           "MainMenuController": {
             "_type": "component",
+            "component_id": "a6d13006-05bb-4a3f-b07c-c821973d5843",
             "go": "9d4ed552-91c9-4e1e-827c-c16f85a3b97f",
             "component_type": "MainMenuController"
           },
@@ -70,19 +83,21 @@
         },
         {
           "__type": "GameLoader",
+          "__guid": "f0a1c673-e05a-4438-9cf2-fac8c28f9594",
           "ErrorScene": "scenes/mainmenu.scene",
           "GameScene": "scenes/main.scene"
         }
       ]
     },
     {
-      "Id": "a8e8cdec-7dfd-4b1f-9071-9f08d3018010",
+      "__guid": "a8e8cdec-7dfd-4b1f-9071-9f08d3018010",
       "Name": "Camera",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
           "__type": "CameraComponent",
+          "__guid": "2056b7b0-7d6f-4e66-8ade-b93d94376679",
           "BackgroundColor": "0.33333,0.46275,0.52157,1",
           "ClearFlags": "All",
           "FieldOfView": 60,
@@ -123,6 +138,8 @@
   },
   "Title": "mainmenu",
   "Description": "",
-  "LastSaved": "2024-03-12T01:36:10.1533979\u002B01:00",
+  "LastSaved": "2024-03-14T15:17:08.6159818\u002B01:00",
+  "ResourceVersion": 1,
+  "__version": 1,
   "__references": []
 }
