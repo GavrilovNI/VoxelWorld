@@ -23,6 +23,8 @@ public class VerticalCameraController : Component
 
         var currentAngle = Transform.Rotation.Forward.SignedAngle(Camera.Transform.Rotation.Forward, Transform.Rotation.Right);
         var newAngle = Math.Clamp(input + currentAngle, DownClamp, UpClamp);
-        Camera.Transform.Rotation = Rotation.FromAxis(Transform.Rotation.Right, newAngle) * Transform.Rotation;
-    }
+
+        var newRotation = Rotation.FromAxis(Transform.Rotation.Right, newAngle) * Transform.Rotation;
+        Camera.Transform.Rotation = Rotation.LookAt(newRotation.Forward, newRotation.Up);
+    }   
 }
