@@ -9,6 +9,7 @@ using Sandcube.IO.NamedBinaryTags;
 using Sandcube.IO.NamedBinaryTags.Collections;
 using Sandcube.Mth;
 using Sandcube.Mth.Enums;
+using Sandcube.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -170,8 +171,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     protected override void OnDestroy()
     {
-        Clear();
-        Destroyed?.Invoke(this);
+        _ = Clear().ContinueWithOnMainThread(t => Destroyed?.Invoke(this));
     }
 
     public virtual Task RequireModelUpdate() => ModelUpdater.RequireModelUpdate();
