@@ -3,6 +3,7 @@ using Sandcube.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sandcube.Data;
 
@@ -41,13 +42,14 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
     {
         lock(Chunks)
         {
-            foreach(var (position, chunk) in Chunks)
+            var chunks = Chunks.Values.ToList(); // TODO: make it faster it smh?
+            Chunks.Clear();
+
+            foreach(var chunk in chunks)
             {
                 chunk.Destroyed -= OnChunkDestroyed;
                 ChunkUnloaded?.Invoke(chunk);
             }
-
-            Chunks.Clear();
         }
     }
 
@@ -137,7 +139,8 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
     {
         lock(Chunks)
         {
-            foreach(var (_, chunk) in Chunks)
+            var chunks = Chunks.Values.ToList(); // TODO: make it faster it smh?
+            foreach(var chunk in chunks)
             {
                 if(chunk.IsValid)
                     yield return chunk;
