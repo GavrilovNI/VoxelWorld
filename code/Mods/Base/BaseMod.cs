@@ -14,7 +14,7 @@ public sealed class BaseMod : Component, IMod
     public const string ModName = "voxelworld";
     public static BaseMod? Instance { get; private set; }
 
-    public Id Id { get; } = new(ModName);
+    public new Id Id { get; } = new(ModName);
 
     public BaseModBlocks Blocks { get; private set; } = null!;
     public BaseModBlockEntities BlockEntities { get; private set; } = null!;
