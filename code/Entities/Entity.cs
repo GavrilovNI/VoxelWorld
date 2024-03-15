@@ -25,6 +25,7 @@ public abstract class Entity : Component
     public Vector3Int ChunkPosition { get; private set; }
 
     private Transform _oldTransform;
+    private bool tranformChanged = false;
 
     public new Guid Id => GameObject.Id;
 
@@ -77,25 +78,34 @@ public abstract class Entity : Component
         _oldTransform = Transform.World;
         Transform.OnTransformChanged = () =>
         {
-            if(World is not null)
-            {
-                var newChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
-                if(newChunkPosition != ChunkPosition)
-                {
-                    var oldChunkPosition = ChunkPosition;
-                    ChunkPosition = newChunkPosition;
-                    OnMovedToAnotherChunk(oldChunkPosition, newChunkPosition);
-                    MovedToAnotherChunk?.Invoke(this, oldChunkPosition, newChunkPosition);
-                }
-            }
-            var oldTransform = _oldTransform;
-            _oldTransform = Transform.World;
-            OnTransformChanged(oldTransform, Transform.World);
-            TransformChanged?.Invoke(this, oldTransform, Transform.World);
+            tranformChanged = true;
         };
         OnAwakeChild();
     }
     protected virtual void OnAwakeChild() { }
+
+    private void HandleTransformChanging()
+    {
+        if(!tranformChanged)
+            return;
+
+        tranformChanged = false;
+        if(World is not null)
+        {
+            var newChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+            if(newChunkPosition != ChunkPosition)
+            {
+                var oldChunkPosition = ChunkPosition;
+                ChunkPosition = newChunkPosition;
+                OnMovedToAnotherChunk(oldChunkPosition, newChunkPosition);
+                MovedToAnotherChunk?.Invoke(this, oldChunkPosition, newChunkPosition);
+            }
+        }
+        var oldTransform = _oldTransform;
+        _oldTransform = Transform.World;
+        OnTransformChanged(oldTransform, Transform.World);
+        TransformChanged?.Invoke(this, oldTransform, Transform.World);
+    }
 
     protected virtual void OnTransformChanged(Transform oldTransform, Transform newTransform) { }
 
@@ -119,10 +129,18 @@ public abstract class Entity : Component
     }
     protected virtual void OnStartChild() { }
 
-    protected sealed override void OnUpdate() => OnUpdateChild();
+    protected sealed override void OnUpdate()
+    {
+        HandleTransformChanging();
+        OnUpdateChild();
+    }
     protected virtual void OnUpdateChild() { }
 
-    protected sealed override void OnFixedUpdate() => OnFixedUpdateChild();
+    protected sealed override void OnFixedUpdate()
+    {
+        HandleTransformChanging();
+        OnFixedUpdateChild();
+    }
     protected virtual void OnFixedUpdateChild() { }
 
     protected sealed override void OnDisabled() => OnDisabledChild();
