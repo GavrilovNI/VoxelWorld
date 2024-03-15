@@ -542,7 +542,6 @@ public class World : Component, IWorldAccessor, ITickable
             }
         }
 
-        Log.Info($"FullyLoadUnsavedChunks {chunksToLoad.Count}");
         var tasks = chunksToLoad.Select(GetChunkOrAwaitFullyLoad);
         await Task.WhenAll(tasks);
     }
