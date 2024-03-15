@@ -12,7 +12,7 @@
           "_type": "component",
           "component_id": "13c0896d-e32f-4c73-b816-94a4f7f3b922",
           "go": "fd0a926f-1e51-4426-b482-ac8cdc1dc19e",
-          "component_type": "LimitedChunksCreator"
+          "component_type": "ChunksCreator"
         },
         "ChunksParent": {
           "_type": "gameobject",
@@ -81,14 +81,12 @@
               "go": "f0173106-2a2f-4d25-aaf2-0ab26a0de480",
               "component_type": "ChunkLoader"
             },
-            "MaxCountToProccess": 15,
             "ModelAwaiter": {
               "_type": "component",
               "component_id": "4a7fbcf2-59f0-4766-a33a-3cdc093b650d",
               "go": "d01d2103-4d66-4269-a22b-9f12f8d984aa",
               "component_type": "ChunkModelAwaiter"
             },
-            "ProcessingCountShower": 0,
             "TreeGenerator": {
               "_type": "component",
               "component_id": "58e17f9e-40a1-4a96-8cb2-4032d7d80e21",
