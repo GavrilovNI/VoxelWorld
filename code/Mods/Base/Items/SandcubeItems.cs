@@ -30,6 +30,9 @@ public sealed class SandcubeItems : ModItems
     public BlockItem WoodLog { get; private set; } = null!;
 
     [AutoBlockItem(SandcubeBaseMod.ModName)]
+    public BlockItem TreeLeaves { get; private set; } = null!;
+
+    [AutoBlockItem(SandcubeBaseMod.ModName)]
     public BlockItem Furnace { get; private set; } = null!;
 
     [AutoBlockItem(SandcubeBaseMod.ModName, rawTexturePath: $"textures/{SandcubeBaseMod.ModName}/items/tall_grass.png")]

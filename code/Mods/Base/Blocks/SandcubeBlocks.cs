@@ -35,6 +35,13 @@ public sealed class SandcubeBlocks : ModRegisterables<Block>
 
     public PillarBlock WoodLog { get; } = new(MakeId("wood_log"),
         BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("wood_log")));
+    public SimpleBlock TreeLeaves { get; } = new(MakeId("tree_leaves"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("tree_leaves")}.png"))
+    {
+        Properties = BlockProperties.Default with
+        {
+            IsTransparent = true,
+        }
+    };
 
     public HorizontalDirectionalBlock Furnace { get; } = new(MakeId("furnace"),
         BlockTexturesLoader.SimplePillar.With(Direction.Forward, BlockTexturesLoader.FrontSuffix)
