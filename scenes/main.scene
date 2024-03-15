@@ -132,6 +132,24 @@
               "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7"
             }
           ]
+        },
+        {
+          "__guid": "f78eae77-52a9-41c5-b05e-b2b4efc3f4a4",
+          "Name": "LoadingScreen",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "FakeLoadingScreen",
+              "__guid": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
+              "FinishingTime": 1,
+              "LastPercent": 0.95,
+              "LastSpeed": 0.005,
+              "PartLoadingTime": 20,
+              "PartSize": 0.3,
+              "WaitingPercent": 0.99
+            }
+          ]
         }
       ]
     },
@@ -194,7 +212,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-14T15:16:18.6189339\u002B01:00",
+  "LastSaved": "2024-03-15T04:55:10.696408\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []
