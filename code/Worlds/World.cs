@@ -294,16 +294,30 @@ public class World : Component, IWorldAccessor, ITickable
     protected virtual Chunk? GetChunk(Vector3Int chunkPosition) => Chunks.GetOrDefault(chunkPosition);
 
     // Thread safe
-    public virtual Task CreateChunk(Vector3Int chunkPosition) => GetOrCreateChunk(chunkPosition);
+    public virtual async Task CreateChunk(Vector3Int chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
+    {
+        if(creationStatus == ChunkCreationStatus.None)
+            return;
+
+        await GetOrCreateChunk(chunkPosition, creationStatus);
+    }
 
     // Thread safe
-    public virtual async Task CreateChunksSimultaneously(IEnumerable<Vector3Int> chunkPositions)
+    public virtual async Task CreateChunksSimultaneously(IEnumerable<Vector3Int> chunkPositions, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
     {
+        if(creationStatus == ChunkCreationStatus.None)
+            return;
+        if(creationStatus != ChunkCreationStatus.Preloading && creationStatus != ChunkCreationStatus.Finishing)
+            throw new NotSupportedException($"{creationStatus} is not supported");
+
         List<Task> tasks = new();
         foreach(var position in chunkPositions)
             tasks.Add(GetOrCreateChunk(position, ChunkCreationStatus.Preloading));
 
         await Task.WhenAll(tasks);
+
+        if(creationStatus == ChunkCreationStatus.Preloading)
+            return;
 
         tasks.Clear();
         foreach(var position in chunkPositions)
