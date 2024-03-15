@@ -26,7 +26,7 @@ public class MenuController : Component, ILocalPlayerInitializable
     public bool ShouldDestroyScreenOnClose { get; private set; }
     public bool IsPlayerInventory { get; private set; }
 
-    public void InitializeLocalPlayer(Entity player) => Player = player as Player;
+    public void InitializeLocalPlayer(Player player) => Player = player;
 
     protected override void OnEnabled()
     {
