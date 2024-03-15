@@ -104,7 +104,7 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, I
     {
         CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
-        var registry = SandcubeGame.Instance!.Registries.GetRegistry<BlockEntityType>();
+        var registry = GameController.Instance!.Registries.GetRegistry<BlockEntityType>();
         var entityType = registry.Get(typeId)!;
         var entity = entityType.CreateBlockEntity();
 

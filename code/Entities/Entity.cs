@@ -210,7 +210,7 @@ public abstract class Entity : Component
         CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
 
-        var entityType = SandcubeGame.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
+        var entityType = GameController.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
         EntitySpawnConfig spawnConfig = new(world, false);
         var entity = entityType.CreateEntity(spawnConfig);
 
@@ -228,13 +228,13 @@ public abstract class Entity : Component
         CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
         var worldId = ModedId.Read(compoundTag.GetTag("world_id"));
-        if(!SandcubeGame.Instance!.Worlds.TryGetWorld(worldId, out World world))
+        if(!GameController.Instance!.Worlds.TryGetWorld(worldId, out World world))
         {
             entity = null!;
             return false;
         }
 
-        var entityType = SandcubeGame.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
+        var entityType = GameController.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
         EntitySpawnConfig spawnConfig = new(world, false);
         entity = entityType.CreateEntity(spawnConfig);
 

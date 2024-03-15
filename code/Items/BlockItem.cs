@@ -67,7 +67,7 @@ public class BlockItem : Item
 
     public static bool TryFind(Block block, out BlockItem item)
     {
-        var game = SandcubeGame.Instance!;
+        var game = GameController.Instance!;
         if(!game.Registries.TryGetRegistry<Item>(out var registry))
         {
             item = null!;

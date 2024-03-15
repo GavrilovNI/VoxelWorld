@@ -10,7 +10,7 @@ namespace Sandcube.Mods.Base.Blocks;
 
 public sealed class BaseModBlocks : ModRegisterables<Block>
 {
-    private static PathedTextureMap TextureMap => SandcubeGame.Instance!.BlocksTextureMap;
+    private static PathedTextureMap TextureMap => GameController.Instance!.BlocksTextureMap;
 
     private static string GetBlockPathPart(string blockId) => $"{BaseMod.ModName}/blocks/{blockId}";
 

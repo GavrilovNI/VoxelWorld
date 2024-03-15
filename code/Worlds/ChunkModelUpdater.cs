@@ -121,7 +121,7 @@ public class ChunkModelUpdater : Component
 
     protected override void OnStart()
     {
-        var game = SandcubeGame.Instance!;
+        var game = GameController.Instance!;
         BlockMeshMap = game.BlockMeshes;
         OpaqueVoxelsMaterial = game.OpaqueVoxelsMaterial;
         TranslucentVoxelsMaterial = game.TranslucentVoxelsMaterial;
@@ -308,7 +308,7 @@ public class ChunkModelUpdater : Component
         var opaqueRenderers = AddModelRenderers(opaqueModels.Length);
         var translucentRenderers = AddModelRenderers(translucentModels.Length);
 
-        var blocksTexture = SandcubeGame.Instance!.BlocksTextureMap.Texture;
+        var blocksTexture = GameController.Instance!.BlocksTextureMap.Texture;
         for(int i = 0; i < opaqueModels.Length; ++i)
         {
             opaqueRenderers[i].Model = opaqueModels[i];

@@ -9,7 +9,7 @@ public class BlocksTextureMapShower : Component
 
     protected override void OnUpdate()
     {
-        var texture = SandcubeGame.Instance?.BlocksTextureMap.Texture;
+        var texture = GameController.Instance?.BlocksTextureMap.Texture;
         if(texture is not null)
         {
             ModelRenderer.SceneObject.Attributes.Set("color", texture);

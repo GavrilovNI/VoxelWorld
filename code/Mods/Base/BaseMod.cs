@@ -27,7 +27,7 @@ public sealed class BaseMod : Component, IMod
     {
         if(Instance is not null)
         {
-            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(SandcubeGame)}. Destroying {this}...");
+            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(GameController)}. Destroying {this}...");
             Destroy();
             return;
         }
@@ -54,7 +54,7 @@ public sealed class BaseMod : Component, IMod
 
         await Blocks.Register(registries);
         await BlockEntities.Register(registries);
-        SandcubeGame.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
+        GameController.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
         await Items.Register(registries);
         await Entities.Register(registries);
 
@@ -63,6 +63,6 @@ public sealed class BaseMod : Component, IMod
 
     public void OnGameLoaded()
     {
-        SandcubeGame.Instance!.TryAddWorld(_mainWorldId, out _);
+        GameController.Instance!.TryAddWorld(_mainWorldId, out _);
     }
 }

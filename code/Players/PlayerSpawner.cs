@@ -72,7 +72,7 @@ public class PlayerSpawner : Component
 
     protected virtual bool TryLoadPlayer(ulong steamId, out Player player, bool enable = true)
     {
-        var fileSystem = SandcubeGame.Instance!.CurrentGameSaveHelper!.PlayersFileSystem;
+        var fileSystem = GameController.Instance!.CurrentGameSaveHelper!.PlayersFileSystem;
 
         if(!fileSystem.FileExists(steamId.ToString()))
         {
@@ -118,7 +118,7 @@ public class PlayerSpawner : Component
     protected virtual async Task<bool> IsEmpty(IWorldAccessor world, BBoxInt range, CancellationToken cancellationToken)
     {
         var limits = world.Limits;
-        var blockMeshes = SandcubeGame.Instance!.BlockMeshes;
+        var blockMeshes = GameController.Instance!.BlockMeshes;
         foreach(var position in range.GetPositions())
         {
             if(cancellationToken.IsCancellationRequested)

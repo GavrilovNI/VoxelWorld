@@ -48,7 +48,7 @@ public class ModItems : ModRegisterables<Item>
             }
 
             Texture texture = await GetTexture(autoAttribute, block.DefaultBlockState);
-            IMeshPart<ComplexVertex> model = SandcubeGame.Instance!.BlockMeshes.GetVisual(block.DefaultBlockState)!;
+            IMeshPart<ComplexVertex> model = GameController.Instance!.BlockMeshes.GetVisual(block.DefaultBlockState)!;
             model = new UnlimitedMesh<ComplexVertex>.Builder().Add(model).Scale(Vector3.Zero, 0.3f).Build();
 
             var propertyType = property.PropertyType;
@@ -91,7 +91,7 @@ public class ModItems : ModRegisterables<Item>
 
     protected virtual async Task<(bool, Texture)> MakeBlockItemTexture(BlockState blockState)
     {
-        var photoMaker = SandcubeGame.Instance!.BlockPhotoMaker;
+        var photoMaker = GameController.Instance!.BlockPhotoMaker;
 
         var itemTexture = Texture.CreateRenderTarget().WithWidth(BlockItemsTextureSize)
             .WithHeight(BlockItemsTextureSize).Create();

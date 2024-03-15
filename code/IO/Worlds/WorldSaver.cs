@@ -16,7 +16,7 @@ public class WorldSaver : Component, ISaver
 {
     [Property] private World World { get; set; } = null!;
 
-    protected static GameSaveHelper GameSaveHelper => SandcubeGame.Instance!.CurrentGameSaveHelper!;
+    protected static GameSaveHelper GameSaveHelper => GameController.Instance!.CurrentGameSaveHelper!;
     protected BaseFileSystem WorldFileSystem => World.WorldFileSystem!;
     protected WorldOptions WorldOptions => World.WorldOptions;
 

@@ -21,7 +21,7 @@ public class WorldAutoLoader : Component, IWorldInitializable
 
     protected override void OnUpdate()
     {
-        bool worldIsLoaded = SandcubeGame.LoadingStatus == LoadingStatus.Loaded && World is not null;
+        bool worldIsLoaded = GameController.LoadingStatus == LoadingStatus.Loaded && World is not null;
         if(worldIsLoaded && !IsStarted)
             StartLoading();
         else if(!worldIsLoaded && IsStarted)

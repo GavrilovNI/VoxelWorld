@@ -47,7 +47,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
             return;
         }
 
-        var game = SandcubeGame.Instance!;
+        var game = GameController.Instance!;
         var blockMeshes = game.BlockMeshes;
 
         var physicsMesh = blockMeshes.GetPhysics(blockState)!;

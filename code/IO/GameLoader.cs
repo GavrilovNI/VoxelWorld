@@ -18,9 +18,9 @@ public class GameLoader : Component
             return false;
 
         var scene = Game.ActiveScene;
-        var game = scene.Components.Get<SandcubeGame>(FindMode.EverythingInDescendants);
+        var game = scene.Components.Get<GameController>(FindMode.EverythingInDescendants);
         if(game is null)
-            throw new InvalidOperationException($"Loaded scene doesn't contain {nameof(SandcubeGame)}");
+            throw new InvalidOperationException($"Loaded scene doesn't contain {nameof(GameController)}");
 
         await game.Initialize();
 

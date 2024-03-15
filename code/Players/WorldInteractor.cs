@@ -25,7 +25,7 @@ public class WorldInteractor : Component
 
     protected override void OnUpdate()
     {
-        if(SandcubeGame.LoadingStatus != LoadingStatus.Loaded)
+        if(GameController.LoadingStatus != LoadingStatus.Loaded)
             return;
 
         bool attacking = Input.Pressed("attack1");

@@ -30,13 +30,13 @@
     },
     {
       "__guid": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
-      "Name": "Sandcube Game",
+      "Name": "Game Controller",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "SandcubeGame",
           "__guid": "ffe37fb8-2302-45f2-90c5-317fa05eeeb5",
+          "__type": "GameController",
           "BaseModPrefab": {
             "_type": "gameobject",
             "prefab": "prefabs/mods/basemod.prefab"
@@ -239,7 +239,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-15T05:03:05.6988095\u002B01:00",
+  "LastSaved": "2024-03-15T21:46:50.7669528\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

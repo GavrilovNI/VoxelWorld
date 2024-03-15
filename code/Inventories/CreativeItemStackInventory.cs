@@ -9,7 +9,7 @@ public class CreativeItemStackInventory : IndexedCapability<Stack<Item>>
 {
     public readonly static CreativeItemStackInventory Instance = new();
 
-    protected static IReadOnlyDictionary<ModedId, Item> Items => SandcubeGame.Instance!.Registries.GetRegistry<Item>().All;
+    protected static IReadOnlyDictionary<ModedId, Item> Items => GameController.Instance!.Registries.GetRegistry<Item>().All;
 
     public override int Size => Items.Count;
 

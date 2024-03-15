@@ -102,7 +102,7 @@ public class PathedTextureMap : TextureMap
 
         var texture = Texture.Load(fileSystem, LoadPathPrefix + path, warnOnMissing);
         if(texture is null)
-            return SandcubeGame.Instance!.BlocksTextureMap.Invalid;
+            return GameController.Instance!.BlocksTextureMap.Invalid;
 
         return AddTexture(path, texture);
     }
@@ -118,7 +118,7 @@ public class PathedTextureMap : TextureMap
 
         var texture = Texture.Load(fileSystem, LoadPathPrefix + path, warnOnMissing);
         if(texture is null)
-            return SandcubeGame.Instance!.BlocksTextureMap.Invalid;
+            return GameController.Instance!.BlocksTextureMap.Invalid;
 
         AnimatedTexture animatedTexture = new(texture, atlasSize, framesLength);
         var textureMapPart = AddAnimatedTexture(path, animatedTexture);

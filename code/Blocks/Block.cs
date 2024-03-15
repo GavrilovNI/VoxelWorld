@@ -92,7 +92,7 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public static Block Read(BinaryTag tag)
     {
         var id = ModedId.Read(tag);
-        var block = SandcubeGame.Instance!.Registries.GetRegistry<Block>().Get(id);
+        var block = GameController.Instance!.Registries.GetRegistry<Block>().Get(id);
         if(block is null)
             throw new KeyNotFoundException($"Block with id {id} not found");
         return block;

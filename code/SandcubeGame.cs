@@ -22,7 +22,9 @@ using System.Threading.Tasks;
 
 namespace Sandcube;
 
-public sealed class SandcubeGame : Component, ILocalPlayerInitializable
+public sealed class GameController
+
+    : Component, ILocalPlayerInitializable
 {
     public static event Action? Initialized;
     public static event Action<World>? WorldAdded;
@@ -31,8 +33,8 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
     public static LoadingStatus LoadingStatus { get; private set; } = LoadingStatus.NotLoaded;
 
     
-    private static SandcubeGame? _instance = null;
-    public static SandcubeGame? Instance
+    private static GameController? _instance = null;
+    public static GameController? Instance
     {
         get
         {
@@ -244,7 +246,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
     {
         if(Instance.IsValid() && Instance != this)
         {
-            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(SandcubeGame)}. Destroying {this}...");
+            Log.Warning($"{nameof(Scene)} {Scene} has to much instances of {nameof(GameController)}. Destroying {this}...");
             Destroy();
             return;
         }
@@ -288,7 +290,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
 
         if(IsValid)
         {
-            Log.Warning($"{nameof(SandcubeGame)} was disabled. It's fine if it being destroyed or scene is unloading. Destroying {this} ...");
+            Log.Warning($"{nameof(GameController)} was disabled. It's fine if it being destroyed or scene is unloading. Destroying {this} ...");
             Destroy();
         }
     }
@@ -375,11 +377,11 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
     private void AssertValid()
     {
         if(!IsValid)
-            throw new InvalidOperationException($"{nameof(SandcubeGame)} {this} is not valid");
+            throw new InvalidOperationException($"{nameof(GameController)} {this} is not valid");
         if(Instance.IsValid() && Instance != this)
-            throw new InvalidOperationException($"{nameof(SandcubeGame)} {this} is duplicated instance");
+            throw new InvalidOperationException($"{nameof(GameController)} {this} is duplicated instance");
         if(Scene.IsEditor)
-            throw new InvalidOperationException($"{nameof(SandcubeGame)} {this} can't run in editor");
+            throw new InvalidOperationException($"{nameof(GameController)} {this} can't run in editor");
     }
 
     private void AssertInitalizationStatus(InitalizationStatus initalizationStatus, bool equal = true)
@@ -387,7 +389,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         AssertValid();
         bool statusEqual = InitalizationStatus == initalizationStatus;
         if(statusEqual != equal)
-            throw new InvalidOperationException($"{nameof(SandcubeGame)}'s {nameof(InitalizationStatus)} is{(equal ? string.Empty : " not")} {initalizationStatus}");
+            throw new InvalidOperationException($"{nameof(GameController)}'s {nameof(InitalizationStatus)} is{(equal ? string.Empty : " not")} {initalizationStatus}");
     }
 
     private void AssertLoadingStatus(LoadingStatus loadingStatus, bool equal = true)
@@ -395,7 +397,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         AssertValid();
         bool statusEqual = LoadingStatus == loadingStatus;
         if(statusEqual != equal)
-            throw new InvalidOperationException($"{nameof(SandcubeGame)}'s {nameof(LoadingStatus)} is{(equal ? string.Empty : " not")} {loadingStatus}");
+            throw new InvalidOperationException($"{nameof(GameController)}'s {nameof(LoadingStatus)} is{(equal ? string.Empty : " not")} {loadingStatus}");
     }
 
     public void InitializeLocalPlayer(Player player) => LocalPlayer = player;

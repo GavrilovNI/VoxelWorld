@@ -42,7 +42,7 @@ public class Item : IRegisterable, IStackValue<Item>
     {
         var id = ModedId.Read(tag);
 
-        var item = SandcubeGame.Instance!.Registries.GetRegistry<Item>().Get(id);
+        var item = GameController.Instance!.Registries.GetRegistry<Item>().Get(id);
         if(item is null)
             throw new KeyNotFoundException($"Item with id {id} not found");
 

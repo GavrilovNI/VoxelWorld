@@ -52,7 +52,7 @@ public class ItemStackEntity : Entity
             return;
         }
 
-        var game = SandcubeGame.Instance!;
+        var game = GameController.Instance!;
 
         var item = ItemStack.Value;
         var itemModel = ItemStack.Value!.Model;

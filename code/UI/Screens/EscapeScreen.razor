@@ -26,10 +26,10 @@
 			return;
 
 		Saving = true;
-		if(SandcubeGame.InitalizationStatus == InitalizationStatus.Initialized &&
-			SandcubeGame.LoadingStatus == LoadingStatus.Loaded)
+		if(GameController.InitalizationStatus == InitalizationStatus.Initialized &&
+			GameController.LoadingStatus == LoadingStatus.Loaded)
 		{
-			var saved = await SandcubeGame.Instance!.SaveGame();
+			var saved = await GameController.Instance!.SaveGame();
 			if (!saved)
 				Log.Warning("Couldn't save something");
 		}
