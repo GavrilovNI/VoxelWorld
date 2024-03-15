@@ -73,12 +73,12 @@
           "GroupName": "Movement"
         },
         {
-          "Name": "Run",
+          "Name": "Run_",
           "KeyboardCode": "CTRL",
           "GroupName": "Movement"
         },
         {
-          "Name": "Duck",
+          "Name": "Crouch",
           "KeyboardCode": "SHIFT",
           "GroupName": "Movement"
         },
@@ -163,7 +163,7 @@
           "GroupName": "Other"
         },
         {
-          "Name": "Drop",
+          "Name": "Drop_",
           "KeyboardCode": "q",
           "GroupName": "Inventory"
         },
@@ -197,7 +197,8 @@
           "KeyboardCode": "SHIFT",
           "GroupName": "Actions"
         }
-      ]
+      ],
+      "__guid": "8bd7606b-16dd-4fc9-8ce0-8d0c97050ab7"
     },
     "StartupScene": "scenes/mainmenu.scene"
   }
