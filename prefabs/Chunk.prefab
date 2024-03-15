@@ -2,7 +2,6 @@
   "RootObject": {
     "__guid": "d9884821-151c-4cf0-bcb5-4ff38c275acb",
     "Name": "chunk",
-    "Tags": "world",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
@@ -46,19 +45,13 @@
         },
         "PhysicsEnabled": true,
         "RenderingEnabled": true
-      },
-      {
-        "__type": "ModelCollider",
-        "__guid": "026bfcad-001f-4058-8fbd-ca322c37232e",
-        "IsTrigger": false,
-        "Static": true
       }
     ],
     "Children": [
       {
         "__guid": "17fa8dbe-2eb2-4e20-91e8-e01f5b1b79a2",
         "Name": "Interactable",
-        "Tags": "interactable,no_entity_collide",
+        "Tags": "interactable,world,no_entity_collide",
         "Enabled": true,
         "NetworkMode": 2,
         "Components": [
@@ -80,6 +73,21 @@
         "Name": "Entities",
         "Enabled": true,
         "NetworkMode": 2
+      },
+      {
+        "__guid": "517e2f6f-17d2-47c2-9c7a-f7ad5c745769",
+        "Name": "Physics",
+        "Tags": "world",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "ModelCollider",
+            "__guid": "3552bcfe-c3ec-4ae4-b5d0-d5644ce69403",
+            "IsTrigger": false,
+            "Static": true
+          }
+        ]
       }
     ]
   },

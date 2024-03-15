@@ -2,7 +2,6 @@
   "RootObject": {
     "__guid": "92b75b3e-e86d-4858-9096-4273868519af",
     "Name": "visualonlychunk",
-    "Tags": "world",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
@@ -42,20 +41,13 @@
         },
         "PhysicsEnabled": false,
         "RenderingEnabled": true
-      },
-      {
-        "__type": "ModelCollider",
-        "__guid": "1bdfc6b8-8fdd-42ff-91dc-e16933a0f5d7",
-        "__enabled": false,
-        "IsTrigger": false,
-        "Static": true
       }
     ],
     "Children": [
       {
         "__guid": "363aa064-f39c-4bd7-a7a0-b493aee132c1",
         "Name": "Interactable",
-        "Tags": "interactable",
+        "Tags": "interactable,world,no_entity_collide",
         "Enabled": true,
         "NetworkMode": 2,
         "Components": [
@@ -67,6 +59,22 @@
           {
             "__type": "ModelCollider",
             "__guid": "44cb271f-abc0-4447-a90c-6ecce01b90f2",
+            "__enabled": false,
+            "IsTrigger": false,
+            "Static": true
+          }
+        ]
+      },
+      {
+        "__guid": "2f7fa184-635d-4a4f-8a36-838352e07168",
+        "Name": "Physics",
+        "Tags": "world",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "ModelCollider",
+            "__guid": "744ca550-932d-462b-823f-486e0284bb50",
             "__enabled": false,
             "IsTrigger": false,
             "Static": true

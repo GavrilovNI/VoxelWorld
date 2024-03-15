@@ -163,11 +163,6 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    protected override void OnAwake()
-    {
-        Tags.Add("world");
-    }
-
     protected override void OnEnabled()
     {
         Initialized = true;
