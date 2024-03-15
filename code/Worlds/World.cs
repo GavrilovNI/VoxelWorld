@@ -204,8 +204,17 @@ public class World : Component, IWorldAccessor, ITickable
             Task<ChunkCreationData>? chunkTask = null;
             if(CreatingChunks.TryGetValue(chunkPosition, out var creatingChunkData))
             {
-                if(creatingChunkData.Status >= creationStatus)
+                if(creatingChunkData.Status == creationStatus)
                     return creatingChunkData.ChunkTask.ConvertResult(d => d.Chunk);
+
+                if(creatingChunkData.Status > creationStatus)
+                {
+                    chunk = creatingChunkData.PartiallyLoadedChunk;
+                    if(chunk is not null)
+                        return Task.FromResult(chunk);
+                    return creatingChunkData.ChunkTask.ConvertResult(d => d.Chunk);
+                }
+
                 currentStatus = creatingChunkData.Status;
                 chunkTask = creatingChunkData.ChunkTask;
             }
