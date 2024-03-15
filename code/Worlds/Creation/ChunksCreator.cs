@@ -16,14 +16,16 @@ public class ChunksCreator : Component
     [Property] protected ChunkLoader? Loader { get; set; } = null!;
     [Property] protected ChunkLandscapeGenerator? LandscapeGenerator { get; set; } = null!;
     [Property] protected ChunkModelAwaiter? ModelAwaiter { get; set; } = null!;
+    [Property] protected ChunkTreeGenerator? TreeGenerator { get; set; } = null!;
     [Property] protected ChunkEntitiesLoader? EntitiesLoader { get; set; } = null!;
 
     protected CancellationTokenSource CommonTokenSource { get; set; } = new();
 
     protected Vector3Int ChunkSize => World.ChunkSize;
 
+    public record struct ChunkCreationData(Chunk Chunk, bool WasLoaded);
 
-    public virtual async Task<Chunk> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
+    public virtual async Task<ChunkCreationData> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -34,27 +36,31 @@ public class ChunksCreator : Component
         if(!loaded && LandscapeGenerator.IsValid())
             await LandscapeGenerator.TryProcess(chunk, cancellationToken);
 
-        return chunk;
+        return new(chunk, loaded);
     }
 
-    public async Task<Chunk> FinishChunk(Task<Chunk> chunkTask, CancellationToken cancellationToken)
+    public async Task<ChunkCreationData> FinishChunk(Task<ChunkCreationData> creationDataTask, CancellationToken cancellationToken)
     {
-        var chunk = await chunkTask;
-        return await FinishChunk(chunk, cancellationToken);
+        var creationData = await creationDataTask;
+        return await FinishChunk(creationData, cancellationToken);
     }
-    public virtual async Task<Chunk> FinishChunk(Chunk chunk, CancellationToken cancellationToken, bool enableChunk = true)
+    public virtual async Task<ChunkCreationData> FinishChunk(ChunkCreationData creationData, CancellationToken cancellationToken, bool enableChunk = true)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
+        var chunk = creationData.Chunk;
+        if(creationData.WasLoaded)
         {
-            await ModelAwaiter.TryProcess(chunk, cancellationToken);
-            await EntitiesLoader.TryProcess(chunk, cancellationToken);
+            if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
+            {
+                await ModelAwaiter.TryProcess(chunk, cancellationToken);
+                await EntitiesLoader.TryProcess(chunk, cancellationToken);
+            }
         }
 
         await Task.MainThread();
         chunk.GameObject.Enabled = enableChunk;
-        return chunk;
+        return creationData;
     }
 
     // Call only in game thread

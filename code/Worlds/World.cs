@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static Sandcube.Worlds.Creation.ChunksCreator;
 
 namespace Sandcube.Worlds;
 
@@ -52,7 +53,7 @@ public class World : Component, IWorldAccessor, ITickable
     protected readonly object ChunksCreationLocker = new();
     protected CancellationTokenSource TaskCreationTokenSource = new();
     protected readonly ChunksCollection Chunks = new(Vector3Int.XYZIterationComparer);
-    protected readonly Dictionary<Vector3Int, (Task<Chunk> ChunkTask, ChunkCreationStatus Status, Chunk? PartiallyLoadedChunk)> CreatingChunks = new();
+    protected readonly Dictionary<Vector3Int, (Task<ChunkCreationData> ChunkTask, ChunkCreationStatus Status, Chunk? PartiallyLoadedChunk)> CreatingChunks = new();
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -200,11 +201,11 @@ public class World : Component, IWorldAccessor, ITickable
                 return Task.FromResult(chunk);
 
             ChunkCreationStatus currentStatus = ChunkCreationStatus.None;
-            Task<Chunk>? chunkTask = null;
+            Task<ChunkCreationData>? chunkTask = null;
             if(CreatingChunks.TryGetValue(chunkPosition, out var creatingChunkData))
             {
                 if(creatingChunkData.Status >= creationStatus)
-                    return creatingChunkData.ChunkTask;
+                    return creatingChunkData.ChunkTask.ConvertResult(d => d.Chunk);
                 currentStatus = creatingChunkData.Status;
                 chunkTask = creatingChunkData.ChunkTask;
             }
@@ -225,7 +226,7 @@ public class World : Component, IWorldAccessor, ITickable
                             t.ThrowIfNotCompletedSuccessfully();
                         }
 
-                        var partiallyLoadedChunk = t.Result;
+                        var partiallyLoadedChunk = t.Result.Chunk;
                         var creatingData = CreatingChunks[partiallyLoadedChunk.Position];
                         CreatingChunks[partiallyLoadedChunk.Position] = creatingData with { PartiallyLoadedChunk = partiallyLoadedChunk };
                     }
@@ -244,7 +245,7 @@ public class World : Component, IWorldAccessor, ITickable
                     {
                         CreatingChunks.Remove(chunkPosition);
                         t.ThrowIfNotCompletedSuccessfully();
-                        Chunks.Add(t.Result);
+                        Chunks.Add(t.Result.Chunk);
                     }
                     return t.Result;
                 }).Unwrap();
@@ -253,7 +254,7 @@ public class World : Component, IWorldAccessor, ITickable
             CreatingChunks[chunkPosition] = new(chunkTask!, creationStatus, null);
             chunkTaskCreationTaskSource.SetResult();
 
-            return chunkTask!;
+            return chunkTask!.ConvertResult(d => d.Chunk);
         }
     }
 

@@ -20,26 +20,26 @@ public class LimitedChunksCreator : ChunksCreator
     }
 
     protected record struct ChunkPreloadingData(Vector3Int Position,
-        TaskCompletionSource<Chunk> TaskCompletionSource, CancellationToken CancellationToken);
+        TaskCompletionSource<ChunkCreationData> TaskCompletionSource, CancellationToken CancellationToken);
 
-    protected record struct ChunkFinishingData(Chunk Chunk, bool EnableChunk,
-        TaskCompletionSource<Chunk> TaskCompletionSource, CancellationToken CancellationToken);
+    protected record struct ChunkFinishingData(ChunkCreationData CreationData, bool EnableChunk,
+        TaskCompletionSource<ChunkCreationData> TaskCompletionSource, CancellationToken CancellationToken);
 
     protected readonly ConcurrentQueue<ChunkPreloadingData> ChunksToPreload = new();
     protected readonly ConcurrentQueue<ChunkFinishingData> ChunksToFinish = new();
 
-    public override Task<Chunk> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
+    public override Task<ChunkCreationData> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
     {
-        TaskCompletionSource<Chunk> taskCompletionSource = new();
+        TaskCompletionSource<ChunkCreationData> taskCompletionSource = new();
         ChunkPreloadingData creatingData = new(position, taskCompletionSource, cancellationToken);
         ChunksToPreload.Enqueue(creatingData);
         return taskCompletionSource.Task;
     }
 
-    public override Task<Chunk> FinishChunk(Chunk chunk, CancellationToken cancellationToken, bool enableChunk = true)
+    public override Task<ChunkCreationData> FinishChunk(ChunkCreationData creationData, CancellationToken cancellationToken, bool enableChunk = true)
     {
-        TaskCompletionSource<Chunk> taskCompletionSource = new();
-        ChunkFinishingData finishingData = new(chunk, enableChunk, taskCompletionSource, cancellationToken);
+        TaskCompletionSource<ChunkCreationData> taskCompletionSource = new();
+        ChunkFinishingData finishingData = new(creationData, enableChunk, taskCompletionSource, cancellationToken);
         ChunksToFinish.Enqueue(finishingData);
         return taskCompletionSource.Task;
     }
@@ -69,7 +69,7 @@ public class LimitedChunksCreator : ChunksCreator
         }
     }
 
-    protected virtual async Task<Chunk> PreloadChunk(ChunkPreloadingData creatingData)
+    protected virtual async Task<ChunkCreationData> PreloadChunk(ChunkPreloadingData creatingData)
     {
         var cancellationToken = creatingData.CancellationToken;
 
@@ -91,7 +91,7 @@ public class LimitedChunksCreator : ChunksCreator
     }
 
     // Call only in game thread
-    protected virtual async Task<Chunk> FinishChunk(ChunkFinishingData finishingData)
+    protected virtual async Task<ChunkCreationData> FinishChunk(ChunkFinishingData finishingData)
     {
         ThreadSafe.AssertIsMainThread();
 
@@ -100,11 +100,11 @@ public class LimitedChunksCreator : ChunksCreator
         ProcessingCount++;
         try
         {
-            var chunk = await base.FinishChunk(finishingData.Chunk, cancellationToken, finishingData.EnableChunk);
+            var creationData = await base.FinishChunk(finishingData.CreationData, cancellationToken, finishingData.EnableChunk);
             cancellationToken.ThrowIfCancellationRequested();
-            finishingData.TaskCompletionSource.TrySetResult(chunk);
+            finishingData.TaskCompletionSource.TrySetResult(creationData);
             ProcessingCount--;
-            return chunk;
+            return creationData;
         }
         catch(OperationCanceledException)
         {
