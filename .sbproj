@@ -1,8 +1,8 @@
 {
-  "Title": "Sandcube",
+  "Title": "VoxelWorld",
   "Type": "game",
   "Org": "sandcube",
-  "Ident": "sandcube",
+  "Ident": "voxelworld",
   "Tags": "game sandbox",
   "Schema": 1,
   "HasAssets": true,
@@ -32,7 +32,7 @@
     "SaveFormatVersion": 1001,
     "TickRate": 50,
     "Compiler": {
-      "RootNamespace": "Sandcube",
+      "RootNamespace": "VoxelWorld",
       "DefineConstants": "SANDBOX;ADDON;DEBUG",
       "NoWarn": "1701;1702;1591;",
       "WarningsAsErrors": "",
