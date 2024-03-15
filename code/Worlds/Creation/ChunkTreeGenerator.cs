@@ -99,7 +99,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
             {
                 for(int z = leavesMinHeigth; z < TrunkHeight + leavesHalfWidth; ++z)
                 {
-                    if((x == 0 || y == 0) && z < TrunkHeight)
+                    if(x == 0 && y == 0 && z < TrunkHeight)
                         continue;
 
                     tasks.Add(TryReplaceBlock(chunk, localPosition + new Vector3Int(x, y, z), leaves));
