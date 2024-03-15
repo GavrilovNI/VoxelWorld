@@ -9,7 +9,7 @@ using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.IO.NamedBinaryTags.Collections;
 using VoxelWorld.Mth;
 using VoxelWorld.Mth.Enums;
-using VoxelWorld.SandcubeExtensions;
+using VoxelWorld.SandboxExtensions;
 using VoxelWorld.Threading;
 using System;
 using System.Collections.Generic;
