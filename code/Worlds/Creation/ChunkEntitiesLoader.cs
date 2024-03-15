@@ -30,6 +30,7 @@ public class ChunkEntitiesLoader : ChunkCreationStage, IWorldInitializationListe
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        await Task.MainThread();
         var entities = await TryLoadEntities(chunk.Position);
         if(entities is null)
             return false;
