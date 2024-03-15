@@ -50,7 +50,7 @@
 
 	protected override void OnAwake()
 	{
-		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/sandcube/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
+		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/voxelworld/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
 	}
 
 	protected override int BuildHash() => HashCode.Combine(PlayerInventory?.Hotbar, PlayerInventory?.MainHandIndex, PlayerInventory.IsValid());
