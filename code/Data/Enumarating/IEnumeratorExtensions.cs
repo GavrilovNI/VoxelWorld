@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Sandcube.Data.Enumarating;
+namespace VoxelWorld.Data.Enumarating;
 
 public static class IEnumeratorExtensions
 {

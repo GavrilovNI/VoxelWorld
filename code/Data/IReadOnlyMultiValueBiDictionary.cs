@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public interface IReadOnlyMultiValueBiDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull where TValue : notnull
 {

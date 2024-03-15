@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Interactions;
-using Sandcube.Items;
-using Sandcube.Menus;
+using VoxelWorld.Entities;
+using VoxelWorld.Interactions;
+using VoxelWorld.Items;
+using VoxelWorld.Menus;
 
-namespace Sandcube.Inventories.Players;
+namespace VoxelWorld.Inventories.Players;
 
 public class HotbarController : Component
 {

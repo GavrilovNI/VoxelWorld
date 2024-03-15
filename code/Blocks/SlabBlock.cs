@@ -1,22 +1,22 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
-using Sandcube.Blocks.States.Properties;
-using Sandcube.Blocks.States.Properties.Enums;
-using Sandcube.Interactions;
-using Sandcube.Meshing;
-using Sandcube.Meshing.Blocks;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Worlds;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Blocks.States.Properties;
+using VoxelWorld.Blocks.States.Properties.Enums;
+using VoxelWorld.Interactions;
+using VoxelWorld.Meshing;
+using VoxelWorld.Meshing.Blocks;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public class SlabBlock : SimpleBlock
 {

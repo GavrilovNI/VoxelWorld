@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Mth;
-using Sandcube.Worlds.Creation;
+using VoxelWorld.Entities;
+using VoxelWorld.Mth;
+using VoxelWorld.Worlds.Creation;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor
 {

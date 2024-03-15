@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public interface IIndexedCapability<T> : ICapability<T>, IReadOnlyIndexedCapability<T> where T : class, IStack<T>
 {

@@ -1,18 +1,18 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Mth.Enums;
-using Sandcube.Mth;
-using Sandcube.Meshing;
-using Sandcube.Meshing.Blocks;
-using Sandcube.Blocks.States.Properties;
-using Sandcube.Interactions;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Mth;
+using VoxelWorld.Meshing;
+using VoxelWorld.Meshing.Blocks;
+using VoxelWorld.Blocks.States.Properties;
+using VoxelWorld.Interactions;
 using System.Collections.Generic;
-using Sandcube.Registries;
+using VoxelWorld.Registries;
 using System.Diagnostics.CodeAnalysis;
-using Sandcube.Texturing;
+using VoxelWorld.Texturing;
 using System.Linq;
-using Sandcube.Blocks.Interfaces;
+using VoxelWorld.Blocks.Interfaces;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public class DirectionalBlock : SimpleBlock, IRotatableBlock, IMirrorableBlock
 {

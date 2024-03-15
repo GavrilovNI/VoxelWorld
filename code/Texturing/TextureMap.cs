@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
+using VoxelWorld.Mth;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Sandcube.Texturing;
+namespace VoxelWorld.Texturing;
 
 public class TextureMap
 {

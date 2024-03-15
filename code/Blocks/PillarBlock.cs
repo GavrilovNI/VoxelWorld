@@ -1,17 +1,17 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Blocks.States.Properties;
-using Sandcube.Interactions;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Meshing;
-using Sandcube.Meshing.Blocks;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Blocks.States.Properties;
+using VoxelWorld.Interactions;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Meshing;
+using VoxelWorld.Meshing.Blocks;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public class PillarBlock : SimpleBlock
 {

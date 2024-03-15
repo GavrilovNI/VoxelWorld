@@ -1,7 +1,7 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
+using VoxelWorld.Entities;
 
-namespace Sandcube.Menus;
+namespace VoxelWorld.Menus;
 
 public interface IMenu
 {

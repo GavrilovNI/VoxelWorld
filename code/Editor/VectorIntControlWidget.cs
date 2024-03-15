@@ -1,8 +1,8 @@
 ﻿using Editor;
 using Sandbox;
-using Sandcube.Mth;
+using VoxelWorld.Mth;
 
-namespace Sandcube.Editor;
+namespace VoxelWorld.Editor;
 
 [CustomEditor(typeof(Vector3Int))]
 [CustomEditor(typeof(Vector2Int))]

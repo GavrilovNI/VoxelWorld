@@ -1,7 +1,7 @@
-﻿using Sandcube.Blocks.States;
+﻿using VoxelWorld.Blocks.States;
 using System.Text.Json.Serialization;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public record struct BlockStateChangingResult
 {

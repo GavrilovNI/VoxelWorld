@@ -1,18 +1,18 @@
-﻿using Sandcube.Blocks.Entities;
-using Sandcube.Blocks.Interfaces;
-using Sandcube.Blocks.States;
-using Sandcube.Interactions;
-using Sandcube.Menus;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Blocks.Interfaces;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Interactions;
+using VoxelWorld.Menus;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public abstract class ItemStorageBlock : SimpleBlock, IEntityBlock
 {

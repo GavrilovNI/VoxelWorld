@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Sandcube.IO.Helpers;
+namespace VoxelWorld.IO.Helpers;
 
 public class PlayerSaveHelper
 {

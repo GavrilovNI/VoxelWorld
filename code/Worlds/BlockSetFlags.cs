@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 [Flags]
 public enum BlockSetFlags : byte

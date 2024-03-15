@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.SandcubeExtensions;
+namespace VoxelWorld.SandcubeExtensions;
 
 public static class GameObjectExtensions
 {

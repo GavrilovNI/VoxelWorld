@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
+using VoxelWorld.Mth;
 using System;
 
-namespace Sandcube.Texturing;
+namespace VoxelWorld.Texturing;
 
 public static class TextureExtensions
 {

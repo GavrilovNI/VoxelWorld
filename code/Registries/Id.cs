@@ -1,11 +1,11 @@
-﻿using Sandcube.Data;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Values;
+﻿using VoxelWorld.Data;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Values;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Sandcube;
+namespace VoxelWorld;
 
 public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
 {

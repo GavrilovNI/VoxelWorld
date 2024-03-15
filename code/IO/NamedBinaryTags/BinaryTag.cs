@@ -1,9 +1,9 @@
-﻿using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.IO.NamedBinaryTags.Values;
+﻿using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Values;
 using System;
 using System.IO;
 
-namespace Sandcube.IO.NamedBinaryTags;
+namespace VoxelWorld.IO.NamedBinaryTags;
 
 public abstract class BinaryTag
 {

@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Blocks.Properties;
+namespace VoxelWorld.Blocks.Properties;
 
 public readonly record struct BlockProperties
 {

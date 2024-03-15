@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using System;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public class AutoPrefabEntityTypeAttribute : Attribute
 {

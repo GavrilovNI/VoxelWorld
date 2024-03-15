@@ -1,7 +1,7 @@
 ﻿using Sandbox.UI;
 using Sandbox;
 
-namespace Sandcube.UI.Extensions;
+namespace VoxelWorld.UI.Extensions;
 
 public static class MousePanelEventEstensions
 {

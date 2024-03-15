@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Sandcube.IO.NamedBinaryTags.Values;
+namespace VoxelWorld.IO.NamedBinaryTags.Values;
 
 public sealed class StringTag : ValueTag<string>
 {

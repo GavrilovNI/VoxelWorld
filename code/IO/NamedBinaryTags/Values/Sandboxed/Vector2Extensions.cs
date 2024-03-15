@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
 using System;
 
-namespace Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
+namespace VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
 
 public static class Vector2Extensions
 {

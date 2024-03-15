@@ -4,10 +4,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 
-namespace Sandcube.Mth.Enums;
+namespace VoxelWorld.Mth.Enums;
 
 
 public abstract class CustomEnum : INbtWritable

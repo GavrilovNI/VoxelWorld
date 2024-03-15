@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Worlds.Creation;
+namespace VoxelWorld.Worlds.Creation;
 
 public enum ChunkCreationStatus
 {

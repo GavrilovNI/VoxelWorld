@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Meshing;
+namespace VoxelWorld.Meshing;
 
 public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVertex
 {

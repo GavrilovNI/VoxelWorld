@@ -1,9 +1,9 @@
-﻿using Sandcube.Mth.Enums;
+﻿using VoxelWorld.Mth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Blocks.States.Properties;
+namespace VoxelWorld.Blocks.States.Properties;
 
 public class BlockProperty
 {

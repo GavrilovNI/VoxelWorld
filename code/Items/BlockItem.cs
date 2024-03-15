@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Blocks;
-using Sandcube.Interactions;
-using Sandcube.Meshing;
-using Sandcube.Mth.Enums;
+using VoxelWorld.Blocks;
+using VoxelWorld.Interactions;
+using VoxelWorld.Meshing;
+using VoxelWorld.Mth.Enums;
 using System.Threading.Tasks;
 
-namespace Sandcube.Items;
+namespace VoxelWorld.Items;
 
 public class BlockItem : Item
 {

@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Mth;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mth;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Sandcube.IO.Helpers;
+namespace VoxelWorld.IO.Helpers;
 
 public class RegionalSaveHelper
 {

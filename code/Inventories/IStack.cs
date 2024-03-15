@@ -1,7 +1,7 @@
-﻿using Sandcube.IO.NamedBinaryTags;
+﻿using VoxelWorld.IO.NamedBinaryTags;
 using System;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 //TODO: implement IBinaryStaticReadable<T> when T.Read get whitelisted
 //TODO: implement INbtStaticReadable<T> when T.Read get whitelisted

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds.Creation;
+namespace VoxelWorld.Worlds.Creation;
 
 public abstract class ChunkCreationStage : Component
 {

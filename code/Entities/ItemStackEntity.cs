@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
-using Sandcube.Items;
-using Sandcube.Meshing;
-using Sandcube.Mods.Base;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
+using VoxelWorld.Items;
+using VoxelWorld.Meshing;
+using VoxelWorld.Mods.Base;
 using System.Collections.Generic;
 
-namespace Sandcube.Entities;
+namespace VoxelWorld.Entities;
 
 public class ItemStackEntity : Entity
 {

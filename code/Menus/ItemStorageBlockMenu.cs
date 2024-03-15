@@ -1,12 +1,12 @@
-﻿using Sandcube.Blocks.Entities;
-using Sandcube.Entities;
-using Sandcube.Inventories;
-using Sandcube.Inventories.Players;
-using Sandcube.Items;
-using Sandcube.Mth;
+﻿using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Entities;
+using VoxelWorld.Inventories;
+using VoxelWorld.Inventories.Players;
+using VoxelWorld.Items;
+using VoxelWorld.Mth;
 using System.Collections.Generic;
 
-namespace Sandcube.Menus;
+namespace VoxelWorld.Menus;
 
 public class ItemStorageBlockMenu : ItemCapabilitiesMenu
 {

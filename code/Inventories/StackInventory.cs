@@ -1,10 +1,10 @@
-﻿using Sandcube.IO;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
+﻿using VoxelWorld.IO;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
 using System;
 using System.Collections.Generic;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 //TODO: implement IBinaryStaticReadable when T.Read will be whitelisted
 //TODO: implement INbtStaticReadable when T.Read will be whitelisted

@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Sandcube.Exceptions;
+namespace VoxelWorld.Exceptions;
 
 internal class ArgumentNotValidException : ArgumentException
 {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public class CombinedIndexedCapability<T> : IIndexedCapability<T> where T : class, IStack<T>
 {

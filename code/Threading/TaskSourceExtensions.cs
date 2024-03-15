@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Sandcube.Threading;
+namespace VoxelWorld.Threading;
 
 public static class TaskSourceExtensions
 {

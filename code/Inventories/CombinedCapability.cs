@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public class CombinedCapability<T> : ICapability<T> where T : class, IStack<T>
 {

@@ -1,7 +1,7 @@
-﻿using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
+﻿using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
 
-namespace Sandcube.IO.NamedBinaryTags.Values;
+namespace VoxelWorld.IO.NamedBinaryTags.Values;
 
 public abstract class ValueTag : BinaryTag
 {

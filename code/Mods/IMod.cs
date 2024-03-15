@@ -1,7 +1,7 @@
-﻿using Sandcube.Registries;
+﻿using VoxelWorld.Registries;
 using System.Threading.Tasks;
 
-namespace Sandcube.Mods;
+namespace VoxelWorld.Mods;
 
 public interface IMod
 {

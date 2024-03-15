@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Data;
-using Sandcube.IO.Helpers;
+using VoxelWorld.Data;
+using VoxelWorld.IO.Helpers;
 using System;
 using System.Threading.Tasks;
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public class GameLoader : Component
 {

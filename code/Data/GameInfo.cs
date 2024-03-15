@@ -1,7 +1,7 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
+﻿using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public readonly record struct GameInfo : INbtWritable, INbtStaticReadable<GameInfo>
 {

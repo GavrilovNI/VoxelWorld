@@ -2,7 +2,7 @@
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace Sandcube.UI;
+namespace VoxelWorld.UI;
 
 public class AdaptiveTextEntry : TextEntry
 {

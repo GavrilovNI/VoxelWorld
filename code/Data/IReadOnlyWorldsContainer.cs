@@ -1,8 +1,8 @@
-﻿using Sandcube.Registries;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Registries;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public interface IReadOnlyWorldsContainer : IEnumerable<World>
 {

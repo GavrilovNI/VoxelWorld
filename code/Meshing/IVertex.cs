@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.Meshing;
+namespace VoxelWorld.Meshing;
 
 public interface IVertex
 {

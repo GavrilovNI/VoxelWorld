@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Items;
+using VoxelWorld.Entities;
+using VoxelWorld.Items;
 
-namespace Sandcube.Interactions;
+namespace VoxelWorld.Interactions;
 
 public record class ItemActionContext
 {

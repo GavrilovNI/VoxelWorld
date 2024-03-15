@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 
 public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BBoxInt>
 {

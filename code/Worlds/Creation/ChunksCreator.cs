@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
-using Sandcube.Threading;
+using VoxelWorld.Mth;
+using VoxelWorld.Threading;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds.Creation;
+namespace VoxelWorld.Worlds.Creation;
 
 public class ChunksCreator : Component
 {

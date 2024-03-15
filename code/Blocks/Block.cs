@@ -1,21 +1,21 @@
-﻿using Sandcube.Blocks.Properties;
-using Sandcube.Blocks.States;
-using Sandcube.Blocks.States.Properties;
-using Sandcube.Interactions;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.Meshing;
-using Sandcube.Meshing.Blocks;
-using Sandcube.Mods.Base;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Blocks.Properties;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Blocks.States.Properties;
+using VoxelWorld.Interactions;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.Meshing;
+using VoxelWorld.Meshing.Blocks;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Block>
 {

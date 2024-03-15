@@ -1,7 +1,7 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
+using VoxelWorld.Mth;
 
-namespace Sandcube.Texturing;
+namespace VoxelWorld.Texturing;
 
 public readonly record struct TextureMapPart(TextureMap TextureMap, RectInt TextureRect) : IUvProvider
 {

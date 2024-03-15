@@ -1,15 +1,15 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
-using Sandcube.IO;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Mth;
-using Sandcube.Registries;
-using Sandcube.Worlds;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.IO;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mth;
+using VoxelWorld.Registries;
+using VoxelWorld.Worlds;
 using System;
 using System.IO;
 
-namespace Sandcube.Blocks.Entities;
+namespace VoxelWorld.Blocks.Entities;
 
 public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, INbtStaticReadable<BlockEntity>
 {

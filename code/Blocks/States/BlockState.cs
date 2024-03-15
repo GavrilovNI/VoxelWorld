@@ -1,14 +1,14 @@
-﻿using Sandcube.Blocks.States.Properties;
-using Sandcube.Mth.Enums;
+﻿using VoxelWorld.Blocks.States.Properties;
+using VoxelWorld.Mth.Enums;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using Sandcube.Mods.Base;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
 
-namespace Sandcube.Blocks.States;
+namespace VoxelWorld.Blocks.States;
 
 public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
 {

@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.IO.NamedBinaryTags;
+namespace VoxelWorld.IO.NamedBinaryTags;
 
 public enum BinaryTagType : byte
 {

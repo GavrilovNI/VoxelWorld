@@ -1,17 +1,17 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
-using Sandcube.Meshing;
-using Sandcube.Meshing.Blocks;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Threading;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Meshing;
+using VoxelWorld.Meshing.Blocks;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public class ChunkModelUpdater : Component
 {

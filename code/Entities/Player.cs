@@ -1,16 +1,16 @@
 ﻿using Sandbox;
-using Sandcube.Inventories;
-using Sandcube.Inventories.Players;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
-using Sandcube.Items;
-using Sandcube.Menus;
-using Sandcube.Players;
+using VoxelWorld.Inventories;
+using VoxelWorld.Inventories.Players;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
+using VoxelWorld.Items;
+using VoxelWorld.Menus;
+using VoxelWorld.Players;
 using System;
 using System.Collections.Generic;
 
-namespace Sandcube.Entities;
+namespace VoxelWorld.Entities;
 
 public class Player : Entity
 {

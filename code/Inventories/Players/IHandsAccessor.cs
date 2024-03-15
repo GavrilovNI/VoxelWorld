@@ -1,7 +1,7 @@
-﻿using Sandcube.Interactions;
-using Sandcube.Items;
+﻿using VoxelWorld.Interactions;
+using VoxelWorld.Items;
 
-namespace Sandcube.Inventories.Players;
+namespace VoxelWorld.Inventories.Players;
 
 public interface IHandsAccessor
 {

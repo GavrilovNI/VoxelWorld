@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public interface ICapability<T> : IEnumerable<T> where T : class, IStack<T>
 {

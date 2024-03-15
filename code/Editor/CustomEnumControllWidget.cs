@@ -1,12 +1,12 @@
 ﻿using Editor;
 using Sandbox;
-using Sandcube.Mth.Enums;
+using VoxelWorld.Mth.Enums;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Sandcube.Editor;
+namespace VoxelWorld.Editor;
 
 [CustomEditor(typeof(CustomEnum))]
 public class CustomEnumControllWidget : ControlWidget

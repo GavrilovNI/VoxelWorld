@@ -1,8 +1,8 @@
 ﻿using System;
-using Sandcube.Blocks.States;
+using VoxelWorld.Blocks.States;
 using System.Collections.Generic;
 
-namespace Sandcube.Meshing.Blocks;
+namespace VoxelWorld.Meshing.Blocks;
 
 // Thread safe
 public class BlockMeshMap

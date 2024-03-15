@@ -1,9 +1,9 @@
-﻿using Sandcube.Mth;
-using Sandcube.Registries;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Mth;
+using VoxelWorld.Registries;
+using VoxelWorld.Worlds;
 using System;
 
-namespace Sandcube.Blocks.Entities;
+namespace VoxelWorld.Blocks.Entities;
 
 public class BlockEntityType : IRegisterable
 {

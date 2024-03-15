@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.Controlling;
+namespace VoxelWorld.Controlling;
 
 public static class GameInput
 {

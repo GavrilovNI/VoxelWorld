@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
+using VoxelWorld.Mth;
 using System;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class AutoBlockItemAttribute : Attribute

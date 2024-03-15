@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Inventories;
-using Sandcube.Items;
+using VoxelWorld.Entities;
+using VoxelWorld.Inventories;
+using VoxelWorld.Items;
 using System;
 using System.Collections.Generic;
 
-namespace Sandcube.Menus;
+namespace VoxelWorld.Menus;
 
 public class CreativeInventoryMenu : ItemCapabilitiesMenu
 {

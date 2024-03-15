@@ -1,6 +1,6 @@
-﻿using Sandcube.Entities;
+﻿using VoxelWorld.Entities;
 
-namespace Sandcube.Players;
+namespace VoxelWorld.Players;
 
 public interface ILocalPlayerInitializable
 {

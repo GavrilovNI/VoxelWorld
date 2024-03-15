@@ -1,9 +1,9 @@
-﻿using Sandcube.Data.Enumarating;
+﻿using VoxelWorld.Data.Enumarating;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public class RegistriesContainer : IEnumerable<KeyValuePair<Type, Registry>>
 {

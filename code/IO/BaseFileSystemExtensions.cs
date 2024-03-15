@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public static class BaseFileSystemExtensions
 {

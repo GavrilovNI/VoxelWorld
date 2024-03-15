@@ -1,8 +1,8 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public record class NeighbourChangedContext
 {

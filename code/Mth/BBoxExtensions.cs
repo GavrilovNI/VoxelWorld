@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 
 public static class BBoxExtensions
 {

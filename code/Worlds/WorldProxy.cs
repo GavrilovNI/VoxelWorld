@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public sealed class WorldProxy : Component, IWorldProxy
 {

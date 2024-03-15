@@ -1,8 +1,8 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Mth;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public interface IBlockStateAccessor : IBlockStateProvider
 {

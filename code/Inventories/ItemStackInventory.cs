@@ -1,9 +1,9 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Items;
+﻿using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Items;
 using System;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 // TODO: remove when access T.Empty (Stack<Item>.Empty) will be whitelisted
 [Obsolete("to remove when access T.Empty (Stack<Item>.Empty) will be whitelisted")]

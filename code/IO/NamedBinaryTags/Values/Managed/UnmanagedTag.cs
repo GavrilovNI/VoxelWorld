@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
+namespace VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 
 public abstract class UnmanagedTag<T> : ValueTag<T> where T : unmanaged, IEquatable<T>
 {

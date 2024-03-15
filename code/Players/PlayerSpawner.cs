@@ -1,19 +1,19 @@
 ﻿using Sandbox;
-using Sandcube.Data;
-using Sandcube.Entities;
-using Sandcube.Entities.Types;
-using Sandcube.IO.Helpers;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.Mods.Base;
-using Sandcube.Mth;
-using Sandcube.Worlds;
+using VoxelWorld.Data;
+using VoxelWorld.Entities;
+using VoxelWorld.Entities.Types;
+using VoxelWorld.IO.Helpers;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Mth;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Players;
+namespace VoxelWorld.Players;
 
 public class PlayerSpawner : Component
 {

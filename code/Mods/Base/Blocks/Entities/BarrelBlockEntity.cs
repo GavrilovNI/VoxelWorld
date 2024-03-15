@@ -1,6 +1,6 @@
-﻿using Sandcube.Blocks.Entities;
+﻿using VoxelWorld.Blocks.Entities;
 
-namespace Sandcube.Mods.Base.Blocks.Entities;
+namespace VoxelWorld.Mods.Base.Blocks.Entities;
 
 public sealed class BarrelBlockEntity : ItemStorageBlockEntity
 {

@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Sandcube.Texturing;
+namespace VoxelWorld.Texturing;
 
 public interface IUvProvider
 {

@@ -1,9 +1,9 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
+using VoxelWorld.Mth;
 using System;
 using System.Collections.Generic;
 
-namespace Sandcube.Texturing;
+namespace VoxelWorld.Texturing;
 
 public class PathedTextureMap : TextureMap
 {

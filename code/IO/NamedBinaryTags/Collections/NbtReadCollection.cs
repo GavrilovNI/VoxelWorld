@@ -1,8 +1,8 @@
-﻿using Sandcube.IO.NamedBinaryTags.Values;
-using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
+﻿using VoxelWorld.IO.NamedBinaryTags.Values;
+using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
 
-namespace Sandcube.IO.NamedBinaryTags.Collections;
+namespace VoxelWorld.IO.NamedBinaryTags.Collections;
 
 public abstract class NbtReadCollection<TKey> : BinaryTag
 {

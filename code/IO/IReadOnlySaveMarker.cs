@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public interface IReadOnlySaveMarker
 {

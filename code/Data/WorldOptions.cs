@@ -1,8 +1,8 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Mth;
+﻿using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mth;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<WorldOptions>
 {

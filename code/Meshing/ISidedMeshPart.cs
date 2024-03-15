@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Mth.Enums;
+using VoxelWorld.Mth.Enums;
 using System.Collections.Generic;
 
-namespace Sandcube.Meshing;
+namespace VoxelWorld.Meshing;
 
 public interface ISidedMeshPart<V> : IMeshPart<V> where V : unmanaged, IVertex
 {

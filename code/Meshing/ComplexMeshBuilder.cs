@@ -1,9 +1,9 @@
 ﻿using Sandbox;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
 using System.Collections.Generic;
 
-namespace Sandcube.Meshing;
+namespace VoxelWorld.Meshing;
 
 public class ComplexMeshBuilder : UnlimitedMesh<ComplexVertex>.Builder<ComplexMeshBuilder>
 {

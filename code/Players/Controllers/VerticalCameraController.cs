@@ -1,9 +1,9 @@
 ﻿using Sandbox;
-using Sandcube.Controlling;
-using Sandcube.Mth;
+using VoxelWorld.Controlling;
+using VoxelWorld.Mth;
 using System;
 
-namespace Sandcube.Players.Controllers;
+namespace VoxelWorld.Players.Controllers;
 
 public class VerticalCameraController : Component
 {

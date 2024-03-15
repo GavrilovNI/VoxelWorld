@@ -1,7 +1,7 @@
 ﻿using Sandbox;
-using Sandcube.Worlds;
+using VoxelWorld.Worlds;
 
-namespace Sandcube.Entities;
+namespace VoxelWorld.Entities;
 
 public record struct EntitySpawnConfig
 {

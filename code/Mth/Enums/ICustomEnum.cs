@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sandcube.Mth.Enums;
+namespace VoxelWorld.Mth.Enums;
 
 public interface ICustomEnum<T> where T : ICustomEnum<T>
 {

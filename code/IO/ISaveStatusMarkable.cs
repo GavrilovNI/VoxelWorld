@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public interface ISaveStatusMarkable
 {

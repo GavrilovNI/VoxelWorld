@@ -1,9 +1,9 @@
-﻿using Sandcube.IO.NamedBinaryTags.Collections;
+﻿using VoxelWorld.IO.NamedBinaryTags.Collections;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Sandcube.IO.NamedBinaryTags;
+namespace VoxelWorld.IO.NamedBinaryTags;
 
 public class NbtStringPalette : INbtWritable, INbtStaticReadable<NbtStringPalette>
 {

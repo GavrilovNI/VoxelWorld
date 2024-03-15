@@ -1,7 +1,7 @@
 ﻿using Sandbox;
-using Sandcube.Registries;
+using VoxelWorld.Registries;
 
-namespace Sandcube.Entities.Types;
+namespace VoxelWorld.Entities.Types;
 
 public abstract class EntityType : IRegisterable
 {

@@ -1,9 +1,9 @@
-﻿using Sandcube.Items;
-using Sandcube.Registries;
+﻿using VoxelWorld.Items;
+using VoxelWorld.Registries;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public class CreativeItemStackInventory : IndexedCapability<Stack<Item>>
 {

@@ -1,11 +1,11 @@
 ﻿using Sandbox;
 using Sandbox.UI;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
 using System;
 using System.Text.Json.Serialization;
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<RectInt>
 {
     public int Left;

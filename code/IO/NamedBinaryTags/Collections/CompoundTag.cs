@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.IO.NamedBinaryTags.Values;
-using Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
+using VoxelWorld.IO.NamedBinaryTags.Values;
+using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Sandcube.IO.NamedBinaryTags.Collections;
+namespace VoxelWorld.IO.NamedBinaryTags.Collections;
 
 public sealed class CompoundTag : NbtReadCollection<string>, IEnumerable<KeyValuePair<string, BinaryTag>>
 {

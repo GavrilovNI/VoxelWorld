@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public static class StringExtensions
 {

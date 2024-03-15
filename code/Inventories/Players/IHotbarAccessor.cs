@@ -1,6 +1,6 @@
-﻿using Sandcube.Items;
+﻿using VoxelWorld.Items;
 
-namespace Sandcube.Inventories.Players;
+namespace VoxelWorld.Inventories.Players;
 
 public interface IHotbarAccessor
 {

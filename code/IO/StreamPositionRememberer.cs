@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public class StreamPositionRememberer : IDisposable
 {

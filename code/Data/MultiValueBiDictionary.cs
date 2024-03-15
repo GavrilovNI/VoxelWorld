@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public class MultiValueBiDictionary<TKey, TValue> : IReadOnlyMultiValueBiDictionary<TKey, TValue> where TKey : notnull where TValue : notnull
 {

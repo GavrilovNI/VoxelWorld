@@ -1,13 +1,13 @@
-﻿using Sandcube.Entities;
-using Sandcube.Inventories;
-using Sandcube.IO;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Menus;
-using Sandcube.Mth;
+﻿using VoxelWorld.Entities;
+using VoxelWorld.Inventories;
+using VoxelWorld.IO;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Menus;
+using VoxelWorld.Mth;
 using System;
 
-namespace Sandcube.Blocks.Entities;
+namespace VoxelWorld.Blocks.Entities;
 
 public class ItemStorageBlockEntity : BlockEntity
 {

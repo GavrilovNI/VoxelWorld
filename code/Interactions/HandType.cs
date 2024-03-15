@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Interactions;
+namespace VoxelWorld.Interactions;
 
 public enum HandType
 {

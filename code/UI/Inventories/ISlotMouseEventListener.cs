@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Inventories;
-using Sandcube.Items;
+using VoxelWorld.Inventories;
+using VoxelWorld.Items;
 
-namespace Sandcube.UI.Inventories;
+namespace VoxelWorld.UI.Inventories;
 
 public interface ISlotMouseEventListener
 {

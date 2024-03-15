@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube;
+namespace VoxelWorld;
 
 public enum LoadingStatus
 {

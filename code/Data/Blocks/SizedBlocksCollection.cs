@@ -1,17 +1,17 @@
-﻿using Sandcube.Blocks.Entities;
-using Sandcube.Blocks.Interfaces;
-using Sandcube.Blocks.States;
-using Sandcube.IO;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Mth;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Blocks.Interfaces;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.IO;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mth;
+using VoxelWorld.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Sandcube.Data.Blocks;
+namespace VoxelWorld.Data.Blocks;
 
 public class SizedBlocksCollection : ISaveStatusMarkable
 {

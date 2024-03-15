@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Sandcube.IO.NamedBinaryTags.Values.Unmanaged;
+namespace VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 
 public sealed class SByteTag : UnmanagedTag<sbyte>
 {

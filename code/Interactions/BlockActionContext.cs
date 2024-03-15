@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
-using Sandcube.Entities;
-using Sandcube.Items;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Worlds;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Entities;
+using VoxelWorld.Items;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Worlds;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sandcube.Interactions;
+namespace VoxelWorld.Interactions;
 
 public record class BlockActionContext
 {

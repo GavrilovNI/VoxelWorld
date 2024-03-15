@@ -1,12 +1,12 @@
 ﻿using Sandbox;
-using Sandcube.Interactions;
-using Sandcube.IO;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Items;
+using VoxelWorld.Interactions;
+using VoxelWorld.IO;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Items;
 using System;
 
-namespace Sandcube.Inventories.Players;
+namespace VoxelWorld.Inventories.Players;
 
 public class PlayerInventory : Component, IPlayerInventory, INbtWritable, INbtReadable
 {

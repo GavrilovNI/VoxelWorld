@@ -1,10 +1,10 @@
-﻿using Sandcube.Data.Enumarating;
+﻿using VoxelWorld.Data.Enumarating;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public abstract class Registry
 {

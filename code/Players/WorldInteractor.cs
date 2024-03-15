@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Interactions;
-using Sandcube.Inventories;
-using Sandcube.Items;
-using Sandcube.Worlds;
+using VoxelWorld.Entities;
+using VoxelWorld.Interactions;
+using VoxelWorld.Inventories;
+using VoxelWorld.Items;
+using VoxelWorld.Worlds;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Players;
+namespace VoxelWorld.Players;
 
 public class WorldInteractor : Component
 {

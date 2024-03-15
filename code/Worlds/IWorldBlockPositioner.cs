@@ -1,6 +1,6 @@
-﻿using Sandcube.Mth;
+﻿using VoxelWorld.Mth;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public interface IWorldBlockPositioner
 {

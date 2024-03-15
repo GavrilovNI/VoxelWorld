@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Registries;
-using Sandcube.Worlds;
+using VoxelWorld.Registries;
+using VoxelWorld.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public class WorldsContainer : IReadOnlyWorldsContainer
 {

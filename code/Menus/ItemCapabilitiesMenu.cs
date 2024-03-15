@@ -1,15 +1,15 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Inventories;
-using Sandcube.Items;
-using Sandcube.UI.Screens;
+using VoxelWorld.Entities;
+using VoxelWorld.Inventories;
+using VoxelWorld.Items;
+using VoxelWorld.UI.Screens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Menus;
+namespace VoxelWorld.Menus;
 
-using ItemStack = Sandcube.Inventories.Stack<Item>;
+using ItemStack = VoxelWorld.Inventories.Stack<Item>;
 
 public class ItemCapabilitiesMenu : IMenu
 {

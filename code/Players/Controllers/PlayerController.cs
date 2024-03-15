@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Controlling;
-using Sandcube.Mth;
+using VoxelWorld.Controlling;
+using VoxelWorld.Mth;
 
-namespace Sandcube.Players.Controllers;
+namespace VoxelWorld.Players.Controllers;
 
 public class PlayerController : Component
 {

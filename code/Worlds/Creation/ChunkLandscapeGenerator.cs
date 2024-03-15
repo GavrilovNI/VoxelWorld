@@ -1,9 +1,9 @@
 ﻿using Sandbox;
-using Sandcube.Worlds.Generation;
+using VoxelWorld.Worlds.Generation;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds.Creation;
+namespace VoxelWorld.Worlds.Creation;
 
 public class ChunkLandscapeGenerator : ChunkCreationStage
 {

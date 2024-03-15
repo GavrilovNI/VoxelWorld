@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Data;
-using Sandcube.IO.Helpers;
+using VoxelWorld.Data;
+using VoxelWorld.IO.Helpers;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube.Worlds.Creation;
+namespace VoxelWorld.Worlds.Creation;
 
 public class ChunkLoader : ChunkCreationStage, IWorldInitializationListener
 {

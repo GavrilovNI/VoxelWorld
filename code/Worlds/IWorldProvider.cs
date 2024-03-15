@@ -1,8 +1,8 @@
-﻿using Sandcube.Mth;
-using Sandcube.Registries;
+﻿using VoxelWorld.Mth;
+using VoxelWorld.Registries;
 using System;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public interface IWorldProvider : IBlockStateProvider, IBlockEntityProvider, IWorldBlockPositioner
 {

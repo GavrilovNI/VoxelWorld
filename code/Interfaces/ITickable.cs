@@ -1,4 +1,4 @@
-﻿namespace Sandcube.Interfaces;
+﻿namespace VoxelWorld.Interfaces;
 
 public interface ITickable
 {

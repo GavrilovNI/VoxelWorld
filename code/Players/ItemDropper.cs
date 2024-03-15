@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Inventories;
-using Sandcube.Items;
-using Sandcube.Worlds;
+using VoxelWorld.Entities;
+using VoxelWorld.Inventories;
+using VoxelWorld.Items;
+using VoxelWorld.Worlds;
 
-namespace Sandcube.Players;
+namespace VoxelWorld.Players;
 
 public class ItemDropper : Component, IWorldInitializable
 {

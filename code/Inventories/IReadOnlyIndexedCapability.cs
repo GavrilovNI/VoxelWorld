@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public interface IReadOnlyIndexedCapability<T> : IEnumerable<T> where T : class, IStack<T>
 {

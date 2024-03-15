@@ -1,7 +1,7 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Mth.Enums;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth.Enums;
 
-namespace Sandcube.Blocks.Interfaces;
+namespace VoxelWorld.Blocks.Interfaces;
 
 public interface IOneAxisRotatableBlock : IRotatableBlock
 {

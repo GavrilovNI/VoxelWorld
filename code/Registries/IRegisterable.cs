@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public interface IRegisterable : IModedIdProvider
 {

@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.Blocks;
-using Sandcube.Mods.Base.Blocks;
-using Sandcube.Mods.Base.Blocks.Entities;
-using Sandcube.Mods.Base.Entities;
-using Sandcube.Mods.Base.Items;
-using Sandcube.Registries;
+using VoxelWorld.Blocks;
+using VoxelWorld.Mods.Base.Blocks;
+using VoxelWorld.Mods.Base.Blocks.Entities;
+using VoxelWorld.Mods.Base.Entities;
+using VoxelWorld.Mods.Base.Items;
+using VoxelWorld.Registries;
 using System.Threading.Tasks;
 
-namespace Sandcube.Mods.Base;
+namespace VoxelWorld.Mods.Base;
 
 public sealed class BaseMod : Component, IMod
 {

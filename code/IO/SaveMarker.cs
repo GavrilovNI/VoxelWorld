@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public class SaveMarker : IReadOnlySaveMarker
 {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Win32;
 using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Entities.Types;
+using VoxelWorld.Entities;
+using VoxelWorld.Entities.Types;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public class ModEntities : Component
 {

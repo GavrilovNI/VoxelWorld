@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Entities.Types;
-using Sandcube.Registries;
+using VoxelWorld.Entities.Types;
+using VoxelWorld.Registries;
 
-namespace Sandcube.Mods.Base.Entities;
+namespace VoxelWorld.Mods.Base.Entities;
 
 public sealed class BaseModEntities : ModEntities
 {

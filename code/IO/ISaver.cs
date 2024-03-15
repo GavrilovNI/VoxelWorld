@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Sandcube.IO;
+namespace VoxelWorld.IO;
 
 public interface ISaver
 {

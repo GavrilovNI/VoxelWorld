@@ -1,14 +1,14 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Meshing;
-using Sandcube.Meshing.Blocks;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Meshing;
+using VoxelWorld.Meshing.Blocks;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public class SimpleBlock : Block
 {

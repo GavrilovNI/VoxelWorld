@@ -1,17 +1,17 @@
-﻿using Sandcube.Blocks;
-using Sandcube.Blocks.Entities;
-using Sandcube.Blocks.States;
-using Sandcube.Mods.Base;
-using Sandcube.Mods.Base.Blocks.Entities;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Blocks;
+using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Mods.Base.Blocks.Entities;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sandcube.Mods.Base.Blocks;
+namespace VoxelWorld.Mods.Base.Blocks;
 
 public class BarrelBlock : ItemStorageBlock
 {

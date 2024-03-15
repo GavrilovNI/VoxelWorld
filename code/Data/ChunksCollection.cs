@@ -1,11 +1,11 @@
-﻿using Sandcube.Mth;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Mth;
+using VoxelWorld.Worlds;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 {

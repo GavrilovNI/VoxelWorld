@@ -1,15 +1,15 @@
 ﻿using Sandbox;
-using Sandcube.Interactions;
-using Sandcube.Inventories;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.Meshing;
-using Sandcube.Mth;
-using Sandcube.Registries;
+using VoxelWorld.Interactions;
+using VoxelWorld.Inventories;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.Meshing;
+using VoxelWorld.Mth;
+using VoxelWorld.Registries;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sandcube.Items;
+namespace VoxelWorld.Items;
 
 public class Item : IRegisterable, IStackValue<Item>
 {

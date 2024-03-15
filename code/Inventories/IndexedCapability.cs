@@ -1,9 +1,9 @@
-﻿using Sandcube.Mth;
+﻿using VoxelWorld.Mth;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : class, IStack<T>
 {

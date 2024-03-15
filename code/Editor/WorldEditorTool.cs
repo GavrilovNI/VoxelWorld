@@ -1,10 +1,10 @@
 ﻿using Editor;
 using Sandbox;
-using Sandcube.IO.Worlds;
-using Sandcube.Worlds;
+using VoxelWorld.IO.Worlds;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 
-namespace Sandcube;
+namespace VoxelWorld;
 
 public class WorldEditorTool : EditorTool<World>
 {

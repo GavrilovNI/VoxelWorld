@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public class ModRegisterables<T> where T : IRegisterable
 {

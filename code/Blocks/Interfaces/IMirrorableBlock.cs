@@ -1,6 +1,6 @@
-﻿using Sandcube.Blocks.States;
+﻿using VoxelWorld.Blocks.States;
 
-namespace Sandcube.Blocks.Interfaces;
+namespace VoxelWorld.Blocks.Interfaces;
 
 public interface IMirrorableBlock
 {

@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Meshing.Blocks;
+namespace VoxelWorld.Meshing.Blocks;
 
 public enum BlockMeshType
 {

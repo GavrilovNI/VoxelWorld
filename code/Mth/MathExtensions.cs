@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 public static class MathExtensions
 {
     public static float Round(this float value) => MathF.Round(value);

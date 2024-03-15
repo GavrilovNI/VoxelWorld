@@ -1,13 +1,13 @@
-﻿using Sandcube.Blocks.Properties;
-using Sandcube.Blocks.States;
-using Sandcube.Meshing.Blocks;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
+﻿using VoxelWorld.Blocks.Properties;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Meshing.Blocks;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public class GlassBlock : SimpleBlock
 {

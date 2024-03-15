@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public interface IWorldInitializationListener
 {

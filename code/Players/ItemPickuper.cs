@@ -1,11 +1,11 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Inventories;
-using Sandcube.Inventories.Players;
+using VoxelWorld.Entities;
+using VoxelWorld.Inventories;
+using VoxelWorld.Inventories.Players;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sandcube.Players;
+namespace VoxelWorld.Players;
 
 public class ItemPickuper : Component, Component.ITriggerListener
 {

@@ -1,7 +1,7 @@
 ﻿using Sandbox;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Mth.Enums;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 
 [JsonConverter(typeof(Vector2IntJsonConverter))]
 public struct Vector2Int : IEquatable<Vector2Int>, IParsable<Vector2Int>, INbtWritable, INbtStaticReadable<Vector2Int>

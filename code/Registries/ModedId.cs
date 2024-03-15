@@ -1,9 +1,9 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Mods.Base;
+﻿using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Mods.Base;
 using System;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public readonly record struct ModedId : INbtWritable, INbtStaticReadable<ModedId>
 {

@@ -1,9 +1,9 @@
-﻿using Sandcube.Blocks.Entities;
-using Sandcube.Blocks.States;
-using Sandcube.Mth;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth;
+using VoxelWorld.Worlds;
 
-namespace Sandcube.Blocks.Interfaces;
+namespace VoxelWorld.Blocks.Interfaces;
 
 public interface IEntityBlock
 {

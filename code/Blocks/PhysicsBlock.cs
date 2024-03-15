@@ -1,16 +1,16 @@
-﻿using Sandcube.Blocks.States;
-using Sandcube.Entities;
-using Sandcube.Interactions;
-using Sandcube.Mods.Base;
-using Sandcube.Mth;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Worlds;
+﻿using VoxelWorld.Blocks.States;
+using VoxelWorld.Entities;
+using VoxelWorld.Interactions;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Worlds;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Sandcube.Blocks;
+namespace VoxelWorld.Blocks;
 
 public class PhysicsBlock : SimpleBlock
 {

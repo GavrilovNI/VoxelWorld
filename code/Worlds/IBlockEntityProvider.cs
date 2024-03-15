@@ -1,7 +1,7 @@
-﻿using Sandcube.Blocks.Entities;
-using Sandcube.Mth;
+﻿using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Mth;
 
-namespace Sandcube.Worlds;
+namespace VoxelWorld.Worlds;
 
 public interface IBlockEntityProvider
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sandcube.Data;
+namespace VoxelWorld.Data;
 
 public class OneOfBase : IOneOf
 {

@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
-using Sandcube.Mods.Base;
-using Sandcube.Mth;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Mth;
 using System.Collections.Generic;
 
-namespace Sandcube.Worlds.Generation;
+namespace VoxelWorld.Worlds.Generation;
 
 public class WorldGenerator : Component, IWorldInitializationListener
 {

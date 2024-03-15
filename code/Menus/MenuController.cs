@@ -1,8 +1,8 @@
 ﻿using Sandbox;
-using Sandcube.Entities;
-using Sandcube.Players;
+using VoxelWorld.Entities;
+using VoxelWorld.Players;
 
-namespace Sandcube.Menus;
+namespace VoxelWorld.Menus;
 
 public class MenuController : Component, ILocalPlayerInitializable
 {

@@ -1,9 +1,9 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.Items;
+﻿using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.Items;
 using System;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public record class Stack<T> : IStack<Stack<T>> where T : class, IStackValue<T>
 {

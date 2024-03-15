@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using System;
 
-namespace Sandcube.UI.Menus.MainMenus;
+namespace VoxelWorld.UI.Menus.MainMenus;
 
 public class MainMenuController : Component
 {

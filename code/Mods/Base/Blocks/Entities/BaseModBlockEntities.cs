@@ -1,7 +1,7 @@
-﻿using Sandcube.Blocks.Entities;
-using Sandcube.Registries;
+﻿using VoxelWorld.Blocks.Entities;
+using VoxelWorld.Registries;
 
-namespace Sandcube.Mods.Base.Blocks.Entities;
+namespace VoxelWorld.Mods.Base.Blocks.Entities;
 
 public sealed class BaseModBlockEntities : ModRegisterables<BlockEntityType>
 {

@@ -1,7 +1,7 @@
-﻿using Sandcube.Mth;
-using Sandcube.Mth.Enums;
+﻿using VoxelWorld.Mth;
+using VoxelWorld.Mth.Enums;
 
-namespace Sandcube.Meshing.Blocks;
+namespace VoxelWorld.Meshing.Blocks;
 
 public class PhysicsMeshes
 {

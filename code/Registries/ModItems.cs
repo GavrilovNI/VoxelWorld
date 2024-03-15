@@ -1,13 +1,13 @@
 ﻿using Sandbox;
-using Sandcube.Blocks;
-using Sandcube.Blocks.States;
-using Sandcube.Items;
-using Sandcube.Meshing;
+using VoxelWorld.Blocks;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Items;
+using VoxelWorld.Meshing;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Registries;
+namespace VoxelWorld.Registries;
 
 public class ModItems : ModRegisterables<Item>
 {

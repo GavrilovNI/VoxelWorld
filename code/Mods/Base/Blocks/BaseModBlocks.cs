@@ -1,12 +1,12 @@
-﻿using Sandcube.Blocks;
-using Sandcube.Blocks.Properties;
-using Sandcube.Mods.Base;
-using Sandcube.Mth.Enums;
-using Sandcube.Registries;
-using Sandcube.Texturing;
+﻿using VoxelWorld.Blocks;
+using VoxelWorld.Blocks.Properties;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Mth.Enums;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
 using System.Linq;
 
-namespace Sandcube.Mods.Base.Blocks;
+namespace VoxelWorld.Mods.Base.Blocks;
 
 public sealed class BaseModBlocks : ModRegisterables<Block>
 {

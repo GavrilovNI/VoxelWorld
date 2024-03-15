@@ -1,7 +1,7 @@
-﻿using Sandcube.Mth.Enums;
+﻿using VoxelWorld.Mth.Enums;
 using System;
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 
 public static class Vector2Extensions
 {

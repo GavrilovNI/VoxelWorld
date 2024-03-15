@@ -1,16 +1,16 @@
 ﻿using Sandbox;
-using Sandcube.Entities.Types;
-using Sandcube.IO.NamedBinaryTags;
-using Sandcube.IO.NamedBinaryTags.Collections;
-using Sandcube.IO.NamedBinaryTags.Values.Sandboxed;
-using Sandcube.Mth;
-using Sandcube.Registries;
-using Sandcube.Worlds;
+using VoxelWorld.Entities.Types;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
+using VoxelWorld.Mth;
+using VoxelWorld.Registries;
+using VoxelWorld.Worlds;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sandcube.Entities;
+namespace VoxelWorld.Entities;
 
 public abstract class Entity : Component
 {

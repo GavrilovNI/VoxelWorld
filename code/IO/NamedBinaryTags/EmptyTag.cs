@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Sandcube.IO.NamedBinaryTags;
+namespace VoxelWorld.IO.NamedBinaryTags;
 
 public sealed class EmptyTag : BinaryTag
 {

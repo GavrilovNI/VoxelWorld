@@ -1,6 +1,6 @@
 ﻿
 
-namespace Sandcube.Inventories.Players;
+namespace VoxelWorld.Inventories.Players;
 
 public interface IPlayerInventory : IHotbarAccessor, IHandsAccessor
 {

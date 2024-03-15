@@ -1,26 +1,26 @@
 ﻿using Sandbox;
 using Sandbox.Utility;
-using Sandcube.Players;
-using Sandcube.Blocks;
-using Sandcube.Blocks.States;
-using Sandcube.Data;
-using Sandcube.Entities;
-using Sandcube.Exceptions;
-using Sandcube.IO;
-using Sandcube.IO.Helpers;
-using Sandcube.Meshing.Blocks;
-using Sandcube.Mods;
-using Sandcube.Mods.Base;
-using Sandcube.Registries;
-using Sandcube.Texturing;
-using Sandcube.Worlds;
+using VoxelWorld.Players;
+using VoxelWorld.Blocks;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Data;
+using VoxelWorld.Entities;
+using VoxelWorld.Exceptions;
+using VoxelWorld.IO;
+using VoxelWorld.IO.Helpers;
+using VoxelWorld.Meshing.Blocks;
+using VoxelWorld.Mods;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Registries;
+using VoxelWorld.Texturing;
+using VoxelWorld.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandcube;
+namespace VoxelWorld;
 
 public sealed class GameController
 

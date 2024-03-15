@@ -1,8 +1,8 @@
-﻿using Sandcube.Items;
-using Sandcube.Mods.Base;
-using Sandcube.Registries;
+﻿using VoxelWorld.Items;
+using VoxelWorld.Mods.Base;
+using VoxelWorld.Registries;
 
-namespace Sandcube.Mods.Base.Items;
+namespace VoxelWorld.Mods.Base.Items;
 
 public sealed class BaseModItems : ModItems
 {

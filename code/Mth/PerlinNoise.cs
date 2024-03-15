@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Sandcube.Mth;
+namespace VoxelWorld.Mth;
 
 public class PerlinNoise
 {

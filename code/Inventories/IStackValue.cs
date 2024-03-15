@@ -1,7 +1,7 @@
-﻿using Sandcube.IO.NamedBinaryTags;
-using Sandcube.Registries;
+﻿using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.Registries;
 
-namespace Sandcube.Inventories;
+namespace VoxelWorld.Inventories;
 
 public interface IStackValue<T> : INbtWritable, INbtStaticReadable<T> where T : IStackValue<T>
 {

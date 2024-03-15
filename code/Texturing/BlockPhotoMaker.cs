@@ -1,10 +1,10 @@
 ﻿using Sandbox;
-using Sandcube.Blocks.States;
-using Sandcube.Mth;
-using Sandcube.Worlds;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Mth;
+using VoxelWorld.Worlds;
 using System.Threading.Tasks;
 
-namespace Sandcube.Texturing;
+namespace VoxelWorld.Texturing;
 
 public class BlockPhotoMaker : Component
 {
