@@ -35,15 +35,15 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__guid": "ffe37fb8-2302-45f2-90c5-317fa05eeeb5",
           "__type": "GameController",
+          "__guid": "ffe37fb8-2302-45f2-90c5-317fa05eeeb5",
           "BaseModPrefab": {
             "_type": "gameobject",
             "prefab": "prefabs/mods/basemod.prefab"
           },
           "BlockPhotoMaker": {
             "_type": "component",
-            "component_id": "8bc26af7-60d4-4107-a0dc-64c35e1bedfe",
+            "component_id": "17cdaf7d-e2c8-4c29-85d9-4f31e4b34606",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -239,7 +239,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-15T21:46:50.7669528\u002B01:00",
+  "LastSaved": "2024-03-15T21:54:52.0957688\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

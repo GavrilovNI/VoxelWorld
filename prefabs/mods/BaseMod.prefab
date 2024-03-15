@@ -6,12 +6,12 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__guid": "e5d30169-0d4d-47d6-9b2c-bd86161dc39d"
         "__type": "BaseMod",
+        "__guid": "ed65e427-89b3-42da-9c29-2c308f64788e"
       },
       {
-        "__guid": "4e0f028c-0c47-4b8b-bcd6-60c992af4b71",
         "__type": "BaseModEntities",
+        "__guid": "cd8054fc-8475-40fd-b389-7ec6d8099b6b",
         "ItemStackPrefab": {
           "_type": "gameobject",
           "prefab": "prefabs/entities/itemstackentity.prefab"

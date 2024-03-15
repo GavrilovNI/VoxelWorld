@@ -1,17 +1,17 @@
 {
   "RootObject": {
-    "__guid": "92b75b3e-e86d-4858-9096-4273868519af",
+    "__guid": "e1e20500-bebc-41aa-a0ae-a6d83989155f",
     "Name": "visualonlychunk",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
       {
         "__type": "Chunk",
-        "__guid": "abade38b-ec40-4d26-953b-89448e5ecfdd",
+        "__guid": "ee7c420f-300d-46d3-b183-7f2fc8337f52",
         "ModelUpdater": {
           "_type": "component",
-          "component_id": "05c4a056-2eee-471f-99aa-7d0030fed1df",
-          "go": "92b75b3e-e86d-4858-9096-4273868519af",
+          "component_id": "57e0979e-fd95-4945-9e76-59ee83af544d",
+          "go": "e1e20500-bebc-41aa-a0ae-a6d83989155f",
           "component_type": "ChunkModelUpdater"
         },
         "Position": "0,0,0",
@@ -19,24 +19,24 @@
       },
       {
         "__type": "ChunkModelUpdater",
-        "__guid": "05c4a056-2eee-471f-99aa-7d0030fed1df",
+        "__guid": "57e0979e-fd95-4945-9e76-59ee83af544d",
         "Chunk": {
           "_type": "component",
-          "component_id": "abade38b-ec40-4d26-953b-89448e5ecfdd",
-          "go": "92b75b3e-e86d-4858-9096-4273868519af",
+          "component_id": "ee7c420f-300d-46d3-b183-7f2fc8337f52",
+          "go": "e1e20500-bebc-41aa-a0ae-a6d83989155f",
           "component_type": "Chunk"
         },
         "InteractionCollider": {
           "_type": "component",
-          "component_id": "44cb271f-abc0-4447-a90c-6ecce01b90f2",
-          "go": "363aa064-f39c-4bd7-a7a0-b493aee132c1",
+          "component_id": "910c4c5c-7cda-415c-89f7-0c27cdff9802",
+          "go": "a4f6fc7c-9ec9-4549-bfeb-eb9f8636778a",
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": false,
         "PhysicsCollider": {
           "_type": "component",
-          "component_id": "1bdfc6b8-8fdd-42ff-91dc-e16933a0f5d7",
-          "go": "92b75b3e-e86d-4858-9096-4273868519af",
+          "component_id": "2cb5ab12-d714-4d16-9127-6937bd79b3bb",
+          "go": "fd50d505-0357-464e-8ae3-640de3d86fc4",
           "component_type": "ModelCollider"
         },
         "PhysicsEnabled": false,
@@ -45,7 +45,7 @@
     ],
     "Children": [
       {
-        "__guid": "363aa064-f39c-4bd7-a7a0-b493aee132c1",
+        "__guid": "a4f6fc7c-9ec9-4549-bfeb-eb9f8636778a",
         "Name": "Interactable",
         "Tags": "interactable,world,no_entity_collide",
         "Enabled": true,
@@ -53,12 +53,12 @@
         "Components": [
           {
             "__type": "WorldProxy",
-            "__guid": "ab777313-cb44-473e-98b7-f1e01abfe3c7",
+            "__guid": "cee1fc7c-799b-4abe-8d40-32be08a356c9",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
             "__type": "ModelCollider",
-            "__guid": "44cb271f-abc0-4447-a90c-6ecce01b90f2",
+            "__guid": "910c4c5c-7cda-415c-89f7-0c27cdff9802",
             "__enabled": false,
             "IsTrigger": false,
             "Static": true
@@ -66,7 +66,7 @@
         ]
       },
       {
-        "__guid": "2f7fa184-635d-4a4f-8a36-838352e07168",
+        "__guid": "fd50d505-0357-464e-8ae3-640de3d86fc4",
         "Name": "Physics",
         "Tags": "world",
         "Enabled": true,
@@ -74,7 +74,7 @@
         "Components": [
           {
             "__type": "ModelCollider",
-            "__guid": "744ca550-932d-462b-823f-486e0284bb50",
+            "__guid": "2cb5ab12-d714-4d16-9127-6937bd79b3bb",
             "__enabled": false,
             "IsTrigger": false,
             "Static": true

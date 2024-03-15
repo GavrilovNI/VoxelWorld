@@ -39,8 +39,8 @@
         "InteractionEnabled": true,
         "PhysicsCollider": {
           "_type": "component",
-          "component_id": "026bfcad-001f-4058-8fbd-ca322c37232e",
-          "go": "d9884821-151c-4cf0-bcb5-4ff38c275acb",
+          "component_id": "3552bcfe-c3ec-4ae4-b5d0-d5644ce69403",
+          "go": "517e2f6f-17d2-47c2-9c7a-f7ad5c745769",
           "component_type": "ModelCollider"
         },
         "PhysicsEnabled": true,
