@@ -7,7 +7,7 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "Resources": null,
+  "Resources": "*",
   "HasCode": true,
   "CodePath": "/code/",
   "PackageReferences": [],
