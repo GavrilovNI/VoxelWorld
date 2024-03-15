@@ -230,7 +230,7 @@ public class World : Component, IWorldAccessor, ITickable
                         CreatingChunks[partiallyLoadedChunk.Position] = creatingData with { PartiallyLoadedChunk = partiallyLoadedChunk };
                     }
                     return t.Result;
-                }).UnwrapWhitelisted();
+                }).Unwrap();
             }
 
             if(creationStatus == ChunkCreationStatus.Finishing)
@@ -247,7 +247,7 @@ public class World : Component, IWorldAccessor, ITickable
                         Chunks.Add(t.Result);
                     }
                     return t.Result;
-                }).UnwrapWhitelisted();
+                }).Unwrap();
             }
 
             CreatingChunks[chunkPosition] = new(chunkTask!, creationStatus, null);

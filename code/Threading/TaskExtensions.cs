@@ -23,22 +23,6 @@ public static class TaskExtensions
         throw new Exception("Task canceled or faulted");
     }
 
-    public static async Task UnwrapWhitelisted(this Task<Task> task)
-    {
-        if(!task.IsCompleted)
-            await task;
-
-        await task.Result;
-    }
-
-    public static async Task<TResult> UnwrapWhitelisted<TResult>(this Task<Task<TResult>> task)
-    {
-        if(!task.IsCompleted)
-            await task;
-
-        return await task.Result;
-    }
-
     public static async Task<TOut> ContinueWithOnMainThread<TIn, TOut>(this Task<TIn> task, Func<Task<TIn>, TOut> continuationFunction)
     {
         await GameTask.MainThread();
