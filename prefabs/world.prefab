@@ -89,6 +89,12 @@
               "component_type": "ChunkModelAwaiter"
             },
             "ProcessingCountShower": 0,
+            "TreeGenerator": {
+              "_type": "component",
+              "component_id": "58e17f9e-40a1-4a96-8cb2-4032d7d80e21",
+              "go": "3185825f-da39-4d64-969c-07ec334afa86",
+              "component_type": "ChunkTreeGenerator"
+            },
             "World": {
               "_type": "component",
               "component_id": "29283cb0-46bf-443c-9868-7eebb4f6ccf0",
@@ -190,6 +196,30 @@
                 ],
                 "MaxHeight": 120,
                 "MinHeight": 0
+              }
+            ]
+          },
+          {
+            "__guid": "3185825f-da39-4d64-969c-07ec334afa86",
+            "Name": "TreeGenerator",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkTreeGenerator",
+                "__guid": "58e17f9e-40a1-4a96-8cb2-4032d7d80e21",
+                "Generator": {
+                  "_type": "component",
+                  "component_id": "cda3bb47-8c2f-48f1-8b33-b767c3685626",
+                  "go": "5eb27194-73d9-4f60-aeb7-227101a289b5",
+                  "component_type": "WorldGenerator"
+                },
+                "World": {
+                  "_type": "component",
+                  "component_id": "b23c681e-5127-4f89-a9a2-17569bcdf31b",
+                  "go": "b81035cb-a151-4938-ae54-a151c0081873",
+                  "component_type": "World"
+                }
               }
             ]
           },

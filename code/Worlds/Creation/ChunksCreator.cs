@@ -57,6 +57,11 @@ public class ChunksCreator : Component
                 await EntitiesLoader.TryProcess(chunk, cancellationToken);
             }
         }
+        else
+        {
+            if(TreeGenerator.IsValid())
+                await TreeGenerator.TryProcess(chunk, cancellationToken);
+        }
 
         await Task.MainThread();
         chunk.GameObject.Enabled = enableChunk;
