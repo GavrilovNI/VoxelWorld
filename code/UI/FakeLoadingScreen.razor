@@ -1,0 +1,101 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using System;
+@using VoxelWorld.Players;
+@using VoxelWorld.Entities;
+
+@namespace VoxelWorld.UI
+
+@inherits PanelComponent
+@implements ILocalPlayerInitializable
+
+<root class="enabled">
+	<div class="title-holder">
+		<AdaptiveLabel class="title">Loading...</AdaptiveLabel>
+	</div>
+	<div class="bar">
+		<div class="fill" style="width=0%;" @ref=FillPanel>
+		</div>
+	</div>
+</root>
+
+@code
+{
+	[Property] protected float PartLoadingTime { get; set; } = 20f;
+	[Property] protected float PartSize { get; set; } = 0.3f;
+	[Property] protected float LastPercent { get; set; } = 0.95f;
+	[Property] protected float LastSpeed { get; set; } = 0.005f;
+	[Property] protected float WaitingPercent { get; set; } = 0.99f;
+	[Property] protected float FinishingTime { get; set; } = 1f;
+
+	protected Panel FillPanel { get; set; } = null!;
+
+	protected float Percent
+	{
+		get
+		{
+			var width = FillPanel.Style.Width;
+			if(!width.HasValue || width.Value.Unit != LengthUnit.Percentage)
+				return 0f;
+			return width.Value.Value / 100f;
+		}
+		set
+		{
+			FillPanel.Style.Width = Length.Percent(value * 100f);
+		}
+	}
+	protected float StartPercent { get; set; }
+	protected float TargetPercent { get; set; }
+	protected bool IsFinishing = false;
+
+	public void InitializeLocalPlayer(Player player) => Finish();
+
+	protected override void OnEnabled()
+	{
+		base.OnEnabled();
+		StartPercent = 0;
+		TargetPercent = PartSize;
+		IsFinishing = false;
+	}
+
+	protected override void OnUpdate()
+	{
+		if (FillPanel is null)
+			return;
+
+		if(!IsFinishing)
+		{
+			if (Percent >= WaitingPercent)
+				return;
+
+			if(Percent >= TargetPercent)
+			{
+				StartPercent = TargetPercent;
+				TargetPercent += (1f - TargetPercent) * PartSize;
+			}
+		}
+
+		Percent += Time.Delta * GetSpeed();
+
+		if(IsFinishing && Percent >= 1f)
+			Enabled = false;
+	}
+
+	protected virtual float GetSpeed()
+	{
+		if(IsFinishing)
+			return 1f / FinishingTime;
+
+		if(Percent > LastPercent)
+			return LastSpeed;
+
+		var currentPartSize = (TargetPercent - StartPercent);
+		return (currentPartSize / PartSize) / PartLoadingTime;
+	}
+
+	[Button("Finish", "sports_score")]
+	protected virtual void Finish()
+	{
+		IsFinishing = true;
+	}
+}

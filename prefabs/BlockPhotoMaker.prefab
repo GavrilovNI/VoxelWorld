@@ -1,0 +1,135 @@
+{
+  "RootObject": {
+    "__guid": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
+    "Name": "blockphotomaker",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "Components": [
+      {
+        "__type": "BlockPhotoMaker",
+        "__guid": "fadad29e-9a0e-4ebd-9d9c-8463c1b7f035",
+        "Camera": {
+          "_type": "component",
+          "component_id": "f90eaa84-9a95-407c-b4b0-7028a681b2e6",
+          "go": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
+          "component_type": "CameraComponent"
+        },
+        "Sun": {
+          "_type": "component",
+          "component_id": "282f2c39-44b6-480c-af6d-d21a7ffddf63",
+          "go": "1e19d035-1f06-4264-9646-754a6f8f472b",
+          "component_type": "DirectionalLight"
+        },
+        "World": {
+          "_type": "component",
+          "component_id": "0f1f2381-82b2-49db-b2c7-526e0f0bca49",
+          "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+          "component_type": "World"
+        }
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "1b5d28c8-5d76-47f7-aa22-a0f866de613f",
+        "Name": "Camera",
+        "Position": "100,100,100",
+        "Rotation": "0.2808902,0.1163481,-0.880145,0.3645665",
+        "Tags": "maincamera",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "CameraComponent",
+            "__guid": "f90eaa84-9a95-407c-b4b0-7028a681b2e6",
+            "BackgroundColor": "0,0,0,0",
+            "ClearFlags": "All",
+            "FieldOfView": 90,
+            "IsMainCamera": false,
+            "Orthographic": true,
+            "OrthographicHeight": 70,
+            "Priority": 1,
+            "RenderExcludeTags": "",
+            "RenderTags": "photomaker",
+            "TargetEye": "None",
+            "Viewport": "0,0,1,1",
+            "ZFar": 1000,
+            "ZNear": 1
+          }
+        ]
+      },
+      {
+        "__guid": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+        "Name": "World",
+        "Tags": "photomaker,invisible",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "World",
+            "__guid": "0f1f2381-82b2-49db-b2c7-526e0f0bca49",
+            "ChunksCreator": {
+              "_type": "component",
+              "component_id": "8a19d256-4b62-42e6-8f6f-e258a9badfac",
+              "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+              "component_type": "ChunksCreator"
+            },
+            "IsService": true,
+            "Limits": {
+              "Mins": "-160000,-160000,-256",
+              "Maxs": "160000,160000,256"
+            },
+            "LimitsInChunks": {
+              "Mins": "-10000,-10000,-16",
+              "Maxs": "10000,10000,16"
+            },
+            "TickByItself": true,
+            "WorldOptions": {
+              "ChunkSize": "16,16,16",
+              "RegionSize": "4,4,4"
+            }
+          },
+          {
+            "__type": "ChunksCreator",
+            "__guid": "8a19d256-4b62-42e6-8f6f-e258a9badfac",
+            "BreakFromPrefab": true,
+            "ChunkPrefab": {
+              "_type": "gameobject",
+              "prefab": "prefabs/visualonlychunk.prefab"
+            },
+            "World": {
+              "_type": "component",
+              "component_id": "0f1f2381-82b2-49db-b2c7-526e0f0bca49",
+              "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
+              "component_type": "World"
+            }
+          }
+        ]
+      },
+      {
+        "__guid": "1e19d035-1f06-4264-9646-754a6f8f472b",
+        "Name": "Sun",
+        "Rotation": "0.4304596,0.4304594,-0.5609856,0.5609852",
+        "Tags": "photomaker,invisible,light_directional,light",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "DirectionalLight",
+            "__guid": "282f2c39-44b6-480c-af6d-d21a7ffddf63",
+            "FogMode": "Enabled",
+            "FogStrength": 1,
+            "LightColor": "0.91373,0.98039,1,1",
+            "Shadows": false,
+            "SkyColor": "0.05882,0.07451,0.08235,1"
+          }
+        ]
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}

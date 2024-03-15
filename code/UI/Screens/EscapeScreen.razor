@@ -1,0 +1,40 @@
+@using Sandbox
+@using Sandbox.UI
+@using VoxelWorld.Menus
+@using VoxelWorld.Players
+@using System.Threading.Tasks
+@using System.Linq
+
+@namespace VoxelWorld.UI.Screens
+@attribute [StyleSheet]
+@inherits PanelComponent
+
+<root>
+	<div class="buttons">
+		<div id="leave-game-button" class="button" onclick="@(() => _ = SaveAndLeaveGame())">Save and Leave</div>
+	</div>
+</root>
+
+
+@code
+{
+	protected bool Saving = false;
+
+	protected async Task SaveAndLeaveGame()
+	{
+		if (Saving)
+			return;
+
+		Saving = true;
+		if(GameController.InitalizationStatus == InitalizationStatus.Initialized &&
+			GameController.LoadingStatus == LoadingStatus.Loaded)
+		{
+			var saved = await GameController.Instance!.SaveGame();
+			if (!saved)
+				Log.Warning("Couldn't save something");
+		}
+
+		Game.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
+		Saving = false;
+	}
+}

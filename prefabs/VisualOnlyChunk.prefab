@@ -1,0 +1,92 @@
+{
+  "RootObject": {
+    "__guid": "e1e20500-bebc-41aa-a0ae-a6d83989155f",
+    "Name": "visualonlychunk",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "Components": [
+      {
+        "__type": "Chunk",
+        "__guid": "ee7c420f-300d-46d3-b183-7f2fc8337f52",
+        "ModelUpdater": {
+          "_type": "component",
+          "component_id": "57e0979e-fd95-4945-9e76-59ee83af544d",
+          "go": "e1e20500-bebc-41aa-a0ae-a6d83989155f",
+          "component_type": "ChunkModelUpdater"
+        },
+        "Position": "0,0,0",
+        "Size": "16,16,16"
+      },
+      {
+        "__type": "ChunkModelUpdater",
+        "__guid": "57e0979e-fd95-4945-9e76-59ee83af544d",
+        "Chunk": {
+          "_type": "component",
+          "component_id": "ee7c420f-300d-46d3-b183-7f2fc8337f52",
+          "go": "e1e20500-bebc-41aa-a0ae-a6d83989155f",
+          "component_type": "Chunk"
+        },
+        "InteractionCollider": {
+          "_type": "component",
+          "component_id": "910c4c5c-7cda-415c-89f7-0c27cdff9802",
+          "go": "a4f6fc7c-9ec9-4549-bfeb-eb9f8636778a",
+          "component_type": "ModelCollider"
+        },
+        "InteractionEnabled": false,
+        "PhysicsCollider": {
+          "_type": "component",
+          "component_id": "2cb5ab12-d714-4d16-9127-6937bd79b3bb",
+          "go": "fd50d505-0357-464e-8ae3-640de3d86fc4",
+          "component_type": "ModelCollider"
+        },
+        "PhysicsEnabled": false,
+        "RenderingEnabled": true
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "a4f6fc7c-9ec9-4549-bfeb-eb9f8636778a",
+        "Name": "Interactable",
+        "Tags": "interactable,world,no_entity_collide",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "WorldProxy",
+            "__guid": "cee1fc7c-799b-4abe-8d40-32be08a356c9",
+            "DoNotEnableIfWorldIsNotValid": true
+          },
+          {
+            "__type": "ModelCollider",
+            "__guid": "910c4c5c-7cda-415c-89f7-0c27cdff9802",
+            "__enabled": false,
+            "IsTrigger": false,
+            "Static": true
+          }
+        ]
+      },
+      {
+        "__guid": "fd50d505-0357-464e-8ae3-640de3d86fc4",
+        "Name": "Physics",
+        "Tags": "world",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "ModelCollider",
+            "__guid": "2cb5ab12-d714-4d16-9127-6937bd79b3bb",
+            "__enabled": false,
+            "IsTrigger": false,
+            "Static": true
+          }
+        ]
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}

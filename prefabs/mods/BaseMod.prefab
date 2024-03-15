@@ -1,0 +1,46 @@
+{
+  "RootObject": {
+    "__guid": "732368bb-866f-4d0d-9095-d00fa949bbe1",
+    "Name": "basemod",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "Components": [
+      {
+        "__type": "BaseMod",
+        "__guid": "ed65e427-89b3-42da-9c29-2c308f64788e"
+      },
+      {
+        "__type": "BaseModEntities",
+        "__guid": "cd8054fc-8475-40fd-b389-7ec6d8099b6b",
+        "ItemStackPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/entities/itemstackentity.prefab"
+        },
+        "PhysicsBlockPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/entities/physicsblockentity.prefab"
+        },
+        "PlayerPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/entities/player.prefab"
+        }
+      },
+      {
+        "__type": "WorldAutoLoader",
+        "__guid": "0fce4f70-dc08-4654-b32c-f07dbbb30a77",
+        "Bounds": {
+          "Mins": "-2,-2,-2",
+          "Maxs": "2,2,2"
+        },
+        "TimeBetweenSuccessfulAttempts": 1
+      }
+    ],
+    "Children": []
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}

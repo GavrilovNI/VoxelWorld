@@ -1,0 +1,50 @@
+@using Sandbox
+@using Sandbox.UI
+@using VoxelWorld.Inventories
+@using VoxelWorld.Items
+@using System
+@using VoxelWorld.Mods
+
+
+@namespace VoxelWorld.UI.Inventories
+@attribute [StyleSheet]
+@inherits Panel
+
+<root>
+	@if(!Stack.IsEmpty)
+	{
+		var itemTexture = Stack.Value.Texture;
+		var itemAspectRatio = itemTexture.Size.x / itemTexture.Size.y;
+
+		float leftOffset, topOffset, width, height;
+
+		if(itemAspectRatio >= 1)
+		{
+			width = 100f;
+			height = 100f / itemAspectRatio;
+		}
+		else
+		{
+			width = itemAspectRatio * 100;
+			height = 100f;
+		}
+
+		leftOffset = (100f - width) / 2f;
+		topOffset = (100f - height) / 2f;
+
+		<Image class="item" style="left:@(leftOffset)%; top:@(topOffset)%; width:@(width)%; height:@(height)%; " Texture=@itemTexture/>
+		@if(Stack.Count > 1 && !HideCount)
+		{
+			<AdaptiveLabel class="count">@Stack.Count</AdaptiveLabel>
+		}
+	}
+</root>
+
+
+@code
+{
+	public bool HideCount { get; set; } = false;
+
+	public Stack<Item> Stack { get; set; } = Stack<Item>.Empty;
+	protected override int BuildHash() => HashCode.Combine(Stack, Stack.Value?.Texture, HideCount);
+}

@@ -1,0 +1,57 @@
+﻿@using Sandbox
+@using Sandbox.UI
+@using VoxelWorld.Interactions
+@using VoxelWorld.Inventories
+@using VoxelWorld.Inventories.Players
+@using VoxelWorld.Items
+@using VoxelWorld.Players
+@using VoxelWorld.Entities
+@using VoxelWorld.UI.Inventories
+@using System
+
+@namespace VoxelWorld.UI.Inventories.Players
+@attribute [StyleSheet]
+@inherits PanelComponent
+@implements ILocalPlayerInitializable
+
+<root>
+	@if(PlayerInventory.IsValid())
+	{
+		var hotbar = PlayerInventory.Hotbar;
+		<div class="inner" style="aspect-ratio:@(hotbar.Size)">
+			<div class="slots">
+				@for(int i = 0; i < hotbar.Size; ++i)
+				{
+					Stack<Item> stack = hotbar.Get(i);
+					bool selected = PlayerInventory.MainHandIndex == i;
+
+					<div class="item-slot @(selected ? "selected" : string.Empty)">
+						<ItemSlotUI Stack=@stack/>
+						@if(selected)
+						{
+							<Image class="selector" Texture=@SelectorTexture/>
+						}
+					</div>
+				}
+				<ItemSlotUI class="item-slot secondary" Stack=@SecondaryHandStack/>
+			</div>
+		</div>
+	}
+</root>
+
+@code
+{
+	[Property] public PlayerInventory PlayerInventory { get; set; } // TODO: change to IPlayerInventory
+
+	protected Stack<Item> SecondaryHandStack => PlayerInventory?.GetHandItem(HandType.Secondary) ?? Stack<Item>.Empty;
+	protected Texture SelectorTexture;
+
+	public void InitializeLocalPlayer(Player player) => PlayerInventory = player.Components.Get<PlayerInventory>(true);
+
+	protected override void OnAwake()
+	{
+		SelectorTexture = Texture.Load(FileSystem.Mounted, $"textures/voxelworld/ui/hotbar_slot_selector.png", true) ?? Texture.Invalid;
+	}
+
+	protected override int BuildHash() => HashCode.Combine(PlayerInventory?.Hotbar, PlayerInventory?.MainHandIndex, PlayerInventory.IsValid());
+}

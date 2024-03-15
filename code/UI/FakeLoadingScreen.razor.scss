@@ -1,0 +1,42 @@
+FakeLoadingScreen {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: #333;
+    z-index: 99999;
+    font-family: Poppins;
+
+    .title-holder {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        font-size: 10%;
+        padding-bottom: 30px;
+        justify-content: center;
+        top: 30%;
+    }
+
+    .title {
+        position: relative;
+        font-size: 10%;
+        text-align: center;
+        padding-bottom: 30px;
+    }
+
+    .bar {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #444;
+        width: 60%;
+        aspect-ratio: 20;
+
+        .fill {
+            background-color: #888;
+            left: 0;
+            top: 0;
+            height: 100%;
+        }
+    }
+}

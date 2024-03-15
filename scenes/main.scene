@@ -1,0 +1,246 @@
+{
+  "__guid": "8c0250af-c367-4bb3-ab12-5cf36779a6ca",
+  "GameObjects": [
+    {
+      "__guid": "f7b78756-955b-4773-b322-645ac082f19e",
+      "Name": "Default Camera",
+      "Position": "-199.9835,127.6956,-98.1855",
+      "Tags": "maincamera",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "Components": [
+        {
+          "__type": "CameraComponent",
+          "__guid": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
+          "BackgroundColor": "0.33333,0.46275,0.52157,1",
+          "ClearFlags": "All",
+          "FieldOfView": 60,
+          "IsMainCamera": false,
+          "Orthographic": false,
+          "OrthographicHeight": 1204,
+          "Priority": 1,
+          "RenderExcludeTags": "",
+          "RenderTags": "",
+          "TargetEye": "None",
+          "Viewport": "0,0,1,1",
+          "ZFar": 10000,
+          "ZNear": 10
+        }
+      ]
+    },
+    {
+      "__guid": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
+      "Name": "Game Controller",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "Components": [
+        {
+          "__type": "GameController",
+          "__guid": "ffe37fb8-2302-45f2-90c5-317fa05eeeb5",
+          "BaseModPrefab": {
+            "_type": "gameobject",
+            "prefab": "prefabs/mods/basemod.prefab"
+          },
+          "BlockPhotoMaker": {
+            "_type": "component",
+            "component_id": "17cdaf7d-e2c8-4c29-85d9-4f31e4b34606",
+            "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
+            "component_type": "BlockPhotoMaker"
+          },
+          "DefaultWorldOptions": {
+            "ChunkSize": "16,16,16",
+            "RegionSize": "4,4,4"
+          },
+          "ModsParent": {
+            "_type": "gameobject",
+            "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
+          },
+          "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
+          "PlayerSpawner": {
+            "_type": "component",
+            "component_id": "51c0e7a1-af4d-4d0c-a2c2-57986fec7ee1",
+            "go": "225b6b8c-75c1-462c-a992-8c81cd7f7feb",
+            "component_type": "PlayerSpawner"
+          },
+          "ShouldAnimateBlockTextures": true,
+          "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat",
+          "WorldPrefab": {
+            "_type": "gameobject",
+            "prefab": "prefabs/world.prefab"
+          },
+          "WorldsParent": {
+            "_type": "gameobject",
+            "go": "108bed85-7734-41fa-bcd2-22f15b326b19"
+          }
+        },
+        {
+          "__type": "PlayerSpawner",
+          "__guid": "51c0e7a1-af4d-4d0c-a2c2-57986fec7ee1",
+          "PreloadRange": {
+            "Mins": "-2,-2,-3",
+            "Maxs": "2,2,3"
+          },
+          "SafeBounds": {
+            "Maxs": "1,1,2"
+          }
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "d0115228-fd86-4a80-84c5-febd9bcadaa5",
+          "Name": "Mods",
+          "Enabled": true,
+          "NetworkMode": 2
+        },
+        {
+          "__guid": "108bed85-7734-41fa-bcd2-22f15b326b19",
+          "Name": "Worlds",
+          "Enabled": true,
+          "NetworkMode": 2
+        }
+      ]
+    },
+    {
+      "__guid": "d5bee545-75ce-40fe-a099-4e741326dbd2",
+      "Name": "Screen UI",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "Components": [
+        {
+          "__type": "ScreenPanel",
+          "__guid": "8fb43bd9-75cf-472a-b8f6-2800f69e71d5",
+          "AutoScreenScale": true,
+          "Opacity": 1,
+          "Scale": 1,
+          "ZIndex": 100
+        },
+        {
+          "__type": "MenuController",
+          "__guid": "7c2472c4-8bf5-481a-aac7-201da111e072",
+          "EscapeScreen": {
+            "_type": "gameobject",
+            "go": "5070d320-0590-4a21-a5de-cd3007668697"
+          }
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "db5119fc-9118-4da7-9cea-58f77011921d",
+          "Name": "Hotbar",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "HotbarUI",
+              "__guid": "e5a60e86-aead-4235-b831-b2850f23b15f"
+            }
+          ]
+        },
+        {
+          "__guid": "5070d320-0590-4a21-a5de-cd3007668697",
+          "Name": "EscapeScreen",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "EscapeScreen",
+              "__guid": "2a8bbb0e-2fd8-4e59-ba61-f38e0190cfca"
+            }
+          ]
+        },
+        {
+          "__guid": "b78083ea-7296-41cc-a8d9-bbc586956a98",
+          "Name": "Crosshair",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "CrosshairUI",
+              "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7"
+            }
+          ]
+        },
+        {
+          "__guid": "f78eae77-52a9-41c5-b05e-b2b4efc3f4a4",
+          "Name": "LoadingScreen",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "FakeLoadingScreen",
+              "__guid": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
+              "FinishingTime": 1,
+              "LastPercent": 0.95,
+              "LastSpeed": 0.005,
+              "PartLoadingTime": 20,
+              "PartSize": 0.3,
+              "WaitingPercent": 0.99
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "__guid": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
+      "Name": "BlockPhotoMaker",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "__Prefab": "prefabs/blockphotomaker.prefab"
+    },
+    {
+      "__guid": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
+      "Name": "BlocksTextureMapShower",
+      "Position": "0,0,800",
+      "Tags": "invisible",
+      "NetworkMode": 2,
+      "Components": [
+        {
+          "__type": "ModelRenderer",
+          "__guid": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",
+          "BodyGroups": 18446744073709551615,
+          "MaterialOverride": "materials/voxels_translucent.vmat",
+          "Model": "models/dev/plane.vmdl",
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        },
+        {
+          "__type": "BlocksTextureMapShower",
+          "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
+          "ModelRenderer": {
+            "_type": "component",
+            "component_id": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",
+            "go": "819fe19d-ee8c-4d0a-a9d9-28205a7c804e",
+            "component_type": "ModelRenderer"
+          }
+        }
+      ]
+    }
+  ],
+  "SceneProperties": {
+    "FixedUpdateFrequency": 50,
+    "Lerping": true,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 60,
+    "ThreadedAnimation": true,
+    "TimeScale": 1,
+    "UseFixedUpdate": true,
+    "NavMesh": {
+      "Enabled": false,
+      "IncludeStaticBodies": true,
+      "IncludeKeyframedBodies": true,
+      "EditorAutoUpdate": true,
+      "AgentHeight": 64,
+      "AgentRadius": 16,
+      "AgentStepSize": 18,
+      "AgentMaxSlope": 40,
+      "ExcludedBodies": "",
+      "IncludedBodies": ""
+    }
+  },
+  "Title": "main",
+  "Description": "",
+  "LastSaved": "2024-03-15T21:54:52.0957688\u002B01:00",
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}

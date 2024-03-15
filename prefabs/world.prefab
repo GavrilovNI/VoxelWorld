@@ -1,0 +1,290 @@
+{
+  "RootObject": {
+    "__guid": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+    "Name": "world",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "Components": [
+      {
+        "__type": "World",
+        "__guid": "e911e5df-985f-4b18-9924-3fd172f11ce3",
+        "ChunksCreator": {
+          "_type": "component",
+          "component_id": "46f4739a-e979-4019-8506-e07f0ae71f3c",
+          "go": "46c9122a-814d-4ffc-95ca-b1e60413b4a3",
+          "component_type": "ChunksCreator"
+        },
+        "ChunksParent": {
+          "_type": "gameobject",
+          "go": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa"
+        },
+        "IsService": false,
+        "Limits": {
+          "Mins": "-160000,-160000,-256",
+          "Maxs": "160000,160000,256"
+        },
+        "LimitsInChunks": {
+          "Mins": "-10000,-10000,-16",
+          "Maxs": "10000,10000,16"
+        },
+        "TickByItself": true,
+        "WorldOptions": {
+          "ChunkSize": "16,16,16",
+          "RegionSize": "4,4,4"
+        }
+      },
+      {
+        "__type": "WorldSaver",
+        "__guid": "f49413c1-90cf-4811-8810-6432416f7e0c",
+        "World": {
+          "_type": "component",
+          "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
+          "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+          "component_type": "World"
+        }
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "46c9122a-814d-4ffc-95ca-b1e60413b4a3",
+        "Name": "ChunksCreator",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "ChunksCreator",
+            "__guid": "46f4739a-e979-4019-8506-e07f0ae71f3c",
+            "BreakFromPrefab": true,
+            "ChunkPrefab": {
+              "_type": "gameobject",
+              "prefab": "prefabs/chunk.prefab"
+            },
+            "ChunksParent": {
+              "_type": "gameobject",
+              "go": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa"
+            },
+            "EntitiesLoader": {
+              "_type": "component",
+              "component_id": "9e22235b-56df-4e1d-8d46-a05d3b9854e8",
+              "go": "1117d0be-87a3-4161-9e14-d6f675bbb56f",
+              "component_type": "ChunkEntitiesLoader"
+            },
+            "LandscapeGenerator": {
+              "_type": "component",
+              "component_id": "3b916e6d-ba78-4413-983e-787a81e6d4f1",
+              "go": "d00cb542-6a67-423b-a241-24c33c388b04",
+              "component_type": "ChunkLandscapeGenerator"
+            },
+            "Loader": {
+              "_type": "component",
+              "component_id": "0b801d63-d59f-41c6-990b-7e89ff5b7fea",
+              "go": "098fef58-b283-4632-a256-97967ccbba44",
+              "component_type": "ChunkLoader"
+            },
+            "ModelAwaiter": {
+              "_type": "component",
+              "component_id": "6bc8f1b4-e6cd-471d-b2ed-f8da4555cbee",
+              "go": "4301fffd-ebf6-42c6-96b4-e71f8f19d6af",
+              "component_type": "ChunkModelAwaiter"
+            },
+            "TreeGenerator": {
+              "_type": "component",
+              "component_id": "b22a5d8b-32d2-41f9-aa44-0d5ad69827a7",
+              "go": "38e3f01d-196c-46a6-808b-706c6b0fc5dd",
+              "component_type": "ChunkTreeGenerator"
+            },
+            "World": {
+              "_type": "component",
+              "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
+              "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+              "component_type": "World"
+            }
+          }
+        ],
+        "Children": [
+          {
+            "__guid": "098fef58-b283-4632-a256-97967ccbba44",
+            "Name": "Loader",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkLoader",
+                "__guid": "0b801d63-d59f-41c6-990b-7e89ff5b7fea",
+                "World": {
+                  "_type": "component",
+                  "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
+                  "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+                  "component_type": "World"
+                }
+              }
+            ]
+          },
+          {
+            "__guid": "d00cb542-6a67-423b-a241-24c33c388b04",
+            "Name": "Landscape",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkLandscapeGenerator",
+                "__guid": "3b916e6d-ba78-4413-983e-787a81e6d4f1",
+                "Generator": {
+                  "_type": "component",
+                  "component_id": "31a5c2ff-9c1c-4820-8034-5feb096f0220",
+                  "go": "d00cb542-6a67-423b-a241-24c33c388b04",
+                  "component_type": "WorldGenerator"
+                }
+              },
+              {
+                "__type": "WorldGenerator",
+                "__guid": "31a5c2ff-9c1c-4820-8034-5feb096f0220",
+                "AdditiveDensityFromHeightCurve": {
+                  "rangey": "-1,1",
+                  "frames": [
+                    {
+                      "y": 1,
+                      "in": 0.6086956,
+                      "out": -0.6086956
+                    },
+                    {
+                      "x": 0.41369048,
+                      "y": 0.5381129,
+                      "in": 1.0989428,
+                      "out": -1.0989428
+                    },
+                    {
+                      "x": 0.7604167,
+                      "y": 0.026405497
+                    },
+                    {
+                      "x": 1
+                    }
+                  ]
+                },
+                "DensityNoiseSettings": {
+                  "Scale": "20,20,20",
+                  "OctavesCount": 2,
+                  "Persistance": 0.5,
+                  "Lacunarity": 2
+                },
+                "HeightNoiseSettings": {
+                  "Scale": "50,50",
+                  "OctavesCount": 2,
+                  "Persistance": 0.3,
+                  "Lacunarity": 2.2
+                },
+                "HeightSurfaceCurve": [
+                  {
+                    "in": -1.1203572,
+                    "out": 1.1203572
+                  },
+                  {
+                    "x": 0.73363096,
+                    "y": 0.53349507,
+                    "in": -0.59002864,
+                    "out": 0.59002864
+                  },
+                  {
+                    "x": 1,
+                    "y": 1,
+                    "in": -1.0212762,
+                    "out": 1.0212762
+                  }
+                ],
+                "MaxHeight": 120,
+                "MinHeight": 0
+              }
+            ]
+          },
+          {
+            "__guid": "38e3f01d-196c-46a6-808b-706c6b0fc5dd",
+            "Name": "TreeGenerator",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkTreeGenerator",
+                "__guid": "b22a5d8b-32d2-41f9-aa44-0d5ad69827a7",
+                "Generator": {
+                  "_type": "component",
+                  "component_id": "31a5c2ff-9c1c-4820-8034-5feb096f0220",
+                  "go": "d00cb542-6a67-423b-a241-24c33c388b04",
+                  "component_type": "WorldGenerator"
+                },
+                "World": {
+                  "_type": "component",
+                  "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
+                  "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+                  "component_type": "World"
+                }
+              }
+            ]
+          },
+          {
+            "__guid": "4301fffd-ebf6-42c6-96b4-e71f8f19d6af",
+            "Name": "ModelAwaiter",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkModelAwaiter",
+                "__guid": "6bc8f1b4-e6cd-471d-b2ed-f8da4555cbee"
+              }
+            ]
+          },
+          {
+            "__guid": "1117d0be-87a3-4161-9e14-d6f675bbb56f",
+            "Name": "EntitiesLoader",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "Components": [
+              {
+                "__type": "ChunkEntitiesLoader",
+                "__guid": "9e22235b-56df-4e1d-8d46-a05d3b9854e8",
+                "BreakFromPrefab": true
+              }
+            ]
+          },
+          {
+            "__guid": "99aa4442-8f64-4eb8-8fb0-e9fc6a351b0d",
+            "Name": "CreatingChunks",
+            "Enabled": true,
+            "NetworkMode": 2
+          }
+        ]
+      },
+      {
+        "__guid": "6ccfc71b-d782-43eb-8ec8-f23f4b20fa94",
+        "Name": "Sun",
+        "Rotation": "-0.1464466,0.3535534,0.3535534,0.8535534",
+        "Tags": "light_directional,light",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "DirectionalLight",
+            "__guid": "0894f2bc-2ec1-47e4-8e9f-6d37831fae68",
+            "FogMode": "Enabled",
+            "FogStrength": 1,
+            "LightColor": "0.91373,0.98039,1,1",
+            "Shadows": true,
+            "SkyColor": "0.05882,0.07451,0.08235,1"
+          }
+        ]
+      },
+      {
+        "__guid": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa",
+        "Name": "Chunks",
+        "Enabled": true,
+        "NetworkMode": 2
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}

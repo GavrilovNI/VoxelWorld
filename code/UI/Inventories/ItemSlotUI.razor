@@ -1,0 +1,27 @@
+@using Sandbox
+@using Sandbox.UI
+@using VoxelWorld.Inventories
+@using VoxelWorld.Items
+@using System
+@using VoxelWorld.Mods
+
+
+@namespace VoxelWorld.UI.Inventories
+@attribute [StyleSheet]
+@inherits Panel
+
+<root>
+	<Image class="background" Texture=@BackgroundTexture/>
+	<ItemStackUI class="stack" Stack=@Stack HideCount=@HideCount/>
+</root>
+
+
+@code
+{
+	public bool HideCount { get; set; } = false;
+
+	public Stack<Item> Stack { get; set; } = Stack<Item>.Empty;
+	public Texture BackgroundTexture { get; set; } = Texture.Load(FileSystem.Mounted, $"textures/voxelworld/ui/item_slot_background.png", true) ?? Texture.Invalid;
+
+	protected override int BuildHash() => HashCode.Combine(Stack, Stack.Value?.Texture, HideCount);
+}

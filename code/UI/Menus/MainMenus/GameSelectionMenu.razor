@@ -1,0 +1,106 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using VoxelWorld.Data;
+@using VoxelWorld.IO;
+@using VoxelWorld.IO.Helpers;
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Threading.Tasks;
+
+@namespace VoxelWorld.UI.Menus.MainMenus
+
+@inherits PanelComponent
+
+
+<root>
+    @{
+        var saves = GetAllSaves().OrderBy(s => s.Value.Name);
+        var savesCount = saves.Count();
+
+        <div class="centered-content flex-column fill-parent">
+            <AdaptiveLabel class="title centered-content">Your Games</AdaptiveLabel>
+
+
+            <div class="buttons-container">
+                <div class="buttons centered-content flex-column">
+                    @if(savesCount == 0)
+                    {
+                        <AdaptiveLabel class="no-games-info centered-content">You have not any saved game</AdaptiveLabel>
+                    }
+                    @foreach(var (path, info) in saves)
+                    {
+                        <div class="button" onclick="@(() => _ = TryLoadGame(path))">
+                            <div class="game-icon-container">
+                                <div class="game-icon"></div>
+                            </div>
+                            <div class="game-info">
+                                <AdaptiveLabel class="game-name">@info.Name</AdaptiveLabel>
+                                <AdaptiveLabel class="game-path">@($"{SavesPath}/{path}")</AdaptiveLabel>
+                                <AdaptiveLabel class="game-seed">@($"Seed: {info.Seed}")</AdaptiveLabel>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="bottom-buttons centered-content">
+                <div class="button create-game" onclick="@(() => OpenGameCreationMenu())">
+                    <AdaptiveLabel class="label">Create New Game</AdaptiveLabel>
+                </div>
+            </div>
+        </div>
+    }
+
+</root>
+
+
+@code
+{
+    [Property] protected MainMenuController MainMenuController { get; set; } = null!;
+    [Property] protected GameCreationMenu GameCreationMenu { get; set; } = null!;
+    [Property] protected string SavesPath { get; set; } = "saves";
+    [Property] protected GameLoader GameLoader { get; set; } = null!;
+
+    private bool _isLoadingGame = false;
+
+    protected BaseFileSystem SavesFileSystem => FileSystem.Data.CreateDirectoryAndSubSystem(SavesPath);
+
+    public Dictionary<string, GameInfo> GetAllSaves() => GameSaveHelper.GetAllSaves(SavesFileSystem);
+
+    public async Task<bool> TryLoadGame(string path)
+    {
+        if(_isLoadingGame)
+            return false;
+        if(!SavesFileSystem.DirectoryExists(path))
+            return false;
+
+        _isLoadingGame = true;
+
+        var gameFileSystem = SavesFileSystem.CreateSubSystem(path);
+        bool loaded = await GameLoader.TryLoadGame(gameFileSystem);
+
+        _isLoadingGame = false;
+        return loaded;
+    }
+
+    public void OpenGameCreationMenu()
+    {
+        if(_isLoadingGame)
+            return;
+        MainMenuController.OpenMenu(GameCreationMenu);
+    }
+
+    public void Close()
+    {
+        if(_isLoadingGame)
+            return;
+        MainMenuController.CloseMenu(this);
+    }
+
+    protected override void OnUpdate()
+    {
+        if (Input.EscapePressed)
+            Close();
+    }
+}
