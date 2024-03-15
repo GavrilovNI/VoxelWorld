@@ -138,8 +138,11 @@ public class World : Component, IWorldAccessor, ITickable
         if(!object.ReferenceEquals(this, entity.World))
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
+        bool wasEnabled = entity.Enabled;
+        entity.Enabled = false;
         var chunkCreationStatus = entity is Player ? ChunkCreationStatus.Finishing : ChunkCreationStatus.Preloading;
         var chunk = await GetOrCreateChunk(entity.ChunkPosition, chunkCreationStatus);
+        entity.Enabled = wasEnabled;
         chunk.AddEntity(entity);
     }
 
