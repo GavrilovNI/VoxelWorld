@@ -52,7 +52,7 @@ public class World : Component, IWorldAccessor, ITickable
     protected readonly object ChunksCreationLocker = new();
     protected CancellationTokenSource TaskCreationTokenSource = new();
     protected readonly ChunksCollection Chunks = new(Vector3Int.XYZIterationComparer);
-    protected readonly Dictionary<Vector3Int, (Task<Chunk> ChunkTask, ChunkCreationStatus Status)> CreatingChunks = new();
+    protected readonly Dictionary<Vector3Int, (Task<Chunk> ChunkTask, ChunkCreationStatus Status, Chunk? PartiallyLoadedChunk)> CreatingChunks = new();
 
 
     public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
@@ -208,28 +208,61 @@ public class World : Component, IWorldAccessor, ITickable
             TaskCompletionSource chunkTaskCreationTaskSource = new();
 
             if(currentStatus < ChunkCreationStatus.Preloading)
+            {
                 chunkTask = ChunksCreator.PreloadChunk(chunkPosition, cancellationToken);
+                chunkTask = chunkTask!.ContinueWith(async t =>
+                {
+                    await chunkTaskCreationTaskSource.Task;
+                    lock(ChunksCreationLocker)
+                    {
+                        if(!t.IsCompletedSuccessfully)
+                        {
+                            CreatingChunks.Remove(chunkPosition);
+                            t.ThrowIfNotCompletedSuccessfully();
+                        }
+
+                        var partiallyLoadedChunk = t.Result;
+                        var creatingData = CreatingChunks[partiallyLoadedChunk.Position];
+                        CreatingChunks[partiallyLoadedChunk.Position] = creatingData with { PartiallyLoadedChunk = partiallyLoadedChunk };
+                    }
+                    return t.Result;
+                }).UnwrapWhitelisted();
+            }
 
             if(creationStatus == ChunkCreationStatus.Finishing)
+            {
                 chunkTask = ChunksCreator.FinishChunk(chunkTask!, cancellationToken);
 
-            chunkTask = chunkTask!.ContinueWith(async t =>
-            {
-                await chunkTaskCreationTaskSource.Task;
-                lock(ChunksCreationLocker)
+                chunkTask = chunkTask!.ContinueWith(async t =>
                 {
-                    CreatingChunks.Remove(chunkPosition);
-                    t.ThrowIfNotCompletedSuccessfully();
-                    Chunks.Add(t.Result);
-                }
-                return t.Result;
-            }).UnwrapWhitelisted();
+                    await chunkTaskCreationTaskSource.Task;
+                    lock(ChunksCreationLocker)
+                    {
+                        CreatingChunks.Remove(chunkPosition);
+                        t.ThrowIfNotCompletedSuccessfully();
+                        Chunks.Add(t.Result);
+                    }
+                    return t.Result;
+                }).UnwrapWhitelisted();
+            }
 
-            CreatingChunks[chunkPosition] = new(chunkTask, creationStatus);
+            CreatingChunks[chunkPosition] = new(chunkTask!, creationStatus, null);
             chunkTaskCreationTaskSource.SetResult();
 
-            return chunkTask;
+            return chunkTask!;
         }
+    }
+
+    protected virtual Task<Chunk?> GetChunkOrAwaitFullyLoad(Vector3Int chunkPosition)
+    {
+        lock(ChunksCreationLocker)
+        {
+            if(Chunks.TryGet(chunkPosition, out var chunk))
+                return Task.FromResult<Chunk?>(chunk);
+            if(!CreatingChunks.ContainsKey(chunkPosition))
+                return Task.FromResult<Chunk?>(null);
+        }
+        return GetOrCreateChunk(chunkPosition, ChunkCreationStatus.Finishing)!;
     }
 
     // Thread safe
@@ -437,21 +470,42 @@ public class World : Component, IWorldAccessor, ITickable
         });
     }
 
-    public virtual (BinaryTag Blocks, ListTag Entities) SaveChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
+    public virtual async Task<(BinaryTag Blocks, ListTag Entities)> SaveChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
     {
-        if(!Chunks.TryGet(chunkPosition, out var chunk))
-            throw new ArgumentOutOfRangeException(nameof(chunkPosition), chunkPosition, "Chunk wasn't loaded");
+        var chunk = await GetChunkOrAwaitFullyLoad(chunkPosition);
+        if(chunk is null)
+            throw new ArgumentOutOfRangeException(nameof(chunkPosition), chunkPosition, "Chunk wasn't created/creating");
 
         return chunk.Save(saveMarker);
     }
 
-    public virtual Dictionary<Vector3Int, (BinaryTag Blocks, ListTag Entities)> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
+    public virtual async Task<Dictionary<Vector3Int, (BinaryTag Blocks, ListTag Entities)>> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
     {
+        await FullyLoadUnsavedChunks();
+
         Dictionary<Vector3Int, (BinaryTag blocks, ListTag entities)> result = new();
         foreach(var chunk in Chunks.Where(c => !c.IsSaved))
             result[chunk.Position] = chunk.Save(saveMarker);
 
         return result;
+    }
+
+    protected virtual async Task FullyLoadUnsavedChunks()
+    {
+        List<Vector3Int> chunksToLoad = new();
+        lock(ChunksCreationLocker)
+        {
+            foreach(var (position, creatingData) in CreatingChunks)
+            {
+                var chunk = creatingData.PartiallyLoadedChunk;
+                if(chunk is not null && !chunk.IsSaved)
+                    chunksToLoad.Add(position);
+            }
+        }
+
+        Log.Info($"FullyLoadUnsavedChunks {chunksToLoad.Count}");
+        var tasks = chunksToLoad.Select(GetChunkOrAwaitFullyLoad);
+        await Task.WhenAll(tasks);
     }
 
     public virtual Dictionary<ulong, BinaryTag> SaveAllPlayers()

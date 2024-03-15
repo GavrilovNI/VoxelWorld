@@ -21,7 +21,7 @@ public class WorldSaver : Component, ISaver
     protected WorldOptions WorldOptions => World.WorldOptions;
 
 
-    public virtual Task<bool> Save()
+    public virtual async Task<bool> Save()
     {
         ThreadSafe.AssertIsMainThread();
 
@@ -30,7 +30,7 @@ public class WorldSaver : Component, ISaver
 
         SaveMarker saveMarker = SaveMarker.NewNotSaved;
 
-        var unsavedChunks = World.SaveUnsavedChunks(saveMarker);
+        var unsavedChunks = await World.SaveUnsavedChunks(saveMarker);
         var unsavedPlayers = World.SaveAllPlayers();
 
         TaskCompletionSource<bool> taskCompletionSource = new();
@@ -51,13 +51,14 @@ public class WorldSaver : Component, ISaver
                 saveMarker.MarkSaved();
                 taskCompletionSource.SetResult(true);
             }
-            catch
+            catch(Exception ex)
             {
                 taskCompletionSource.SetResult(false);
+                Log.Error(ex);
                 throw;
             }
         });
-        return taskCompletionSource.Task;
+        return await taskCompletionSource.Task;
     }
 
     protected virtual void SavePlayers(BaseFileSystem fileSystem, IReadOnlyDictionary<ulong, BinaryTag> playerTags)
