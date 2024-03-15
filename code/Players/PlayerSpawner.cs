@@ -142,10 +142,6 @@ public class PlayerSpawner : Component
         Vector3Int centerChunkPosition = world.GetChunkPosition(spawnPosition);
         var positionsToLoad = (range + centerChunkPosition).GetPositions().ToHashSet();
 
-        List<Task> tasks = new();
-        foreach(var position in positionsToLoad)
-            tasks.Add(world.CreateChunk(position));
-
-        return Task.WhenAll(tasks);
+        return world.CreateChunksSimultaneously(positionsToLoad);
     }
 }

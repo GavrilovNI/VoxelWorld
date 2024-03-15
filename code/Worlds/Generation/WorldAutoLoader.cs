@@ -78,11 +78,7 @@ public class WorldAutoLoader : Component, IWorldInitializable
         if(positions.Count == 0)
             return;
 
-        List<Task> tasks = new();
-        foreach(var position in positions)
-            tasks.Add(World!.CreateChunk(position));
-
-        await Task.WhenAll(tasks);
+        await World!.CreateChunksSimultaneously(positions);
     }
 
     protected virtual HashSet<Vector3Int> GetChunkPositionsToLoad()

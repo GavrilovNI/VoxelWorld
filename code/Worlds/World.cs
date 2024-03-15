@@ -296,6 +296,21 @@ public class World : Component, IWorldAccessor, ITickable
     // Thread safe
     public virtual Task CreateChunk(Vector3Int chunkPosition) => GetOrCreateChunk(chunkPosition);
 
+    // Thread safe
+    public virtual async Task CreateChunksSimultaneously(IEnumerable<Vector3Int> chunkPositions)
+    {
+        List<Task> tasks = new();
+        foreach(var position in chunkPositions)
+            tasks.Add(GetOrCreateChunk(position, ChunkCreationStatus.Preloading));
+
+        await Task.WhenAll(tasks);
+
+        tasks.Clear();
+        foreach(var position in chunkPositions)
+            tasks.Add(GetOrCreateChunk(position, ChunkCreationStatus.Finishing));
+
+        await Task.WhenAll(tasks);
+    }
 
     public virtual Vector3Int GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
     {
