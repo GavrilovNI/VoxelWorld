@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandcube.Mth;
+using Sandcube.Threading;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ public class ChunksCreator : Component
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var chunk = CreateChunkObject(position);
+        var chunk = await Task.RunInMainThreadAsync(() => CreateChunkObject(position));
 
         bool loaded = Loader.IsValid() && await Loader.TryProcess(chunk, cancellationToken);
 

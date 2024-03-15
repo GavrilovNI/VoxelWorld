@@ -69,11 +69,8 @@ public class LimitedChunksCreator : ChunksCreator
         }
     }
 
-    // Call only in game thread
     protected virtual async Task<Chunk> PreloadChunk(ChunkPreloadingData creatingData)
     {
-        ThreadSafe.AssertIsMainThread();
-
         var cancellationToken = creatingData.CancellationToken;
 
         ProcessingCount++;
