@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube;
 
-public sealed class SandcubeGame : Component
+public sealed class SandcubeGame : Component, ILocalPlayerInitializable
 {
     public static event Action? Initialized;
     public static event Action<World>? WorldAdded;
@@ -54,6 +54,7 @@ public sealed class SandcubeGame : Component
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
     [Property] public Material OpaqueVoxelsMaterial { get; private set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; private set; } = null!;
+    [Property] public Player? LocalPlayer { get; private set; }
 
 
     private readonly WorldsContainer _worlds = new(); // TODO: make readonly?
@@ -396,4 +397,6 @@ public sealed class SandcubeGame : Component
         if(statusEqual != equal)
             throw new InvalidOperationException($"{nameof(SandcubeGame)}'s {nameof(LoadingStatus)} is{(equal ? string.Empty : " not")} {loadingStatus}");
     }
+
+    public void InitializeLocalPlayer(Player player) => LocalPlayer = player;
 }
