@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Mods.Base;
 
-public sealed class SandcubeBaseMod : Component, ISandcubeMod
+public sealed class BaseMod : Component, IMod
 {
     public const string ModName = "sandcube";
-    public static SandcubeBaseMod? Instance { get; private set; }
+    public static BaseMod? Instance { get; private set; }
 
     public Id Id { get; } = new(ModName);
 
-    public SandcubeBlocks Blocks { get; private set; } = null!;
-    public SandcubeBlockEntities BlockEntities { get; private set; } = null!;
-    public SandcubeItems Items { get; private set; } = null!;
-    public SandcubeEntities Entities { get; private set; } = null!;
+    public BaseModBlocks Blocks { get; private set; } = null!;
+    public BaseModBlockEntities BlockEntities { get; private set; } = null!;
+    public BaseModItems Items { get; private set; } = null!;
+    public BaseModEntities Entities { get; private set; } = null!;
 
     private readonly ModedId _mainWorldId = new(ModName, "main");
 
@@ -37,7 +37,7 @@ public sealed class SandcubeBaseMod : Component, ISandcubeMod
         Blocks = new();
         BlockEntities = new();
         Items = new();
-        Entities = Components.Get<SandcubeEntities>(true);
+        Entities = Components.Get<BaseModEntities>(true);
     }
 
     protected override void OnDestroy()

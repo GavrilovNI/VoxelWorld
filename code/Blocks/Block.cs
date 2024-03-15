@@ -54,7 +54,7 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public virtual IEnumerable<BlockProperty> CombineProperties() => Enumerable.Empty<BlockProperty>();
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
-    public bool IsAir() => this == SandcubeBaseMod.Instance!.Blocks.Air;
+    public bool IsAir() => this == BaseMod.Instance!.Blocks.Air;
 
 
     public virtual BlockState GetStateForPlacement(in BlockActionContext context) => DefaultBlockState;

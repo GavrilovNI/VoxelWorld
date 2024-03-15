@@ -44,7 +44,7 @@ public class WorldGenerator : Component, IWorldInitializationListener
     {
         Dictionary<Vector3Int, BlockState> result = new();
 
-        var blocks = SandcubeBaseMod.Instance!.Blocks;
+        var blocks = BaseMod.Instance!.Blocks;
 
         for(int x = 0; x < size.x; ++x)
         {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Sandcube.Mods;
 
-public interface ISandcubeMod
+public interface IMod
 {
     Id Id { get; }
 

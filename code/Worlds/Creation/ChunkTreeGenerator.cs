@@ -63,7 +63,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
 
     protected virtual async Task<bool> CanPlaceTreeAt(Chunk chunk, Vector3Int localPosition)
     {
-        var blocks = SandcubeBaseMod.Instance!.Blocks;
+        var blocks = BaseMod.Instance!.Blocks;
 
         var groundBlockState = await GetBlockState(chunk, localPosition + Vector3Int.Down);
         bool isValidGround = groundBlockState.Block == blocks.Grass || groundBlockState.Block == blocks.Dirt;
@@ -81,7 +81,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
 
     protected virtual async Task PlaceTree(Chunk chunk, Vector3Int localPosition)
     {
-        var blocks = SandcubeBaseMod.Instance!.Blocks;
+        var blocks = BaseMod.Instance!.Blocks;
         var log = blocks.WoodLog.DefaultBlockState.With(PillarBlock.AxisProperty, Axis.Z);
         var leaves = blocks.TreeLeaves.DefaultBlockState;
 

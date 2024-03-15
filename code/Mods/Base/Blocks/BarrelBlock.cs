@@ -26,7 +26,7 @@ public class BarrelBlock : ItemStorageBlock
     }
 
     public override BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState) =>
-        SandcubeBaseMod.Instance!.BlockEntities.Barrel.CreateBlockEntity(world, position);
+        BaseMod.Instance!.BlockEntities.Barrel.CreateBlockEntity(world, position);
 
     public override bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => true;
 

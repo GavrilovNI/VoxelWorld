@@ -19,7 +19,7 @@ public class PlayerSpawner : Component
 {
     [Property] protected BBoxInt PreloadRange { get; set; } = BBoxInt.FromPositionAndRadius(0, new Vector3Int(2, 2, 3));
     [Property] protected BBoxInt SafeBounds { get; set; } = BBoxInt.FromMinsAndSize(0, new Vector3Int(1, 1, 2));
-    protected static EntityType PlayerEntityType => SandcubeBaseMod.Instance!.Entities.Player;
+    protected static EntityType PlayerEntityType => BaseMod.Instance!.Entities.Player;
 
 
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)

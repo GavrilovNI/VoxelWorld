@@ -27,7 +27,7 @@ public readonly record struct ModedId : INbtWritable, INbtStaticReadable<ModedId
         string name;
         if(ids.Length == 1)
         {
-            modId = SandcubeBaseMod.Instance!.Id;
+            modId = BaseMod.Instance!.Id;
             name = ids[0];
         }
         else if(ids.Length == 2)

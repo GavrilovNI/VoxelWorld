@@ -23,7 +23,7 @@ public class ItemStackEntity : Entity
     public static ItemStackEntity Create(Inventories.Stack<Item> itemStack, in EntitySpawnConfig spawnConfig, Vector3 velocity = default)
     {
         ThreadSafe.AssertIsMainThread();
-        var entity = (SandcubeBaseMod.Instance!.Entities.ItemStack.CreateEntity(spawnConfig) as ItemStackEntity)!;
+        var entity = (BaseMod.Instance!.Entities.ItemStack.CreateEntity(spawnConfig) as ItemStackEntity)!;
         entity.SetItemStack(itemStack);
         entity.Rigidbody.Velocity = velocity;
         return entity;

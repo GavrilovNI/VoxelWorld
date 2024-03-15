@@ -30,7 +30,7 @@ public class BushBlock : Block
 
     protected virtual bool CanStayOn(BlockState blockState, BlockState blockStateUnder)
     {
-        var blocks = SandcubeBaseMod.Instance!.Blocks;
+        var blocks = BaseMod.Instance!.Blocks;
 
         var blockUnder = blockStateUnder.Block;
         return blockUnder == blocks.Dirt ||

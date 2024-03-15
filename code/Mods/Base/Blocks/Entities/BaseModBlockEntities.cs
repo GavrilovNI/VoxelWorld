@@ -3,8 +3,8 @@ using Sandcube.Registries;
 
 namespace Sandcube.Mods.Base.Blocks.Entities;
 
-public sealed class SandcubeBlockEntities : ModRegisterables<BlockEntityType>
+public sealed class BaseModBlockEntities : ModRegisterables<BlockEntityType>
 {
-    private static ModedId MakeId(string blockId) => new(SandcubeBaseMod.ModName, blockId);
+    private static ModedId MakeId(string blockId) => new(BaseMod.ModName, blockId);
     public BlockEntityType Barrel { get; } = new(MakeId("barrel"), () => new BarrelBlockEntity());
 }

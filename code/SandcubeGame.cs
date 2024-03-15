@@ -68,7 +68,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
     public PathedTextureMap BlocksTextureMap { get; } = new("textures/", 3, new Color32(255, 0, 255), 4);
     public BlockMeshMap BlockMeshes { get; } = new();
 
-    private readonly Dictionary<Id, ISandcubeMod> _mods = new();
+    private readonly Dictionary<Id, IMod> _mods = new();
 
     private Task<bool>? _savingTask = null;
     private bool _wasClosingGame = false;
@@ -81,11 +81,11 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         InitalizationStatus = InitalizationStatus.Initializing;
         Instance = this;
 
-        var loaded = TryCloneModFrom<SandcubeBaseMod>(BaseModPrefab, out var baseMod);
+        var loaded = TryCloneModFrom<BaseMod>(BaseModPrefab, out var baseMod);
         if(!loaded)
-            throw new InvalidOperationException($"couldn't create {nameof(SandcubeBaseMod)}");
+            throw new InvalidOperationException($"couldn't create {nameof(BaseMod)}");
 
-        await LoadMods(new ISandcubeMod[] { baseMod });
+        await LoadMods(new IMod[] { baseMod });
 
         InitalizationStatus = InitalizationStatus.Initialized;
         Initialized?.Invoke();
@@ -172,7 +172,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         return true;
     }
 
-    public async Task LoadMods(IEnumerable<ISandcubeMod> mods)
+    public async Task LoadMods(IEnumerable<IMod> mods)
     {
         AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
 
@@ -222,7 +222,7 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         }
     }
 
-    public ISandcubeMod? GetMod(Id id) => _mods!.GetValueOrDefault(id, null);
+    public IMod? GetMod(Id id) => _mods!.GetValueOrDefault(id, null);
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 
 
@@ -317,10 +317,10 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
             BlockMeshes.Update(blockState);
     }
 
-    public static bool TryCreateMod(TypeDescription type, out ISandcubeMod mod)
+    public static bool TryCreateMod(TypeDescription type, out IMod mod)
     {
         var targetType = type.TargetType;
-        if(!targetType.IsAssignableTo(typeof(ISandcubeMod)))
+        if(!targetType.IsAssignableTo(typeof(IMod)))
         {
             mod = null!;
             return false;
@@ -329,14 +329,14 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         if(targetType.IsAssignableTo(typeof(Component)))
         {
             GameObject modObject = new();
-            mod = (modObject.Components.Create(type) as ISandcubeMod)!;
+            mod = (modObject.Components.Create(type) as IMod)!;
             modObject.Name = mod.Id;
             return true;
         }
 
         try
         {
-            mod = type.Create<ISandcubeMod>();
+            mod = type.Create<IMod>();
             return true;
         }
         catch(MissingMethodException)
@@ -346,17 +346,17 @@ public sealed class SandcubeGame : Component, ILocalPlayerInitializable
         }
     }
 
-    public static bool TryCreateMod<T>(out T mod) where T : ISandcubeMod
+    public static bool TryCreateMod<T>(out T mod) where T : IMod
     {
         var created = TryCreateMod(TypeLibrary.GetType<T>(), out var createdMod);
         mod = created ? (T)createdMod : default!;
         return created;
     }
 
-    public static bool TryCloneModFrom(GameObject modObject, out ISandcubeMod mod) =>
-        TryCloneModFrom<ISandcubeMod>(modObject, out mod);
+    public static bool TryCloneModFrom(GameObject modObject, out IMod mod) =>
+        TryCloneModFrom<IMod>(modObject, out mod);
 
-    public static bool TryCloneModFrom<T>(GameObject modObject, out T mod) where T : ISandcubeMod
+    public static bool TryCloneModFrom<T>(GameObject modObject, out T mod) where T : IMod
     {
         ArgumentNotValidException.ThrowIfNotValid(modObject);
         modObject = modObject.Clone();

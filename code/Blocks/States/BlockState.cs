@@ -12,7 +12,7 @@ namespace Sandcube.Blocks.States;
 
 public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
 {
-    public static BlockState Air => SandcubeBaseMod.Instance!.Blocks.Air.DefaultBlockState;
+    public static BlockState Air => BaseMod.Instance!.Blocks.Air.DefaultBlockState;
 
     internal readonly Dictionary<BlockProperty, CustomEnum> _properties;
     private readonly Dictionary<(BlockProperty, CustomEnum), BlockState> _neighbors;

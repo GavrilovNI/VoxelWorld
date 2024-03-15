@@ -8,13 +8,13 @@ using System.Linq;
 
 namespace Sandcube.Mods.Base.Blocks;
 
-public sealed class SandcubeBlocks : ModRegisterables<Block>
+public sealed class BaseModBlocks : ModRegisterables<Block>
 {
     private static PathedTextureMap TextureMap => SandcubeGame.Instance!.BlocksTextureMap;
 
-    private static string GetBlockPathPart(string blockId) => $"{SandcubeBaseMod.ModName}/blocks/{blockId}";
+    private static string GetBlockPathPart(string blockId) => $"{BaseMod.ModName}/blocks/{blockId}";
 
-    private static ModedId MakeId(string blockId) => new(SandcubeBaseMod.ModName, blockId);
+    private static ModedId MakeId(string blockId) => new(BaseMod.ModName, blockId);
 
 
     public SimpleBlock Air { get; } = new(MakeId("air"), TextureMap.Transparent)

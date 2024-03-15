@@ -54,7 +54,7 @@ public class PhysicsBlock : SimpleBlock
         EntitySpawnConfig spawnConfig = new(new(world.GetBlockGlobalPosition(position)),
             world, false, $"{nameof(PhysicsBlockEntity)} {blockState}");
 
-        var entity = (PhysicsBlockEntity)SandcubeBaseMod.Instance!.Entities.PhysicsBlock.CreateEntity(spawnConfig);
+        var entity = (PhysicsBlockEntity)BaseMod.Instance!.Entities.PhysicsBlock.CreateEntity(spawnConfig);
         entity.SetBlockState(blockState);
         entity.Enabled = true;
     }
