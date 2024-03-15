@@ -37,6 +37,7 @@
       "NoWarn": "1701;1702;1591;",
       "WarningsAsErrors": "",
       "Nullables": true,
+      "Whitelist": true,
       "AssemblyReferences": [],
       "IgnoreFolders": [],
       "DistinctAssemblyReferences": []
