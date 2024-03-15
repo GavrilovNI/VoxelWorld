@@ -1,5 +1,6 @@
 CrosshairUI {
     position: absolute;
+    opacity: 0;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -9,4 +10,8 @@ CrosshairUI {
     image-rendering: pixelated;
     width: 5vh;
     height: 5vh;
+
+    &.enabled {
+        opacity: 1;
+    }
 }

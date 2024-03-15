@@ -1,13 +1,17 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
+@using Sandcube.Players;
+@using Sandcube.Entities;
 
 @namespace Sandcube.UI
 
 @inherits PanelComponent
+@implements ILocalPlayerInitializable
 
 <root>
 </root>
 
 @code
 {
+	public void InitializeLocalPlayer(Player player) => this.Panel.SetClass("enabled", true);
 }
