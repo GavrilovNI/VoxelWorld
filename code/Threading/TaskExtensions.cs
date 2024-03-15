@@ -23,6 +23,12 @@ public static class TaskExtensions
         throw new Exception("Task canceled or faulted");
     }
 
+    public static async Task<TOut> ConvertResult<TIn, TOut>(this Task<TIn> task, Func<TIn, TOut> convertor)
+    {
+        var result = await task;
+        return convertor(result);
+    }
+
     public static async Task<bool> TryAwait(this Task task)
     {
         try
