@@ -11,7 +11,7 @@ namespace VoxelWorld.Mods.Base;
 
 public sealed class BaseMod : Component, IMod
 {
-    public const string ModName = "sandcube";
+    public const string ModName = "voxelworld";
     public static BaseMod? Instance { get; private set; }
 
     public Id Id { get; } = new(ModName);
