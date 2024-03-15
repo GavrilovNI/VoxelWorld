@@ -294,17 +294,8 @@ public class World : Component, IWorldAccessor, ITickable
     protected virtual Chunk? GetChunk(Vector3Int chunkPosition) => Chunks.GetOrDefault(chunkPosition);
 
     // Thread safe
-    public virtual async Task CreateChunk(Vector3Int chunkPosition)
-    {
-        Chunk? chunk;
-        do
-        {
-            if(!IsValid)
-                throw new OperationCanceledException();
-            chunk = await GetOrCreateChunk(chunkPosition);
-        }
-        while(!chunk.IsValid());
-    }
+    public virtual Task CreateChunk(Vector3Int chunkPosition) => GetOrCreateChunk(chunkPosition);
+
 
     public virtual Vector3Int GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
     {
@@ -349,9 +340,6 @@ public class World : Component, IWorldAccessor, ITickable
         bool preloadOnly = !flags.HasFlag(BlockSetFlags.UpdateModel) && !flags.HasFlag(BlockSetFlags.AwaitModelUpdate);
         var chunkCreationStatus = preloadOnly ? ChunkCreationStatus.Preloading : ChunkCreationStatus.Finishing;
         var chunk = await GetOrCreateChunk(chunkPosition, chunkCreationStatus);
-
-        if(!chunk.IsValid())
-            throw new InvalidOperationException($"Couldn't load {nameof(Chunk)} at position {chunkPosition}");
 
         var localPosition = GetBlockPositionInChunk(blockPosition);
 
