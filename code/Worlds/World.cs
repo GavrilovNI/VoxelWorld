@@ -221,8 +221,11 @@ public class World : Component, IWorldAccessor, ITickable
 
             TaskCompletionSource chunkTaskCreationTaskSource = new();
 
-            if(currentStatus < ChunkCreationStatus.Preloading)
+
+            ChunkCreationStatus nextStatus;
+            if(currentStatus == ChunkCreationStatus.None)
             {
+                nextStatus = ChunkCreationStatus.Preloading;
                 chunkTask = ChunksCreator.PreloadChunk(chunkPosition, cancellationToken);
                 chunkTask = chunkTask!.ContinueWith(async t =>
                 {
@@ -235,18 +238,16 @@ public class World : Component, IWorldAccessor, ITickable
                             t.ThrowIfNotCompletedSuccessfully();
                         }
 
-                        var partiallyLoadedChunk = t.Result.Chunk;
-                        var creatingData = CreatingChunks[partiallyLoadedChunk.Position];
-                        CreatingChunks[partiallyLoadedChunk.Position] = creatingData with { PartiallyLoadedChunk = partiallyLoadedChunk };
+                        var chunk = t.Result.Chunk;
+                        CreatingChunks[chunkPosition] = CreatingChunks[chunkPosition] with { PartiallyLoadedChunk = chunk };
                     }
                     return t.Result;
                 }).Unwrap();
             }
-
-            if(creationStatus == ChunkCreationStatus.Finishing)
+            else
             {
+                nextStatus = ChunkCreationStatus.Finishing;
                 chunkTask = ChunksCreator.FinishChunk(chunkTask!, cancellationToken);
-
                 chunkTask = chunkTask!.ContinueWith(async t =>
                 {
                     await chunkTaskCreationTaskSource.Task;
@@ -260,10 +261,17 @@ public class World : Component, IWorldAccessor, ITickable
                 }).Unwrap();
             }
 
-            CreatingChunks[chunkPosition] = new(chunkTask!, creationStatus, null);
+            CreatingChunks[chunkPosition] = CreatingChunks.GetValueOrDefault(chunkPosition) with { ChunkTask = chunkTask, Status = nextStatus };
             chunkTaskCreationTaskSource.SetResult();
 
-            return chunkTask!.ConvertResult(d => d.Chunk);
+            if(nextStatus >= creationStatus)
+                return chunkTask!.ConvertResult(d => d.Chunk);
+
+            return chunkTask.ContinueWith(t =>
+            {
+                t.ThrowIfNotCompletedSuccessfully();
+                return GetOrCreateChunk(chunkPosition, creationStatus);
+            }).Unwrap();
         }
     }
 
