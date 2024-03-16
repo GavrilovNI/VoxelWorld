@@ -36,7 +36,8 @@ public class ItemCapabilitiesMenu : IMenu
     }
 
     public IReadOnlyIndexedCapability<ItemStack> GetCapability(int capabilityIndex) => Capabilities[capabilityIndex];
-    protected IIndexedCapability<ItemStack>? FindEditableCapability(IReadOnlyIndexedCapability<ItemStack> capability)
+
+    protected IIndexedCapability<ItemStack>? FindEditableCapability(IReadOnlyIndexedCapability<ItemStack> capability, ref int slotIndex)
     {
         IIndexedCapability<ItemStack>? result = Capabilities.FirstOrDefault(x => x == capability, null)!;
         if(result is not null)
@@ -44,9 +45,13 @@ public class ItemCapabilitiesMenu : IMenu
 
         if(capability is IndexedCapabilityPart<ItemStack> part)
         {
-            result = FindEditableCapability(part.Capability);
+            int newIndex = part.GetParentIndex(slotIndex);
+            result = FindEditableCapability(part.Capability, ref newIndex);
             if(result is not null)
+            {
+                slotIndex = newIndex;
                 return result;
+            }
         }
 
         return capability as IIndexedCapability<ItemStack>;
@@ -54,7 +59,7 @@ public class ItemCapabilitiesMenu : IMenu
 
     public virtual bool TakeStack(IReadOnlyIndexedCapability<ItemStack> capability, int slotIndex, int maxCount)
     {
-        var changableCapability = FindEditableCapability(capability);
+        var changableCapability = FindEditableCapability(capability, ref slotIndex);
         if(changableCapability is null)
             throw new ArgumentException($"Couldn't find editable capability of {capability}", nameof(capability));
 
@@ -85,7 +90,7 @@ public class ItemCapabilitiesMenu : IMenu
 
     public virtual bool PlaceStack(IReadOnlyIndexedCapability<ItemStack> capability, int slotIndex, int maxCount)
     {
-        var changableCapability = FindEditableCapability(capability);
+        var changableCapability = FindEditableCapability(capability, ref slotIndex);
         if(changableCapability is null)
             throw new ArgumentException($"Couldn't find editable capability of {capability}", nameof(capability));
 
