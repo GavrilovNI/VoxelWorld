@@ -33,7 +33,7 @@ public class ItemStorageBlockMenu : ItemCapabilitiesMenu
         
         var globalPosition = BlockEntity.GlobalPosition;
         var bbox = new BBox(globalPosition, globalPosition + new Vector3(MathV.UnitsInMeter));
-        var closestPoint = bbox.ClosestPoint(globalPosition);
+        var closestPoint = bbox.ClosestPoint(Player.Transform.Position);
         var distanceSquared = closestPoint.DistanceSquared(Player.Transform.Position);
         return distanceSquared <= Player.ReachDistance * Player.ReachDistance;
     }
