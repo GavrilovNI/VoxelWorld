@@ -49,4 +49,7 @@ public sealed class BaseModItems : ModItems
 
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Sand { get; private set; } = null!;
+
+    [AutoBlockItem(BaseMod.ModName)]
+    public BlockItem Workbench { get; private set; } = null!;
 }

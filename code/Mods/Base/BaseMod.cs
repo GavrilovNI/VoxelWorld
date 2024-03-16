@@ -6,6 +6,10 @@ using VoxelWorld.Mods.Base.Entities;
 using VoxelWorld.Mods.Base.Items;
 using VoxelWorld.Registries;
 using System.Threading.Tasks;
+using VoxelWorld.Mods.Base.Recipes;
+using VoxelWorld.Crafting.Recipes;
+using VoxelWorld.Items;
+using VoxelWorld.Inventories;
 
 namespace VoxelWorld.Mods.Base;
 
@@ -20,6 +24,7 @@ public sealed class BaseMod : Component, IMod
     public BaseModBlockEntities BlockEntities { get; private set; } = null!;
     public BaseModItems Items { get; private set; } = null!;
     public BaseModEntities Entities { get; private set; } = null!;
+    public BaseRecipeTypes RecipeTypes { get; private set; } = null!;
 
     private readonly ModedId _mainWorldId = new(ModName, "main");
 
@@ -38,6 +43,7 @@ public sealed class BaseMod : Component, IMod
         BlockEntities = new();
         Items = new();
         Entities = Components.Get<BaseModEntities>(true);
+        RecipeTypes = new();
     }
 
     protected override void OnDestroy()
@@ -57,6 +63,7 @@ public sealed class BaseMod : Component, IMod
         GameController.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
         await Items.Register(registries);
         await Entities.Register(registries);
+        await RecipeTypes.Register(registries);
 
         registries.Add(container);
     }

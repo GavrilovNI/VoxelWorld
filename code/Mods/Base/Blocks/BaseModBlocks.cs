@@ -66,4 +66,6 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
 
     public PhysicsBlock Sand { get; } = new(MakeId("sand"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("sand")}.png"));
 
+    public WorkbenchBlock Workbench { get; } = new(MakeId("workbench"), BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("workbench")));
+
 }
