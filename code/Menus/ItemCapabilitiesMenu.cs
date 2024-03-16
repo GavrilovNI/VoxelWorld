@@ -138,7 +138,7 @@ public class ItemCapabilitiesMenu : IMenu
     public virtual GameObject CreateScreen()
     {
         var gameObject = new GameObject();
-        var screen = gameObject.Components.Create<ItemCapabilitiesScreen>();
+        var screen = gameObject.Components.Create<SimpleItemCapabilitiesScreen>();
         screen.Menu = this;
         return gameObject;
     }
