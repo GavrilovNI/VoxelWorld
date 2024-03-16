@@ -38,13 +38,13 @@ public sealed class BaseModItems : ModItems
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Furnace { get; private set; } = null!;
 
-    [AutoBlockItem(BaseMod.ModName, rawTexturePath: $"textures/{BaseMod.ModName}/items/tall_grass.png")]
+    [AutoBlockItem(BaseMod.ModName, texturePath: $"{BaseMod.ModName}/items/tall_grass.png")]
     public BlockItem TallGrass { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Barrel { get; private set; } = null!;
 
-    [AutoBlockItem(BaseMod.ModName, rawTexturePath: $"textures/{BaseMod.ModName}/items/door.png")]
+    [AutoBlockItem(BaseMod.ModName, texturePath: $"{BaseMod.ModName}/items/door.png")]
     public BlockItem Door { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]

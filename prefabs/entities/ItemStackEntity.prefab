@@ -15,12 +15,25 @@
           "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
           "component_type": "BoxCollider"
         },
+        "Renderer": {
+          "_type": "component",
+          "component_id": "c7eca098-5689-4fa6-b36d-cf67ed846f0a",
+          "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
+          "component_type": "ModelRenderer"
+        },
         "Rigidbody": {
           "_type": "component",
           "component_id": "a2891dfe-954a-485f-a9c3-a4fdda389685",
           "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
           "component_type": "Rigidbody"
         }
+      },
+      {
+        "__type": "ModelRenderer",
+        "__guid": "c7eca098-5689-4fa6-b36d-cf67ed846f0a",
+        "BodyGroups": 18446744073709551615,
+        "RenderType": "On",
+        "Tint": "1,1,1,1"
       },
       {
         "__type": "Rigidbody",

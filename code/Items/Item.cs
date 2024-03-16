@@ -14,11 +14,11 @@ namespace VoxelWorld.Items;
 public class Item : IRegisterable, IStackValue<Item>
 {
     public ModedId Id { get; }
-    public IMeshPart<ComplexVertex> Model { get; }
+    public Model Model { get; }
     public Texture Texture { get; }
     public int StackLimit { get; }
 
-    public Item(in ModedId id, IMeshPart<ComplexVertex> model, Texture texture, int stackLimit)
+    public Item(in ModedId id, Model model, Texture texture, int stackLimit)
     {
         Id = id;
         Model = model;
@@ -26,7 +26,7 @@ public class Item : IRegisterable, IStackValue<Item>
         StackLimit = stackLimit;
     }
 
-    public Item(in ModedId id, IMeshPart<ComplexVertex> model, Texture texture) : this(id, model, texture, DefaultValues.ItemStackLimit)
+    public Item(in ModedId id, Model model, Texture texture) : this(id, model, texture, DefaultValues.ItemStackLimit)
     {
     }
 

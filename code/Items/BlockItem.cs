@@ -11,12 +11,12 @@ public class BlockItem : Item
 {
     public readonly Block Block;
 
-    public BlockItem(Block block, IMeshPart<ComplexVertex> model, Texture texture, int stackLimit) : base(block.Id, model, texture, stackLimit)
+    public BlockItem(Block block, Model model, Texture texture, int stackLimit) : base(block.Id, model, texture, stackLimit)
     {
         Block = block;
     }
 
-    public BlockItem(Block block, IMeshPart<ComplexVertex> model, Texture texture) : base(block.Id, model, texture)
+    public BlockItem(Block block, Model model, Texture texture) : base(block.Id, model, texture)
     {
         Block = block;
     }
