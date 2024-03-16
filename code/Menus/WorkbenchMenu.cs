@@ -49,7 +49,7 @@ public class WorkbenchMenu : ItemCapabilitiesMenu
         return distanceSquared <= Player.ReachDistance * Player.ReachDistance;
     }
 
-    public GameObject CreateScreen()
+    public override GameObject CreateScreen()
     {
         var gameObject = new GameObject();
         var screen = gameObject.Components.Create<WorkbenchScreen>();
