@@ -9,7 +9,7 @@ namespace VoxelWorld.Inventories;
 
 public class IndexedCapabilityPart<T> : IIndexedCapability<T> where T : class, IStack<T>
 {
-    private IIndexedCapability<T> _capability;
+    public IIndexedCapability<T> Capability { get; }
     private int _startIndex;
 
     public int Size { get; }
@@ -23,16 +23,16 @@ public class IndexedCapabilityPart<T> : IIndexedCapability<T> where T : class, I
     {
         if(startIndex < 0 || startIndex >= capability.Size)
             throw new ArgumentOutOfRangeException(nameof(startIndex), startIndex, $"should be >= 0 & < capability.Size ({capability.Size})");
-        if(count < 0 || startIndex + count >= capability.Size)
-            throw new ArgumentOutOfRangeException(nameof(count), count, $"should be >= 0 & {nameof(startIndex)}+{nameof(count)} < capability.Size ({capability.Size})");
+        if(count < 0 || startIndex + count > capability.Size)
+            throw new ArgumentOutOfRangeException(nameof(count), count, $"should be >= 0 & {nameof(startIndex)}+{nameof(count)} <= capability.Size ({capability.Size})");
 
-        _capability = capability;
+        Capability = capability;
         _startIndex = startIndex;
         Size = count;
     }
 
-    public T Get(int index) => _capability.Get(_startIndex + index);
-    public IEnumerator<T> GetEnumerator() => _capability.Skip(_startIndex).Take(Size).GetEnumerator();
-    public int SetMax(int index, T stack, bool simulate = false) => _capability.SetMax(_startIndex + index, stack, simulate);
+    public T Get(int index) => Capability.Get(_startIndex + index);
+    public IEnumerator<T> GetEnumerator() => Capability.Skip(_startIndex).Take(Size).GetEnumerator();
+    public int SetMax(int index, T stack, bool simulate = false) => Capability.SetMax(_startIndex + index, stack, simulate);
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
