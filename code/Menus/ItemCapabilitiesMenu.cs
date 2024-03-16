@@ -36,13 +36,27 @@ public class ItemCapabilitiesMenu : IMenu
     }
 
     public IReadOnlyIndexedCapability<ItemStack> GetCapability(int capabilityIndex) => Capabilities[capabilityIndex];
-    protected IIndexedCapability<ItemStack>? FindCapability(IReadOnlyIndexedCapability<ItemStack> capability) => Capabilities.FirstOrDefault(x => x == capability, null);
+    protected IIndexedCapability<ItemStack>? FindEditableCapability(IReadOnlyIndexedCapability<ItemStack> capability)
+    {
+        IIndexedCapability<ItemStack>? result = Capabilities.FirstOrDefault(x => x == capability, null)!;
+        if(result is not null)
+            return result;
+
+        if(capability is IndexedCapabilityPart<ItemStack> part)
+        {
+            result = FindEditableCapability(part.Capability);
+            if(result is not null)
+                return result;
+        }
+
+        return capability as IIndexedCapability<ItemStack>;
+    }
 
     public virtual bool TakeStack(IReadOnlyIndexedCapability<ItemStack> capability, int slotIndex, int maxCount)
     {
-        var changableCapability = FindCapability(capability);
+        var changableCapability = FindEditableCapability(capability);
         if(changableCapability is null)
-            throw new ArgumentException($"Capability {capability} is not part of menu", nameof(capability));
+            throw new ArgumentException($"Couldn't find editable capability of {capability}", nameof(capability));
 
         if(maxCount <= 0)
             return false;
@@ -71,9 +85,9 @@ public class ItemCapabilitiesMenu : IMenu
 
     public virtual bool PlaceStack(IReadOnlyIndexedCapability<ItemStack> capability, int slotIndex, int maxCount)
     {
-        var changableCapability = FindCapability(capability);
+        var changableCapability = FindEditableCapability(capability);
         if(changableCapability is null)
-            throw new ArgumentException($"Capability {capability} is not part of menu", nameof(capability));
+            throw new ArgumentException($"Couldn't find editable capability of {capability}", nameof(capability));
 
         if(TakenStack.IsEmpty)
             return false;
