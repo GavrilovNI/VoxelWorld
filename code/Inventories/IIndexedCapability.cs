@@ -91,20 +91,20 @@ public interface IIndexedCapability<T> : ICapability<T>, IReadOnlyIndexedCapabil
 
         return stack.Count - leftCount;
     }
+
+    int ExtractMax(int index, T stack, bool simulate)
+    {
+        var currentStack = Get(index);
+        if(!currentStack.EqualsValue(stack))
+            return 0;
+
+        SetMax(index, stack.WithCount(0), simulate); // TODO: use T.Empty when will be whitelisted
+        return currentStack.Count;
+    }
 }
 
 public static class IIndexedCapabilityExtensions
 {
-    public static int ExtractMax<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate) where T : class, IStack<T>
-    {
-        var currentStack = capability.Get(index);
-        if(!currentStack.EqualsValue(stack))
-            return 0;
-
-        capability.SetMax(index, stack.WithCount(0), simulate); // TODO: use T.Empty when will be whitelisted
-        return currentStack.Count;
-    }
-
     public static bool TrySet<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate = false) where T : class, IStack<T>
     {
         int maxCanSet = capability.SetMax(index, stack, true);
