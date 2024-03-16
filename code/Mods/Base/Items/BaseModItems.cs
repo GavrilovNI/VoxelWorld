@@ -30,6 +30,9 @@ public sealed class BaseModItems : ModItems
     public BlockItem WoodLog { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
+    public BlockItem WoodPlanks { get; private set; } = null!;
+
+    [AutoBlockItem(BaseMod.ModName)]
     public BlockItem TreeLeaves { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
