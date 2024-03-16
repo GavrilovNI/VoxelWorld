@@ -206,8 +206,9 @@
           "Tint": "1,1,1,1"
         },
         {
-          "__type": "BlocksTextureMapShower",
           "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
+          "__type": "TextureMapShower",
+          "Blocks": true,
           "ModelRenderer": {
             "_type": "component",
             "component_id": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",

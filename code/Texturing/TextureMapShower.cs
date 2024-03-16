@@ -2,14 +2,14 @@
 
 namespace VoxelWorld.Texturing;
 
-public class BlocksTextureMapShower : Component
+public class TextureMapShower : Component
 {
-    [Property]
-    public ModelRenderer ModelRenderer { get; set; } = null!;
+    [Property] public ModelRenderer ModelRenderer { get; set; } = null!;
+    [Property] public bool Blocks { get; set; } = true;
 
     protected override void OnUpdate()
     {
-        var texture = GameController.Instance?.BlocksTextureMap.Texture;
+        var texture = Blocks ? GameController.Instance?.BlocksTextureMap.Texture : GameController.Instance?.ItemsTextureMap.Texture;
         if(texture is not null)
         {
             ModelRenderer.SceneObject.Attributes.Set("color", texture);
