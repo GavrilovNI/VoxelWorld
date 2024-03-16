@@ -42,4 +42,6 @@ public class IndexedCapabilityPart<T> : IIndexedCapability<T> where T : class, I
     public int ExtractMax(int index, T stack, bool simulate) => Capability.ExtractMax(_startIndex + index, stack, simulate);
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public override int GetHashCode() => HashCode.Combine(Capability, _startIndex, Size);
 }
