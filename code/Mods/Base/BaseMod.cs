@@ -68,6 +68,14 @@ public sealed class BaseMod : Component, IMod
         registries.Add(container);
     }
 
+    private static ModedId MakeId(string id) => new(ModName, id);
+
+    public void RegisterRecipes(RecipesContainer recipesContainer)
+    {
+        recipesContainer.AddRecipe(new WorkbenchShaplessRecipe(MakeId("wood_log_to_planks"),
+            new Item[1] { Items.WoodLog }, new Stack<Item>(Items.WoodPlanks, 6)));
+    }
+
     public void OnGameLoaded()
     {
         GameController.Instance!.TryAddWorld(_mainWorldId, out _);
