@@ -44,8 +44,6 @@ public class ItemCapabilitiesMenu : IMenu
         if(changableCapability is null)
             throw new ArgumentException($"Capability {capability} is not part of menu", nameof(capability));
 
-        if(!TakenStack.IsEmpty)
-            return false;
         if(maxCount <= 0)
             return false;
 
@@ -53,8 +51,16 @@ public class ItemCapabilitiesMenu : IMenu
         if(clickedStack.IsEmpty)
             return false;
 
-        TakenStack = changableCapability.ExtractMax(slotIndex, maxCount);
-        bool took = !TakenStack.IsEmpty;
+        if(!TakenStack.IsEmpty && !TakenStack.EqualsValue(clickedStack))
+            return false;
+
+        maxCount = Math.Min(maxCount, clickedStack.ValueStackLimit - TakenStack.Count);
+
+        var extracted = changableCapability.ExtractMax(slotIndex, maxCount);
+        if(!extracted.IsEmpty)
+            TakenStack = extracted.Add(TakenStack.Count);
+
+        bool took = !extracted.IsEmpty;
         if(took)
         {
             CapabilityTakenFrom = changableCapability;
