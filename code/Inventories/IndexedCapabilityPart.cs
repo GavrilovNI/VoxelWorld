@@ -31,6 +31,8 @@ public class IndexedCapabilityPart<T> : IIndexedCapability<T> where T : class, I
         Size = count;
     }
 
+    public int GetParentIndex(int index) => _startIndex + index;
+
     public T Get(int index) => Capability.Get(_startIndex + index);
     public IEnumerator<T> GetEnumerator() => Capability.Skip(_startIndex).Take(Size).GetEnumerator();
     public int SetMax(int index, T stack, bool simulate = false) => Capability.SetMax(_startIndex + index, stack, simulate);
