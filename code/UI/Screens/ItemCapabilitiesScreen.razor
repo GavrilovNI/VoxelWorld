@@ -87,12 +87,17 @@
         JustMousedDownSlot = true;
         var clickedStack = capability.Get(slotIndex);
 
-        int countToExtract = 0;
-        if (mouseButton == MouseButtons.Left)
-            countToExtract = clickedStack.Count;
-        else if (mouseButton == MouseButtons.Right)
-            countToExtract = clickedStack.Count / 2 + clickedStack.Count % 2;
+        if(!Menu.TakenStack.IsEmpty)
+        {
+            int countToInsert = GetCountToInsert(mouseButton);
+            if (Menu.PlaceStack(capability, slotIndex, countToInsert))
+            {
+                WaitingMouseUps.Add(mouseButton);
+                return;
+            }
+        }
 
+        int countToExtract = GetCountToExtract(mouseButton, clickedStack);
         if(Menu.TakeStack(capability, slotIndex, countToExtract))
             WaitingMouseUps.Add(mouseButton);
     }
@@ -102,15 +107,26 @@
         if(WaitingMouseUps.Remove(mouseButton))
             return;
 
-        var clickedStack = capability.Get(slotIndex);
-
-        int countToInsert = 0;
-        if(mouseButton == MouseButtons.Left)
-            countToInsert = TakenStack.Count;
-        else if(mouseButton == MouseButtons.Right)
-            countToInsert = 1;
-
+        int countToInsert = GetCountToInsert(mouseButton);
         Menu.PlaceStack(capability, slotIndex, countToInsert);
+    }
+
+    protected int GetCountToInsert(MouseButtons mouseButton)
+    {
+        if(mouseButton == MouseButtons.Left)
+            return TakenStack.Count;
+        else if(mouseButton == MouseButtons.Right)
+            return  1;
+        return 0;
+    }
+
+    protected int GetCountToExtract(MouseButtons mouseButton, Stack<Item> clickedStack)
+    {
+        if(mouseButton == MouseButtons.Left)
+            return clickedStack.Count;
+        else if(mouseButton == MouseButtons.Right)
+            return clickedStack.Count / 2 + clickedStack.Count % 2;
+        return 0;
     }
 
     protected override int BuildHash() => HashCode.Combine(Menu, Width);
