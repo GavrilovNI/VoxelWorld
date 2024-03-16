@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using VoxelWorld.Crafting.Recipes;
 
 namespace VoxelWorld;
 
@@ -66,6 +67,7 @@ public sealed class GameController
     public GameSaveHelper? CurrentGameSaveHelper { get; private set; }
 
     public RegistriesContainer Registries { get; } = new();
+    public RecipesContainer Recipes { get; } = new();
 
     public PathedTextureMap BlocksTextureMap { get; } = new("textures/", 3, new Color32(255, 0, 255), 4);
     public BlockMeshMap BlockMeshes { get; } = new();
@@ -210,6 +212,9 @@ public sealed class GameController
             }
             Registries.Add(registries);
         }
+
+        foreach(var (_, mod) in regsiteredMods)
+            mod.RegisterRecipes(Recipes);
 
         foreach(var (id, mod) in regsiteredMods)
         {
