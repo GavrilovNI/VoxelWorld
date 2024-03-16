@@ -24,7 +24,7 @@ SimpleItemCapabilitiesScreen {
 
         &.taken {
             position: absolute;
-            width: 7%; // calculated (capabilities.width(%) / hotbar.size * stack.width(%))
+            width: 76px; // TODO: calculate it
         }
 
         &.hidden {
