@@ -34,5 +34,10 @@ public class IndexedCapabilityPart<T> : IIndexedCapability<T> where T : class, I
     public T Get(int index) => Capability.Get(_startIndex + index);
     public IEnumerator<T> GetEnumerator() => Capability.Skip(_startIndex).Take(Size).GetEnumerator();
     public int SetMax(int index, T stack, bool simulate = false) => Capability.SetMax(_startIndex + index, stack, simulate);
+
+    public int InsertMax(int index, T stack, bool simulate = false) => Capability.InsertMax(_startIndex + index, stack, simulate);
+    public T ExtractMax(int index, int count, bool simulate = false) => Capability.ExtractMax(_startIndex + index, count, simulate);
+    public int ExtractMax(int index, T stack, bool simulate) => Capability.ExtractMax(_startIndex + index, stack, simulate);
+
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
