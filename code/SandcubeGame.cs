@@ -57,6 +57,8 @@ public sealed class GameController
     [Property] public bool ShouldAnimateBlockTextures { get; private set; } = true;
     [Property] public Material OpaqueVoxelsMaterial { get; private set; } = null!;
     [Property] public Material TranslucentVoxelsMaterial { get; private set; } = null!;
+    [Property] public Material OpaqueItemsMaterial { get; private set; } = null!;
+    [Property] public Material TranslucentItemsMaterial { get; private set; } = null!;
     [Property] public Player? LocalPlayer { get; private set; }
 
 
@@ -71,6 +73,8 @@ public sealed class GameController
 
     public PathedTextureMap BlocksTextureMap { get; } = new("textures/", 3, new Color32(255, 0, 255), 4);
     public BlockMeshMap BlockMeshes { get; } = new();
+
+    public PathedTextureMap ItemsTextureMap { get; } = new("textures/", 3, new Color32(255, 0, 255), 4);
 
     private readonly Dictionary<Id, IMod> _mods = new();
 

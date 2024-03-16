@@ -55,6 +55,7 @@
             "_type": "gameobject",
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
           },
+          "OpaqueItemsMaterial": "materials/items_opaque.vmat",
           "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
           "PlayerSpawner": {
             "_type": "component",
@@ -63,6 +64,7 @@
             "component_type": "PlayerSpawner"
           },
           "ShouldAnimateBlockTextures": true,
+          "TranslucentItemsMaterial": "materials/items_translucent.vmat",
           "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat",
           "WorldPrefab": {
             "_type": "gameobject",
