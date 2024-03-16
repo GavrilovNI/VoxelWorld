@@ -13,95 +13,41 @@
 
 @namespace VoxelWorld.UI.Screens
 @attribute [StyleSheet]
-@inherits PanelComponent
-@implements ISlotMouseEventListener
+@inherits ItemCapabilitiesScreen
 
 <root onmousedown=@(e => OnMouseDown(e as MousePanelEvent))>
+
+    @if(Menu is not null)
+    {
+        <div class="capabilities centered-content flex-column">
+
+            <div class="workbench-capability-parent">
+                <ItemCapabilityUI class="capability inputs" Capability=@Menu.WorkbenchCapability.Inputs Width=@(3) MouseEventListener=@this/>
+                <div class="output-parent">
+                    <ItemCapabilityUI class="capability output" Capability=@Menu.WorkbenchCapability.OutputCapability Width=@(1) MouseEventListener=@this/>
+                </div>
+            </div>
+
+            @for(int i = 0; i < Menu.CapabilitiesCount; ++i)
+            {
+                var capability = Menu.GetCapability(i);
+                if (capability == Menu.WorkbenchCapability)
+                    continue;
+                <ItemCapabilityUI class="capability" Capability=@capability Width=@Width MouseEventListener=@this/>
+            }
+        </div>
+    }
+
     <ItemStackUI class="stack taken @(TakenStack.IsEmpty ? "hidden" : string.Empty)" Stack=@TakenStack @ref=TakenStackUI/>
 </root>
 
 @code
 {
-    public WorkbenchMenu Menu { get; set; }
+    public new WorkbenchMenu Menu
+    {
+        get => base.Menu as WorkbenchMenu;
+        set => base.Menu = value;
+    }
+
     public int Width { get; set; } = 9;
-
-    protected bool JustMousedDownSlot { get; set; } = false;
-
-    protected ItemStackUI TakenStackUI { get; set; }
-    protected Stack<Item> TakenStack => Menu.TakenStack;
-
-    protected readonly System.Collections.Generic.HashSet<MouseButtons> WaitingMouseUps = new();
-
-    protected virtual void MoveTakenStack()
-    {
-        if (!TakenStackUI.IsValid())
-            return;
-        var positionByPersent = Mouse.Position / Screen.Size * 100;
-        TakenStackUI.Style.Left = Length.Percent(positionByPersent.x);
-        TakenStackUI.Style.Top = Length.Percent(positionByPersent.y);
-    }
-
-    protected override void OnUpdate()
-    {
-        MoveTakenStack();
-    }
-
-    protected virtual void DropTakenStack(int maxCount) => Menu.DropTakenStack(maxCount);
-
-    protected virtual void ReturnTakenStack() => Menu.ReturnTakenStack();
-
-    public virtual void OnMouseDown(MousePanelEvent mousePanelEvent)
-    {
-        if(JustMousedDownSlot)
-        {
-            JustMousedDownSlot = false;
-            return;
-        }
-        JustMousedDownSlot = false;
-
-        var mouseButton = mousePanelEvent.GetMouseButton();
-        if(mouseButton == MouseButtons.None)
-            return;
-
-        int countToDrop = 0;
-        if(mouseButton == MouseButtons.Left)
-            countToDrop = TakenStack.Count;
-        else if(mouseButton == MouseButtons.Right)
-            countToDrop = 1;
-
-        DropTakenStack(countToDrop);
-    }
-
-    public virtual void OnMouseDownOnSlot(IReadOnlyIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
-    {
-        JustMousedDownSlot = true;
-        var clickedStack = capability.Get(slotIndex);
-
-        int countToExtract = 0;
-        if (mouseButton == MouseButtons.Left)
-            countToExtract = clickedStack.Count;
-        else if (mouseButton == MouseButtons.Right)
-            countToExtract = clickedStack.Count / 2 + clickedStack.Count % 2;
-
-        if(Menu.TakeStack(capability, slotIndex, countToExtract))
-            WaitingMouseUps.Add(mouseButton);
-    }
-
-    public virtual void OnMouseUpOnSlot(IReadOnlyIndexedCapability<Stack<Item>> capability, int slotIndex, MouseButtons mouseButton)
-    {
-        if(WaitingMouseUps.Remove(mouseButton))
-            return;
-
-        var clickedStack = capability.Get(slotIndex);
-
-        int countToInsert = 0;
-        if(mouseButton == MouseButtons.Left)
-            countToInsert = TakenStack.Count;
-        else if(mouseButton == MouseButtons.Right)
-            countToInsert = 1;
-
-        Menu.PlaceStack(capability, slotIndex, countToInsert);
-    }
-
-    protected override int BuildHash() => HashCode.Combine(Menu, Width);
 }
