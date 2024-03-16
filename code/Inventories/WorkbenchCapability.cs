@@ -109,4 +109,6 @@ public class WorkbenchCapability : IndexedCapability<Stack<Item>>
     }
 
     protected virtual void Process() => CurrentRecipe!.Process(Inputs);
+
+    public override int GetHashCode() => StacksHashCode;
 }
