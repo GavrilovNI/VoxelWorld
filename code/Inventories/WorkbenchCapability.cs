@@ -20,6 +20,7 @@ public class WorkbenchCapability : IndexedCapability<Stack<Item>>
     }
 
     public IIndexedCapability<Stack<Item>> Inputs { get; }
+    public IIndexedCapability<Stack<Item>> OutputCapability { get; }
 
     private int? _stacksHashCode = null;
     protected int StacksHashCode
@@ -43,6 +44,7 @@ public class WorkbenchCapability : IndexedCapability<Stack<Item>>
 
         Size = inputsCount + 1;
         Inputs = new IndexedCapabilityPart<Stack<Item>>(this, inputsCount);
+        OutputCapability = new IndexedCapabilityPart<Stack<Item>>(this, inputsCount, 1);
     }
 
     public override Stack<Item> Get(int index) => _stacks.GetValueOrDefault(index, Stack<Item>.Empty);
