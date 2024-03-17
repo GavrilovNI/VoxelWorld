@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sandbox.Utility;
 
 namespace VoxelWorld.IO.Worlds;
 
@@ -31,6 +32,7 @@ public class WorldSaver : Component, ISaver
         SaveMarker saveMarker = SaveMarker.NewNotSaved;
 
         var unsavedChunks = await World.SaveUnsavedChunks(saveMarker);
+        var outOfLimitsEntities = World.SaveOutOfLimitsEntitites(saveMarker);
         var unsavedPlayers = World.SaveAllPlayers();
 
         TaskCompletionSource<bool> taskCompletionSource = new();
@@ -48,6 +50,8 @@ public class WorldSaver : Component, ISaver
 
                 SavePlayers(GameSaveHelper.PlayersFileSystem, unsavedPlayers);
 
+                SaveOutOfLimitsEntities(worldSaveHelper.FileSystem, outOfLimitsEntities);
+
                 saveMarker.MarkSaved();
                 taskCompletionSource.SetResult(true);
             }
@@ -59,6 +63,13 @@ public class WorldSaver : Component, ISaver
             }
         });
         return await taskCompletionSource.Task;
+    }
+
+    protected virtual void SaveOutOfLimitsEntities(BaseFileSystem fileSystem, BinaryTag tag)
+    {
+        using var stream = fileSystem.OpenWrite("out_of_limits.entities");
+        using var writer = new BinaryWriter(stream);
+        tag.Write(writer);
     }
 
     protected virtual void SavePlayers(BaseFileSystem fileSystem, IReadOnlyDictionary<ulong, BinaryTag> playerTags)

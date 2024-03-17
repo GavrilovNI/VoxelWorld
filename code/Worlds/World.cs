@@ -36,10 +36,11 @@ public class World : Component, IWorldAccessor, ITickable
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
     [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3Int(-10000, -10000, -16), new Vector3Int(10000, 10000, 16));
     [Property] public BBoxInt Limits => LimitsInChunks * WorldOptions.ChunkSize;
+    [Property] protected float EntitiesLimitThreshold { get; set; } = 32;
     [Property] protected bool TickByItself { get; set; } = true;
     [Property] protected bool IsService { get; set; } = false;
 
-    public bool Initialized { get; private set; }
+    public InitializationStatus InitializationStatus { get; private set; } = InitializationStatus.NotInitialized;
     public new ModedId Id { get; private set; }
     public BaseFileSystem? WorldFileSystem { get; private set; }
     public Vector3Int ChunkSize => WorldOptions.ChunkSize;
@@ -50,19 +51,23 @@ public class World : Component, IWorldAccessor, ITickable
     
     private readonly Dictionary<ulong, Player> _players = new();
 
+
+    protected Chunk OutOfLimitsChunk { get; private set; } = null!;
+
     protected readonly object ChunksCreationLocker = new();
     protected CancellationTokenSource TaskCreationTokenSource = new();
     protected readonly ChunksCollection Chunks = new(Vector3Int.XYZIterationComparer);
     protected readonly Dictionary<Vector3Int, (Task<ChunkCreationData> ChunkTask, ChunkCreationStatus Status, Chunk? PartiallyLoadedChunk)> CreatingChunks = new();
 
 
-    public void Initialize(in ModedId id, BaseFileSystem fileSystem, in WorldOptions defaultWorldOptions)
+    public async Task Initialize(ModedId id, BaseFileSystem fileSystem, WorldOptions defaultWorldOptions)
     {
-        if(Initialized)
-            throw new InvalidOperationException($"{nameof(World)} {this} was already initialized");
+        ThreadSafe.AssertIsMainThread();
+        if(InitializationStatus != InitializationStatus.NotInitialized)
+            throw new InvalidOperationException($"{nameof(World)} {this} was initializing/already initialized");
         if(IsService)
             throw new InvalidOperationException($"{nameof(World)} {this} is service, it can't be initialized");
-        Initialized = true;
+        InitializationStatus = InitializationStatus.Initializing;
 
         Id = id;
         WorldFileSystem = fileSystem;
@@ -78,8 +83,33 @@ public class World : Component, IWorldAccessor, ITickable
             saveHelper.SaveWorldOptions(WorldOptions);
         }
 
+        if(!OutOfLimitsChunk.IsValid())
+            CreateOutOfLimitsChunk();
+
+        GameObject.Enabled = true;
+
+        await LoadExtraData(saveHelper);
+
+        InitializationStatus = InitializationStatus.Initialized;
         foreach(var listener in Components.GetAll<IWorldInitializationListener>(FindMode.EverythingInSelfAndDescendants))
             listener.OnWorldInitialized(this);
+    }
+
+    protected virtual async Task LoadExtraData(WorldSaveHelper saveHelper)
+    {
+        var entities = await Task.RunInThreadAsync(() => saveHelper.ReadOutOfLimitsEntities(this));
+
+        List<Task> tasks = new();
+        foreach(var entity in entities)
+        {
+            if(entity is Player)
+            {
+                entity.Destroy();
+                continue;
+            }
+            tasks.Add(AddEntity(entity));
+        }
+        await Task.WhenAll(tasks);
     }
 
     protected override void OnAwake()
@@ -91,12 +121,27 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected override void OnStart()
     {
-        if(!Initialized && !IsService)
+        if(InitializationStatus == InitializationStatus.NotInitialized && !IsService)
         {
-            Log.Warning($"{nameof(World)} {this} was not initialized before OnStart, destroying...");
+            Log.Warning($"{nameof(World)} {this} was not initialized OnStart, destroying...");
             GameObject.Destroy();
             return;
         }
+
+        if(!OutOfLimitsChunk.IsValid())
+            CreateOutOfLimitsChunk();
+    }
+
+    protected virtual void CreateOutOfLimitsChunk()
+    {
+        if(OutOfLimitsChunk.IsValid())
+            throw new InvalidOperationException($"{nameof(OutOfLimitsChunk)} was already created");
+
+        OutOfLimitsChunk = ChunksCreator.CreateChunkObject(LimitsInChunks.Mins - Vector3Int.One);
+        OutOfLimitsChunk.GameObject.Parent = GameObject;
+        OutOfLimitsChunk.GameObject.Name = "Out of limits Chunk";
+        OutOfLimitsChunk.EntityAdded += OnEntityAddedToChunk;
+        OutOfLimitsChunk.EntityRemoved += OnEntityRemovedFromChunk;
     }
 
     protected override void OnDestroy()
@@ -111,6 +156,10 @@ public class World : Component, IWorldAccessor, ITickable
         Chunks.ChunkLoaded -= OnChunkLoaded;
         Chunks.ChunkUnloaded -= OnChunkUnloaded;
         Chunks.Dispose();
+
+        OutOfLimitsChunk.EntityAdded -= OnEntityAddedToChunk;
+        OutOfLimitsChunk.EntityRemoved -= OnEntityRemovedFromChunk;
+        OutOfLimitsChunk.GameObject.Destroy();
     }
 
     protected override void OnUpdate()
@@ -139,16 +188,37 @@ public class World : Component, IWorldAccessor, ITickable
         if(!object.ReferenceEquals(this, entity.World))
             throw new InvalidOperationException($"{nameof(Entity)}({entity})'s world was not set to {nameof(World)} {this}");
 
-        bool wasEnabled = entity.Enabled;
-        entity.Enabled = false;
-        var chunkCreationStatus = entity is Player ? ChunkCreationStatus.Finishing : ChunkCreationStatus.Preloading;
-        var chunk = await GetOrCreateChunk(entity.ChunkPosition, chunkCreationStatus);
-        entity.Enabled = wasEnabled;
-        chunk.AddEntity(entity);
+
+        if(IsChunkInLimits(entity.ChunkPosition))
+        {
+            bool wasEnabled = entity.Enabled;
+            entity.Enabled = false;
+            var chunkCreationStatus = entity is Player ? ChunkCreationStatus.Finishing : ChunkCreationStatus.Preloading;
+            var chunk = await GetOrCreateChunk(entity.ChunkPosition, chunkCreationStatus);
+            entity.Enabled = wasEnabled;
+            chunk.AddEntity(entity);
+        }
+        else
+        {
+            var entityBlockPosition = GetBlockPosition(entity.Transform.Position);
+            var distanceToLimits = Limits.ClosestPoint(entityBlockPosition).Distance(entityBlockPosition);
+            if(distanceToLimits > EntitiesLimitThreshold)
+            {
+                entity.Destroy();
+                return;
+            }
+
+            OutOfLimitsChunk.AddEntity(entity);
+        }
     }
 
-    public bool RemoveEntity(Entity entity) =>
-        Chunks.TryGet(entity.ChunkPosition, out var chunk) && chunk.RemoveEntity(entity);
+    public bool RemoveEntity(Entity entity)
+    {
+        if(!IsChunkInLimits(entity.ChunkPosition))
+            return OutOfLimitsChunk.RemoveEntity(entity);
+
+        return Chunks.TryGet(entity.ChunkPosition, out var chunk) && chunk.RemoveEntity(entity);
+    }
 
     protected virtual void OnEntityAddedToChunk(Chunk chunk, Entity entity)
     {
@@ -532,6 +602,8 @@ public class World : Component, IWorldAccessor, ITickable
 
         return chunk.Save(saveMarker);
     }
+
+    public virtual ListTag SaveOutOfLimitsEntitites(IReadOnlySaveMarker saveMarker) => OutOfLimitsChunk.Save(saveMarker).Entities;
 
     public virtual async Task<Dictionary<Vector3Int, (BinaryTag Blocks, ListTag Entities)>> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
     {

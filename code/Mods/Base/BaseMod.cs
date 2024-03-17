@@ -86,6 +86,6 @@ public sealed class BaseMod : Component, IMod
 
     public void OnGameLoaded()
     {
-        GameController.Instance!.TryAddWorld(_mainWorldId, out _);
+        _ = GameController.Instance!.TryAddWorld(_mainWorldId);
     }
 }

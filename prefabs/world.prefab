@@ -18,6 +18,7 @@
           "_type": "gameobject",
           "go": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa"
         },
+        "EntitiesLimitThreshold": 32,
         "IsService": false,
         "Limits": {
           "Mins": "-160000,-160000,-256",

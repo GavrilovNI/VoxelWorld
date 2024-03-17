@@ -23,9 +23,7 @@ using VoxelWorld.Crafting.Recipes;
 
 namespace VoxelWorld;
 
-public sealed class GameController
-
-    : Component, ILocalPlayerInitializable
+public sealed class GameController : Component, ILocalPlayerInitializable
 {
     public static event Action? Initialized;
     public static event Action<World>? WorldAdded;
@@ -152,22 +150,19 @@ public sealed class GameController
         return result;
     }
 
-    public bool TryAddWorld(ModedId id, out World world)
+    public async Task<World?> TryAddWorld(ModedId id)
     {
         AssertLoadingStatus(LoadingStatus.Loaded);
 
-        if(_worlds.TryGetWorld(id, out world))
-            return false;
+        if(_worlds.TryGetWorld(id, out var world))
+            return null;
 
         if(CurrentGameSaveHelper is null)
-        {
-            world = null!;
-            return false;
-        }
+            return null;
 
         var worldFileSystem = CurrentGameSaveHelper.GetOrCreateWorldFileSystem(id);
 
-        world = CreateWorld(id, worldFileSystem);
+        world = await CreateWorld(id, worldFileSystem);
         _worlds.AddWorld(world);
         WorldAdded?.Invoke(world);
 
@@ -177,7 +172,7 @@ public sealed class GameController
             _ = PlayerSpawner.SpawnPlayer(Steam.SteamId, spawnConfig, CancellationToken.None);
         }
 
-        return true;
+        return world;
     }
 
     public async Task LoadMods(IEnumerable<IMod> mods)
@@ -237,7 +232,7 @@ public sealed class GameController
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 
 
-    private World CreateWorld(ModedId id, BaseFileSystem fileSystem, bool enable = true)
+    private async Task<World> CreateWorld(ModedId id, BaseFileSystem fileSystem, bool enable = true)
     {
         var cloneConfig = new CloneConfig(Transform.World, WorldsParent, false, $"World {id}");
         var worldGameObject = WorldPrefab.Clone(cloneConfig);
@@ -245,9 +240,7 @@ public sealed class GameController
         var world = worldGameObject.Components.Get<World>(true);
 
         var worldOptions = DefaultWorldOptions with { Seed = CurrentGameInfo!.Value.Seed + id.GetHashCode() };
-        world.Initialize(id, fileSystem, worldOptions);
-
-        worldGameObject.Enabled = enable;
+        await world.Initialize(id, fileSystem, worldOptions);
         return world;
     }
 
