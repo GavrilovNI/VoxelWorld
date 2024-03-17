@@ -13,4 +13,6 @@ public static class DefaultValues
 
     public const float FlatItemPixelSize = MathV.UnitsInMeter / 16f;
     public const float FlatItemThickness = MathV.UnitsInMeter / 16f;
+
+    public const float ItemModelScale = 0.4f;
 }

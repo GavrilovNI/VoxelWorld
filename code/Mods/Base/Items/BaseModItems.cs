@@ -1,5 +1,7 @@
-﻿using VoxelWorld.Items;
-using VoxelWorld.Mods.Base;
+﻿using Sandbox;
+using VoxelWorld.Items;
+using VoxelWorld.Meshing;
+using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 
 namespace VoxelWorld.Mods.Base.Items;
@@ -52,4 +54,8 @@ public sealed class BaseModItems : ModItems
 
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Workbench { get; private set; } = null!;
+
+    public Item Stick { get; private set; } = new Item(MakeId("stick"),
+        ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/stick.png"),
+        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/stick.png"));
 }

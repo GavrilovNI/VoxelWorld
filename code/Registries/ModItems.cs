@@ -53,7 +53,7 @@ public class ModItems : ModRegisterables<Item>
 
             Texture texture = await GetTexture(autoAttribute, block.DefaultBlockState);
 
-            float modelScale = 0.3f;
+            float modelScale = DefaultValues.ItemModelScale;
 
             var isTransparent = block.Properties.IsTransparent;
             Material material;

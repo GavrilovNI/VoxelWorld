@@ -6,6 +6,27 @@ namespace VoxelWorld.Meshing;
 
 public static class ItemFlatModelCreator
 {
+    public static Model CreateModelFromMap(string texturePath, Material? material = null, float scale = DefaultValues.ItemModelScale, float pixelSize = DefaultValues.FlatItemPixelSize, float thickness = DefaultValues.FlatItemThickness)
+    {
+        var unlimitedMesh = CreateFromMap(texturePath, pixelSize * scale, thickness * scale);
+
+        material ??= GameController.Instance!.TranslucentItemsMaterial;
+
+        ModelBuilder modelBuilder = new();
+        Mesh mesh = new(material);
+        unlimitedMesh.CreateBuffersFor(mesh, 0);
+        modelBuilder.AddMesh(mesh);
+        return modelBuilder.Create();
+    }
+
+    public static UnlimitedMesh<ComplexVertex> CreateFromMap(string texturePath, float pixelSize = DefaultValues.FlatItemPixelSize, float thickness = DefaultValues.FlatItemThickness)
+    {
+        var map = GameController.Instance!.ItemsTextureMap;
+        var textureRect = map.GetOrLoadTexture(texturePath).TextureRect;
+        var texture = map.Texture;
+        return Create(texture, textureRect, pixelSize, thickness);
+    }
+
     public static UnlimitedMesh<ComplexVertex> Create(Texture texture, RectInt textureRect, float pixelSize = DefaultValues.FlatItemPixelSize, float thickness = DefaultValues.FlatItemThickness)
     {
         List<ComplexVertex> vertices = new();
