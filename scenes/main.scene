@@ -181,6 +181,7 @@
             {
               "__type": "FakeLoadingScreen",
               "__guid": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
+              "BackgroundImagePath": "textures/voxelworld/ui/background.png",
               "FinishingTime": 1,
               "LastPercent": 0.95,
               "LastSpeed": 0.005,
