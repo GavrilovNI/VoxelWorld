@@ -119,7 +119,7 @@ public class PlayerSpawner : Component
     {
         var limits = world.Limits;
         var blockMeshes = GameController.Instance!.BlockMeshes;
-        foreach(var position in range.GetPositions())
+        foreach(var position in range.GetPositions(false))
         {
             if(cancellationToken.IsCancellationRequested)
                 return false;
