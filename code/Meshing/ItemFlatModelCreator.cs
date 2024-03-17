@@ -1,7 +1,6 @@
 ﻿using Sandbox;
 using System.Collections.Generic;
 using VoxelWorld.Mth;
-using VoxelWorld.Texturing;
 
 namespace VoxelWorld.Meshing;
 
@@ -43,15 +42,15 @@ public static class ItemFlatModelCreator
                 indices.Add(d.back);
                 indices.Add(c.back);
 
-                var shouldAddPixelRight = x != textureRect.Left && texture.GetPixel(x - 1, y).a != 0;
-                var shouldAddPixelLeft = x != textureRect.Right - 1 && texture.GetPixel(x + 1, y).a != 0;
-                var shouldAddPixelDown = y != textureRect.Top && texture.GetPixel(x, y - 1).a != 0;
-                var shouldAddPixelUp = y != textureRect.Bottom - 1 && texture.GetPixel(x, y + 1).a != 0;
+                var shouldAddPixelRight = x != textureRect.Right - 1 && texture.GetPixel(x + 1, y).a != 0;
+                var shouldAddPixelLeft = x != textureRect.Left && texture.GetPixel(x - 1, y).a != 0;
+                var shouldAddPixelDown = y != textureRect.Bottom - 1 && texture.GetPixel(x, y + 1).a != 0;
+                var shouldAddPixelUp = y != textureRect.Top && texture.GetPixel(x, y - 1).a != 0;
 
-                if(!shouldAddPixelLeft)
+                if(!shouldAddPixelRight)
                 {
-                    var aa = getOrAddSides(x + 1, y, Vector3.Left);
-                    var bb = getOrAddSides(x + 1, y + 1, Vector3.Left);
+                    var aa = getOrAddSides(x + 1, y, Vector3.Right);
+                    var bb = getOrAddSides(x + 1, y + 1, Vector3.Right);
 
                     indices.Add(aa.front);
                     indices.Add(bb.front);
@@ -61,10 +60,10 @@ public static class ItemFlatModelCreator
                     indices.Add(aa.front);
                 }
 
-                if(!shouldAddPixelRight)
+                if(!shouldAddPixelLeft)
                 {
-                    var aa = getOrAddSides(x, y, Vector3.Right);
-                    var bb = getOrAddSides(x, y + 1, Vector3.Right);
+                    var aa = getOrAddSides(x, y, Vector3.Left);
+                    var bb = getOrAddSides(x, y + 1, Vector3.Left);
 
                     indices.Add(aa.back);
                     indices.Add(bb.back);
@@ -76,28 +75,28 @@ public static class ItemFlatModelCreator
 
                 if(!shouldAddPixelUp)
                 {
-                    var aa = getOrAddSides(x, y + 1, Vector3.Up);
-                    var bb = getOrAddSides(x + 1, y + 1, Vector3.Up);
+                    var aa = getOrAddSides(x, y, Vector3.Up);
+                    var bb = getOrAddSides(x + 1, y, Vector3.Up);
 
-                    indices.Add(aa.front);
-                    indices.Add(aa.back);
-                    indices.Add(bb.back);
-                    indices.Add(bb.back);
                     indices.Add(bb.front);
+                    indices.Add(bb.back);
+                    indices.Add(aa.back);
+                    indices.Add(aa.back);
                     indices.Add(aa.front);
+                    indices.Add(bb.front);
                 }
 
                 if(!shouldAddPixelDown)
                 {
-                    var aa = getOrAddSides(x, y, Vector3.Down);
-                    var bb = getOrAddSides(x + 1, y, Vector3.Down);
+                    var aa = getOrAddSides(x, y + 1, Vector3.Down);
+                    var bb = getOrAddSides(x + 1, y + 1, Vector3.Down);
 
-                    indices.Add(aa.back);
-                    indices.Add(aa.front);
-                    indices.Add(bb.front);
-                    indices.Add(bb.front);
                     indices.Add(bb.back);
+                    indices.Add(bb.front);
+                    indices.Add(aa.front);
+                    indices.Add(aa.front);
                     indices.Add(aa.back);
+                    indices.Add(bb.back);
                 }
             }
         }
@@ -119,20 +118,22 @@ public static class ItemFlatModelCreator
             if(sideIndices.TryGetValue((x, y, normal), out var result))
                 return result;
 
-            var indices = addVertices(x, y, normal, normal, Vector3.Backward);
+            var backUvMove = new Vector2(normal.y, normal.z);
+            var indices = addVertices(x, y, normal, normal, Vector3.Backward, backUvMove);
             sideIndices[(x, y, normal)] = indices;
             return indices;
         }
 
-        (ushort front, ushort back) addVertices(int x, int y, in Vector3 frontNormal, in Vector3 backNormal, in Vector3 tangent)
+        (ushort front, ushort back) addVertices(int x, int y, in Vector3 frontNormal, in Vector3 backNormal, in Vector3 tangent, in Vector2 moveBackUv = default)
         {
             var positionFront = new Vector3(0f, (textureRect.Right - x) * pixelSize, (textureRect.Bottom - y) * pixelSize);
             var positionBack = new Vector3(thickness, positionFront.y, positionFront.z);
 
-            var uv = new Vector4(1f * x / texture.Width, 1f * y / texture.Height, 0f, 0f);
+            var uvFront = new Vector4(1f * x / texture.Width, 1f * y / texture.Height, 0f, 0f);
+            var uvBack = uvFront + new Vector4(moveBackUv.x / texture.Width, moveBackUv.y / texture.Height, 0f, 0f);
 
-            vertices.Add(new Vertex(positionFront, frontNormal, tangent, uv));
-            vertices.Add(new Vertex(positionBack, backNormal, tangent, uv));
+            vertices.Add(new Vertex(positionFront, frontNormal, tangent, uvFront));
+            vertices.Add(new Vertex(positionBack, backNormal, tangent, uvBack));
 
             return ((ushort)(vertices.Count - 2), (ushort)(vertices.Count - 1));
         }
