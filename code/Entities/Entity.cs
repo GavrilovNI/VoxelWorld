@@ -56,8 +56,8 @@ public abstract class Entity : Component
         var oldWorld = World;
         World = newWorld;
         oldWorld?.RemoveEntity(this);
-        World?.AddEntity(this);
         ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+        World?.AddEntity(this);
         OnChangedWorld(oldWorld, World);
         ChangedWorld?.Invoke(this, oldWorld, World);
         return true;
