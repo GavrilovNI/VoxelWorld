@@ -211,11 +211,12 @@ public abstract class Entity : Component
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
 
         var entityType = GameController.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
-        EntitySpawnConfig spawnConfig = new(world, false);
-        var entity = entityType.CreateEntity(spawnConfig);
 
         var transform = compoundTag.Get<Transform>("transform");
-        entity.Transform.World = world.GameObject.Transform.Local.ToWorld(transform);
+        transform = world.GameObject.Transform.Local.ToWorld(transform);
+
+        EntitySpawnConfig spawnConfig = new(transform, world, false);
+        var entity = entityType.CreateEntity(spawnConfig);
 
         entity.ReadAdditional(compoundTag.GetTag("data"));
 
@@ -226,7 +227,6 @@ public abstract class Entity : Component
     public static bool TryReadWithWorld(BinaryTag tag, out Entity entity, bool enable = true)
     {
         CompoundTag compoundTag = tag.To<CompoundTag>();
-        var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
         var worldId = ModedId.Read(compoundTag.GetTag("world_id"));
         if(!GameController.Instance!.Worlds.TryGetWorld(worldId, out World world))
         {
@@ -234,16 +234,7 @@ public abstract class Entity : Component
             return false;
         }
 
-        var entityType = GameController.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
-        EntitySpawnConfig spawnConfig = new(world, false);
-        entity = entityType.CreateEntity(spawnConfig);
-
-        var transform = compoundTag.Get<Transform>("transform");
-        entity.Transform.World = world.GameObject.Transform.Local.ToWorld(transform);
-
-        entity.ReadAdditional(compoundTag.GetTag("data"));
-
-        entity.Enabled = enable;
+        entity = Read(tag, world, enable);
         return true;
     }
 }
