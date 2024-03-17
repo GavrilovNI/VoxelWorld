@@ -2,7 +2,7 @@
 
 namespace VoxelWorld;
 
-public enum InitalizationStatus
+public enum InitializationStatus
 {
     NotInitialized,
     Initializing,
