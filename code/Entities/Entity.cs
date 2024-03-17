@@ -31,7 +31,7 @@ public abstract class Entity : Component
 
     public new bool Enabled
     {
-        get => GameObject.Enabled;
+        get => GameObject.Active;
         set => GameObject.Enabled = value;
     }
 
@@ -42,6 +42,15 @@ public abstract class Entity : Component
         Initialized = true;
 
         TypeId = typeId;
+
+        _oldTransform = Transform.World;
+        Transform.OnTransformChanged = () =>
+        {
+            tranformChanged = true;
+            if(!Enabled)
+                HandleTransformChanging();
+        };
+
         ChangeWorld(world);
     }
 
@@ -74,12 +83,6 @@ public abstract class Entity : Component
     protected sealed override void OnAwake()
     {
         Tags.Add("entity");
-
-        _oldTransform = Transform.World;
-        Transform.OnTransformChanged = () =>
-        {
-            tranformChanged = true;
-        };
         OnAwakeChild();
     }
     protected virtual void OnAwakeChild() { }
