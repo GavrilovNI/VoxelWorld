@@ -28,6 +28,7 @@
         {
           "__type": "MainMenu",
           "__guid": "25a5e17d-9e30-4673-a0ab-b958c453891f",
+          "BackgroundImagePath": "textures/voxelworld/ui/background.png",
           "GameSelectionMenu": {
             "_type": "component",
             "component_id": "4ed0e177-b8b8-47da-952d-be3d143ec72d",
@@ -44,6 +45,7 @@
         {
           "__type": "GameSelectionMenu",
           "__guid": "4ed0e177-b8b8-47da-952d-be3d143ec72d",
+          "BackgroundImagePath": "textures/voxelworld/ui/background.png",
           "GameCreationMenu": {
             "_type": "component",
             "component_id": "16e1c163-0361-44d1-8f4e-5ab87d53bcd6",
@@ -67,6 +69,7 @@
         {
           "__type": "GameCreationMenu",
           "__guid": "16e1c163-0361-44d1-8f4e-5ab87d53bcd6",
+          "BackgroundImagePath": "textures/voxelworld/ui/background.png",
           "GameLoader": {
             "_type": "component",
             "component_id": "f0a1c673-e05a-4438-9cf2-fac8c28f9594",
@@ -138,7 +141,7 @@
   },
   "Title": "mainmenu",
   "Description": "",
-  "LastSaved": "2024-03-14T15:17:08.6159818\u002B01:00",
+  "LastSaved": "2024-03-17T04:07:41.0206291\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

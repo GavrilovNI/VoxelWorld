@@ -6,12 +6,24 @@
 @inherits PanelComponent
 
 
-<root>
+<root style="background-image: url(@BackgroundImagePath);">
 	<div class="centered-content flex-column fill-parent">
 		<AdaptiveLabel class="title centered-content">Voxel World</AdaptiveLabel>
 		<div class="buttons centered-content flex-column">
 			<div id="button singleplayer" class="button" onclick="@(OpenGameSelectingMenu)">
 				<AdaptiveLabel>Singleplayer</AdaptiveLabel>
+			</div>
+			<div id="button multiplayer" class="button disabled">
+				<AdaptiveLabel>Multiplayer</AdaptiveLabel>
+			</div>
+			<div id="button mods" class="button disabled">
+				<AdaptiveLabel>Mods</AdaptiveLabel>
+			</div>
+			<div id="button settigs" class="button disabled">
+				<AdaptiveLabel>Settings</AdaptiveLabel>
+			</div>
+			<div id="button quit" class="button" onclick="@(Quit)">
+				<AdaptiveLabel>Quit</AdaptiveLabel>
 			</div>
 		</div>
 	</div>
@@ -22,9 +34,15 @@
 {
 	[Property] protected MainMenuController MainMenuController { get; set; } = null!;
 	[Property] protected GameSelectionMenu GameSelectionMenu { get; set; } = null!;
+	[Property] protected string BackgroundImagePath { get; set; } = "textures/voxelworld/ui/background.png";
 
 	protected void OpenGameSelectingMenu()
 	{
 		MainMenuController.OpenMenu(GameSelectionMenu);
+	}
+
+	protected void Quit()
+	{
+		Game.Close();
 	}
 }

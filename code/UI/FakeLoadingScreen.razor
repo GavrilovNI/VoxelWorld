@@ -9,7 +9,7 @@
 @inherits PanelComponent
 @implements ILocalPlayerInitializable
 
-<root class="enabled">
+<root class="enabled" style="background-image: url(@BackgroundImagePath);">
 	<div class="title-holder">
 		<AdaptiveLabel class="title">Loading...</AdaptiveLabel>
 	</div>
@@ -27,6 +27,7 @@
 	[Property] protected float LastSpeed { get; set; } = 0.005f;
 	[Property] protected float WaitingPercent { get; set; } = 0.99f;
 	[Property] protected float FinishingTime { get; set; } = 1f;
+	[Property] protected string BackgroundImagePath { get; set; } = "textures/voxelworld/ui/background.png";
 
 	protected Panel FillPanel { get; set; } = null!;
 

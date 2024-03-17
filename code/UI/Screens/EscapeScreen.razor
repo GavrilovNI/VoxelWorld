@@ -11,6 +11,10 @@
 
 <root>
 	<div class="buttons">
+		<div class="button" onclick="@(Back)">Back</div>
+		<div class="button disabled">Mods</div>
+		<div class="button disabled">Settings</div>
+		<div id="save-game-button" class="button" onclick="@(() => _ = Save())">Save</div>
 		<div id="leave-game-button" class="button" onclick="@(() => _ = SaveAndLeaveGame())">Save and Leave</div>
 	</div>
 </root>
@@ -20,9 +24,14 @@
 {
 	protected bool Saving = false;
 
-	protected async Task SaveAndLeaveGame()
+	protected void Back()
 	{
-		if (Saving)
+		MenuController.Instance.CloseMenu();
+	}
+
+	protected async Task Save()
+	{
+		if(Saving)
 			return;
 
 		Saving = true;
@@ -30,11 +39,20 @@
 			GameController.LoadingStatus == LoadingStatus.Loaded)
 		{
 			var saved = await GameController.Instance!.SaveGame();
-			if (!saved)
+			if(!saved)
 				Log.Warning("Couldn't save something");
 		}
 
-		Game.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
 		Saving = false;
+	}
+
+	protected async Task SaveAndLeaveGame()
+	{
+		if (Saving)
+			return;
+
+		await Save();
+
+		Game.ActiveScene.LoadFromFile("scenes/mainmenu.scene");
 	}
 }

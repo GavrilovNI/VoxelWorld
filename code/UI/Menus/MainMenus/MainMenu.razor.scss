@@ -1,10 +1,11 @@
 MainMenu {
-    background-color: #333;
     width: 100vw;
     height: 100vh;
     z-index: 999;
     align-items: center;
     justify-content: center;
+    background-position: center;
+    background-size: auto 100%;
     pointer-events: all;
     font-family: Poppins;
 
@@ -27,18 +28,21 @@ MainMenu {
     .title {
         position: relative;
         font-size: 10%;
+        color: #206a83;
+        text-stroke: 2px #9dd9ee;
         padding-bottom: 30px;
     }
 
     .buttons {
         position: relative;
-        height: 50%;
+        height: 55%;
         width: 700px;
 
         .button {
             background-color: #444;
+            border: 1px solid #777;
             width: 100%;
-            height: 25%;
+            height: 20%;
             align-items: center;
             justify-content: center;
             align-self: flex-start;
@@ -49,6 +53,19 @@ MainMenu {
                 text-align: center;
                 width: 100%;
                 font-size: 30%;
+                color: #aaa;
+            }
+
+            &.disabled {
+                background-color: #333;
+
+                &:hover {
+                    background-color: #333;
+                }
+
+                &:active {
+                    background-color: #333;
+                }
             }
 
             &:hover {
