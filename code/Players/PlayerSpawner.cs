@@ -140,7 +140,7 @@ public class PlayerSpawner : Component
     protected virtual Task PreloadChunks(IWorldAccessor world, BBoxInt range, Vector3 spawnPosition)
     {
         Vector3Int centerChunkPosition = world.GetChunkPosition(spawnPosition);
-        var positionsToLoad = (range + centerChunkPosition).GetPositions().ToHashSet();
+        var positionsToLoad = (range + centerChunkPosition).GetPositions().Where(p => world.IsChunkInLimits(p)).ToHashSet();
 
         return world.CreateChunksSimultaneously(positionsToLoad);
     }
