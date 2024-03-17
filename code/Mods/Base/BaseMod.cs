@@ -74,6 +74,8 @@ public sealed class BaseMod : Component, IMod
     {
         recipesContainer.AddRecipe(new WorkbenchShaplessRecipe(MakeId("wood_log_to_planks"),
             new Item[1] { Items.WoodLog }, new Stack<Item>(Items.WoodPlanks, 6)));
+        recipesContainer.AddRecipe(new WorkbenchShapedRecipe(MakeId("wood_planks_to_sticks"),
+            new Item?[2, 1] { { Items.WoodPlanks }, { Items.WoodPlanks } }, new Stack<Item>(Items.Stick, 8)));
     }
 
     public void OnGameLoaded()
