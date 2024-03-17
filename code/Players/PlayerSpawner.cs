@@ -1,13 +1,10 @@
 ﻿using Sandbox;
-using VoxelWorld.Data;
 using VoxelWorld.Entities;
 using VoxelWorld.Entities.Types;
-using VoxelWorld.IO.Helpers;
 using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.Mods.Base;
 using VoxelWorld.Mth;
 using VoxelWorld.Worlds;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -36,10 +33,24 @@ public class PlayerSpawner : Component
 
             var spawnPosition = player.Transform.Position;
             var spawnBlockPosition = world.GetBlockPosition(spawnPosition);
-            spawnBlockPosition = await FindSafePosition(world, spawnBlockPosition, SafeBounds, cancellationToken);
 
-            spawnPosition = world.GetBlockGlobalPosition(spawnBlockPosition) +
-                new Vector3(MathV.UnitsInMeter / 2f, MathV.UnitsInMeter / 2f, 0);
+            if(cancellationToken.IsCancellationRequested)
+                return null;
+
+            var currentBounds = SafeBounds + spawnBlockPosition;
+            if(world.Limits.Overlaps(currentBounds))
+            {
+                if(!await IsEmpty(world, currentBounds, cancellationToken))
+                {
+                    if(cancellationToken.IsCancellationRequested)
+                        return null;
+
+                    spawnBlockPosition = await FindSafePosition(world, spawnBlockPosition, SafeBounds, cancellationToken);
+
+                    spawnPosition = world.GetBlockGlobalPosition(spawnBlockPosition) +
+                        new Vector3(MathV.UnitsInMeter / 2f, MathV.UnitsInMeter / 2f, 0);
+                }
+            }
 
             if(cancellationToken.IsCancellationRequested)
                 return null;
@@ -106,11 +117,27 @@ public class PlayerSpawner : Component
 
     protected virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
     {
-        while(!await IsEmpty(world, range + startPosition, cancellationToken))
+        var currentRange = range + startPosition;
+        while(world.Limits.Overlaps(currentRange) && !await IsEmpty(world, currentRange, cancellationToken))
+        {
             startPosition += Vector3Int.Up;
+            currentRange = range + startPosition;
+        }
 
-        while(await IsEmpty(world, range + startPosition, cancellationToken))
+        if(!world.Limits.Overlaps(currentRange))
+        {
             startPosition += Vector3Int.Down;
+            currentRange = range + startPosition;
+
+            if(!world.Limits.Overlaps(currentRange))
+                return startPosition + Vector3Int.Up;
+        }
+
+        while(world.Limits.Overlaps(currentRange) && await IsEmpty(world, currentRange, cancellationToken))
+        {
+            startPosition += Vector3Int.Down;
+            currentRange = range + startPosition;
+        }
 
         return startPosition + Vector3Int.Up;
     }
