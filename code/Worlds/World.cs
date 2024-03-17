@@ -594,7 +594,7 @@ public class World : Component, IWorldAccessor, ITickable
         });
     }
 
-    public virtual async Task<(BinaryTag Blocks, ListTag Entities)> SaveChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
+    public virtual async Task<(BinaryTag? Blocks, ListTag Entities)> SaveChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
     {
         var chunk = await GetChunkOrAwaitFullyLoad(chunkPosition);
         if(chunk is null)
@@ -605,11 +605,11 @@ public class World : Component, IWorldAccessor, ITickable
 
     public virtual ListTag SaveOutOfLimitsEntitites(IReadOnlySaveMarker saveMarker) => OutOfLimitsChunk.Save(saveMarker).Entities;
 
-    public virtual async Task<Dictionary<Vector3Int, (BinaryTag Blocks, ListTag Entities)>> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
+    public virtual async Task<Dictionary<Vector3Int, (BinaryTag? Blocks, ListTag Entities)>> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
     {
         await FullyLoadUnsavedChunks();
 
-        Dictionary<Vector3Int, (BinaryTag blocks, ListTag entities)> result = new();
+        Dictionary<Vector3Int, (BinaryTag? blocks, ListTag entities)> result = new();
         foreach(var chunk in Chunks.Where(c => !c.IsSaved))
             result[chunk.Position] = chunk.Save(saveMarker);
 

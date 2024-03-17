@@ -49,15 +49,14 @@ public class ChunksCreator : Component
         cancellationToken.ThrowIfCancellationRequested();
 
         var chunk = creationData.Chunk;
-        if(creationData.WasLoaded)
+
+        if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
         {
-            if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
-            {
-                await ModelAwaiter.TryProcess(chunk, cancellationToken);
-                await EntitiesLoader.TryProcess(chunk, cancellationToken);
-            }
+            await ModelAwaiter.TryProcess(chunk, cancellationToken);
+            await EntitiesLoader.TryProcess(chunk, cancellationToken);
         }
-        else
+
+        if(!creationData.WasLoaded)
         {
             if(TreeGenerator.IsValid())
                 await TreeGenerator.TryProcess(chunk, cancellationToken);

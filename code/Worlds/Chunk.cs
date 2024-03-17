@@ -340,14 +340,14 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
 
-    public virtual (BinaryTag Blocks, ListTag Entities) Save(IReadOnlySaveMarker saveMarker)
+    public virtual (BinaryTag? Blocks, ListTag Entities) Save(IReadOnlySaveMarker saveMarker)
     {
         lock(Blocks)
         {
             lock(_entities)
             {
                 MarkSaved(saveMarker);
-                var blocks = SaveBlocks();
+                var blocks = Blocks.IsSaved ? null : SaveBlocks();
                 var entities = SaveEntities();
                 return (blocks, entities);
             }

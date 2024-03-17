@@ -43,7 +43,8 @@ public class WorldSaver : Component, ISaver
             {
                 var worldSaveHelper = new WorldSaveHelper(WorldFileSystem);
                 var blocksHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.BlocksRegionName, WorldOptions.RegionSize);
-                blocksHelper.SaveChunks(unsavedChunks.ToDictionary(kv => kv.Key, kv => kv.Value.Blocks));
+                blocksHelper.SaveChunks(unsavedChunks.Where(kv => kv.Value.Blocks is not null)
+                    .ToDictionary(kv => kv.Key, kv => kv.Value.Blocks)!);
 
                 var entitiesHelper = worldSaveHelper.GetRegionalHelper(WorldSaveHelper.EntitiesRegionName, WorldOptions.RegionSize);
                 entitiesHelper.SaveChunks(unsavedChunks.ToDictionary(kv => kv.Key, kv => (BinaryTag)kv.Value.Entities));
