@@ -45,7 +45,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
             {
                 lock(_entities)
                 {
-                    return Blocks.IsSaved && _entitiesSaveMarker.IsSaved;
+                    return Blocks.IsSaved && _entitiesSaveMarker.IsSaved && _entities.Count == 0;
                 }
             }
         }
