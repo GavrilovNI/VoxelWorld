@@ -28,7 +28,15 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
         if(!currentStack.IsEmpty && !currentStack.EqualsValue(stack))
             return 0;
 
-        return SetMax(index, stack.Add(currentStack.Count), simulate) - currentStack.Count;
+        var stackToSet = stack.Add(currentStack.Count);
+        int maxCanSet = SetMax(index, stackToSet, true);
+        if(maxCanSet <= currentStack.Count)
+            return 0;
+
+        if(!simulate)
+            SetMax(index, stackToSet, simulate);
+
+        return maxCanSet - currentStack.Count;
     }
 
     public virtual T ExtractMax(int index, int count, bool simulate = false)
@@ -78,7 +86,9 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
 
     public virtual int ExtractMax(T stack, bool simulate)
     {
-        int extractedCount = 0;
+        int leftCount = stack.Count;
+        if(leftCount == 0)
+            return 0;
 
         for(int i = 0; i < Size; ++i)
         {
@@ -86,10 +96,13 @@ public abstract class IndexedCapability<T> : IIndexedCapability<T> where T : cla
             if(!currentStack.EqualsValue(stack))
                 continue;
 
-            extractedCount += ExtractMax(i, currentStack.Count, simulate).Count;
+            leftCount -= ExtractMax(i, leftCount, simulate).Count;
+
+            if(leftCount == 0)
+                return stack.Count;
         }
 
-        return extractedCount;
+        return stack.Count - leftCount;
     }
 
 

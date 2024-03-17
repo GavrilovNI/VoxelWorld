@@ -36,16 +36,33 @@ public class ItemCapabilitiesMenu : IMenu
     }
 
     public IReadOnlyIndexedCapability<ItemStack> GetCapability(int capabilityIndex) => Capabilities[capabilityIndex];
-    protected IIndexedCapability<ItemStack>? FindCapability(IReadOnlyIndexedCapability<ItemStack> capability) => Capabilities.FirstOrDefault(x => x == capability, null);
+
+    protected IIndexedCapability<ItemStack>? FindEditableCapability(IReadOnlyIndexedCapability<ItemStack> capability, ref int slotIndex)
+    {
+        IIndexedCapability<ItemStack>? result = Capabilities.FirstOrDefault(x => x == capability, null)!;
+        if(result is not null)
+            return result;
+
+        if(capability is IndexedCapabilityPart<ItemStack> part)
+        {
+            int newIndex = part.GetParentIndex(slotIndex);
+            result = FindEditableCapability(part.Capability, ref newIndex);
+            if(result is not null)
+            {
+                slotIndex = newIndex;
+                return result;
+            }
+        }
+
+        return capability as IIndexedCapability<ItemStack>;
+    }
 
     public virtual bool TakeStack(IReadOnlyIndexedCapability<ItemStack> capability, int slotIndex, int maxCount)
     {
-        var changableCapability = FindCapability(capability);
+        var changableCapability = FindEditableCapability(capability, ref slotIndex);
         if(changableCapability is null)
-            throw new ArgumentException($"Capability {capability} is not part of menu", nameof(capability));
+            throw new ArgumentException($"Couldn't find editable capability of {capability}", nameof(capability));
 
-        if(!TakenStack.IsEmpty)
-            return false;
         if(maxCount <= 0)
             return false;
 
@@ -53,8 +70,16 @@ public class ItemCapabilitiesMenu : IMenu
         if(clickedStack.IsEmpty)
             return false;
 
-        TakenStack = changableCapability.ExtractMax(slotIndex, maxCount);
-        bool took = !TakenStack.IsEmpty;
+        if(!TakenStack.IsEmpty && !TakenStack.EqualsValue(clickedStack))
+            return false;
+
+        maxCount = Math.Min(maxCount, clickedStack.ValueStackLimit - TakenStack.Count);
+
+        var extracted = changableCapability.ExtractMax(slotIndex, maxCount);
+        if(!extracted.IsEmpty)
+            TakenStack = extracted.Add(TakenStack.Count);
+
+        bool took = !extracted.IsEmpty;
         if(took)
         {
             CapabilityTakenFrom = changableCapability;
@@ -65,9 +90,9 @@ public class ItemCapabilitiesMenu : IMenu
 
     public virtual bool PlaceStack(IReadOnlyIndexedCapability<ItemStack> capability, int slotIndex, int maxCount)
     {
-        var changableCapability = FindCapability(capability);
+        var changableCapability = FindEditableCapability(capability, ref slotIndex);
         if(changableCapability is null)
-            throw new ArgumentException($"Capability {capability} is not part of menu", nameof(capability));
+            throw new ArgumentException($"Couldn't find editable capability of {capability}", nameof(capability));
 
         if(TakenStack.IsEmpty)
             return false;
@@ -132,7 +157,7 @@ public class ItemCapabilitiesMenu : IMenu
     public virtual GameObject CreateScreen()
     {
         var gameObject = new GameObject();
-        var screen = gameObject.Components.Create<ItemCapabilitiesScreen>();
+        var screen = gameObject.Components.Create<SimpleItemCapabilitiesScreen>();
         screen.Menu = this;
         return gameObject;
     }

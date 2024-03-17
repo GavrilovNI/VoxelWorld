@@ -1,39 +1,26 @@
 @using Sandbox
 @using Sandbox.UI
-@using VoxelWorld.Interactions
 @using VoxelWorld.Inventories
 @using VoxelWorld.Items
 @using VoxelWorld.Menus
-@using VoxelWorld.Players
 @using VoxelWorld.UI.Extensions
 @using VoxelWorld.UI.Inventories
-@using VoxelWorld.UI.Menus
 @using System
-@using System.Linq
 
 @namespace VoxelWorld.UI.Screens
 @attribute [StyleSheet]
+//TODO: make abstract?
 @inherits PanelComponent
 @implements ISlotMouseEventListener
 
 <root onmousedown=@(e => OnMouseDown(e as MousePanelEvent))>
-    @if(Menu is not null)
-    {
-        <div class="capabilities">
-            @for(int i = 0; i < Menu.CapabilitiesCount; ++i)
-            {
-                var capability = Menu.GetCapability(i);
-                <ItemCapabilityUI class="capability" Capability=@capability Width=@Width MouseEventListener=@this/>
-            }
-        </div>
-    }
+    
     <ItemStackUI class="stack taken @(TakenStack.IsEmpty ? "hidden" : string.Empty)" Stack=@TakenStack @ref=TakenStackUI/>
 </root>
 
 @code
 {
     public ItemCapabilitiesMenu Menu { get; set; }
-    public int Width { get; set; } = 9;
 
     protected bool JustMousedDownSlot { get; set; } = false;
 
@@ -87,12 +74,17 @@
         JustMousedDownSlot = true;
         var clickedStack = capability.Get(slotIndex);
 
-        int countToExtract = 0;
-        if (mouseButton == MouseButtons.Left)
-            countToExtract = clickedStack.Count;
-        else if (mouseButton == MouseButtons.Right)
-            countToExtract = clickedStack.Count / 2 + clickedStack.Count % 2;
+        if(!Menu.TakenStack.IsEmpty)
+        {
+            int countToInsert = GetCountToInsert(mouseButton);
+            if (Menu.PlaceStack(capability, slotIndex, countToInsert))
+            {
+                WaitingMouseUps.Add(mouseButton);
+                return;
+            }
+        }
 
+        int countToExtract = GetCountToExtract(mouseButton, clickedStack);
         if(Menu.TakeStack(capability, slotIndex, countToExtract))
             WaitingMouseUps.Add(mouseButton);
     }
@@ -102,16 +94,27 @@
         if(WaitingMouseUps.Remove(mouseButton))
             return;
 
-        var clickedStack = capability.Get(slotIndex);
-
-        int countToInsert = 0;
-        if(mouseButton == MouseButtons.Left)
-            countToInsert = TakenStack.Count;
-        else if(mouseButton == MouseButtons.Right)
-            countToInsert = 1;
-
+        int countToInsert = GetCountToInsert(mouseButton);
         Menu.PlaceStack(capability, slotIndex, countToInsert);
     }
 
-    protected override int BuildHash() => HashCode.Combine(Menu, Width);
+    protected virtual int GetCountToInsert(MouseButtons mouseButton)
+    {
+        if(mouseButton == MouseButtons.Left)
+            return TakenStack.Count;
+        else if(mouseButton == MouseButtons.Right)
+            return  1;
+        return 0;
+    }
+
+    protected virtual int GetCountToExtract(MouseButtons mouseButton, Stack<Item> clickedStack)
+    {
+        if(mouseButton == MouseButtons.Left)
+            return clickedStack.Count;
+        else if(mouseButton == MouseButtons.Right)
+            return clickedStack.Count / 2 + clickedStack.Count % 2;
+        return 0;
+    }
+
+    protected override int BuildHash() => Menu?.GetHashCode() ?? 0;
 }

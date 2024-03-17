@@ -1,5 +1,7 @@
-﻿using VoxelWorld.Items;
-using VoxelWorld.Mods.Base;
+﻿using Sandbox;
+using VoxelWorld.Items;
+using VoxelWorld.Meshing;
+using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 
 namespace VoxelWorld.Mods.Base.Items;
@@ -30,20 +32,38 @@ public sealed class BaseModItems : ModItems
     public BlockItem WoodLog { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
+    public BlockItem WoodPlanks { get; private set; } = null!;
+
+    [AutoBlockItem(BaseMod.ModName)]
     public BlockItem TreeLeaves { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Furnace { get; private set; } = null!;
 
-    [AutoBlockItem(BaseMod.ModName, rawTexturePath: $"textures/{BaseMod.ModName}/items/tall_grass.png")]
+    [AutoBlockItem(BaseMod.ModName, texturePath: $"{BaseMod.ModName}/items/tall_grass.png")]
     public BlockItem TallGrass { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Barrel { get; private set; } = null!;
 
-    [AutoBlockItem(BaseMod.ModName, rawTexturePath: $"textures/{BaseMod.ModName}/items/door.png")]
+    [AutoBlockItem(BaseMod.ModName, texturePath: $"{BaseMod.ModName}/items/door.png")]
     public BlockItem Door { get; private set; } = null!;
 
     [AutoBlockItem(BaseMod.ModName)]
     public BlockItem Sand { get; private set; } = null!;
+
+    [AutoBlockItem(BaseMod.ModName)]
+    public BlockItem Workbench { get; private set; } = null!;
+
+    public Item Stick { get; private set; } = new Item(MakeId("stick"),
+        ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/stick.png"),
+        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/stick.png"), true);
+
+    public Item WoodenPickaxe { get; private set; } = new Item(MakeId("wooden_pickaxe"),
+        ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/wooden_pickaxe.png"),
+        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_pickaxe.png"), 1, true);
+
+    public Item WoodenAxe { get; private set; } = new Item(MakeId("wooden_axe"),
+        ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/wooden_axe.png"),
+        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_axe.png"), 1, true);
 }

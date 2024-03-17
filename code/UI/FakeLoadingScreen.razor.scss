@@ -2,8 +2,9 @@ FakeLoadingScreen {
     position: absolute;
     width: 100vw;
     height: 100vh;
-    background-color: #333;
     z-index: 99999;
+    background-position: center;
+    background-size: auto 100%;
     font-family: Poppins;
 
     .title-holder {
@@ -20,6 +21,8 @@ FakeLoadingScreen {
         position: relative;
         font-size: 10%;
         text-align: center;
+        color: #206a83;
+        text-stroke: 2px #9dd9ee;
         padding-bottom: 30px;
     }
 
@@ -29,6 +32,7 @@ FakeLoadingScreen {
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: #444;
+        border: 2px solid #ccc;
         width: 60%;
         aspect-ratio: 20;
 

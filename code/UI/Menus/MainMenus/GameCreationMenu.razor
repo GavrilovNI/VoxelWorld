@@ -12,7 +12,7 @@
 @inherits PanelComponent
 
 
-<root>
+<root style="background-image: url(@BackgroundImagePath);">
     @{
         <div class="centered-content flex-column fill-parent">
             <AdaptiveLabel class="title">Create Game</AdaptiveLabel>
@@ -49,6 +49,7 @@
     [Property] protected MainMenuController MainMenuController { get; set; } = null!;
     [Property] protected string SavesPath { get; set; } = "saves";
     [Property] protected GameLoader GameLoader { get; set; } = null!;
+    [Property] protected string BackgroundImagePath { get; set; } = "textures/voxelworld/ui/background.png";
 
     protected TextEntry NameTextEntry { get; set; }
     protected TextEntry SeedTextEntry { get; set; }

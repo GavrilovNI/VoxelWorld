@@ -1,9 +1,10 @@
 GameSelectionMenu {
-    background-color: #333;
     width: 100vw;
     height: 100vh;
     z-index: 999;
     pointer-events: all;
+    background-position: center;
+    background-size: auto 100%;
     align-items: center;
     justify-content: center;
 
@@ -25,6 +26,8 @@ GameSelectionMenu {
 
     .title {
         position: relative;
+        color: #206a83;
+        text-stroke: 2px #9dd9ee;
         font-size: 10%;
         overflow: hidden;
         padding-bottom: 30px;
@@ -131,11 +134,13 @@ GameSelectionMenu {
 
     .button {
         background-color: #444;
+        border: 1px solid #777;
 
         .label {
             position: relative;
             text-align: center;
             width: 100%;
+            color: #aaa;
         }
 
         &:hover {

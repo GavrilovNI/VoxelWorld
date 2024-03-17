@@ -15,7 +15,15 @@ public interface IIndexedCapability<T> : ICapability<T>, IReadOnlyIndexedCapabil
         if(!currentStack.IsEmpty && !currentStack.EqualsValue(stack))
             return 0;
 
-        return SetMax(index, stack.Add(currentStack.Count), simulate) - currentStack.Count;
+        var stackToSet = stack.Add(currentStack.Count);
+        int maxCanSet = SetMax(index, stackToSet, true);
+        if(maxCanSet <= currentStack.Count)
+            return 0;
+
+        if(!simulate)
+            SetMax(index, stackToSet, simulate);
+
+        return maxCanSet - currentStack.Count;
     }
 
     T ExtractMax(int index, int count, bool simulate = false)
@@ -65,7 +73,9 @@ public interface IIndexedCapability<T> : ICapability<T>, IReadOnlyIndexedCapabil
 
     int ICapability<T>.ExtractMax(T stack, bool simulate)
     {
-        int extractedCount = 0;
+        int leftCount = stack.Count;
+        if(leftCount == 0)
+            return 0;
 
         for(int i = 0; i < Size; ++i)
         {
@@ -73,25 +83,28 @@ public interface IIndexedCapability<T> : ICapability<T>, IReadOnlyIndexedCapabil
             if(!currentStack.EqualsValue(stack))
                 continue;
 
-            extractedCount += ExtractMax(i, currentStack.Count, simulate).Count;
+            leftCount -= ExtractMax(i, leftCount, simulate).Count;
+
+            if(leftCount == 0)
+                return stack.Count;
         }
 
-        return extractedCount;
+        return stack.Count - leftCount;
+    }
+
+    int ExtractMax(int index, T stack, bool simulate)
+    {
+        var currentStack = Get(index);
+        if(!currentStack.EqualsValue(stack))
+            return 0;
+
+        SetMax(index, stack.WithCount(0), simulate); // TODO: use T.Empty when will be whitelisted
+        return currentStack.Count;
     }
 }
 
 public static class IIndexedCapabilityExtensions
 {
-    public static int ExtractMax<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate) where T : class, IStack<T>
-    {
-        var currentStack = capability.Get(index);
-        if(!currentStack.EqualsValue(stack))
-            return 0;
-
-        capability.SetMax(index, stack.WithCount(0), simulate); // TODO: use T.Empty when will be whitelisted
-        return currentStack.Count;
-    }
-
     public static bool TrySet<T>(this IIndexedCapability<T> capability, int index, T stack, bool simulate = false) where T : class, IStack<T>
     {
         int maxCanSet = capability.SetMax(index, stack, true);

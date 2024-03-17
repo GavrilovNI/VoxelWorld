@@ -35,6 +35,8 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
 
     public PillarBlock WoodLog { get; } = new(MakeId("wood_log"),
         BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("wood_log")));
+
+    public SimpleBlock WoodPlanks { get; } = new(MakeId("wood_planks"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("wood_planks")}.png"));
     public SimpleBlock TreeLeaves { get; } = new(MakeId("tree_leaves"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("tree_leaves")}.png"))
     {
         Properties = BlockProperties.Default with
@@ -63,5 +65,7 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
         BlockTexturesLoader.AllSides.LoadTextureUvs(TextureMap, GetBlockPathPart("door_top"), Direction.AllSet.Except(new[] { Direction.Down }).ToHashSet()));
 
     public PhysicsBlock Sand { get; } = new(MakeId("sand"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("sand")}.png"));
+
+    public WorkbenchBlock Workbench { get; } = new(MakeId("workbench"), BlockTexturesLoader.SimplePillar.LoadTextureUvs(TextureMap, GetBlockPathPart("workbench")));
 
 }

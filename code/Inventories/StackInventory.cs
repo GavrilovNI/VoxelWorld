@@ -97,6 +97,16 @@ public abstract class StackInventory<T> : IndexedCapability<T>, INbtWritable, IS
         return insertedCount;
     }
 
+    public int ExtractMax(int index, T stack, bool simulate)
+    {
+        var currentStack = Get(index);
+        if(!currentStack.EqualsValue(stack))
+            return 0;
+
+        SetMax(index, stack.WithCount(0), simulate); // TODO: use T.Empty when will be whitelisted
+        return currentStack.Count;
+    }
+
     public override IEnumerator<T> GetEnumerator() => _stacks.Values.GetEnumerator();
 
     public override int GetHashCode() => StacksHashCode;

@@ -31,6 +31,16 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
     }
 
+    public UnlimitedMesh(List<V> vertices, List<ushort> indices)
+    {
+        if(vertices.Count > ushort.MaxValue)
+            throw new ArgumentException($"max vertex count is {ushort.MaxValue}", nameof(vertices));
+
+        _vertices = new List<List<V>>() { vertices.ToList() };
+        _indices = new List<List<ushort>>() { indices.ToList() };
+        Bounds = BBox.FromPoints(vertices.Select(v => v.GetPosition()));
+    }
+
     public UnlimitedMesh(UnlimitedMesh<V> mesh)
     {
         _vertices = mesh._vertices.Select(l => new List<V>(l)).ToList();

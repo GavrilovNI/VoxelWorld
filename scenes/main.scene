@@ -55,6 +55,7 @@
             "_type": "gameobject",
             "go": "d0115228-fd86-4a80-84c5-febd9bcadaa5"
           },
+          "OpaqueItemsMaterial": "materials/items_opaque.vmat",
           "OpaqueVoxelsMaterial": "materials/voxels_opaque.vmat",
           "PlayerSpawner": {
             "_type": "component",
@@ -63,6 +64,7 @@
             "component_type": "PlayerSpawner"
           },
           "ShouldAnimateBlockTextures": true,
+          "TranslucentItemsMaterial": "materials/items_translucent.vmat",
           "TranslucentVoxelsMaterial": "materials/voxels_translucent.vmat",
           "WorldPrefab": {
             "_type": "gameobject",
@@ -204,8 +206,9 @@
           "Tint": "1,1,1,1"
         },
         {
-          "__type": "BlocksTextureMapShower",
           "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
+          "__type": "TextureMapShower",
+          "Blocks": true,
           "ModelRenderer": {
             "_type": "component",
             "component_id": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",

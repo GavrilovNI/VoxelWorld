@@ -309,7 +309,22 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    protected virtual Chunk? GetChunk(Vector3Int chunkPosition) => Chunks.GetOrDefault(chunkPosition);
+    protected virtual Chunk? GetChunk(Vector3Int chunkPosition, bool includeLoading = false)
+    {
+        if(!includeLoading)
+            return Chunks.GetOrDefault(chunkPosition);
+
+        lock(ChunksCreationLocker)
+        {
+            var chunk = Chunks.GetOrDefault(chunkPosition);
+            if(chunk.IsValid())
+                return chunk;
+
+            if(CreatingChunks.TryGetValue(chunkPosition, out var data) && data.PartiallyLoadedChunk.IsValid())
+                return data.PartiallyLoadedChunk;
+        }
+        return null;
+    }
 
     // Thread safe
     public virtual async Task CreateChunk(Vector3Int chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
@@ -456,7 +471,7 @@ public class World : Component, IWorldAccessor, ITickable
         foreach(Direction direction in Direction.All)
         {
             var neighboringChunkPosition = chunkPosition + direction;
-            var chunk = GetChunk(neighboringChunkPosition);
+            var chunk = GetChunk(neighboringChunkPosition, true);
             chunk?.RequireModelUpdate();
         }    
     }

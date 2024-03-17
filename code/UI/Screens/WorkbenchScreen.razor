@@ -1,0 +1,53 @@
+@using Sandbox
+@using Sandbox.UI
+@using VoxelWorld.Interactions
+@using VoxelWorld.Inventories
+@using VoxelWorld.Items
+@using VoxelWorld.Menus
+@using VoxelWorld.Players
+@using VoxelWorld.UI.Extensions
+@using VoxelWorld.UI.Inventories
+@using VoxelWorld.UI.Menus
+@using System
+@using System.Linq
+
+@namespace VoxelWorld.UI.Screens
+@attribute [StyleSheet]
+@inherits ItemCapabilitiesScreen
+
+<root onmousedown=@(e => OnMouseDown(e as MousePanelEvent))>
+
+    @if(Menu is not null)
+    {
+        <div class="capabilities centered-content flex-column">
+
+            <div class="workbench-capability-parent">
+                <ItemCapabilityUI class="capability inputs" Capability=@Menu.WorkbenchCapability.Inputs Width=@(3) MouseEventListener=@this/>
+                <div class="output-parent">
+                    <ItemCapabilityUI class="capability output" Capability=@Menu.WorkbenchCapability.OutputCapability Width=@(1) MouseEventListener=@this/>
+                </div>
+            </div>
+
+            @for(int i = 0; i < Menu.CapabilitiesCount; ++i)
+            {
+                var capability = Menu.GetCapability(i);
+                if (capability == Menu.WorkbenchCapability)
+                    continue;
+                <ItemCapabilityUI class="capability" Capability=@capability Width=@Width MouseEventListener=@this/>
+            }
+        </div>
+    }
+
+    <ItemStackUI class="stack taken @(TakenStack.IsEmpty ? "hidden" : string.Empty)" Stack=@TakenStack @ref=TakenStackUI/>
+</root>
+
+@code
+{
+    public new WorkbenchMenu Menu
+    {
+        get => base.Menu as WorkbenchMenu;
+        set => base.Menu = value;
+    }
+
+    public int Width { get; set; } = 9;
+}

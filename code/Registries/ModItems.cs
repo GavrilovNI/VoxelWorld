@@ -6,6 +6,8 @@ using VoxelWorld.Meshing;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VoxelWorld.Mth;
+using VoxelWorld.Inventories;
 
 namespace VoxelWorld.Registries;
 
@@ -47,9 +49,35 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
+            var gameController = GameController.Instance!;
+
             Texture texture = await GetTexture(autoAttribute, block.DefaultBlockState);
-            IMeshPart<ComplexVertex> model = GameController.Instance!.BlockMeshes.GetVisual(block.DefaultBlockState)!;
-            model = new UnlimitedMesh<ComplexVertex>.Builder().Add(model).Scale(Vector3.Zero, 0.3f).Build();
+
+            float modelScale = DefaultValues.ItemModelScale;
+
+            var isTransparent = block.Properties.IsTransparent;
+            Material material;
+
+            ComplexMeshBuilder meshBuilder = new();
+            if(autoAttribute.UseFlatModel)
+            {
+                material = isTransparent ? gameController.TranslucentItemsMaterial : gameController.OpaqueItemsMaterial;
+                var texturePart = gameController.ItemsTextureMap.GetOrLoadTexture(autoAttribute.FlatModelTexturePath!);
+                var meshPart = ItemFlatModelCreator.Create(gameController.ItemsTextureMap.Texture, texturePart.TextureRect, DefaultValues.FlatItemPixelSize * modelScale, DefaultValues.FlatItemThickness * modelScale);
+                meshBuilder.Add(meshPart);
+            }
+            else
+            {
+                material = isTransparent ? gameController.TranslucentVoxelsMaterial : gameController.OpaqueVoxelsMaterial;
+                var meshPart = gameController.BlockMeshes.GetVisual(block.DefaultBlockState)!;
+                meshBuilder.Add(meshPart).Scale(Vector3.Zero, modelScale);
+            }
+
+            ModelBuilder modelBuilder = new();
+            Mesh mesh = new(material);
+            meshBuilder.CreateBuffersFor(mesh, 0);
+            modelBuilder.AddMesh(mesh);
+            Model model = modelBuilder.Create();
 
             var propertyType = property.PropertyType;
             if(propertyType.IsGenericType)
@@ -58,14 +86,15 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
+            var args = new object[] { block!, model, texture, autoAttribute.StackLimit, autoAttribute.UseFlatModel };
             object blockItem;
             try
             {
-                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, model, texture, autoAttribute.StackLimit });
+                blockItem = TypeLibrary.Create<Item>(propertyType, args);
             }
             catch(MissingMethodException)
             {
-                Log.Warning($"Couldn't create block item {thisType.FullName}.{property.Name}, constructor with args {typeof(Block)} {typeof(Texture)} not found");
+                Log.Warning($"Couldn't create block item {thisType.FullName}.{property.Name}, constructor with args {args} not found");
                 continue;
             }
 
@@ -78,7 +107,7 @@ public class ModItems : ModRegisterables<Item>
         Texture texture;
         if(autoAttribute.UseRawTexture)
         {
-            texture = Texture.Load(FileSystem.Mounted, autoAttribute.RawTexturePath, true);
+            texture = Texture.Load(FileSystem.Mounted, "Textures/"+autoAttribute.RawTexturePath, true);
         }
         else
         {

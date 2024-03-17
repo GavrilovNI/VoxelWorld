@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using VoxelWorld.Controlling;
 using VoxelWorld.Entities;
 using VoxelWorld.Interactions;
 using VoxelWorld.Items;
@@ -23,10 +24,10 @@ public class HotbarController : Component
         {
             ChangeMainHandIndex();
 
-            if(Input.Pressed("HandSwap"))
+            if(GameInput.IsHandSwapPressed)
                 SwapHands();
 
-            if(Input.Pressed("Drop"))
+            if(GameInput.IsDropPressed)
                 DropHoldingItem();
         }
     }
@@ -39,11 +40,11 @@ public class HotbarController : Component
 
         for(int i = 0; i < hotbar.Size; ++i)
         {
-            if(Input.Pressed($"Slot{i + 1}"))
+            if(GameInput.IsSlotPressed(i))
                 Inventory.MainHandIndex = i;
         }
 
-        int slotMoveDelta = (Input.Pressed("SlotPrev") ? -1 : 0) + (Input.Pressed("SlotNext") ? 1 : 0);
+        int slotMoveDelta = (GameInput.IsSlotPrevPressed ? -1 : 0) + (GameInput.IsSlotNextPressed ? 1 : 0);
         slotMoveDelta -= (int)Input.MouseWheel.y;
         var newIndex = Inventory.MainHandIndex + slotMoveDelta;
         newIndex = (newIndex % hotbar.Size + hotbar.Size) % hotbar.Size;

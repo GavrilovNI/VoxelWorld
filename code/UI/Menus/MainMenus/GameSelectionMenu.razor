@@ -13,7 +13,7 @@
 @inherits PanelComponent
 
 
-<root>
+<root style="background-image: url(@BackgroundImagePath);">
     @{
         var saves = GetAllSaves().OrderBy(s => s.Value.Name);
         var savesCount = saves.Count();
@@ -61,6 +61,7 @@
     [Property] protected GameCreationMenu GameCreationMenu { get; set; } = null!;
     [Property] protected string SavesPath { get; set; } = "saves";
     [Property] protected GameLoader GameLoader { get; set; } = null!;
+    [Property] protected string BackgroundImagePath { get; set; } = "textures/voxelworld/ui/background.png";
 
     private bool _isLoadingGame = false;
 

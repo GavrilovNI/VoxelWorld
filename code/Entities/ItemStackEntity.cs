@@ -6,6 +6,8 @@ using VoxelWorld.Items;
 using VoxelWorld.Meshing;
 using VoxelWorld.Mods.Base;
 using System.Collections.Generic;
+using System.Linq;
+using VoxelWorld.Inventories;
 
 namespace VoxelWorld.Entities;
 
@@ -14,10 +16,12 @@ public class ItemStackEntity : Entity
     [Property] protected Rigidbody Rigidbody { get; set; } = null!;
     [Property] protected BoxCollider Collider { get; set; } = null!;
 
-    protected List<ModelRenderer> Renderers { get; set; } = new();
+    [Property] protected ModelRenderer Renderer { get; set; } = null!;
 
     public Inventories.Stack<Item> ItemStack { get; private set; } = null!;
     public BBox ModelBounds { get; protected set; }
+
+    protected bool Started = false;
 
 
     public static ItemStackEntity Create(Inventories.Stack<Item> itemStack, in EntitySpawnConfig spawnConfig, Vector3 velocity = default)
@@ -36,6 +40,13 @@ public class ItemStackEntity : Entity
             SetItemStack(Inventories.Stack<Item>.Empty);
     }
 
+    protected override void OnStartChild()
+    {
+        Started = true;
+        if(!ItemStack.IsEmpty && ItemStack.Value!.IsFlatModel)
+            Renderer.SceneObject.Attributes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
+    }
+
     public virtual void SetItemStack(Inventories.Stack<Item> itemStack)
     {
         ThreadSafe.AssertIsMainThread();
@@ -44,38 +55,21 @@ public class ItemStackEntity : Entity
         if(itemStack.IsEmpty)
         {
             Collider.Enabled = false;
-            foreach(var renderer in Renderers)
-                renderer.Destroy();
-            Renderers.Clear();
+            Renderer.Enabled = false;
             Rigidbody.Enabled = false;
             ModelBounds = new BBox();
             return;
         }
 
-        var game = GameController.Instance!;
-
-        var item = ItemStack.Value;
         var itemModel = ItemStack.Value!.Model;
-
-        var isTransparent = item is BlockItem blockItem && blockItem.Block.Properties.IsTransparent;
-        var material = isTransparent ? game.TranslucentVoxelsMaterial : game.OpaqueVoxelsMaterial;
-
-        ComplexMeshBuilder visualMeshBuilder = new ComplexMeshBuilder().Add(itemModel);
-        for(int i = 0; i < visualMeshBuilder.PartsCount; ++i)
-        {
-            ModelBuilder modelBuilder = new();
-            Mesh mesh = new(material);
-            visualMeshBuilder.CreateBuffersFor(mesh, i);
-            modelBuilder.AddMesh(mesh);
-
-            var renderer = Components.Create<ModelRenderer>();
-            Renderers.Add(renderer);
-            renderer.Model = modelBuilder.Create();
-        }
+        Renderer.Model = itemModel;
         ModelBounds = itemModel.Bounds;
+        if(Started && ItemStack.Value!.IsFlatModel)
+            Renderer.SceneObject.Attributes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
 
         Collider.Center = itemModel.Bounds.Center;
         Collider.Scale = itemModel.Bounds.Size;
+        Renderer.Enabled = true;
         Collider.Enabled = true;
         Rigidbody.Enabled = true;
     }
