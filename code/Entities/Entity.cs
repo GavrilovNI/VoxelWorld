@@ -25,7 +25,7 @@ public abstract class Entity : Component
     public Vector3Int ChunkPosition { get; private set; }
 
     private Transform _oldTransform;
-    private bool tranformChanged = false;
+    private bool _tranformChanged = false;
 
     public new Guid Id => GameObject.Id;
 
@@ -46,7 +46,7 @@ public abstract class Entity : Component
         _oldTransform = Transform.World;
         Transform.OnTransformChanged = () =>
         {
-            tranformChanged = true;
+            _tranformChanged = true;
             if(!Enabled)
                 HandleTransformChanging();
         };
@@ -89,10 +89,10 @@ public abstract class Entity : Component
 
     private void HandleTransformChanging()
     {
-        if(!tranformChanged)
+        if(!_tranformChanged)
             return;
 
-        tranformChanged = false;
+        _tranformChanged = false;
         if(World is not null)
         {
             var newChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
