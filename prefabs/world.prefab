@@ -22,11 +22,11 @@
         "IsService": false,
         "Limits": {
           "Mins": "-160000,-160000,-256",
-          "Maxs": "160000,160000,256"
+          "Maxs": "160016,160016,272"
         },
         "LimitsInChunks": {
           "Mins": "-10000,-10000,-16",
-          "Maxs": "10000,10000,16"
+          "Maxs": "10001,10001,17"
         },
         "TickByItself": true,
         "WorldOptions": {

@@ -34,7 +34,7 @@ public class World : Component, IWorldAccessor, ITickable
     
     [Property] protected GameObject? ChunksParent { get; set; }
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
-    [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3Int(-10000, -10000, -16), new Vector3Int(10000, 10000, 16));
+    [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3Int(-10000, -10000, -16), new Vector3Int(10001, 10001, 17));
     [Property] public BBoxInt Limits => LimitsInChunks * WorldOptions.ChunkSize;
     [Property] protected float EntitiesLimitThreshold { get; set; } = 32;
     [Property] protected bool TickByItself { get; set; } = true;
