@@ -43,7 +43,7 @@ public class ItemStackEntity : Entity
     protected override void OnStartChild()
     {
         Started = true;
-        if(!ItemStack.IsEmpty)
+        if(!ItemStack.IsEmpty && ItemStack.Value!.IsFlatModel)
             Renderer.SceneObject.Attributes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
     }
 
@@ -64,7 +64,7 @@ public class ItemStackEntity : Entity
         var itemModel = ItemStack.Value!.Model;
         Renderer.Model = itemModel;
         ModelBounds = itemModel.Bounds;
-        if(Started)
+        if(Started && ItemStack.Value!.IsFlatModel)
             Renderer.SceneObject.Attributes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
 
         Collider.Center = itemModel.Bounds.Center;

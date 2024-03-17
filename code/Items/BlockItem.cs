@@ -11,12 +11,12 @@ public class BlockItem : Item
 {
     public readonly Block Block;
 
-    public BlockItem(Block block, Model model, Texture texture, int stackLimit) : base(block.Id, model, texture, stackLimit)
+    public BlockItem(Block block, Model model, Texture texture, int stackLimit, bool isFlatModel = false) : base(block.Id, model, texture, stackLimit, isFlatModel)
     {
         Block = block;
     }
 
-    public BlockItem(Block block, Model model, Texture texture) : base(block.Id, model, texture)
+    public BlockItem(Block block, Model model, Texture texture, bool isFlatModel = false) : base(block.Id, model, texture, isFlatModel)
     {
         Block = block;
     }

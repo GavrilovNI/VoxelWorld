@@ -17,16 +17,18 @@ public class Item : IRegisterable, IStackValue<Item>
     public Model Model { get; }
     public Texture Texture { get; }
     public int StackLimit { get; }
+    public bool IsFlatModel { get; } //TODO: remove
 
-    public Item(in ModedId id, Model model, Texture texture, int stackLimit)
+    public Item(in ModedId id, Model model, Texture texture, int stackLimit, bool isFlatModel = false)
     {
         Id = id;
         Model = model;
         Texture = texture;
         StackLimit = stackLimit;
+        IsFlatModel = isFlatModel;
     }
 
-    public Item(in ModedId id, Model model, Texture texture) : this(id, model, texture, DefaultValues.ItemStackLimit)
+    public Item(in ModedId id, Model model, Texture texture, bool isFlatModel = false) : this(id, model, texture, DefaultValues.ItemStackLimit, isFlatModel)
     {
     }
 

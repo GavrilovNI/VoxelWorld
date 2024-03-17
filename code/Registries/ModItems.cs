@@ -86,14 +86,15 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
+            var args = new object[] { block!, model, texture, autoAttribute.StackLimit, autoAttribute.UseFlatModel };
             object blockItem;
             try
             {
-                blockItem = TypeLibrary.Create<Item>(propertyType, new object[] { block!, model, texture, autoAttribute.StackLimit });
+                blockItem = TypeLibrary.Create<Item>(propertyType, args);
             }
             catch(MissingMethodException)
             {
-                Log.Warning($"Couldn't create block item {thisType.FullName}.{property.Name}, constructor with args {typeof(Block)} {typeof(Texture)} not found");
+                Log.Warning($"Couldn't create block item {thisType.FullName}.{property.Name}, constructor with args {args} not found");
                 continue;
             }
 
