@@ -40,7 +40,7 @@ public record class BlockActionContext
 
     public static bool TryMakeFromItemActionContext(ItemActionContext itemActionContext, out BlockActionContext context)
     {
-        if(!Worlds.World.TryFind(itemActionContext.TraceResult.Body?.GetGameObject(), out var world))
+        if(!Worlds.World.TryFindInObject(itemActionContext.TraceResult.Body?.GetGameObject(), out var world))
         {
             context = null!;
             return false;

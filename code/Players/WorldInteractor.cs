@@ -50,7 +50,7 @@ public class WorldInteractor : Component
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        if(!World.TryFind(traceResult.Body?.GetGameObject(), out var world))
+        if(!World.TryFindInObject(traceResult.Body?.GetGameObject(), out var world))
             return InteractionResult.Pass;
 
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
@@ -178,7 +178,7 @@ public class WorldInteractor : Component
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
-        if(!World.TryFind(traceResult.Body?.GetGameObject(), out var world))
+        if(!World.TryFindInObject(traceResult.Body?.GetGameObject(), out var world))
             return InteractionResult.Pass;
 
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
