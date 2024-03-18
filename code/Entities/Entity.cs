@@ -54,6 +54,9 @@ public abstract class Entity : Component
         _oldTransform = Transform.World;
         Transform.OnTransformChanged = () =>
         {
+            if(_oldTransform.Position.AlmostEqual(Transform.Position))
+                return;
+
             _tranformChanged = true;
             if(!Enabled)
                 HandleTransformChanging();
