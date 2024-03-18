@@ -7,8 +7,8 @@ namespace VoxelWorld.Registries;
 
 public readonly record struct ModedId : INbtWritable, INbtStaticReadable<ModedId>
 {
-    public readonly Id ModId { get; init; }
-    public readonly Id Name { get; init; }
+    public readonly Id ModId { get; }
+    public readonly Id Name { get; }
 
     public ModedId(string modId, string name) : this((Id)modId, (Id)name)
     {

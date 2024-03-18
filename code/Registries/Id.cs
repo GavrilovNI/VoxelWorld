@@ -12,7 +12,7 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
     private const char Underscore = '_';
     public static readonly Regex Regex = new("^[a-z_]+$");
 
-    public readonly string Name { get; init; }
+    public readonly string Name { get; }
 
     public Id(string name)
     {
