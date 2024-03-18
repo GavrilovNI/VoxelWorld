@@ -33,7 +33,7 @@ public class WorldSaver : Component, ISaver
 
         var unsavedChunks = await World.SaveUnsavedChunks(saveMarker);
         var outOfLimitsEntities = World.SaveOutOfLimitsEntitites(saveMarker);
-        var unsavedPlayers = World.SaveAllPlayers();
+        var unsavedPlayers = World.SaveAllPlayers(saveMarker);
 
         TaskCompletionSource<bool> taskCompletionSource = new();
 
@@ -77,6 +77,13 @@ public class WorldSaver : Component, ISaver
     {
         foreach(var (steamId, tag) in playerTags)
         {
+            var fileName = steamId.ToString();
+            if(tag.IsDataEmpty)
+            {
+                fileSystem.DeleteFile(fileName);
+                continue;
+            }
+
             using var stream = fileSystem.OpenWrite(steamId.ToString());
             using var writer = new BinaryWriter(stream);
             tag.Write(writer);

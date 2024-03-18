@@ -49,7 +49,7 @@ public class World : Component, IWorldAccessor, ITickable
     private bool IsSceneRunning => !Scene.IsEditor;
     
     
-    private readonly Dictionary<ulong, Player> _players = new();
+    private readonly Dictionary<ulong, Player?> _players = new();
 
 
     protected Chunk OutOfLimitsChunk { get; private set; } = null!;
@@ -226,7 +226,7 @@ public class World : Component, IWorldAccessor, ITickable
         {
             lock(_players)
             {
-                _players.Add(player.SteamId, player);
+                _players[player.SteamId] = player;
             }
         }
     }
@@ -237,7 +237,7 @@ public class World : Component, IWorldAccessor, ITickable
         {
             lock(_players)
             {
-                _players.Remove(player.SteamId);
+                _players[player.SteamId] = null;
             }
         }
     }
@@ -633,14 +633,31 @@ public class World : Component, IWorldAccessor, ITickable
         await Task.WhenAll(tasks);
     }
 
-    public virtual Dictionary<ulong, BinaryTag> SaveAllPlayers()
+    public virtual Dictionary<ulong, BinaryTag> SaveAllPlayers(IReadOnlySaveMarker saveMarker)
     {
         Dictionary<ulong, BinaryTag> result = new();
 
         lock(_players)
         {
-            foreach(var (_, player) in _players)
-                result.Add(player.SteamId, player.Write());
+            HashSet<ulong> playersToRemove = new();
+            foreach(var (steamId, player) in _players)
+            {
+                result.Add(steamId, player?.Write() ?? EmptyTag.Empty);
+                if(player is null)
+                    playersToRemove.Add(steamId);
+            }
+
+            saveMarker.AddSaveListener(() =>
+            {
+                lock(_players)
+                {
+                    foreach(var steamId in playersToRemove)
+                    {
+                        if(_players.TryGetValue(steamId, out var player) && player is null)
+                            _players.Remove(steamId);
+                    }
+                }
+            });
         }
 
         return result;

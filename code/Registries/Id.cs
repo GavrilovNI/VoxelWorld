@@ -12,7 +12,9 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
     private const char Underscore = '_';
     public static readonly Regex Regex = new("^[a-z_]+$");
 
-    public readonly string Name { get; init; }
+    public static readonly Id Error = new("error");
+
+    public readonly string Name { get; } = Error.Name;
 
     public Id(string name)
     {
@@ -21,10 +23,12 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
         Name = name;
     }
 
+    public static Id FromStringOrError(string name) => IsValidString(name) ? new(name) : Error;
+
     public static bool TryFromString(string name, out Id id)
     {
         bool canConvert = IsValidString(name);
-        id = canConvert ? new(name) : default;
+        id = canConvert ? new(name) : Error;
         return canConvert;
     }
 
@@ -61,5 +65,5 @@ public readonly record struct Id : INbtWritable, INbtStaticReadable<Id>
     }
 
     public BinaryTag Write() => new StringTag(Name);
-    public static Id Read(BinaryTag tag) => new(tag.To<StringTag>().Value);
+    public static Id Read(BinaryTag tag) => FromStringOrError(tag.To<StringTag>().Value);
 }
