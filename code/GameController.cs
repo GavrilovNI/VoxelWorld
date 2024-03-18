@@ -23,14 +23,12 @@ using VoxelWorld.Crafting.Recipes;
 
 namespace VoxelWorld;
 
-public sealed class GameController
-
-    : Component, ILocalPlayerInitializable
+public sealed class GameController : Component, ILocalPlayerInitializable
 {
     public static event Action? Initialized;
     public static event Action<World>? WorldAdded;
 
-    public static InitalizationStatus InitalizationStatus { get; private set; } = InitalizationStatus.NotInitialized;
+    public static InitializationStatus InitializationStatus { get; private set; } = InitializationStatus.NotInitialized;
     public static LoadingStatus LoadingStatus { get; private set; } = LoadingStatus.NotLoaded;
 
     
@@ -84,9 +82,9 @@ public sealed class GameController
 
     public async Task Initialize()
     {
-        AssertInitalizationStatus(InitalizationStatus.NotInitialized);
+        AssertInitializationStatus(InitializationStatus.NotInitialized);
 
-        InitalizationStatus = InitalizationStatus.Initializing;
+        InitializationStatus = InitializationStatus.Initializing;
         Instance = this;
 
         var loaded = TryCloneModFrom<BaseMod>(BaseModPrefab, out var baseMod);
@@ -95,13 +93,13 @@ public sealed class GameController
 
         await LoadMods(new IMod[] { baseMod });
 
-        InitalizationStatus = InitalizationStatus.Initialized;
+        InitializationStatus = InitializationStatus.Initialized;
         Initialized?.Invoke();
     }
 
     public bool TryLoadGame(BaseFileSystem baseFileSystem)
     {
-        AssertInitalizationStatus(InitalizationStatus.Initialized);
+        AssertInitializationStatus(InitializationStatus.Initialized);
         AssertLoadingStatus(LoadingStatus.NotLoaded);
 
         LoadingStatus = LoadingStatus.Loading;
@@ -127,7 +125,7 @@ public sealed class GameController
     public async Task<bool> SaveGame()
     {
         ThreadSafe.AssertIsMainThread();
-        AssertInitalizationStatus(InitalizationStatus.Initialized);
+        AssertInitializationStatus(InitializationStatus.Initialized);
         AssertLoadingStatus(LoadingStatus.Loaded);
 
         if(_savingTask is not null)
@@ -152,22 +150,19 @@ public sealed class GameController
         return result;
     }
 
-    public bool TryAddWorld(ModedId id, out World world)
+    public async Task<World?> TryAddWorld(ModedId id)
     {
         AssertLoadingStatus(LoadingStatus.Loaded);
 
-        if(_worlds.TryGetWorld(id, out world))
-            return false;
+        if(_worlds.TryGetWorld(id, out var world))
+            return null;
 
         if(CurrentGameSaveHelper is null)
-        {
-            world = null!;
-            return false;
-        }
+            return null;
 
         var worldFileSystem = CurrentGameSaveHelper.GetOrCreateWorldFileSystem(id);
 
-        world = CreateWorld(id, worldFileSystem);
+        world = await CreateWorld(id, worldFileSystem);
         _worlds.AddWorld(world);
         WorldAdded?.Invoke(world);
 
@@ -177,12 +172,12 @@ public sealed class GameController
             _ = PlayerSpawner.SpawnPlayer(Steam.SteamId, spawnConfig, CancellationToken.None);
         }
 
-        return true;
+        return world;
     }
 
     public async Task LoadMods(IEnumerable<IMod> mods)
     {
-        AssertInitalizationStatus(InitalizationStatus.NotInitialized, false);
+        AssertInitializationStatus(InitializationStatus.NotInitialized, false);
 
         Dictionary<Id, RegistriesContainer> modRegistries = new();
         
@@ -237,7 +232,7 @@ public sealed class GameController
     public bool IsModLoaded(Id id) => _mods.ContainsKey(id);
 
 
-    private World CreateWorld(ModedId id, BaseFileSystem fileSystem, bool enable = true)
+    private async Task<World> CreateWorld(ModedId id, BaseFileSystem fileSystem, bool enable = true)
     {
         var cloneConfig = new CloneConfig(Transform.World, WorldsParent, false, $"World {id}");
         var worldGameObject = WorldPrefab.Clone(cloneConfig);
@@ -245,9 +240,7 @@ public sealed class GameController
         var world = worldGameObject.Components.Get<World>(true);
 
         var worldOptions = DefaultWorldOptions with { Seed = CurrentGameInfo!.Value.Seed + id.GetHashCode() };
-        world.Initialize(id, fileSystem, worldOptions);
-
-        worldGameObject.Enabled = enable;
+        await world.Initialize(id, fileSystem, worldOptions);
         return world;
     }
 
@@ -269,7 +262,7 @@ public sealed class GameController
         ModsParent ??= GameObject;
         WorldsParent ??= GameObject;
 
-        if(InitalizationStatus == InitalizationStatus.NotInitialized)
+        if(InitializationStatus == InitializationStatus.NotInitialized)
             _ = Initialize();
     }
 
@@ -278,7 +271,7 @@ public sealed class GameController
         if(Instance.IsValid() && Instance != this)
             return;
 
-        if(InitalizationStatus != InitalizationStatus.Initialized)
+        if(InitializationStatus != InitializationStatus.Initialized)
             return;
 
         if(ShouldAnimateBlockTextures)
@@ -309,7 +302,7 @@ public sealed class GameController
         if(Instance.IsValid() && Instance != this)
             return;
 
-        InitalizationStatus = InitalizationStatus.NotInitialized;
+        InitializationStatus = InitializationStatus.NotInitialized;
         LoadingStatus = LoadingStatus.NotLoaded;
         Instance = null;
     }
@@ -393,12 +386,12 @@ public sealed class GameController
             throw new InvalidOperationException($"{nameof(GameController)} {this} can't run in editor");
     }
 
-    private void AssertInitalizationStatus(InitalizationStatus initalizationStatus, bool equal = true)
+    private void AssertInitializationStatus(InitializationStatus initializationStatus, bool equal = true)
     {
         AssertValid();
-        bool statusEqual = InitalizationStatus == initalizationStatus;
+        bool statusEqual = InitializationStatus == initializationStatus;
         if(statusEqual != equal)
-            throw new InvalidOperationException($"{nameof(GameController)}'s {nameof(InitalizationStatus)} is{(equal ? string.Empty : " not")} {initalizationStatus}");
+            throw new InvalidOperationException($"{nameof(GameController)}'s {nameof(InitializationStatus)} is{(equal ? string.Empty : " not")} {initializationStatus}");
     }
 
     private void AssertLoadingStatus(LoadingStatus loadingStatus, bool equal = true)

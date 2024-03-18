@@ -73,6 +73,7 @@
               "go": "94280597-0e6c-4e04-a1a8-9fc05ee1dd23",
               "component_type": "ChunksCreator"
             },
+            "EntitiesLimitThreshold": 0,
             "IsService": true,
             "Limits": {
               "Mins": "-160000,-160000,-256",

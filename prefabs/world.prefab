@@ -18,14 +18,15 @@
           "_type": "gameobject",
           "go": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa"
         },
+        "EntitiesLimitThreshold": 32,
         "IsService": false,
         "Limits": {
           "Mins": "-160000,-160000,-256",
-          "Maxs": "160000,160000,256"
+          "Maxs": "160016,160016,272"
         },
         "LimitsInChunks": {
           "Mins": "-10000,-10000,-16",
-          "Maxs": "10000,10000,16"
+          "Maxs": "10001,10001,17"
         },
         "TickByItself": true,
         "WorldOptions": {

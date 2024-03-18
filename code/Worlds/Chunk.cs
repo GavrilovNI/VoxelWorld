@@ -45,7 +45,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
             {
                 lock(_entities)
                 {
-                    return Blocks.IsSaved && _entitiesSaveMarker.IsSaved;
+                    return Blocks.IsSaved && _entitiesSaveMarker.IsSaved && _entities.Count == 0;
                 }
             }
         }
@@ -80,7 +80,6 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Size = size;
         World = world;
         Blocks = new(world, World.GetBlockWorldPosition(position, Vector3Int.Zero), size);
-        EntitiesParent ??= GameObject;
     }
 
     public bool AddEntity(Entity entity)
@@ -166,6 +165,16 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     protected override void OnEnabled()
     {
         Initialized = true;
+        _ = DisableEntitiesUntilModelUpdate();
+    }
+
+    protected virtual async Task DisableEntitiesUntilModelUpdate()
+    {
+        ThreadSafe.AssertIsMainThread();
+        EntitiesParent.Enabled = false;
+        await GetModelUpdateTask();
+        await Task.MainThread();
+        EntitiesParent.Enabled = true;
     }
 
     protected override void OnDestroy()
@@ -331,14 +340,14 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
 
-    public virtual (BinaryTag Blocks, ListTag Entities) Save(IReadOnlySaveMarker saveMarker)
+    public virtual (BinaryTag? Blocks, ListTag Entities) Save(IReadOnlySaveMarker saveMarker)
     {
         lock(Blocks)
         {
             lock(_entities)
             {
                 MarkSaved(saveMarker);
-                var blocks = SaveBlocks();
+                var blocks = Blocks.IsSaved ? null : SaveBlocks();
                 var entities = SaveEntities();
                 return (blocks, entities);
             }
@@ -374,7 +383,9 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         lock(Blocks)
         {
             Blocks.Read(tag);
-            return GetModelUpdateTask(flags);
+            var result = GetModelUpdateTask(flags);
+            _ = Task.RunInMainThreadAsync(() => DisableEntitiesUntilModelUpdate());
+            return result;
         }
     }
 

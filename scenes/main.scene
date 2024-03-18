@@ -18,13 +18,23 @@
           "IsMainCamera": false,
           "Orthographic": false,
           "OrthographicHeight": 1204,
-          "Priority": 1,
+          "Priority": 2,
           "RenderExcludeTags": "",
           "RenderTags": "",
           "TargetEye": "None",
           "Viewport": "0,0,1,1",
           "ZFar": 10000,
           "ZNear": 10
+        },
+        {
+          "__type": "LocalPlayerCameraDuplicate",
+          "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
+          "Camera": {
+            "_type": "component",
+            "component_id": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
+            "go": "f7b78756-955b-4773-b322-645ac082f19e",
+            "component_type": "CameraComponent"
+          }
         }
       ]
     },
@@ -171,6 +181,7 @@
             {
               "__type": "FakeLoadingScreen",
               "__guid": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
+              "BackgroundImagePath": "textures/voxelworld/ui/background.png",
               "FinishingTime": 1,
               "LastPercent": 0.95,
               "LastSpeed": 0.005,
@@ -242,7 +253,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-15T21:54:52.0957688\u002B01:00",
+  "LastSaved": "2024-03-18T00:20:14.7966369\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

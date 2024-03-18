@@ -29,7 +29,7 @@ public class ChunksCreator : Component
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var chunk = await Task.RunInMainThreadAsync(() => CreateChunkObject(position));
+        var chunk = await Task.RunInMainThreadAsync(() => CreateChunkObject(position, false));
 
         bool loaded = Loader.IsValid() && await Loader.TryProcess(chunk, cancellationToken);
 
@@ -49,15 +49,14 @@ public class ChunksCreator : Component
         cancellationToken.ThrowIfCancellationRequested();
 
         var chunk = creationData.Chunk;
-        if(creationData.WasLoaded)
+
+        if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
         {
-            if(ModelAwaiter.IsValid() && EntitiesLoader.IsValid())
-            {
-                await ModelAwaiter.TryProcess(chunk, cancellationToken);
-                await EntitiesLoader.TryProcess(chunk, cancellationToken);
-            }
+            await ModelAwaiter.TryProcess(chunk, cancellationToken);
+            await EntitiesLoader.TryProcess(chunk, cancellationToken);
         }
-        else
+
+        if(!creationData.WasLoaded)
         {
             if(TreeGenerator.IsValid())
                 await TreeGenerator.TryProcess(chunk, cancellationToken);
@@ -69,7 +68,7 @@ public class ChunksCreator : Component
     }
 
     // Call only in game thread
-    protected virtual Chunk CreateChunkObject(Vector3Int position)
+    public virtual Chunk CreateChunkObject(Vector3Int position, bool enable = true)
     {
         ThreadSafe.AssertIsMainThread();
 
@@ -85,6 +84,7 @@ public class ChunksCreator : Component
         foreach(var proxy in proxies)
             proxy.WorldComponent = World;
 
+        chunk.GameObject.Enabled = enable;
         return chunk;
     }
 

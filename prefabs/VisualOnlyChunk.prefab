@@ -8,6 +8,10 @@
       {
         "__type": "Chunk",
         "__guid": "ee7c420f-300d-46d3-b183-7f2fc8337f52",
+        "EntitiesParent": {
+          "_type": "gameobject",
+          "go": "c24643f5-faf2-4410-889a-4a513dda12ec"
+        },
         "ModelUpdater": {
           "_type": "component",
           "component_id": "57e0979e-fd95-4945-9e76-59ee83af544d",
@@ -64,6 +68,13 @@
             "Static": true
           }
         ]
+      },
+      {
+        "__guid": "c24643f5-faf2-4410-889a-4a513dda12ec",
+        "Name": "Entities",
+        "Position": "149.995,149.995,-212.125",
+        "Enabled": true,
+        "NetworkMode": 2
       },
       {
         "__guid": "fd50d505-0357-464e-8ae3-640de3d86fc4",

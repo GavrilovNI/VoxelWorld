@@ -17,7 +17,7 @@ public class ItemPickuper : Component, Component.ITriggerListener
     public void OnTriggerEnter(Collider other)
     {
         if(other.Components.TryGet<ItemStackEntity>(out var entity))
-            Entities.Add(entity, 0);
+            Entities[entity] = 0;
     }
 
     public void OnTriggerExit(Collider other)
@@ -47,7 +47,7 @@ public class ItemPickuper : Component, Component.ITriggerListener
 
         foreach(var (entity, timeSince) in Entities.ToList())
         {
-            if(!entity.IsValid)
+            if(!entity.IsValid || !entity.Enabled)
             {
                 entitiesToRemove.Add(entity);
                 continue;

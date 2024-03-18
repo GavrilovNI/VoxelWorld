@@ -1,13 +1,10 @@
 ﻿using Sandbox;
-using VoxelWorld.Data;
 using VoxelWorld.Entities;
 using VoxelWorld.Entities.Types;
-using VoxelWorld.IO.Helpers;
 using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.Mods.Base;
 using VoxelWorld.Mth;
 using VoxelWorld.Worlds;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -25,8 +22,10 @@ public class PlayerSpawner : Component
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)
     {
         if(!TryLoadPlayer(steamId, out var player, false))
+        {
             player = (PlayerEntityType.CreateEntity(defaultSpawnConfig with { StartEnabled = false }) as Player)!;
-        player.SetSteamId(steamId);
+            player.SetSteamId(steamId);
+        }
 
         var world = player.World;
         if(world is not null)
@@ -36,10 +35,24 @@ public class PlayerSpawner : Component
 
             var spawnPosition = player.Transform.Position;
             var spawnBlockPosition = world.GetBlockPosition(spawnPosition);
-            spawnBlockPosition = await FindSafePosition(world, spawnBlockPosition, SafeBounds, cancellationToken);
 
-            spawnPosition = world.GetBlockGlobalPosition(spawnBlockPosition) +
-                new Vector3(MathV.UnitsInMeter / 2f, MathV.UnitsInMeter / 2f, 0);
+            if(cancellationToken.IsCancellationRequested)
+                return null;
+
+            var currentBounds = SafeBounds + spawnBlockPosition;
+            if(world.Limits.Overlaps(currentBounds))
+            {
+                if(!await IsEmpty(world, currentBounds, cancellationToken))
+                {
+                    if(cancellationToken.IsCancellationRequested)
+                        return null;
+
+                    spawnBlockPosition = await FindSafePosition(world, spawnBlockPosition, SafeBounds, cancellationToken);
+
+                    spawnPosition = world.GetBlockGlobalPosition(spawnBlockPosition) +
+                        new Vector3(MathV.UnitsInMeter / 2f, MathV.UnitsInMeter / 2f, 0);
+                }
+            }
 
             if(cancellationToken.IsCancellationRequested)
                 return null;
@@ -87,30 +100,32 @@ public class PlayerSpawner : Component
             tag = BinaryTag.Read(reader);
         }
 
-        if(!Entity.TryReadWithWorld(tag, out var entity, enable))
-        {
-            player = null!;
-            return false;
-        }
-
-        if(entity is not Player playerEntity)
-        {
-            player = null!;
-            entity.Destroy();
-            return false;
-        }
-
-        player = playerEntity;
-        return true;
+        return Player.TryReadPlayer(tag, steamId, out player, enable);
     }
 
     protected virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
     {
-        while(!await IsEmpty(world, range + startPosition, cancellationToken))
+        var currentRange = range + startPosition;
+        while(world.Limits.Overlaps(currentRange) && !await IsEmpty(world, currentRange, cancellationToken))
+        {
             startPosition += Vector3Int.Up;
+            currentRange = range + startPosition;
+        }
 
-        while(await IsEmpty(world, range + startPosition, cancellationToken))
+        if(!world.Limits.Overlaps(currentRange))
+        {
             startPosition += Vector3Int.Down;
+            currentRange = range + startPosition;
+
+            if(!world.Limits.Overlaps(currentRange))
+                return startPosition + Vector3Int.Up;
+        }
+
+        while(world.Limits.Overlaps(currentRange) && await IsEmpty(world, currentRange, cancellationToken))
+        {
+            startPosition += Vector3Int.Down;
+            currentRange = range + startPosition;
+        }
 
         return startPosition + Vector3Int.Up;
     }
@@ -119,7 +134,7 @@ public class PlayerSpawner : Component
     {
         var limits = world.Limits;
         var blockMeshes = GameController.Instance!.BlockMeshes;
-        foreach(var position in range.GetPositions())
+        foreach(var position in range.GetPositions(false))
         {
             if(cancellationToken.IsCancellationRequested)
                 return false;
@@ -140,7 +155,7 @@ public class PlayerSpawner : Component
     protected virtual Task PreloadChunks(IWorldAccessor world, BBoxInt range, Vector3 spawnPosition)
     {
         Vector3Int centerChunkPosition = world.GetChunkPosition(spawnPosition);
-        var positionsToLoad = (range + centerChunkPosition).GetPositions().ToHashSet();
+        var positionsToLoad = (range + centerChunkPosition).GetPositions().Where(p => world.IsChunkInLimits(p)).ToHashSet();
 
         return world.CreateChunksSimultaneously(positionsToLoad);
     }

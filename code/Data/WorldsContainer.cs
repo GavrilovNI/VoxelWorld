@@ -15,7 +15,7 @@ public class WorldsContainer : IReadOnlyWorldsContainer
 
     public bool TryAddWorld(World world)
     {
-        if(!world.Initialized)
+        if(world.InitializationStatus != InitializationStatus.Initialized)
             throw new InvalidOperationException($"{nameof(World)} {world} wasn't initialized");
 
         if(HasWorld(world.Id))

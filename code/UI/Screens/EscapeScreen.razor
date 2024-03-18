@@ -35,7 +35,7 @@
 			return;
 
 		Saving = true;
-		if(GameController.InitalizationStatus == InitalizationStatus.Initialized &&
+		if(GameController.InitializationStatus == InitializationStatus.Initialized &&
 			GameController.LoadingStatus == LoadingStatus.Loaded)
 		{
 			var saved = await GameController.Instance!.SaveGame();
