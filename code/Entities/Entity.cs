@@ -29,6 +29,12 @@ public abstract class Entity : Component
 
     public new Guid Id => GameObject.Id;
 
+    public Transform LocalToWorldTransform
+    {
+        get => World is null ? Transform.World : World!.GameObject.Transform.World.ToLocal(Transform.World);
+        set => Transform.World = World is null ? value : World.GameObject.Transform.Local.ToWorld(value);
+    }
+
     public new bool Enabled
     {
         get => GameObject.Active;
@@ -37,6 +43,8 @@ public abstract class Entity : Component
 
     public void Initialize(ModedId typeId, IWorldAccessor? world = null)
     {
+        ThreadSafe.AssertIsMainThread();
+
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Entity)} {this} was already initialized");
         Initialized = true;
@@ -51,19 +59,32 @@ public abstract class Entity : Component
                 HandleTransformChanging();
         };
 
-        ChangeWorld(world);
+        ChangeWorld(world ?? World);
     }
 
-    public bool ChangeWorld(IWorldAccessor? newWorld)
+    public bool ChangeWorld(IWorldAccessor? newWorld, bool saveLocalToWorldTransform = true)
     {
+        ThreadSafe.AssertIsMainThread();
+
         if(!IsValid && newWorld is not null)
             throw new InvalidOperationException($"{this} is not valid, can't change world (remove is possible)");
 
         if(object.ReferenceEquals(World, newWorld))
             return false;
 
+        if(!Initialized)
+        {
+            World = newWorld;
+            ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+            return true;
+        }
+
+        var oldTransform = LocalToWorldTransform;
         var oldWorld = World;
         World = newWorld;
+        if(saveLocalToWorldTransform)
+            LocalToWorldTransform = oldTransform;
+
         oldWorld?.RemoveEntity(this);
         ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
         World?.AddEntity(this);
@@ -199,8 +220,7 @@ public abstract class Entity : Component
         CompoundTag tag = new();
         tag.Set("type_id", TypeId);
         tag.Set("world_id", World!.Id);
-        var transform = World!.GameObject.Transform.World.ToLocal(Transform.World);
-        tag.Set("transform", transform);
+        tag.Set("transform", LocalToWorldTransform);
 
         var additionalData = WriteAdditional();
         if(!additionalData.IsDataEmpty)
@@ -208,7 +228,7 @@ public abstract class Entity : Component
         return tag;
     }
 
-    public static Entity Read(BinaryTag tag, IWorldAccessor world, bool enable = true)
+    public static Entity Read(BinaryTag tag, IWorldAccessor? world, bool enable = true)
     {
         CompoundTag compoundTag = tag.To<CompoundTag>();
         var typeId = ModedId.Read(compoundTag.GetTag("type_id"));
@@ -216,7 +236,8 @@ public abstract class Entity : Component
         var entityType = GameController.Instance!.Registries.GetRegistry<EntityType>().Get(typeId);
 
         var transform = compoundTag.Get<Transform>("transform");
-        transform = world.GameObject.Transform.Local.ToWorld(transform);
+        if(world is not null)
+            transform = world.GameObject.Transform.Local.ToWorld(transform);
 
         EntitySpawnConfig spawnConfig = new(transform, world, false);
         var entity = entityType.CreateEntity(spawnConfig);
@@ -231,7 +252,7 @@ public abstract class Entity : Component
     {
         CompoundTag compoundTag = tag.To<CompoundTag>();
         var worldId = ModedId.Read(compoundTag.GetTag("world_id"));
-        if(!GameController.Instance!.Worlds.TryGetWorld(worldId, out World world))
+        if(!Worlds.World.TryFind(worldId, out World world))
         {
             entity = null!;
             return false;

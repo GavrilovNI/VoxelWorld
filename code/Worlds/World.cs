@@ -646,6 +646,9 @@ public class World : Component, IWorldAccessor, ITickable
         return result;
     }
 
+    public static bool TryFind(ModedId worldId, out World world) =>
+        GameController.Instance!.Worlds.TryGetWorld(worldId, out world);
+
     public static bool TryFindInObject(GameObject? gameObject, out IWorldAccessor world)
     {
         if(!gameObject.IsValid())

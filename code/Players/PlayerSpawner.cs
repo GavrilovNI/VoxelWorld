@@ -22,8 +22,10 @@ public class PlayerSpawner : Component
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)
     {
         if(!TryLoadPlayer(steamId, out var player, false))
+        {
             player = (PlayerEntityType.CreateEntity(defaultSpawnConfig with { StartEnabled = false }) as Player)!;
-        player.SetSteamId(steamId);
+            player.SetSteamId(steamId);
+        }
 
         var world = player.World;
         if(world is not null)
@@ -98,21 +100,7 @@ public class PlayerSpawner : Component
             tag = BinaryTag.Read(reader);
         }
 
-        if(!Entity.TryReadWithWorld(tag, out var entity, enable))
-        {
-            player = null!;
-            return false;
-        }
-
-        if(entity is not Player playerEntity)
-        {
-            player = null!;
-            entity.Destroy();
-            return false;
-        }
-
-        player = playerEntity;
-        return true;
+        return Player.TryReadPlayer(tag, steamId, out player, enable);
     }
 
     protected virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
