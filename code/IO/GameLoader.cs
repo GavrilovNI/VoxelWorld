@@ -3,6 +3,8 @@ using VoxelWorld.Data;
 using VoxelWorld.IO.Helpers;
 using System;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace VoxelWorld.IO;
 
@@ -50,12 +52,13 @@ public class GameLoader : Component
         return (loaded, path);
     }
 
-    protected string GetNotTakenSavePath(BaseFileSystem savesFileSystemm, string path)
+    public string GetNotTakenSavePath(BaseFileSystem savesFileSystemm, string fileName)
     {
-        string result = path;
+        string result = IOUtils.RemoveInvalidCharacters(fileName);
+        result = string.IsNullOrWhiteSpace(result) ? "New Game" : result;
         int addValue = 1;
         while(savesFileSystemm.DirectoryExists(result))
-            result = $"{path} ({addValue++})";
+            result = $"{result} ({addValue++})";
         return result;
     }
 }
