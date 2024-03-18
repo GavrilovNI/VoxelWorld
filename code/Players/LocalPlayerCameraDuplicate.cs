@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using System.Linq;
 using VoxelWorld.Entities;
 using VoxelWorld.SandcubeExtensions;
 
@@ -20,8 +19,8 @@ public class LocalPlayerCameraDuplicate : Component, ILocalPlayerInitializable
 
     protected override void OnUpdate()
     {
-        if(PlayerCamera is not null)
+        if(PlayerCamera.IsValid())
             Transform.World = PlayerCamera.Transform.World;
-        Camera.Enabled = PlayerCamera is not null && !PlayerCamera.Active;
+        Camera.Enabled = !PlayerCamera.IsValid() || !PlayerCamera.Active;
     }
 }
