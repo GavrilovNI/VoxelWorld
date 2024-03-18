@@ -165,6 +165,47 @@ public sealed class ListTag : NbtReadCollection<int>, IEnumerable<BinaryTag>
         Add(Array.IndexOf(Enum.GetValues<T>(), value));
 
 
+    public void Set(int index, BinaryTag? tag)
+    {
+        if(tag is null)
+            RemoveAt(index);
+        else
+            this[index] = tag;
+    }
+
+    public void Set(int index, byte? value) => Set(index, value is null ? null : new ByteTag(value.Value));
+
+    public void Set(int index, sbyte? value) => Set(index, value is null ? null : new SByteTag(value.Value));
+
+    public void Set(int index, short? value) => Set(index, value is null ? null : new ShortTag(value.Value));
+
+    public void Set(int index, ushort? value) => Set(index, value is null ? null : new UShortTag(value.Value));
+
+    public void Set(int index, int? value) => Set(index, value is null ? null : new IntTag(value.Value));
+
+    public void Set(int index, uint? value) => Set(index, value is null ? null : new UIntTag(value.Value));
+
+    public void Set(int index, long? value) => Set(index, value is null ? null : new LongTag(value.Value));
+
+    public void Set(int index, ulong? value) => Set(index, value is null ? null : new ULongTag(value.Value));
+
+    public void Set(int index, float? value) => Set(index, value is null ? null : new FloatTag(value.Value));
+
+    public void Set(int index, double? value) => Set(index, value is null ? null : new DoubleTag(value.Value));
+
+    public void Set(int index, decimal? value) => Set(index, value is null ? null : new DecimalTag(value.Value));
+
+    public void Set(int index, bool? value) => Set(index, value is null ? null : new BoolTag(value.Value));
+
+    public void Set(int index, char? value) => Set(index, value is null ? null : new CharTag(value.Value));
+
+    public void Set(int index, string? value) => Set(index, value is null ? null : new StringTag(value));
+
+    public void Set<T>(int index, T? value) where T : INbtWritable => Set(index, value is null ? null : value.Write());
+
+    public void Set<T>(int index, T? value, bool _ = false) where T : struct, Enum =>
+        Set(index, value is null ? null : Array.IndexOf(Enum.GetValues<T>(), value.Value));
+
 
     public void Insert(int index, BinaryTag tag)
     {
