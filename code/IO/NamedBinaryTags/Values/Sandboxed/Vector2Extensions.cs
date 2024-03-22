@@ -16,6 +16,9 @@ public static class Vector2Extensions
     public static void Set(this CompoundTag collection, string key, Vector2 value) =>
         collection.Set(key, value.Write());
 
+    public static void Set(this ListTag collection, int index, Vector2 value) =>
+        collection.Set(index, value.Write());
+
     public static void Add(this ListTag collection, Vector2 value) =>
         collection.Add(value.Write());
 
@@ -23,11 +26,21 @@ public static class Vector2Extensions
         collection.Insert(index, value.Write());
 
 
-    public static Vector2 Get<T>(this CompoundTag collection, string key) where T : IEquatable<Vector2> =>
-        collection.GetTag(key).To<ListTag>().To<T>();
+    public static Vector2 Get<T>(this CompoundTag collection, string key, Vector2 defaultValue = default) where T : IEquatable<Vector2>
+    {
+        var tag = collection.GetTagOrNull(key);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<Vector2>();
+    }
 
-    public static Vector2 Get<T>(this ListTag collection, int index) where T : IEquatable<Vector2> =>
-        collection.GetTag(index).To<ListTag>().To<T>();
+    public static Vector2 Get<T>(this ListTag collection, int index, Vector2 defaultValue = default) where T : IEquatable<Vector2>
+    {
+        var tag = collection.GetTagOrNull(index);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<Vector2>();
+    }
 
     public static Vector2 To<T>(this ListTag tag) where T : IEquatable<Vector2> =>
         new(tag.Get<float>(0), tag.Get<float>(1));

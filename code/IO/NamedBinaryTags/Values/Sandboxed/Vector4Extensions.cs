@@ -17,6 +17,9 @@ public static class Vector4Extensions
     public static void Set(this CompoundTag collection, string key, Vector4 value) =>
         collection.Set(key, value.Write());
 
+    public static void Set(this ListTag collection, int index, Vector4 value) =>
+        collection.Set(index, value.Write());
+
     public static void Add(this ListTag collection, Vector4 value) =>
         collection.Add(value.Write());
 
@@ -24,11 +27,21 @@ public static class Vector4Extensions
         collection.Insert(index, value.Write());
 
 
-    public static Vector4 Get<T>(this CompoundTag collection, string key) where T : IEquatable<Vector4> =>
-        collection.GetTag(key).To<ListTag>().To<T>();
+    public static Vector4 Get<T>(this CompoundTag collection, string key, Vector4 defaultValue = default) where T : IEquatable<Vector4>
+    {
+        var tag = collection.GetTagOrNull(key);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<Vector4>();
+    }
 
-    public static Vector4 Get<T>(this ListTag collection, int index) where T : IEquatable<Vector4> =>
-        collection.GetTag(index).To<ListTag>().To<T>();
+    public static Vector4 Get<T>(this ListTag collection, int index, Vector4 defaultValue = default) where T : IEquatable<Vector4>
+    {
+        var tag = collection.GetTagOrNull(index);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<Vector4>();
+    }
 
     public static Vector4 To<T>(this ListTag tag) where T : IEquatable<Vector4> =>
         new(tag.Get<float>(0), tag.Get<float>(1), tag.Get<float>(2), tag.Get<float>(3));

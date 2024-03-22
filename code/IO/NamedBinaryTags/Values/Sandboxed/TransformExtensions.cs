@@ -23,6 +23,9 @@ public static class TransformExtensions
     public static void Set(this CompoundTag collection, string key, Transform value) =>
         collection.Set(key, value.Write());
 
+    public static void Set(this ListTag collection, int index, Transform value) =>
+        collection.Set(index, value.Write());
+
     public static void Add(this ListTag collection, Transform value) =>
         collection.Add(value.Write());
 
@@ -30,11 +33,21 @@ public static class TransformExtensions
         collection.Insert(index, value.Write());
 
 
-    public static Transform Get<T>(this CompoundTag collection, string key) where T : IEquatable<Transform> =>
-        collection.GetTag(key).To<ListTag>().To<T>();
+    public static Transform Get<T>(this CompoundTag collection, string key, Transform defaultValue = default) where T : IEquatable<Transform>
+    {
+        var tag = collection.GetTagOrNull(key);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<Transform>();
+    }
 
-    public static Transform Get<T>(this ListTag collection, int index) where T : IEquatable<Transform> =>
-        collection.GetTag(index).To<ListTag>().To<T>();
+    public static Transform Get<T>(this ListTag collection, int index, Transform defaultValue = default) where T : IEquatable<Transform>
+    {
+        var tag = collection.GetTagOrNull(index);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<Transform>();
+    }
 
     public static Transform To<T>(this ListTag tag) where T : IEquatable<Transform> =>
         new(new Vector3(tag.Get<float>(0), tag.Get<float>(1), tag.Get<float>(2)),
