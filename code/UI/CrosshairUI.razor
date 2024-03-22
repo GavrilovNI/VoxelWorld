@@ -13,6 +13,19 @@
 
 @code
 {
-	public void OnLocalPlayerCreated(Player player) => this.Panel.SetClass("enabled", true);
-	public void OnLocalPlayerDestroyed(Player player) => this.Panel.SetClass("enabled", false);
+	private bool _isShowing = false;
+	[Property] public bool IsShowing
+	{
+		get => _isShowing;
+		set
+		{
+			_isShowing = value;
+			this.Panel?.SetClass("enabled", value);
+		}
+	}
+
+	protected override void OnTreeFirstBuilt() => this.Panel?.SetClass("enabled", IsShowing);
+
+	public void OnLocalPlayerCreated(Player player) => IsShowing = true;
+	public void OnLocalPlayerDestroyed(Player player) => IsShowing = false;
 }

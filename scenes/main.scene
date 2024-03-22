@@ -162,7 +162,8 @@
           "Components": [
             {
               "__type": "CrosshairUI",
-              "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7"
+              "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7",
+              "IsShowing": false
             }
           ]
         },
