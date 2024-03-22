@@ -164,8 +164,13 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         if(canPlace)
         {
             blockPosition = ConvertingWorld!.GetBlockPosition(testPosition);
-            currentState = ConvertingWorld.GetBlockState(blockPosition);
-            canPlace = currentState.Block.CanBeReplaced(currentState, BlockState);
+            canPlace = ConvertingWorld.Limits.Contains(blockPosition);
+
+            if(canPlace)
+            {
+                currentState = ConvertingWorld.GetBlockState(blockPosition);
+                canPlace = currentState.Block.CanBeReplaced(currentState, BlockState);
+            }
         }
 
         if(!canPlace)
