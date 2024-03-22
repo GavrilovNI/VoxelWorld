@@ -403,5 +403,5 @@ public sealed class GameController : Component, ILocalPlayerListener
     }
 
     public void OnLocalPlayerCreated(Player player) => LocalPlayer = player;
-    public void OnLocalPlayerDestroyed(Player player) => LocalPlayer = null;
+    public void OnLocalPlayerDestroyed(Player player) { }
 }
