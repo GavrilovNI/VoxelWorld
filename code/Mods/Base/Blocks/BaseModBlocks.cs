@@ -22,6 +22,9 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
         Properties = BlockProperties.Default with
         {
             IsTransparent = true,
+            PlaceSound = "sounds/err.sound",
+            BreakSound = "sounds/err.sound",
+            FootstepSound = "sounds/err.sound",
         }
     };
 
