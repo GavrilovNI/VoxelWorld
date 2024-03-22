@@ -274,7 +274,13 @@
               "_type": "gameobject",
               "go": "7db5d1e9-a608-4b3c-b0bc-f312a7710621"
             }
-            "MaxTraceDownDistance": 100
+            "MaxTraceDownDistance": 100,
+            "PlayerController": {
+              "_type": "component",
+              "component_id": "f143aad7-c4e8-4c49-9d06-5aa7d2afab53",
+              "go": "8e266743-5db2-40f8-a74a-286a025b5796",
+              "component_type": "PlayerController"
+            }
           }
         ]
       }

@@ -17,6 +17,7 @@ public class PlayerController : Component
     [Property] protected float StopSpeed { get; set; } = 140f;
     [Property] protected float AirWishVelocityClamp { get; set; } = 50f;
 
+    public bool IsCrouching { get; protected set; } = false;
 
     public virtual Vector3 Gravity => Scene.PhysicsWorld.Gravity;
     public Vector3 GravityNormal
@@ -40,6 +41,7 @@ public class PlayerController : Component
 
     protected override void OnUpdate()
     {
+        IsCrouching = GameInput.IsCrouching;
         WishVelocity = CalculateWishVelocity();
     }
 
@@ -92,7 +94,7 @@ public class PlayerController : Component
 
     protected virtual float GetWishSpeed(Vector3 input)
     {
-        if(GameInput.IsCrouching)
+        if(IsCrouching)
             return CrouchSpeed;
 
         bool goingForward = input.x > 0;

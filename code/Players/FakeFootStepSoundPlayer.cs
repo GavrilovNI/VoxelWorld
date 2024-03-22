@@ -11,6 +11,7 @@ public class FakeFootStepSoundPlayer : Component
     [Property] public GameObject Feet { get; set; } = null!;
     [Property] public float DistanceBetweenSteps { get; set; } = 60f;
     [Property, RequireComponent] public CharacterController CharacterController { get; set; } = null!;
+    [Property, RequireComponent] public PlayerController PlayerController { get; set; } = null!;
     [Property] public float MaxTraceDownDistance { get; set; } = 100f;
 
     protected Vector3 LastPosition = Vector3.Zero;
@@ -33,7 +34,8 @@ public class FakeFootStepSoundPlayer : Component
         if(CharacterController.IsOnGround && !WasOnGround ||
             DistanceTravelled > DistanceBetweenSteps)
         {
-            PlaySound();
+            if(!PlayerController.IsCrouching)
+                PlaySound();
             DistanceTravelled = 0;
         }
 
