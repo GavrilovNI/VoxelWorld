@@ -84,6 +84,11 @@
         "NetworkMode": 2,
         "Components": [
           {
+            "__type": "WorldProxy",
+            "__guid": "f956928a-12d4-4545-8a04-67740b763601",
+            "DoNotEnableIfWorldIsNotValid": true
+          },
+          {
             "__type": "ModelCollider",
             "__guid": "2cb5ab12-d714-4d16-9127-6937bd79b3bb",
             "__enabled": false,
