@@ -127,6 +127,9 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
 
         await World.SetBlockState(blockPosition, BlockState);
 
+        var blockCenterPosition = World.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
+        Sound.Play(state.Block.Properties.PlaceSound, blockCenterPosition);
+
         var currentBlockkState = World.GetBlockState(blockPosition);
         if(currentBlockkState.Block is PhysicsBlock physicsBlock)
         {

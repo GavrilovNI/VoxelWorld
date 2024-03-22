@@ -35,7 +35,7 @@
         },
         "MassOverride": 0,
         "MotionEnabled": true,
-        "RigidbodyFlags": 0,
+        "RigidbodyFlags": "DisableCollisionSounds",
         "StartAsleep": false
       },
       {
