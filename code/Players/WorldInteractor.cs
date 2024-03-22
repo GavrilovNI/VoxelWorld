@@ -6,6 +6,7 @@ using VoxelWorld.Items;
 using VoxelWorld.Worlds;
 using System.Linq;
 using System.Threading.Tasks;
+using VoxelWorld.Mth;
 
 namespace VoxelWorld.Players;
 
@@ -204,6 +205,8 @@ public class WorldInteractor : Component
         if(attacking && !blockState.IsAir())
         {
             await blockState.Block.Break(blockContext);
+            var blockCenterPosition = world.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
+            Sound.Play(block.Properties.BreakSound, blockCenterPosition);
             return InteractionResult.Success;
         }
 
