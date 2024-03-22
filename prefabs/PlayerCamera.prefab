@@ -1,0 +1,74 @@
+{
+  "RootObject": {
+    "__guid": "a6d72a0a-070b-49fe-91b7-0bf118c8e89e",
+    "Name": "Camera",
+    "Position": "0,0,0",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "Components": [
+      {
+        "__type": "CameraComponent",
+        "__guid": "cdaf28f8-d032-44ac-9aa3-6e52f3552e80",
+        "BackgroundColor": "0.25292,0.26086,0.29703,1",
+        "ClearFlags": "All",
+        "FieldOfView": 110,
+        "IsMainCamera": true,
+        "Orthographic": false,
+        "OrthographicHeight": 1204,
+        "Priority": 2,
+        "RenderExcludeTags": "invisible",
+        "RenderTags": "",
+        "TargetEye": "None",
+        "Viewport": "0,0,1,1",
+        "ZFar": 10000,
+        "ZNear": 1
+      },
+      {
+        "__type": "Sharpen",
+        "__guid": "9d6ae0a7-58b6-4ff2-ae87-1cbe3925c989",
+        "Scale": 1
+      },
+      {
+        "__type": "Bloom",
+        "__guid": "6f0b0fb2-2408-4dda-821d-98f1b26e6356",
+        "BloomColor": {
+          "color": [
+            {
+              "c": "1,1,1,1"
+            },
+            {
+              "t": 1,
+              "c": "0.5,0.5,0.5,1"
+            }
+          ],
+          "alpha": []
+        },
+        "BloomCurve": {
+          "rangey": "0,106.45",
+          "frames": [
+            {},
+            {
+              "x": 1,
+              "y": 1
+            }
+          ]
+        },
+        "Mode": "Screen",
+        "Strength": 1,
+        "Threshold": 0.3,
+        "ThresholdWidth": 2
+      },
+      {
+        "__type": "AudioListener",
+        "__guid": "babe795e-f7fe-45a3-a55e-f174a6cbabda",
+        "UseCameraDirection": true
+      }
+    ]
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}
