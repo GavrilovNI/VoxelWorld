@@ -70,6 +70,7 @@ public class PlayerSpawner : Component
                 return null;
         }
 
+        // TODO: remove when getting players entering/leaving controller
         foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
             localPlayerInitializable.OnLocalPlayerCreated(player);
 
