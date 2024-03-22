@@ -10,14 +10,14 @@ namespace VoxelWorld.Data;
 
 public class EntitiesCollection : IEnumerable<Entity>
 {
-    public event Action<Entity, Vector3Int, Vector3Int>? EntityMovedToAnotherChunk;
+    public event Action<Entity, Vector3IntB, Vector3IntB>? EntityMovedToAnotherChunk;
 
     protected readonly object Locker = new();
 
     protected readonly IWorldProvider World;
 
     protected readonly Dictionary<Guid, Entity> Entities = new();
-    protected readonly MultiValueBiDictionary<Vector3Int, Entity> ChunkedEntities = new();
+    protected readonly MultiValueBiDictionary<Vector3IntB, Entity> ChunkedEntities = new();
 
 
     public EntitiesCollection(IWorldProvider world)
@@ -126,13 +126,13 @@ public class EntitiesCollection : IEnumerable<Entity>
         }
     }
 
-    protected virtual void OnEntityMovedToAnotherChunk(Entity entity, Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
+    protected virtual void OnEntityMovedToAnotherChunk(Entity entity, Vector3IntB oldChunkPosition, Vector3IntB newChunkPosition)
     {
         UpdateEntityChunk(entity);
         EntityMovedToAnotherChunk?.Invoke(entity, oldChunkPosition, newChunkPosition);
     }
 
-    public virtual IReadOnlySet<Entity> GetEntitiesInChunk(Vector3Int chunkPosition)
+    public virtual IReadOnlySet<Entity> GetEntitiesInChunk(Vector3IntB chunkPosition)
     {
         lock(Locker)
         {
@@ -140,11 +140,11 @@ public class EntitiesCollection : IEnumerable<Entity>
         }
     }
 
-    public virtual IReadOnlyMultiValueBiDictionary<Vector3Int, Entity> GetChunkedEntities()
+    public virtual IReadOnlyMultiValueBiDictionary<Vector3IntB, Entity> GetChunkedEntities()
     {
         lock(Locker)
         {
-            return new MultiValueBiDictionary<Vector3Int, Entity>(ChunkedEntities);
+            return new MultiValueBiDictionary<Vector3IntB, Entity>(ChunkedEntities);
         }
     }
 

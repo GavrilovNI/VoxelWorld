@@ -68,7 +68,7 @@ public class SlabBlock : SimpleBlock
         return currentSlabType != newSlabType;
     }
 
-    protected virtual SlabType GetSlabPart(IWorldProvider world, Vector3Int blockPosition, PhysicsTraceResult traceResult, SlabType slabTypeAtCenter)
+    protected virtual SlabType GetSlabPart(IWorldProvider world, Vector3IntB blockPosition, PhysicsTraceResult traceResult, SlabType slabTypeAtCenter)
     {
         var blockLocalYPosition = traceResult.HitPosition.z - world.GetBlockGlobalPosition(blockPosition).z;
 

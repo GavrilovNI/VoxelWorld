@@ -12,12 +12,12 @@ namespace VoxelWorld.IO.Helpers;
 public class RegionalSaveHelper
 {
     public BaseFileSystem FileSystem { get; }
-    public Vector3Int RegionSize { get; }
+    public Vector3IntB RegionSize { get; }
     public string FilesExtension { get; }
     protected int MaxChunksCount { get; }
     protected BBoxInt Bounds { get; }
 
-    public RegionalSaveHelper(BaseFileSystem fileSystem, Vector3Int regionSize, string filesExtension)
+    public RegionalSaveHelper(BaseFileSystem fileSystem, Vector3IntB regionSize, string filesExtension)
     {
         FileSystem = fileSystem;
         RegionSize = regionSize;
@@ -26,7 +26,7 @@ public class RegionalSaveHelper
         Bounds = BBoxInt.FromMinsAndSize(0, RegionSize);
     }
 
-    public bool TryLoadOneChunkOnly(Vector3Int globalChunkPosition, out BinaryTag chunkTag)
+    public bool TryLoadOneChunkOnly(Vector3IntB globalChunkPosition, out BinaryTag chunkTag)
     {
         var regionPosition = (1f * globalChunkPosition / RegionSize).Floor();
         if(!HasRegionFile(regionPosition))
@@ -61,7 +61,7 @@ public class RegionalSaveHelper
         return true;
     }
 
-    public Dictionary<Vector3Int, BinaryTag> LoadRegion(Vector3Int regionPosition)
+    public Dictionary<Vector3IntB, BinaryTag> LoadRegion(Vector3IntB regionPosition)
     {
         if(!HasRegionFile(regionPosition))
             return new();
@@ -76,7 +76,7 @@ public class RegionalSaveHelper
         if(possibleRegionTag is not ListTag regionTag || regionTag.TagsType != BinaryTagType.Compound)
             return new();
 
-        Dictionary<Vector3Int, BinaryTag> result = new();
+        Dictionary<Vector3IntB, BinaryTag> result = new();
         for(int chunkIndex = 0; chunkIndex < MaxChunksCount && chunkIndex < regionTag.Count; ++chunkIndex)
         {
             var chunkPosition = GetChunkPosition(chunkIndex);
@@ -85,7 +85,7 @@ public class RegionalSaveHelper
         return result;
     }
 
-    public void SaveRegion(Vector3Int regionPosition, IReadOnlyDictionary<Vector3Int, BinaryTag> localChunkedTags)
+    public void SaveRegion(Vector3IntB regionPosition, IReadOnlyDictionary<Vector3IntB, BinaryTag> localChunkedTags)
     {
         if(localChunkedTags.All(x => x.Value.IsDataEmpty))
         {
@@ -118,7 +118,7 @@ public class RegionalSaveHelper
         regionTag.Write(writer);
     }
 
-    public virtual void SaveChunks(IReadOnlyDictionary<Vector3Int, BinaryTag> chunkedTags)
+    public virtual void SaveChunks(IReadOnlyDictionary<Vector3IntB, BinaryTag> chunkedTags)
     {
         var regionedData = chunkedTags.GroupBy(c => (1f * c.Key / RegionSize).Floor());
         foreach(var region in regionedData)
@@ -131,12 +131,12 @@ public class RegionalSaveHelper
     }
 
 
-    protected virtual int GetChunkIndex(Vector3Int chunkPosition)
+    protected virtual int GetChunkIndex(Vector3IntB chunkPosition)
     {
         return chunkPosition.z + RegionSize.z * (chunkPosition.y + RegionSize.y * chunkPosition.x);
     }
 
-    protected virtual Vector3Int GetChunkPosition(int chunkIndex)
+    protected virtual Vector3IntB GetChunkPosition(int chunkIndex)
     {
         int z = chunkIndex % RegionSize.z;
         chunkIndex /= RegionSize.z;
@@ -146,13 +146,13 @@ public class RegionalSaveHelper
         return new(x, y, z);
     }
 
-    public virtual string GetRegionFilePath(in Vector3Int regionPosition) =>
+    public virtual string GetRegionFilePath(in Vector3IntB regionPosition) =>
         $"{regionPosition.x}.{regionPosition.y}.{regionPosition.z}.{FilesExtension}";
 
-    public virtual bool HasRegionFile(in Vector3Int regionPosition) =>
+    public virtual bool HasRegionFile(in Vector3IntB regionPosition) =>
         FileSystem.FileExists(GetRegionFilePath(regionPosition));
 
-    public virtual bool DeleteRegionFile(in Vector3Int regionPosition)
+    public virtual bool DeleteRegionFile(in Vector3IntB regionPosition)
     {
         var filePath = GetRegionFilePath(regionPosition);
         bool hadFile = FileSystem.FileExists(filePath);
@@ -161,11 +161,11 @@ public class RegionalSaveHelper
         return hadFile;
     }
 
-    public virtual Dictionary<Vector3Int, string> GetAllRegionFiles()
+    public virtual Dictionary<Vector3IntB, string> GetAllRegionFiles()
     {
         var posibleFiles = FileSystem.FindFile("/", $"*.*.*.{FilesExtension}", false);
 
-        Dictionary<Vector3Int, string> result = new();
+        Dictionary<Vector3IntB, string> result = new();
         foreach(var posibleFile in posibleFiles)
         {
             var parts = posibleFile.Split('.', 4);
@@ -182,13 +182,13 @@ public class RegionalSaveHelper
         return result;
     }
 
-    public virtual Stream OpenRegionRead(in Vector3Int regionPosition, FileMode fileMode = FileMode.Open)
+    public virtual Stream OpenRegionRead(in Vector3IntB regionPosition, FileMode fileMode = FileMode.Open)
     {
         string fileName = GetRegionFilePath(regionPosition);
         return FileSystem.OpenRead(fileName, fileMode);
     }
 
-    public virtual Stream OpenRegionWrite(in Vector3Int regionPosition, FileMode fileMode = FileMode.Create)
+    public virtual Stream OpenRegionWrite(in Vector3IntB regionPosition, FileMode fileMode = FileMode.Create)
     {
         string fileName = GetRegionFilePath(regionPosition);
         return FileSystem.OpenWrite(fileName, fileMode);

@@ -17,7 +17,7 @@ public class BlockPhotoMaker : Component
     public async Task<bool> TryMakePhoto(BlockState blockState, Texture texture)
     {
         World.Clear();
-        await World.SetBlockState(Vector3Int.Zero, blockState, BlockSetFlags.Default | BlockSetFlags.AwaitModelUpdate);
+        await World.SetBlockState(Vector3IntB.Zero, blockState, BlockSetFlags.Default | BlockSetFlags.AwaitModelUpdate);
         bool made = TryRenderToTexture(texture);
         World.Clear();
         return made;

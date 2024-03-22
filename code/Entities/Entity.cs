@@ -15,14 +15,14 @@ namespace VoxelWorld.Entities;
 public abstract class Entity : Component
 {
     public event Action<Entity, IWorldAccessor?, IWorldAccessor?>? ChangedWorld;
-    public event Action<Entity, Vector3Int, Vector3Int>? MovedToAnotherChunk;
+    public event Action<Entity, Vector3IntB, Vector3IntB>? MovedToAnotherChunk;
     public event Action<Entity, Transform, Transform>? TransformChanged;
     public event Action<Entity>? Destroyed;
 
     public bool Initialized { get; private set; }
     public ModedId TypeId { get; private set; }
     public IWorldAccessor? World { get; private set; }
-    public Vector3Int ChunkPosition { get; private set; }
+    public Vector3IntB ChunkPosition { get; private set; }
 
     private Transform _oldTransform;
     private bool _tranformChanged = false;
@@ -78,7 +78,7 @@ public abstract class Entity : Component
         if(!Initialized)
         {
             World = newWorld;
-            ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+            ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3IntB.Zero;
             return true;
         }
 
@@ -89,7 +89,7 @@ public abstract class Entity : Component
             LocalToWorldTransform = oldTransform;
 
         oldWorld?.RemoveEntity(this);
-        ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+        ChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3IntB.Zero;
         World?.AddEntity(this);
         OnChangedWorld(oldWorld, World);
         ChangedWorld?.Invoke(this, oldWorld, World);
@@ -119,7 +119,7 @@ public abstract class Entity : Component
         _tranformChanged = false;
         if(World is not null)
         {
-            var newChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3Int.Zero;
+            var newChunkPosition = World?.GetChunkPosition(Transform.Position) ?? Vector3IntB.Zero;
             if(newChunkPosition != ChunkPosition)
             {
                 var oldChunkPosition = ChunkPosition;
@@ -210,7 +210,7 @@ public abstract class Entity : Component
     protected virtual void OnValidateChild() { }
 
 
-    protected virtual void OnMovedToAnotherChunk(Vector3Int oldChunkPosition, Vector3Int newChunkPosition)
+    protected virtual void OnMovedToAnotherChunk(Vector3IntB oldChunkPosition, Vector3IntB newChunkPosition)
     {
 
     }

@@ -6,5 +6,5 @@ namespace VoxelWorld.Worlds;
 
 public interface IBlockStateAccessor : IBlockStateProvider
 {
-    Task<BlockStateChangingResult> SetBlockState(Vector3Int blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default);
+    Task<BlockStateChangingResult> SetBlockState(Vector3IntB blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default);
 }

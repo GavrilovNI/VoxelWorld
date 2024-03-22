@@ -25,8 +25,8 @@ public class ChunkTreeGenerator : ChunkCreationStage
         int minHeight = Generator?.MinHeight ?? World.Limits.Mins.z;
         int maxHeight = Generator?.MaxHeight ?? World.Limits.Maxs.z;
 
-        int chunkGlobalMinZ = World.GetBlockWorldPosition(chunk.Position, Vector3Int.Zero).z;
-        int chunkGlobalMaxZ = World.GetBlockWorldPosition(chunk.Position, new Vector3Int(0, 0, chunk.Size.z - 1)).z;
+        int chunkGlobalMinZ = World.GetBlockWorldPosition(chunk.Position, Vector3IntB.Zero).z;
+        int chunkGlobalMaxZ = World.GetBlockWorldPosition(chunk.Position, new Vector3IntB(0, 0, chunk.Size.z - 1)).z;
 
         if(minHeight > chunkGlobalMaxZ || chunkGlobalMinZ > maxHeight)
             return true;
@@ -34,8 +34,8 @@ public class ChunkTreeGenerator : ChunkCreationStage
         int minZ = Math.Max(minHeight, chunkGlobalMinZ);
         int maxZ = Math.Min(maxHeight, chunkGlobalMaxZ);
 
-        int localMinZ = World.GetBlockPositionInChunk(new Vector3Int(0, 0, minZ)).z;
-        int localMaxZ = World.GetBlockPositionInChunk(new Vector3Int(0, 0, maxZ)).z;
+        int localMinZ = World.GetBlockPositionInChunk(new Vector3IntB(0, 0, minZ)).z;
+        int localMaxZ = World.GetBlockPositionInChunk(new Vector3IntB(0, 0, maxZ)).z;
 
         await TryPlaceTreeAtXY(chunk, 0, localMinZ, localMaxZ);
 
@@ -46,14 +46,14 @@ public class ChunkTreeGenerator : ChunkCreationStage
     {
         for(int z = zMax; z >= zMin; --z)
         {
-            var localPosition = new Vector3Int(localPositionXY, z);
+            var localPosition = new Vector3IntB(localPositionXY, z);
             if(await TryPlaceTree(chunk, localPosition))
                 return true;
         }
         return false;
     }
 
-    protected virtual async Task<bool> TryPlaceTree(Chunk chunk, Vector3Int localPosition)
+    protected virtual async Task<bool> TryPlaceTree(Chunk chunk, Vector3IntB localPosition)
     {
         bool canPlace = await CanPlaceTreeAt(chunk, localPosition);
         if(canPlace)
@@ -61,11 +61,11 @@ public class ChunkTreeGenerator : ChunkCreationStage
         return canPlace;
     }
 
-    protected virtual async Task<bool> CanPlaceTreeAt(Chunk chunk, Vector3Int localPosition)
+    protected virtual async Task<bool> CanPlaceTreeAt(Chunk chunk, Vector3IntB localPosition)
     {
         var blocks = BaseMod.Instance!.Blocks;
 
-        var groundBlockState = await GetBlockState(chunk, localPosition + Vector3Int.Down);
+        var groundBlockState = await GetBlockState(chunk, localPosition + Vector3IntB.Down);
         bool isValidGround = groundBlockState.Block == blocks.Grass || groundBlockState.Block == blocks.Dirt;
         if(!isValidGround)
             return false;
@@ -73,13 +73,13 @@ public class ChunkTreeGenerator : ChunkCreationStage
         var log = blocks.WoodLog.DefaultBlockState.With(PillarBlock.AxisProperty, Axis.Z);
         List<Task<bool>> trunkTestTasks = new();
         for(int i = 0; i < TrunkHeight; ++i)
-            trunkTestTasks.Add(CanReplaceBlock(chunk, localPosition + new Vector3Int(0, 0, i), log));
+            trunkTestTasks.Add(CanReplaceBlock(chunk, localPosition + new Vector3IntB(0, 0, i), log));
 
         var results = await Task.WhenAll(trunkTestTasks);
         return results.All(v => v);
     }
 
-    protected virtual async Task PlaceTree(Chunk chunk, Vector3Int localPosition)
+    protected virtual async Task PlaceTree(Chunk chunk, Vector3IntB localPosition)
     {
         var blocks = BaseMod.Instance!.Blocks;
         var log = blocks.WoodLog.DefaultBlockState.With(PillarBlock.AxisProperty, Axis.Z);
@@ -91,7 +91,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
         List<Task> tasks = new();
 
         for(int i = 0; i < TrunkHeight; ++i)
-            tasks.Add(SetBlockState(chunk, localPosition + new Vector3Int(0, 0, i), log));
+            tasks.Add(SetBlockState(chunk, localPosition + new Vector3IntB(0, 0, i), log));
 
         for(int x = -leavesHalfWidth; x <= 1; ++x)
         {
@@ -102,7 +102,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
                     if(x == 0 && y == 0 && z < TrunkHeight)
                         continue;
 
-                    tasks.Add(TryReplaceBlock(chunk, localPosition + new Vector3Int(x, y, z), leaves));
+                    tasks.Add(TryReplaceBlock(chunk, localPosition + new Vector3IntB(x, y, z), leaves));
                 }
             }
         }
@@ -112,7 +112,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
 
 
 
-    protected virtual async Task<BlockStateChangingResult> SetBlockState(Chunk chunk, Vector3Int relativePosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.None)
+    protected virtual async Task<BlockStateChangingResult> SetBlockState(Chunk chunk, Vector3IntB relativePosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.None)
     {
         if(relativePosition.IsAnyAxis((a, v) => v < 0 || v >= chunk.Size.GetAxis(a)))
         {
@@ -122,20 +122,20 @@ public class ChunkTreeGenerator : ChunkCreationStage
         return await chunk.SetBlockState(relativePosition, blockState, flags);
     }
 
-    protected virtual async Task<bool> CanReplaceBlock(Chunk chunk, Vector3Int relativePosition, BlockState blockState)
+    protected virtual async Task<bool> CanReplaceBlock(Chunk chunk, Vector3IntB relativePosition, BlockState blockState)
     {
         var currentBlockState = await GetBlockState(chunk, relativePosition);
         return currentBlockState.Block.CanBeReplaced(currentBlockState, blockState);
     }
 
-    protected virtual async Task<BlockStateChangingResult> TryReplaceBlock(Chunk chunk, Vector3Int relativePosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.None)
+    protected virtual async Task<BlockStateChangingResult> TryReplaceBlock(Chunk chunk, Vector3IntB relativePosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.None)
     {
         if(await CanReplaceBlock(chunk, relativePosition, blockState))
             return await SetBlockState(chunk, relativePosition, blockState, flags);
         return BlockStateChangingResult.NotChanged;
     }
 
-    protected virtual async Task<BlockState> GetBlockState(Chunk chunk, Vector3Int relativePosition)
+    protected virtual async Task<BlockState> GetBlockState(Chunk chunk, Vector3IntB relativePosition)
     {
         if(relativePosition.IsAnyAxis((a, v) => v < 0 || v >= chunk.Size.GetAxis(a)))
         {

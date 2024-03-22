@@ -37,7 +37,7 @@ public abstract class ItemStorageBlock : SimpleBlock, IEntityBlock
         return Task.FromResult(InteractionResult.Fail);
     }
 
-    public abstract BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState);
-    public abstract bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState);
-    public abstract bool IsValidEntity(IWorldProvider world, Vector3Int position, BlockState blockState, BlockEntity blockEntity);
+    public abstract BlockEntity? CreateEntity(IWorldAccessor world, Vector3IntB position, BlockState blockState);
+    public abstract bool HasEntity(IWorldProvider world, Vector3IntB position, BlockState blockState);
+    public abstract bool IsValidEntity(IWorldProvider world, Vector3IntB position, BlockState blockState, BlockEntity blockEntity);
 }

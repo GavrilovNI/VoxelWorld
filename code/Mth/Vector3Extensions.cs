@@ -26,9 +26,9 @@ public static class Vector3Extensions
             vector.z - planeNormal.z * dot / sqrMag);
     }
 
-    public static Vector3Int Floor(this Vector3 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y), (int)MathF.Floor(vector.z));
-    public static Vector3Int Ceiling(this Vector3 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y), (int)MathF.Ceiling(vector.z));
-    public static Vector3Int Round(this Vector3 vector) => new((int)MathF.Round(vector.x), (int)MathF.Round(vector.y), (int)MathF.Round(vector.z));
+    public static Vector3IntB Floor(this Vector3 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y), (int)MathF.Floor(vector.z));
+    public static Vector3IntB Ceiling(this Vector3 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y), (int)MathF.Ceiling(vector.z));
+    public static Vector3IntB Round(this Vector3 vector) => new((int)MathF.Round(vector.x), (int)MathF.Round(vector.y), (int)MathF.Round(vector.z));
 
     public static Vector3 Divide(this Vector3 dividend, Vector3 divisor) => new(dividend.x / divisor.x, dividend.y / divisor.y, dividend.z / divisor.z);
 
@@ -49,12 +49,15 @@ public static class Vector3Extensions
             return vector.WithY(value);
         return vector.WithZ(value);
     }
-    public static Vector3 WithAxes(this Vector3 vector, Func<Axis, float, float> axisChanger)
-    {
-        return new Vector3(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y), axisChanger.Invoke(Axis.Z, vector.z));
-    }
+    public static Vector3 WithAxes(this Vector3 vector, Func<Axis, float, float> axisChanger) =>
+        new(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y), axisChanger.Invoke(Axis.Z, vector.z));
 
     public static Vector3 WithAxes(this Vector3 vector, Func<float, float> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
+    
+    public static Vector3Int WithAxes(this Vector3 vector, Func<Axis, float, int> axisChanger) =>
+        new(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y), axisChanger.Invoke(Axis.Z, vector.z));
+
+    public static Vector3Int WithAxes(this Vector3 vector, Func<float, int> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
 
     public static bool IsAnyAxis(this Vector3 vector, Func<Axis, float, bool> predicate)
     {

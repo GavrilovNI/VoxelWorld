@@ -36,7 +36,7 @@ public static class BBoxExtensions
     public static BBox GetIntersection(this BBox @this, BBox other)
     {
         if(!@this.Overlaps(other))
-            return new(Vector3Int.Zero, Vector3Int.Zero);
+            return new(Vector3IntB.Zero, Vector3IntB.Zero);
 
         BBox result = new()
         {

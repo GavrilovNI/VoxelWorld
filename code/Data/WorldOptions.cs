@@ -1,13 +1,14 @@
 ﻿using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
 using VoxelWorld.Mth;
 
 namespace VoxelWorld.Data;
 
 public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<WorldOptions>
 {
-    public required Vector3Int ChunkSize { get; init; }
-    public required Vector3Int RegionSize { get; init; }
+    public required Vector3IntB ChunkSize { get; init; }
+    public required Vector3IntB RegionSize { get; init; }
     public int Seed { get; init; } = 0;
 
     public WorldOptions()
@@ -29,8 +30,8 @@ public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<Wo
 
         return new()
         {
-            ChunkSize = Vector3Int.Read(compoundTag.GetTag("chunk_size", DefaultValues.ChunkSize.Write)),
-            RegionSize = Vector3Int.Read(compoundTag.GetTag("region_size", DefaultValues.RegionSize.Write)),
+            ChunkSize = compoundTag.Get<Vector3Int>("chunk_size", DefaultValues.ChunkSize),
+            RegionSize = compoundTag.Get<Vector3Int>("region_size", DefaultValues.RegionSize),
             Seed = compoundTag.Get<int>("seed"),
         };
     }

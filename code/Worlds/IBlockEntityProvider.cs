@@ -6,5 +6,5 @@ namespace VoxelWorld.Worlds;
 public interface IBlockEntityProvider
 {
     // Thread safe
-    BlockEntity? GetBlockEntity(Vector3Int blockPosition);
+    BlockEntity? GetBlockEntity(Vector3IntB blockPosition);
 }

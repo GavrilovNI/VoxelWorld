@@ -48,7 +48,7 @@ public class ChunkEntitiesLoader : ChunkCreationStage, IWorldInitializationListe
         return true;
     }
 
-    public virtual async Task<List<Entity>?> TryLoadEntities(Vector3Int chunkPosition, bool enableEntities = true)
+    public virtual async Task<List<Entity>?> TryLoadEntities(Vector3IntB chunkPosition, bool enableEntities = true)
     {
         ThreadSafe.AssertIsMainThread();
 

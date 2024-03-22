@@ -14,7 +14,7 @@ namespace VoxelWorld.Blocks.Entities;
 public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, INbtStaticReadable<BlockEntity>
 {
     public BlockEntityType Type { get; }
-    public Vector3Int Position { get; private set; }
+    public Vector3IntB Position { get; private set; }
     public Vector3 GlobalPosition => World.GetBlockGlobalPosition(Position);
     public IWorldAccessor World { get; private set; } = null!;
 
@@ -46,7 +46,7 @@ public abstract class BlockEntity : IValid, ISaveStatusMarkable, INbtWritable, I
         Initialized = false;
     }
 
-    public void Initialize(IWorldAccessor world, Vector3Int position)
+    public void Initialize(IWorldAccessor world, Vector3IntB position)
     {
         if(Initialized)
             throw new InvalidOperationException($"{GetType().Name} {this} was alread initialized");

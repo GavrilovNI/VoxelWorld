@@ -21,11 +21,11 @@ public class ChunksCreator : Component
 
     protected CancellationTokenSource CommonTokenSource { get; set; } = new();
 
-    protected Vector3Int ChunkSize => World.ChunkSize;
+    protected Vector3IntB ChunkSize => World.ChunkSize;
 
     public record struct ChunkCreationData(Chunk Chunk, bool WasLoaded);
 
-    public virtual async Task<ChunkCreationData> PreloadChunk(Vector3Int position, CancellationToken cancellationToken)
+    public virtual async Task<ChunkCreationData> PreloadChunk(Vector3IntB position, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -68,7 +68,7 @@ public class ChunksCreator : Component
     }
 
     // Call only in game thread
-    public virtual Chunk CreateChunkObject(Vector3Int position, bool enable = true)
+    public virtual Chunk CreateChunkObject(Vector3IntB position, bool enable = true)
     {
         ThreadSafe.AssertIsMainThread();
 
