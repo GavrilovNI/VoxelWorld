@@ -1,8 +1,7 @@
 {
   "RootObject": {
     "__guid": "a6d72a0a-070b-49fe-91b7-0bf118c8e89e",
-    "Name": "Camera",
-    "Position": "0,0,0",
+    "Name": "playercamera",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
@@ -63,7 +62,8 @@
         "__guid": "babe795e-f7fe-45a3-a55e-f174a6cbabda",
         "UseCameraDirection": true
       }
-    ]
+    ],
+    "Children": []
   },
   "ShowInMenu": false,
   "MenuPath": null,

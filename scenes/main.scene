@@ -14,8 +14,8 @@
           "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
           "Camera": {
             "_type": "component",
-            "component_id": "fe100ef4-d47a-41cc-8499-1e33c4e62a72",
-            "go": "921b1dcc-6aa0-442d-805c-8f942680c79c",
+            "component_id": "9426dcb1-42b9-446a-a116-aa082d0298d7",
+            "go": "47ff2699-109e-4015-9482-7d20f186d20d",
             "component_type": "CameraComponent"
           },
           "DisableCameraObject": true
@@ -23,8 +23,9 @@
       ],
       "Children": [
         {
-          "__guid": "921b1dcc-6aa0-442d-805c-8f942680c79c",
-          "Name": "Camera",
+          "__guid": "47ff2699-109e-4015-9482-7d20f186d20d",
+          "Name": "playercamera (1)",
+          "Position": "0,0,0",
           "Enabled": true,
           "NetworkMode": 2,
           "__Prefab": "prefabs/playercamera.prefab"
@@ -46,7 +47,7 @@
           },
           "BlockPhotoMaker": {
             "_type": "component",
-            "component_id": "5fb3f175-6217-476d-9777-966e7974c8ef",
+            "component_id": "0a358c6a-6a8f-47be-9258-cc501775d78b",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -246,7 +247,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-22T23:38:40.4112457\u002B01:00",
+  "LastSaved": "2024-03-22T23:59:16.3588147\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []
