@@ -6,12 +6,13 @@
 @namespace VoxelWorld.UI
 
 @inherits PanelComponent
-@implements ILocalPlayerInitializable
+@implements ILocalPlayerListener
 
 <root>
 </root>
 
 @code
 {
-	public void InitializeLocalPlayer(Player player) => this.Panel.SetClass("enabled", true);
+	public void OnLocalPlayerCreated(Player player) => this.Panel.SetClass("enabled", true);
+	public void OnLocalPlayerDestroyed(Player player) => this.Panel.SetClass("enabled", false);
 }

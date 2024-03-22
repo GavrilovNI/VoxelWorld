@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static VoxelWorld.Worlds.Creation.ChunksCreator;
+using VoxelWorld.Players;
 
 namespace VoxelWorld.Worlds;
 
@@ -238,6 +239,12 @@ public class World : Component, IWorldAccessor, ITickable
             lock(_players)
             {
                 _players[player.SteamId] = null;
+            }
+
+            if(!player.IsValid())
+            {
+                foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
+                    localPlayerInitializable.OnLocalPlayerDestroyed(player);
             }
         }
     }

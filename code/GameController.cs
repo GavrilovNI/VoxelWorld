@@ -23,7 +23,7 @@ using VoxelWorld.Crafting.Recipes;
 
 namespace VoxelWorld;
 
-public sealed class GameController : Component, ILocalPlayerInitializable
+public sealed class GameController : Component, ILocalPlayerListener
 {
     public static event Action? Initialized;
     public static event Action<World>? WorldAdded;
@@ -402,5 +402,6 @@ public sealed class GameController : Component, ILocalPlayerInitializable
             throw new InvalidOperationException($"{nameof(GameController)}'s {nameof(LoadingStatus)} is{(equal ? string.Empty : " not")} {loadingStatus}");
     }
 
-    public void InitializeLocalPlayer(Player player) => LocalPlayer = player;
+    public void OnLocalPlayerCreated(Player player) => LocalPlayer = player;
+    public void OnLocalPlayerDestroyed(Player player) => LocalPlayer = null;
 }

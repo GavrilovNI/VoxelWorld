@@ -70,8 +70,8 @@ public class PlayerSpawner : Component
                 return null;
         }
 
-        foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerInitializable>(FindMode.EverythingInSelfAndDescendants))
-            localPlayerInitializable.InitializeLocalPlayer(player);
+        foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
+            localPlayerInitializable.OnLocalPlayerCreated(player);
 
         if(world is not null)
         {
