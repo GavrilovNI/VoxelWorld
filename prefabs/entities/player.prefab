@@ -252,6 +252,31 @@
             "Static": false
           }
         ]
+      },
+      {
+        "__guid": "7db5d1e9-a608-4b3c-b0bc-f312a7710621",
+        "Name": "FootStepSoundPlayer",
+        "Position": "0,0,-1",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "FakeFootStepSoundPlayer",
+            "__guid": "f86d5496-7dfc-4bc1-abfd-e80bacabd4f2",
+            "CharacterController": {
+              "_type": "component",
+              "component_id": "3a71ecf8-82b8-49a3-9fd2-ace05c84d5a5",
+              "go": "8e266743-5db2-40f8-a74a-286a025b5796",
+              "component_type": "CharacterController"
+            },
+            "DistanceBetweenSteps": 60,
+            "Feet": {
+              "_type": "gameobject",
+              "go": "7db5d1e9-a608-4b3c-b0bc-f312a7710621"
+            }
+            "MaxTraceDownDistance": 100
+          }
+        ]
       }
     ]
   },
