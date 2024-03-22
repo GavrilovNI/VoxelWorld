@@ -102,6 +102,19 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         return true;
     }
 
+    public (List<int> indices, List<V> vertices) ToRaw()
+    {
+        (List<int> indices, List<V> vertices) result = (new(), new());
+
+        for(int i = 0; i < PartsCount; ++i)
+        {
+            result.indices.AddRange(_indices[i].Select(i => i + result.vertices.Count));
+            result.vertices.AddRange(_vertices[i]);
+        }
+
+        return result;
+    }
+
     public List<V> CombineVertices()
     {
         List<V> result = new();
@@ -396,8 +409,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             return this;
         }
 
+        public (List<int> indices, List<V> vertices) ToRaw() => Mesh.ToRaw();
         public List<V> CombineVertices() => Mesh.CombineVertices();
-
         public List<int> CombineIndices() => Mesh.CombineIndices();
 
 

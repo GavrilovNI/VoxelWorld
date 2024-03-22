@@ -5,11 +5,17 @@ using VoxelWorld.Meshing;
 using VoxelWorld.Mth.Enums;
 using System.Threading.Tasks;
 using VoxelWorld.Mth;
+using VoxelWorld.Worlds;
+using VoxelWorld.Blocks.States;
+using System.Linq;
 
 namespace VoxelWorld.Items;
 
 public class BlockItem : Item
 {
+    public readonly string[] PlacingCollidingTags = new string[] { "player" };
+    public readonly string[] PlacingIgnoringTags = new string[] { "world", "world_part" };
+
     public readonly Block Block;
 
     public BlockItem(Block block, Model model, Texture texture, int stackLimit, bool isFlatModel = false) : base(block.Id, model, texture, stackLimit, isFlatModel)
@@ -20,6 +26,34 @@ public class BlockItem : Item
     public BlockItem(Block block, Model model, Texture texture, bool isFlatModel = false) : base(block.Id, model, texture, isFlatModel)
     {
         Block = block;
+    }
+
+
+    protected virtual bool CanPlaceBlock(IWorldAccessor world, BlockState blockState, Vector3IntB blockPosition)
+    {
+        var position = world.GetBlockGlobalPosition(blockPosition);
+        var physicsMesh = GameController.Instance!.BlockMeshes.GetPhysics(blockState)!;
+
+        var worldGameObject = world.GameObject;
+        var scene = worldGameObject.Scene;
+
+        var bounds = physicsMesh.Bounds.Transform(worldGameObject.Transform.World.WithPosition(position));
+        var collidesWithSomething = scene.FindInPhysics(bounds)
+            .Where(o => (PlacingCollidingTags.Length == 0 || o.Tags.HasAny(PlacingCollidingTags)) && !o.Tags.HasAny(PlacingIgnoringTags)).Any();
+
+        if(collidesWithSomething)
+            return false;
+
+        PhysicsBody body = new(scene.PhysicsWorld);
+        body.AddHullShape(0, Rotation.Identity, physicsMesh.CombineVertices().Select(v => v.Position).ToList());
+        var trace = scene.Trace.Body(body, worldGameObject.Transform.World.WithPosition(position), position)
+            .UsePhysicsWorld();
+        if(PlacingCollidingTags.Length != 0)
+            trace = trace.WithAnyTags(PlacingCollidingTags);
+        trace = trace.WithoutTags(PlacingIgnoringTags);
+
+        var result = trace.Run();
+        return !result.Hit;
     }
 
     public override async Task<InteractionResult> OnUse(ItemActionContext context)
@@ -55,6 +89,9 @@ public class BlockItem : Item
 
         bool canStay = block.CanStay(context.World, context.Position, stateToPlace);
         if(!canStay)
+            return false;
+
+        if(!CanPlaceBlock(context.World, stateToPlace, context.Position))
             return false;
 
         var contextCopy = context;

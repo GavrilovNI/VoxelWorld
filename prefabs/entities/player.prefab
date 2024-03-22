@@ -64,6 +64,14 @@
         "TimeBetweenSuccessfulAttempts": 1
       },
       {
+        "__type": "BoxCollider",
+        "__guid": "34cb8b24-55aa-4cd6-8bae-f0d2eea35ecd",
+        "Center": "0,0,32",
+        "IsTrigger": false,
+        "Scale": "32,32,64",
+        "Static": false
+      },
+      {
         "__type": "CharacterController",
         "__guid": "3a71ecf8-82b8-49a3-9fd2-ace05c84d5a5",
         "Acceleration": 10,

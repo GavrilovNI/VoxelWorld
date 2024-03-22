@@ -145,6 +145,32 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         Bounds = bounds ?? new();
     }
 
+    public (List<int> indices, List<V> vertices) ToRaw()
+    {
+        (List<int> indices, List<V> vertices) result = (_notSidedElements.CombineIndices(), _notSidedElements.CombineVertices());
+
+        foreach(var (_, sidedElement) in _sidedElements)
+        {
+            result.indices.AddRange(sidedElement.CombineIndices().Select(i => i + result.vertices.Count));
+            result.vertices.AddRange(sidedElement.CombineVertices());
+        }
+
+        return result;
+    }
+
+    public List<V> CombineVertices()
+    {
+        List<V> result = _notSidedElements.CombineVertices();
+
+        foreach(var (_, sidedElement) in _sidedElements)
+            result.AddRange(sidedElement.CombineVertices());
+
+        return result;
+    }
+
+    public List<int> CombineIndices() => ToRaw().indices;
+
+
     public class Builder : ISidedMeshPart<V>
     {
         protected SidedMesh<V> Mesh { get; private set; } = new();
@@ -268,6 +294,10 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) =>
             Mesh.AddAsCollisionHull(builder, center, rotation, offset);
 
+
+        public (List<int> indices, List<V> vertices) ToRaw() => Mesh.ToRaw();
+        public List<V> CombineVertices() => Mesh.CombineVertices();
+        public List<int> CombineIndices() => Mesh.CombineIndices();
 
         public SidedMesh<V> Build() => new(Mesh._sidedElements, Mesh._notSidedElements, Bounds);
     }
