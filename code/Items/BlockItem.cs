@@ -4,6 +4,7 @@ using VoxelWorld.Interactions;
 using VoxelWorld.Meshing;
 using VoxelWorld.Mth.Enums;
 using System.Threading.Tasks;
+using VoxelWorld.Mth;
 
 namespace VoxelWorld.Items;
 
@@ -60,7 +61,12 @@ public class BlockItem : Item
 
         var changed = await context.World.SetBlockState(context.Position, stateToPlace);
         if(changed)
+        {
             block.OnPlaced(contextCopy, stateToPlace);
+
+            var blockCenterPosition = context.World.GetBlockGlobalPosition(context.Position) + MathV.UnitsInMeter / 2f;
+            Sound.Play(block.Properties.PlaceSound, blockCenterPosition);
+        }
 
         return changed;
     }
