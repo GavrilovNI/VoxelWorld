@@ -184,11 +184,11 @@ public abstract class Entity : Component
         if(!Initialized)
             return;
 
-        if(World is not null)
-            ChangeWorld(null);
-
         OnDestroyChild();
         Destroyed?.Invoke(this);
+
+        if(World is not null)
+            ChangeWorld(null);
     }
 
     protected virtual void OnDestroyChild() { }
