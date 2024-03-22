@@ -26,7 +26,7 @@ public sealed class BaseMod : Component, IMod
     public BaseModEntities Entities { get; private set; } = null!;
     public BaseRecipeTypes RecipeTypes { get; private set; } = null!;
 
-    private readonly ModedId _mainWorldId = new(ModName, "main");
+    public readonly ModedId MainWorldId = new(ModName, "main");
 
     protected override void OnAwake()
     {
@@ -86,6 +86,6 @@ public sealed class BaseMod : Component, IMod
 
     public void OnGameLoaded()
     {
-        _ = GameController.Instance!.TryAddWorld(_mainWorldId);
+        _ = GameController.Instance!.TryAddWorld(MainWorldId);
     }
 }

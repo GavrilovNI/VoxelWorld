@@ -23,7 +23,7 @@ using VoxelWorld.Crafting.Recipes;
 
 namespace VoxelWorld;
 
-public sealed class GameController : Component, ILocalPlayerListener
+public sealed class GameController : Component
 {
     public static event Action? Initialized;
     public static event Action<World>? WorldAdded;
@@ -166,11 +166,8 @@ public sealed class GameController : Component, ILocalPlayerListener
         _worlds.AddWorld(world);
         WorldAdded?.Invoke(world);
 
-        if(_worlds.Count == 1)
-        {
-            EntitySpawnConfig spawnConfig = new(world, true);
-            _ = PlayerSpawner.SpawnPlayer(Steam.SteamId, spawnConfig, CancellationToken.None);
-        }
+        if(!LocalPlayer.IsValid() && world.Id == BaseMod.Instance!.MainWorldId)
+            _ = TryRespawnPlayer(Steam.SteamId);
 
         return world;
     }
@@ -243,6 +240,47 @@ public sealed class GameController : Component, ILocalPlayerListener
         await world.Initialize(id, fileSystem, worldOptions);
         return world;
     }
+
+    public async Task<Player?> TryRespawnPlayer(ulong steamId)
+    {
+        if(_worlds.TryGetWorld(BaseMod.Instance!.MainWorldId, out var world))
+        {
+            EntitySpawnConfig spawnConfig = new(world, true);
+            var player = await PlayerSpawner.SpawnPlayer(steamId, spawnConfig, CancellationToken.None);
+
+            if(player.IsValid())
+            {
+                bool isLocalPlayer = player.SteamId == Steam.SteamId;
+                if(isLocalPlayer)
+                {
+                    if(LocalPlayer is not null)
+                        LocalPlayer.Destroyed -= OnLocalPlayerDestroyed;
+                    LocalPlayer = player;
+                    LocalPlayer.Destroyed += OnLocalPlayerDestroyed;
+
+                    // TODO: remove when getting players entering/leaving controller
+                    foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
+                        localPlayerInitializable.OnLocalPlayerCreated(player);
+                }
+            }
+            return player;
+        }
+        return null;
+    }
+
+    private void OnLocalPlayerDestroyed(Entity entity)
+    {
+        if(LocalPlayer is not null && object.ReferenceEquals(entity, LocalPlayer))
+        {
+            // TODO: remove when getting players entering/leaving controller
+            foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
+                localPlayerInitializable.OnLocalPlayerDestroyed(LocalPlayer);
+
+            LocalPlayer.Destroyed -= OnLocalPlayerDestroyed;
+            LocalPlayer = null;
+        }
+    }
+
 
     protected override void OnEnabled()
     {
@@ -401,7 +439,4 @@ public sealed class GameController : Component, ILocalPlayerListener
         if(statusEqual != equal)
             throw new InvalidOperationException($"{nameof(GameController)}'s {nameof(LoadingStatus)} is{(equal ? string.Empty : " not")} {loadingStatus}");
     }
-
-    public void OnLocalPlayerCreated(Player player) => LocalPlayer = player;
-    public void OnLocalPlayerDestroyed(Player player) { }
 }

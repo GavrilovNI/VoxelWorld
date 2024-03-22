@@ -240,13 +240,6 @@ public class World : Component, IWorldAccessor, ITickable
             {
                 _players[player.SteamId] = null;
             }
-
-            if(destroyed)
-            {
-                // TODO: remove when getting players entering/leaving controller
-                foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
-                    localPlayerInitializable.OnLocalPlayerDestroyed(player);
-            }
         }
     }
 
