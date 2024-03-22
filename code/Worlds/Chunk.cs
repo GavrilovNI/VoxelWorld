@@ -22,7 +22,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 {
     public event Action<Chunk>? Destroyed = null;
     public event Action<Chunk, Entity>? EntityAdded = null;
-    public event Action<Chunk, Entity>? EntityRemoved = null;
+    public event Action<Chunk, Entity, bool>? EntityRemoved = null;
 
     [Property] protected GameObject EntitiesParent { get; set; } = null!;
     [Property, HideIf(nameof(Initialized), true)] public Vector3IntB Position { get; internal set; }
@@ -132,7 +132,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    private bool RemoveEntityInternal(Entity entity)
+    private bool RemoveEntityInternal(Entity entity, bool destroyed = false)
     {
         lock(_entities)
         {
@@ -142,7 +142,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
                 entity.Destroyed -= OnEntityDestroyed;
                 entity.MovedToAnotherChunk -= OnEntityMovedToAnotherChunk;
                 _entitiesSaveMarker = SaveMarker.NotSaved;
-                EntityRemoved?.Invoke(this, entity);
+                EntityRemoved?.Invoke(this, entity, destroyed);
             }
             return removed;
         }
@@ -150,7 +150,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     private void OnEntityDestroyed(Entity entity)
     {
-        RemoveEntityInternal(entity);
+        RemoveEntityInternal(entity, true);
     }
 
     private void OnEntityMovedToAnotherChunk(Entity entity, Vector3IntB oldChunk, Vector3IntB newChunk)

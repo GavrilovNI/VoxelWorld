@@ -232,7 +232,7 @@ public class World : Component, IWorldAccessor, ITickable
         }
     }
 
-    protected virtual void OnEntityRemovedFromChunk(Chunk chunk, Entity entity)
+    protected virtual void OnEntityRemovedFromChunk(Chunk chunk, Entity entity, bool destroyed)
     {
         if(entity is Player player)
         {
@@ -241,7 +241,7 @@ public class World : Component, IWorldAccessor, ITickable
                 _players[player.SteamId] = null;
             }
 
-            if(!player.IsValid())
+            if(destroyed)
             {
                 foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
                     localPlayerInitializable.OnLocalPlayerDestroyed(player);
