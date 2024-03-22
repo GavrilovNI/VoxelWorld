@@ -14,7 +14,7 @@
           "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
           "Camera": {
             "_type": "component",
-            "component_id": "9426dcb1-42b9-446a-a116-aa082d0298d7",
+            "component_id": "1a9bac28-6787-4ea2-be3a-2ae96c4337e9",
             "go": "47ff2699-109e-4015-9482-7d20f186d20d",
             "component_type": "CameraComponent"
           },
@@ -47,7 +47,7 @@
           },
           "BlockPhotoMaker": {
             "_type": "component",
-            "component_id": "0a358c6a-6a8f-47be-9258-cc501775d78b",
+            "component_id": "2195dfd3-4cd2-4ae9-b0cf-3bf6a42a385d",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -185,6 +185,19 @@
               "WaitingPercent": 0.99
             }
           ]
+        },
+        {
+          "__guid": "276f355a-184a-4945-b65f-9dd09bffc14d",
+          "Name": "RespawnScreen",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "RespawnScreen",
+              "__guid": "594c9154-9e46-43da-8aa3-dd1c0536366f",
+              "IsShowing": false
+            }
+          ]
         }
       ]
     },
@@ -248,7 +261,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-22T23:59:16.3588147\u002B01:00",
+  "LastSaved": "2024-03-23T00:27:01.0673304\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

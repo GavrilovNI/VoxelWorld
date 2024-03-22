@@ -1,0 +1,58 @@
+@using Sandbox
+@using Sandbox.UI
+@using Sandbox.Utility
+@using VoxelWorld.Menus
+@using VoxelWorld.Players
+@using VoxelWorld.Entities
+@using System.Threading.Tasks
+@using System.Linq
+
+@namespace VoxelWorld.UI.Screens
+@attribute [StyleSheet]
+@inherits PanelComponent
+@implements ILocalPlayerListener
+
+<root enabled=@IsShowing>
+	<div class="title">You died!</div>
+	<div class="reason">There will be a death reason</div>
+	<div class="buttons">
+		<div class="button" onclick="@(Respawn)">Respawn</div>
+	</div>
+</root>
+
+
+@code
+{
+	private bool _isShowing = false;
+	[Property]
+	public bool IsShowing
+	{
+		get => _isShowing;
+		set
+		{
+			_isShowing = value;
+			this.Panel?.SetClass("enabled", value);
+		}
+	}
+
+	protected override void OnTreeFirstBuilt() => this.Panel?.SetClass("enabled", IsShowing);
+
+	public void OnLocalPlayerCreated(Player player) => IsShowing = false;
+	public void OnLocalPlayerDestroyed(Player player)
+	{
+		if (object.ReferenceEquals(player, GameController.Instance!.LocalPlayer))
+			IsShowing = true;
+	}
+
+	protected async Task Respawn()
+	{
+		if(!GameController.Instance!.LocalPlayer.IsValid())
+		{
+			IsShowing = false;
+			var player = await GameController.Instance.TryRespawnPlayer(Steam.SteamId);
+
+			if (!player.IsValid())
+				IsShowing = !GameController.Instance!.LocalPlayer.IsValid();
+		}
+	}
+}
