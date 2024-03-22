@@ -11,6 +11,7 @@ using VoxelWorld.Mth;
 using VoxelWorld.Mth.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace VoxelWorld.Entities;
 
@@ -23,6 +24,8 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
 
     public BBox ModelBounds { get; protected set; }
     public BlockState BlockState { get; private set; } = null!;
+    public ConvertionStatus ConvertionStatus { get; protected set; } = ConvertionStatus.None;
+    protected object ConvertionStatusLocker { get; } = new();
 
     protected override void OnAwakeChild()
     {
@@ -101,21 +104,38 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
     public virtual void OnCollisionStart(Collision other)
     {
         if(Direction.ClosestTo(other.Contact.Normal) == Direction.Down)
-            _ = ConvertToBlockOrDrop();
+            RequestConvertingToBlockOrDrop();
     }
 
     public virtual void OnCollisionUpdate(Collision other) { }
     public virtual void OnCollisionStop(CollisionStop other) { }
 
-    public virtual async Task ConvertToBlockOrDrop()
+    public virtual void RequestConvertingToBlockOrDrop()
     {
-        Destroy();
+        lock(ConvertionStatusLocker)
+        {
+            if(ConvertionStatus == ConvertionStatus.None)
+                ConvertionStatus = ConvertionStatus.ConvertionRequested;
+        }
+    }
+
+    protected virtual async Task ConvertToBlockOrDrop()
+    {
+        lock(ConvertionStatusLocker)
+        {
+            if(ConvertionStatus == ConvertionStatus.Converting || ConvertionStatus == ConvertionStatus.Converted)
+                throw new InvalidOperationException($"{nameof(PhysicsBlockEntity)} was already converting or converted");
+            ConvertionStatus = ConvertionStatus.Converting;
+        }
+
         Vector3 testPosition = Transform.Position + ModelBounds.Center.WithZ(ModelBounds.Mins.z);
 
         var blockPosition = World!.GetBlockPosition(testPosition);
         var state = World.GetBlockState(blockPosition);
         if(!state.Block.CanBeReplaced(state, BlockState))
         {
+            Destroy();
+
             if(!BlockItem.TryFind(BlockState.Block, out var item))
                 return;
 
@@ -126,6 +146,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         }
 
         await World.SetBlockState(blockPosition, BlockState);
+        Destroy();
 
         var blockCenterPosition = World.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
         Sound.Play(state.Block.Properties.PlaceSound, blockCenterPosition);
@@ -135,6 +156,20 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         {
             if(physicsBlock.ShouldConvertToEntity(World, blockPosition, currentBlockkState))
                 physicsBlock.ConvertToEntity(World, blockPosition, currentBlockkState);
+        }
+
+        lock(ConvertionStatusLocker)
+        {
+            ConvertionStatus = ConvertionStatus.Converted;
+        }
+    }
+
+    protected override void OnFixedUpdateChild()
+    {
+        lock(ConvertionStatusLocker)
+        {
+            if(ConvertionStatus == ConvertionStatus.ConvertionRequested)
+                _ = ConvertToBlockOrDrop();
         }
     }
 
