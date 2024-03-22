@@ -193,6 +193,11 @@
                 "Strength": 1,
                 "Threshold": 0.3,
                 "ThresholdWidth": 2
+              },
+              {
+                "__type": "AudioListener",
+                "__guid": "81f496cd-20d5-40f0-a973-0c5b096f5ae0",
+                "UseCameraDirection": true
               }
             ]
           },

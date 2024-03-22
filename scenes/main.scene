@@ -3,38 +3,55 @@
   "GameObjects": [
     {
       "__guid": "f7b78756-955b-4773-b322-645ac082f19e",
-      "Name": "Default Camera",
+      "Name": "Local Player Camera Duplicate",
       "Position": "-199.9835,127.6956,-98.1855",
       "Tags": "maincamera",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "CameraComponent",
-          "__guid": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
-          "BackgroundColor": "0.33333,0.46275,0.52157,1",
-          "ClearFlags": "All",
-          "FieldOfView": 60,
-          "IsMainCamera": false,
-          "Orthographic": false,
-          "OrthographicHeight": 1204,
-          "Priority": 2,
-          "RenderExcludeTags": "",
-          "RenderTags": "",
-          "TargetEye": "None",
-          "Viewport": "0,0,1,1",
-          "ZFar": 10000,
-          "ZNear": 10
-        },
-        {
           "__type": "LocalPlayerCameraDuplicate",
           "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
           "Camera": {
             "_type": "component",
             "component_id": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
-            "go": "f7b78756-955b-4773-b322-645ac082f19e",
+            "go": "41f8249c-47ce-47d7-9bb7-8bcbeb89f6ca",
             "component_type": "CameraComponent"
-          }
+          },
+          "DisableCameraObject": true
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "41f8249c-47ce-47d7-9bb7-8bcbeb89f6ca",
+          "Name": "Camera",
+          "Position": "0,0,0",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "CameraComponent",
+              "__guid": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
+              "BackgroundColor": "0.33333,0.46275,0.52157,1",
+              "ClearFlags": "All",
+              "FieldOfView": 60,
+              "IsMainCamera": false,
+              "Orthographic": false,
+              "OrthographicHeight": 1204,
+              "Priority": 2,
+              "RenderExcludeTags": "",
+              "RenderTags": "",
+              "TargetEye": "None",
+              "Viewport": "0,0,1,1",
+              "ZFar": 10000,
+              "ZNear": 10
+            },
+            {
+              "__type": "AudioListener",
+              "__guid": "af40a0d2-5e33-465a-87be-69e758bdbb03",
+              "UseCameraDirection": true
+            }
+          ]
         }
       ]
     },
@@ -253,7 +270,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-18T00:20:14.7966369\u002B01:00",
+  "LastSaved": "2024-03-22T17:42:39.8500674\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []
