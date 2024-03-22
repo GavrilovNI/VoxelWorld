@@ -201,6 +201,8 @@ public class World : Component, IWorldAccessor, ITickable
         }
         else
         {
+            OutOfLimitsChunk.AddEntity(entity);
+
             var entityBlockPosition = GetBlockPosition(entity.Transform.Position);
             var distanceToLimits = Limits.ClosestPoint(entityBlockPosition).Distance(entityBlockPosition);
             if(distanceToLimits > EntitiesLimitThreshold)
@@ -208,8 +210,6 @@ public class World : Component, IWorldAccessor, ITickable
                 entity.Destroy();
                 return;
             }
-
-            OutOfLimitsChunk.AddEntity(entity);
         }
     }
 
