@@ -2,7 +2,7 @@
   "RootObject": {
     "__guid": "09ca0739-f949-47de-a034-c4eb3e80ab08",
     "Name": "physicsblockentity",
-    "Tags": "entity,no_entity_collide",
+    "Tags": "world_part,entity",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
@@ -35,7 +35,7 @@
         },
         "MassOverride": 0,
         "MotionEnabled": true,
-        "RigidbodyFlags": 0,
+        "RigidbodyFlags": "DisableCollisionSounds",
         "StartAsleep": false
       },
       {

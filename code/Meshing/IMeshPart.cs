@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System.Collections.Generic;
 
 namespace VoxelWorld.Meshing;
 
@@ -10,4 +11,8 @@ public interface IMeshPart<V> where V : unmanaged, IVertex
 
     void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default);
     void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default);
+
+    (List<int> indices, List<V> vertices) ToRaw();
+    List<V> CombineVertices();
+    List<int> CombineIndices();
 }

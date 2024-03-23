@@ -1,0 +1,26 @@
+{
+  "UI": false,
+  "Volume": "1.00,1.00,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/footsteps/footstep-concrete01.vsnd",
+    "sounds/footsteps/footstep-concrete02.vsnd",
+    "sounds/footsteps/footstep-concrete03.vsnd",
+    "sounds/footsteps/footstep-concrete04.vsnd",
+    "sounds/footsteps/footstep-concrete05.vsnd",
+    "sounds/footsteps/footstep-concrete06.vsnd",
+    "sounds/footsteps/footstep-concrete07.vsnd",
+    "sounds/footsteps/footstep-concrete08.vsnd"
+  ],
+  "Occlusion": true,
+  "Reflections": true,
+  "AirAbsorption": true,
+  "Transmission": true,
+  "OcclusionRadius": 64,
+  "DistanceAttenuation": true,
+  "ResourceVersion": 0,
+  "__version": 0,
+  "__references": []
+}

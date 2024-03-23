@@ -64,9 +64,9 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public virtual Task<InteractionResult> OnAttack(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
     public virtual Task<InteractionResult> OnInteract(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
     public virtual Task Break(BlockActionContext context) => Break(context.World, context.Position, context.BlockState);
-    public virtual Task Break(IWorldAccessor world, Vector3Int position, BlockState blockState) => world.SetBlockState(position, BlockState.Air);
+    public virtual Task Break(IWorldAccessor world, Vector3IntB position, BlockState blockState) => world.SetBlockState(position, BlockState.Air);
 
-    public virtual bool CanStay(IWorldAccessor world, Vector3Int position, BlockState blockState) => true;
+    public virtual bool CanStay(IWorldAccessor world, Vector3IntB position, BlockState blockState) => true;
 
     public virtual void OnNeighbourChanged(in NeighbourChangedContext context)
     {

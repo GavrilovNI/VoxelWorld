@@ -12,23 +12,23 @@ public sealed class Axis : CustomEnum<Axis>, ICustomEnum<Axis>
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {
-    public static readonly Axis X = new(0, "X", new Vector3Int(1, 0, 0));
-    public static readonly Axis Y = new(1, "Y", new Vector3Int(0, 1, 0));
-    public static readonly Axis Z = new(2, "Z", new Vector3Int(0, 0, 1));
+    public static readonly Axis X = new(0, "X", new Vector3IntB(1, 0, 0));
+    public static readonly Axis Y = new(1, "Y", new Vector3IntB(0, 1, 0));
+    public static readonly Axis Z = new(2, "Z", new Vector3IntB(0, 0, 1));
 
     public static IReadOnlyList<Axis> All { get; } = new List<Axis>() { X, Y, Z }.AsReadOnly();
     public static readonly IReadOnlySet<Axis> AllSet = All.ToHashSet();
     public static IReadOnlyList<Axis> XY { get; } = new List<Axis>() { X, Y }.AsReadOnly();
     public static readonly IReadOnlySet<Axis> XYSet = XY.ToHashSet();
 
-    public Vector3Int PositiveNormal { get; init; }
+    public Vector3IntB PositiveNormal { get; init; }
 
     [Obsolete("For serialization only", true)]
     public Axis()
     {
     }
 
-    private Axis(int ordinal, string name, Vector3Int positiveNormal) : base(ordinal, name)
+    private Axis(int ordinal, string name, Vector3IntB positiveNormal) : base(ordinal, name)
     {
         PositiveNormal = positiveNormal;
     }

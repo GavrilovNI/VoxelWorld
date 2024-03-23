@@ -10,24 +10,24 @@ namespace VoxelWorld.Mth;
 public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BBoxInt>
 {
     [JsonInclude]
-    public Vector3Int Mins;
+    public Vector3IntB Mins;
 
     [JsonInclude]
-    public Vector3Int Maxs;
+    public Vector3IntB Maxs;
 
     [JsonIgnore]
-    public readonly IEnumerable<Vector3Int> Corners
+    public readonly IEnumerable<Vector3IntB> Corners
     {
         get
         {
-            yield return new Vector3Int(Mins.x, Mins.y, Mins.z);
-            yield return new Vector3Int(Maxs.x, Mins.y, Mins.z);
-            yield return new Vector3Int(Maxs.x, Maxs.y, Mins.z);
-            yield return new Vector3Int(Mins.x, Maxs.y, Mins.z);
-            yield return new Vector3Int(Mins.x, Mins.y, Maxs.z);
-            yield return new Vector3Int(Maxs.x, Mins.y, Maxs.z);
-            yield return new Vector3Int(Maxs.x, Maxs.y, Maxs.z);
-            yield return new Vector3Int(Mins.x, Maxs.y, Maxs.z);
+            yield return new Vector3IntB(Mins.x, Mins.y, Mins.z);
+            yield return new Vector3IntB(Maxs.x, Mins.y, Mins.z);
+            yield return new Vector3IntB(Maxs.x, Maxs.y, Mins.z);
+            yield return new Vector3IntB(Mins.x, Maxs.y, Mins.z);
+            yield return new Vector3IntB(Mins.x, Mins.y, Maxs.z);
+            yield return new Vector3IntB(Maxs.x, Mins.y, Maxs.z);
+            yield return new Vector3IntB(Maxs.x, Maxs.y, Maxs.z);
+            yield return new Vector3IntB(Mins.x, Maxs.y, Maxs.z);
         }
     }
 
@@ -35,7 +35,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     public readonly Vector3 Center => Mins + Size * 0.5f;
 
     [JsonIgnore]
-    public readonly Vector3Int Size => Maxs - Mins;
+    public readonly Vector3IntB Size => Maxs - Mins;
 
     [JsonIgnore]
     public readonly Vector3 Extents => Size * 0.5f;
@@ -53,7 +53,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     }
 
     [JsonIgnore]
-    public readonly Vector3Int RandomPointIntInside
+    public readonly Vector3IntB RandomPointIntInside
     {
         get
         {
@@ -67,7 +67,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     [JsonIgnore]
     public readonly float Volume => Math.Abs(Mins.x - Maxs.x) * Math.Abs(Mins.y - Maxs.y) * Math.Abs(Mins.z - Maxs.z);
 
-    public BBoxInt(in Vector3Int mins, in Vector3Int maxs)
+    public BBoxInt(in Vector3IntB mins, in Vector3IntB maxs)
     {
         Mins = default;
         Maxs = default;
@@ -79,12 +79,12 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         Maxs.z = Math.Max(mins.z, maxs.z);
     }
 
-    public static BBoxInt FromMinsAndSize(in Vector3Int mins, in Vector3Int size) => new(in mins, mins + size);
+    public static BBoxInt FromMinsAndSize(in Vector3IntB mins, in Vector3IntB size) => new(in mins, mins + size);
 
     public static BBoxInt FromHeightAndRadius(int height, int radius) =>
-        new((Vector3Int.One * -radius).WithZ(0), (Vector3Int.One * radius).WithZ(height));
+        new((Vector3IntB.One * -radius).WithZ(0), (Vector3IntB.One * radius).WithZ(height));
 
-    public static BBoxInt FromPositionAndRadius(in Vector3Int center, in Vector3Int radius)
+    public static BBoxInt FromPositionAndRadius(in Vector3IntB center, in Vector3IntB radius)
     {
         BBoxInt result = default;
         result.Mins = center - radius;
@@ -110,15 +110,15 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return result;
     }
 
-    public static BBoxInt FromPointsAndRadius(IEnumerable<Vector3Int> points, in Vector3Int radius = default)
+    public static BBoxInt FromPointsAndRadius(IEnumerable<Vector3IntB> points, in Vector3IntB radius = default)
     {
-        using IEnumerator<Vector3Int> enumerator = points.GetEnumerator();
+        using IEnumerator<Vector3IntB> enumerator = points.GetEnumerator();
         if(!enumerator.MoveNext())
         {
             return default;
         }
 
-        Vector3Int center = enumerator.Current;
+        Vector3IntB center = enumerator.Current;
         BBoxInt result = FromPositionAndRadius(in center, in radius);
         while(enumerator.MoveNext())
         {
@@ -134,9 +134,9 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     public static implicit operator BBox(in BBoxInt bbox) => new(bbox.Mins, bbox.Maxs);
 
 
-    public readonly IEnumerable<Vector3Int> GetPositions(bool includeMaxs = true) => GetPositions(true, includeMaxs);
+    public readonly IEnumerable<Vector3IntB> GetPositions(bool includeMaxs = true) => GetPositions(true, includeMaxs);
 
-    public readonly IEnumerable<Vector3Int> GetPositions(bool includeMins, bool includeMaxs)
+    public readonly IEnumerable<Vector3IntB> GetPositions(bool includeMins, bool includeMaxs)
     {
         var first = includeMins ? Mins : Mins + 1;
         var last = includeMaxs ? Maxs : Maxs - 1;
@@ -161,7 +161,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return result;
     }
 
-    public readonly BBoxInt Translate(in Vector3Int offset)
+    public readonly BBoxInt Translate(in Vector3IntB offset)
     {
         BBoxInt result = this;
         result.Mins += offset;
@@ -203,7 +203,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         b.y >= Mins.y && b.y < Maxs.y &&
         b.z >= Mins.z && b.z < Maxs.z;
 
-    public readonly bool Contains(in Vector3Int b) =>
+    public readonly bool Contains(in Vector3IntB b) =>
         b.x >= Mins.x && b.x < Maxs.x &&
         b.y >= Mins.y && b.y < Maxs.y &&
         b.z >= Mins.z && b.z < Maxs.z;
@@ -222,7 +222,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     public readonly BBoxInt GetIntersection(BBoxInt other)
     {
         if(!Overlaps(other))
-            return new(Vector3Int.Zero, Vector3Int.Zero);
+            return new(Vector3IntB.Zero, Vector3IntB.Zero);
 
         BBoxInt result = new()
         {
@@ -244,7 +244,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return result;
     }
 
-    public readonly BBoxInt AddPoint(in Vector3Int point)
+    public readonly BBoxInt AddPoint(in Vector3IntB point)
     {
         BBoxInt result = this;
         result.Mins.x = Math.Min(result.Mins.x, point.x);
@@ -288,7 +288,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return result;
     }
 
-    public readonly BBoxInt Grow(in Vector3Int skin)
+    public readonly BBoxInt Grow(in Vector3IntB skin)
     {
         BBoxInt result = this;
         result.Mins -= skin;
@@ -325,21 +325,21 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         return new Vector3(Math.Clamp(point.x, Mins.x, Maxs.x), Math.Clamp(point.y, Mins.y, Maxs.y), Math.Clamp(point.z, Mins.z, Maxs.z));
     }
 
-    public static BBoxInt operator *(in BBoxInt c1, Vector3Int c2) => new(c1.Mins * c2, c1.Maxs * c2);
+    public static BBoxInt operator *(in BBoxInt c1, Vector3IntB c2) => new(c1.Mins * c2, c1.Maxs * c2);
     public static BBox operator *(in BBoxInt c1, Vector3 c2) => new(c1.Mins * c2, c1.Maxs * c2);
 
     public static BBox operator *(in BBoxInt c1, float c2) => new(c1.Mins * c2, c1.Maxs * c2);
 
     public static BBoxInt operator *(in BBoxInt c1, int c2) => new(c1.Mins * c2, c1.Maxs * c2);
 
-    public static BBoxInt operator +(BBoxInt c1, in Vector3Int c2)
+    public static BBoxInt operator +(BBoxInt c1, in Vector3IntB c2)
     {
         c1.Mins += c2;
         c1.Maxs += c2;
         return c1;
     }
 
-    public static BBoxInt operator -(BBoxInt c1, in Vector3Int c2)
+    public static BBoxInt operator -(BBoxInt c1, in Vector3IntB c2)
     {
         c1.Mins -= c2;
         c1.Maxs -= c2;
@@ -450,7 +450,7 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     public static BBoxInt Read(BinaryTag tag)
     {
         var listTag = tag.To<ListTag>();
-        return new(new Vector3Int(listTag.Get<int>(0), listTag.Get<int>(1), listTag.Get<int>(2)),
-            new Vector3Int(listTag.Get<int>(3), listTag.Get<int>(4), listTag.Get<int>(5)));
+        return new(new Vector3IntB(listTag.Get<int>(0), listTag.Get<int>(1), listTag.Get<int>(2)),
+            new Vector3IntB(listTag.Get<int>(3), listTag.Get<int>(4), listTag.Get<int>(5)));
     }
 }

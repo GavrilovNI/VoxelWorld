@@ -4,7 +4,7 @@ using VoxelWorld.Players;
 
 namespace VoxelWorld.Menus;
 
-public class MenuController : Component, ILocalPlayerInitializable
+public class MenuController : Component, ILocalPlayerListener
 {
     private static MenuController? _instance = null;
     public static MenuController? Instance
@@ -26,7 +26,8 @@ public class MenuController : Component, ILocalPlayerInitializable
     public bool ShouldDestroyScreenOnClose { get; private set; }
     public bool IsPlayerInventory { get; private set; }
 
-    public void InitializeLocalPlayer(Player player) => Player = player;
+    public virtual void OnLocalPlayerCreated(Player player) => Player = player;
+    public virtual void OnLocalPlayerDestroyed(Player player) => Player = player;
 
     protected override void OnEnabled()
     {

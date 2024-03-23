@@ -8,7 +8,7 @@ namespace VoxelWorld.Texturing;
 public class AnimatedTexture
 {
     protected Texture Texture { get; }
-    protected Vector2Int AtlasSize { get; }
+    protected Vector2IntB AtlasSize { get; }
     protected float[] FramesLength { get; }
 
     protected Vector2Int FrameTextureSize { get; }
@@ -36,7 +36,7 @@ public class AnimatedTexture
 
     protected RectInt GetFrameRect(int index)
     {
-        Vector2Int position = new(index % AtlasSize.x, index / AtlasSize.x);
+        Vector2IntB position = new(index % AtlasSize.x, index / AtlasSize.x);
         position *= FrameTextureSize;
         return new RectInt(position, FrameTextureSize);
     }

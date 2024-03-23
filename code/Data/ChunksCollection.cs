@@ -15,10 +15,10 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
 
     protected bool Disposed { get; private set; } = false;
 
-    protected readonly SortedDictionary<Vector3Int, Chunk> Chunks;
+    protected readonly SortedDictionary<Vector3IntB, Chunk> Chunks;
 
 
-    public ChunksCollection(IComparer<Vector3Int>? comparer = null)
+    public ChunksCollection(IComparer<Vector3IntB>? comparer = null)
     {
         Chunks = new(comparer);
     }
@@ -53,7 +53,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         }
     }
 
-    public Chunk GetOrAdd(Vector3Int position, Chunk chunk)
+    public Chunk GetOrAdd(Vector3IntB position, Chunk chunk)
     {
         lock(Chunks)
         {
@@ -97,7 +97,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         return false;
     }
 
-    public bool Remove(Vector3Int position)
+    public bool Remove(Vector3IntB position)
     {
         lock(Chunks)
         {
@@ -107,7 +107,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         return false;
     }
 
-    public bool Contains(Vector3Int position)
+    public bool Contains(Vector3IntB position)
     {
         lock(Chunks)
         {
@@ -115,7 +115,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         }
     }
 
-    public Chunk? GetOrDefault(Vector3Int position, Chunk? defaultValue = null)
+    public Chunk? GetOrDefault(Vector3IntB position, Chunk? defaultValue = null)
     {
         lock(Chunks)
         {
@@ -125,7 +125,7 @@ public class ChunksCollection : IEnumerable<Chunk>, IDisposable
         return defaultValue;
     }
 
-    public bool TryGet(Vector3Int position, out Chunk chunk)
+    public bool TryGet(Vector3IntB position, out Chunk chunk)
     {
         lock(Chunks)
         {

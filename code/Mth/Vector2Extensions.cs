@@ -33,9 +33,9 @@ public static class Vector2Extensions
         return vector;
     }
 
-    public static Vector2Int Floor(this Vector2 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y));
-    public static Vector2Int Ceiling(this Vector2 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y));
-    public static Vector2Int Round(this Vector2 vector) => new((int)MathF.Round(vector.x), (int)MathF.Round(vector.y));
+    public static Vector2IntB Floor(this Vector2 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y));
+    public static Vector2IntB Ceiling(this Vector2 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y));
+    public static Vector2IntB Round(this Vector2 vector) => new((int)MathF.Round(vector.x), (int)MathF.Round(vector.y));
 
     public static Vector2 Divide(this Vector2 dividend, Vector2 divisor) => new(dividend.x / divisor.x, dividend.y / divisor.y);
 
@@ -56,12 +56,16 @@ public static class Vector2Extensions
             return vector.WithY(value);
         throw new ArgumentException($"Given axis {axis} should be {Axis.X} or {Axis.Y}", nameof(axis));
     }
-    public static Vector2 WithAxes(this Vector2 vector, Func<Axis, float, float> axisChanger)
-    {
-        return new Vector2(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y));
-    }
+    public static Vector2 WithAxes(this Vector2 vector, Func<Axis, float, float> axisChanger) =>
+        new(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y));
 
     public static Vector2 WithAxes(this Vector2 vector, Func<float, float> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
+    
+    public static Vector2Int WithAxes(this Vector2 vector, Func<Axis, float, int> axisChanger) =>
+        new(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y));
+
+    public static Vector2Int WithAxes(this Vector2 vector, Func<float, int> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
+
 
     public static bool IsAnyAxis(this Vector2 vector, Func<Axis, float, bool> predicate)
     {

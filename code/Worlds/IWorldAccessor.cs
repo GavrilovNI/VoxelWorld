@@ -11,8 +11,8 @@ public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor
 {
     GameObject GameObject { get; }
 
-    Task CreateChunk(Vector3Int chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing);
-    Task CreateChunksSimultaneously(IEnumerable<Vector3Int> chunkPositions, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing);
+    Task CreateChunk(Vector3IntB chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing);
+    Task CreateChunksSimultaneously(IEnumerable<Vector3IntB> chunkPositions, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing);
     Task AddEntity(Entity entity);
     bool RemoveEntity(Entity entity);
     void Tick();

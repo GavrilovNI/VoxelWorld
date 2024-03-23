@@ -25,12 +25,12 @@ public class BarrelBlock : ItemStorageBlock
     {
     }
 
-    public override BlockEntity? CreateEntity(IWorldAccessor world, Vector3Int position, BlockState blockState) =>
+    public override BlockEntity? CreateEntity(IWorldAccessor world, Vector3IntB position, BlockState blockState) =>
         BaseMod.Instance!.BlockEntities.Barrel.CreateBlockEntity(world, position);
 
-    public override bool HasEntity(IWorldProvider world, Vector3Int position, BlockState blockState) => true;
+    public override bool HasEntity(IWorldProvider world, Vector3IntB position, BlockState blockState) => true;
 
-    public override bool IsValidEntity(IWorldProvider world, Vector3Int position, BlockState blockState, BlockEntity blockEntity) =>
+    public override bool IsValidEntity(IWorldProvider world, Vector3IntB position, BlockState blockState, BlockEntity blockEntity) =>
         blockEntity is BarrelBlockEntity;
 
 }

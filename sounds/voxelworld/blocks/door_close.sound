@@ -1,0 +1,28 @@
+{
+  "UI": false,
+  "Volume": "1.00,1.00,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_01.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_02.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_03.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_04.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_05.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_06.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_07.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_08.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_09.vsnd",
+    "sounds/physics/footsteps/shared/wood/shared_wood_step_10.vsnd"
+  ],
+  "Occlusion": true,
+  "Reflections": true,
+  "AirAbsorption": true,
+  "Transmission": true,
+  "OcclusionRadius": 64,
+  "DistanceAttenuation": true,
+  "ResourceVersion": 0,
+  "__version": 0,
+  "__references": []
+}

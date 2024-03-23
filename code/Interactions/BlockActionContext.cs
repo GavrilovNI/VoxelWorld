@@ -17,7 +17,7 @@ public record class BlockActionContext
     public required PhysicsTraceResult TraceResult { get; init; }
 
     public required IWorldAccessor World { get; init; }
-    public required Vector3Int Position { get; init; }
+    public required Vector3IntB Position { get; init; }
     public required BlockState BlockState { get; init; }
 
     public BlockActionContext()
@@ -26,7 +26,7 @@ public record class BlockActionContext
     }
 
     [SetsRequiredMembers]
-    public BlockActionContext(ItemActionContext itemActionContext, IWorldAccessor world, Vector3Int position, BlockState blockState)
+    public BlockActionContext(ItemActionContext itemActionContext, IWorldAccessor world, Vector3IntB position, BlockState blockState)
     {
         Player = itemActionContext.Player;
         Item = itemActionContext.Item;

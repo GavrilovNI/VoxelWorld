@@ -37,9 +37,9 @@ public class BushBlock : Block
             blockUnder == blocks.Grass;
     }
 
-    public override bool CanStay(IWorldAccessor world, Vector3Int position, BlockState blockState)
+    public override bool CanStay(IWorldAccessor world, Vector3IntB position, BlockState blockState)
     {
-        var blockStateUnder = world.GetBlockState(position + Vector3Int.Down);
+        var blockStateUnder = world.GetBlockState(position + Vector3IntB.Down);
         return CanStayOn(blockState, blockStateUnder);
     }
 }

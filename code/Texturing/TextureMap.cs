@@ -11,12 +11,12 @@ public class TextureMap
     public Texture Texture { get; private set; }
 
     protected TextureMapNode Nodes;
-    protected Vector2Int MultipleOfExpand;
+    protected Vector2IntB MultipleOfExpand;
     protected Color32? FillColor;
     protected int Mips;
     protected int TextureBorderSize;
 
-    public Vector2Int Size => (Vector2Int)Texture.Size;
+    public Vector2IntB Size => (Vector2IntB)Texture.Size;
 
     protected List<(TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture)> AnimatedTextures = new();
     protected float AnimatedTime = 0;
@@ -39,7 +39,7 @@ public class TextureMap
     {
     }
 
-    protected virtual Texture CreateTexture(Vector2Int size)
+    protected virtual Texture CreateTexture(Vector2IntB size)
     {
         var texture = Texture.Create(size.x, size.y).WithMips(Mips).Finish();
         if(FillColor.HasValue)
@@ -52,11 +52,11 @@ public class TextureMap
 
     public TextureMapPart AddTexture(Texture texture)
     {
-        var textureSize = (Vector2Int)texture.Size;
-        var textureSizeWithBorders = textureSize + Vector2Int.One * TextureBorderSize * 2;
+        var textureSize = (Vector2IntB)texture.Size;
+        var textureSizeWithBorders = textureSize + Vector2IntB.One * TextureBorderSize * 2;
         if(!Nodes.TryTakeSpace(textureSizeWithBorders, out RectInt rect))
         {
-            var newSize = new Vector2Int(Math.Max(Texture.Width, textureSizeWithBorders.x), Texture.Height + textureSizeWithBorders.y);
+            var newSize = new Vector2IntB(Math.Max(Texture.Width, textureSizeWithBorders.x), Texture.Height + textureSizeWithBorders.y);
             var expandDelta = newSize - Size;
             expandDelta = (1f * expandDelta / MultipleOfExpand).Ceiling() * MultipleOfExpand;
 
@@ -134,12 +134,12 @@ public class TextureMap
         return updated;
     }
 
-    protected void Expand(Vector2Int delta)
+    protected void Expand(Vector2IntB delta)
     {
         if(delta.x < 0 || delta.y < 0)
             throw new ArgumentOutOfRangeException(nameof(delta), delta, "expand size can't be negative");
 
-        var newTexture = CreateTexture(((Vector2Int)Texture.Size) + delta);
+        var newTexture = CreateTexture(((Vector2IntB)Texture.Size) + delta);
         newTexture.Update(Texture.GetPixels(), 0, 0, Texture.Width, Texture.Height);
         Texture = newTexture;
 

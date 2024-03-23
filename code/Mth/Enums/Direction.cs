@@ -34,14 +34,14 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
 
     public Axis Axis { get; init; }
     public AxisDirection AxisDirection { get; init; }
-    public Vector3Int Normal { get; init; }
+    public Vector3IntB Normal { get; init; }
 
     [Obsolete("For serialization only", true)]
     public Direction()
     {
         Axis = Axis.X;
         AxisDirection = AxisDirection.Positive;
-        Normal = Vector3Int.Zero;
+        Normal = Vector3IntB.Zero;
     }
 
     private Direction(int ordinal, string name, Axis axis, AxisDirection axisDirection) : base(ordinal, name)
@@ -96,11 +96,12 @@ public sealed class Direction : CustomEnum<Direction>, ICustomEnum<Direction>
     }
 
     public static explicit operator Direction(int ordinal) => All[ordinal];
+    public static implicit operator Vector3IntB(Direction direction) => direction.Normal;
     public static implicit operator Vector3Int(Direction direction) => direction.Normal;
 
     public static Direction operator -(Direction direction) => direction.GetOpposite();
-    public static Vector3Int operator *(Direction direction, int value) => direction.Normal * value;
-    public static Vector3Int operator *(int value, Direction direction) => direction.Normal * value;
+    public static Vector3IntB operator *(Direction direction, int value) => direction.Normal * value;
+    public static Vector3IntB operator *(int value, Direction direction) => direction.Normal * value;
     public static Vector3 operator *(Direction direction, float value) => direction.Normal * value;
     public static Vector3 operator *(float value, Direction direction) => direction.Normal * value;
 

@@ -22,6 +22,9 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
         Properties = BlockProperties.Default with
         {
             IsTransparent = true,
+            PlaceSound = "sounds/err.sound",
+            BreakSound = "sounds/err.sound",
+            FootstepSound = "sounds/err.sound",
         }
     };
 
@@ -50,7 +53,7 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
         .LoadTextureUvs(TextureMap, GetBlockPathPart("furnace")));
 
     public BushBlock TallGrass { get; } = new(MakeId("tall_grass"),
-        TextureMap.GetOrLoadAnimatedTexture($"{GetBlockPathPart("tall_grass")}.png", new Mth.Vector2Int(2, 1), new float[2] { 1f, 1f }))
+        TextureMap.GetOrLoadAnimatedTexture($"{GetBlockPathPart("tall_grass")}.png", new Mth.Vector2IntB(2, 1), new float[2] { 1f, 1f }))
     {
         Properties = BlockProperties.Default with
         {

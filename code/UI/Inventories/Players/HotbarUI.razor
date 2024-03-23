@@ -12,7 +12,7 @@
 @namespace VoxelWorld.UI.Inventories.Players
 @attribute [StyleSheet]
 @inherits PanelComponent
-@implements ILocalPlayerInitializable
+@implements ILocalPlayerListener
 
 <root>
 	@if(PlayerInventory.IsValid())
@@ -41,12 +41,13 @@
 
 @code
 {
-	[Property] public PlayerInventory PlayerInventory { get; set; } // TODO: change to IPlayerInventory
+	[Property] public PlayerInventory? PlayerInventory { get; set; } // TODO: change to IPlayerInventory
 
 	protected Stack<Item> SecondaryHandStack => PlayerInventory?.GetHandItem(HandType.Secondary) ?? Stack<Item>.Empty;
 	protected Texture SelectorTexture;
 
-	public void InitializeLocalPlayer(Player player) => PlayerInventory = player.Components.Get<PlayerInventory>(true);
+	public void OnLocalPlayerCreated(Player player) => PlayerInventory = player.Components.Get<PlayerInventory>(true);
+	public void OnLocalPlayerDestroyed(Player player) => PlayerInventory = null;
 
 	protected override void OnAwake()
 	{

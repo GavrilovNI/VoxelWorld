@@ -1,0 +1,89 @@
+RespawnScreen {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+	opacity: 0;
+	pointer-events: all;
+	justify-content: center;
+	align-items: center;
+	backdrop-filter: blur(3px);
+	pointer-events: all;
+	display: flex;
+	flex-direction: column;
+	font-family: Poppins;
+
+	&.enabled {
+		opacity: 1;
+	}
+
+	.title {
+		position: relative;
+		font-size: 60%;
+		color: #f22;
+		text-stroke: 2px #000;
+		overflow: hidden;
+		padding-bottom: 30px;
+	}
+
+	.reason {
+		position: relative;
+		font-size: 20%;
+		color: #888;
+		text-stroke: 3px #222;
+		overflow: hidden;
+		padding-bottom: 30px;
+	}
+
+	.buttons {
+		position: relative;
+		width: 500px;
+		height: 14%;
+		justify-content: center;
+		background-color: #333;
+		padding: 1%;
+		display: flex;
+		flex-direction: column;
+		gap: 5%;
+
+		.button {
+			background-color: #444;
+			width: 100%;
+			height: 100%;
+			align-items: center;
+			justify-content: center;
+			font-size: 30%;
+			font-family: Poppins;
+			align-self: flex-end;
+			margin-top: auto;
+
+			.label {
+				position: relative;
+				text-align: center;
+				width: 100%;
+				font-size: 30%;
+				color: #aaa;
+			}
+
+			&.disabled {
+				background-color: #3a3a3a;
+
+				&:hover {
+					background-color: #3a3a3a;
+				}
+
+				&:active {
+					background-color: #383838;
+				}
+			}
+
+			&:hover {
+				background-color: #555;
+			}
+
+			&:active {
+				background-color: #888;
+			}
+		}
+	}
+}

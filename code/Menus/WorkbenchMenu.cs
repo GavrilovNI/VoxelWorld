@@ -14,15 +14,15 @@ namespace VoxelWorld.Menus;
 public class WorkbenchMenu : ItemCapabilitiesMenu
 {
     public IWorldAccessor? World { get; }
-    public Vector3Int BlockPosition { get; }
+    public Vector3IntB BlockPosition { get; }
     public IPlayerInventory PlayerInventory { get; }
     public WorkbenchCapability WorkbenchCapability { get; } = new();
 
-    public WorkbenchMenu(Player player) : this(player, null!, Vector3Int.Zero)
+    public WorkbenchMenu(Player player) : this(player, null!, Vector3IntB.Zero)
     {
     }
 
-    public WorkbenchMenu(Player player, IWorldAccessor world, Vector3Int blockPosition) : base(new List<IIndexedCapability<Inventories.Stack<Item>>>()
+    public WorkbenchMenu(Player player, IWorldAccessor world, Vector3IntB blockPosition) : base(new List<IIndexedCapability<Inventories.Stack<Item>>>()
     {
         player.Inventory.Main,
         player.Inventory.Hotbar

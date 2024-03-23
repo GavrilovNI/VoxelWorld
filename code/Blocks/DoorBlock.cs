@@ -24,6 +24,9 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
     public static readonly BlockProperty<BoolEnum> OpenedProperty = new((Id)"opened");
     public static readonly BlockProperty<DoorHingeSide> HingeProperty = new((Id)"hinge_side");
 
+    public string OpenSound { get; init; } = "sounds/voxelworld/blocks/door_open.sound";
+    public string CloseSound { get; init; } = "sounds/voxelworld/blocks/door_close.sound";
+
     [SetsRequiredMembers]
     public DoorBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> bottomUvProviders,
         IReadOnlyDictionary<Direction, IUvProvider> topUvProviders) : base(id, bottomUvProviders, topUvProviders)
@@ -72,6 +75,11 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
     {
         bool isOpen = context.BlockState.GetValue(OpenedProperty);
         await context.World.SetBlockState(context.Position, context.BlockState.With(OpenedProperty, !isOpen));
+
+        var sound = isOpen ? CloseSound : OpenSound;
+        var centerPosition = context.World.GetBlockGlobalPosition(context.Position) + MathV.UnitsInMeter / 2f;
+        Sound.Play(sound, centerPosition);
+
         return InteractionResult.Success;
     }
 

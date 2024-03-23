@@ -23,7 +23,7 @@ public class WorldGenerator : Component, IWorldInitializationListener
 
     public void OnWorldInitialized(World world) => SetSeed(world.WorldOptions.Seed);
 
-    protected bool ShouldPlaceBlock(in Vector3Int position, float surfaceHeight)
+    protected bool ShouldPlaceBlock(in Vector3IntB position, float surfaceHeight)
     {
         const int surfaceModifactionsHeight = 4;
         if(position.z < MinHeight - surfaceModifactionsHeight)
@@ -40,9 +40,9 @@ public class WorldGenerator : Component, IWorldInitializationListener
         return shouldPalceBlock;
     }
 
-    public Dictionary<Vector3Int, BlockState> Generate(Vector3Int position, Vector3Int size)
+    public Dictionary<Vector3IntB, BlockState> Generate(Vector3IntB position, Vector3IntB size)
     {
-        Dictionary<Vector3Int, BlockState> result = new();
+        Dictionary<Vector3IntB, BlockState> result = new();
 
         var blocks = BaseMod.Instance!.Blocks;
 
@@ -50,7 +50,7 @@ public class WorldGenerator : Component, IWorldInitializationListener
         {
             for(int y = 0; y < size.y; ++y)
             {
-                Vector2Int globalBlockPositionXY = new(position.x + x, position.y + y);
+                Vector2IntB globalBlockPositionXY = new(position.x + x, position.y + y);
                 var heightNoise = (PerlinNoise.Get(new Vector2(globalBlockPositionXY), HeightNoiseSettings) + 1f) / 2f;
                 heightNoise = HeightSurfaceCurve.Evaluate(heightNoise);
                 var surfaceHeight = heightNoise * (MaxHeight - MinHeight) + MinHeight;
@@ -82,7 +82,7 @@ public class WorldGenerator : Component, IWorldInitializationListener
                     {
                         if(heightOffset <= 0 || z + heightOffset >= size.z)
                         {
-                            Vector3Int globalBlockPosition = new(globalBlockPositionXY, position.z + z + heightOffset);
+                            Vector3IntB globalBlockPosition = new(globalBlockPositionXY, position.z + z + heightOffset);
                             return ShouldPlaceBlock(globalBlockPosition, surfaceHeight);
                         }
                         else

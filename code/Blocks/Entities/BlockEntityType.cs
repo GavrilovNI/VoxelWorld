@@ -17,7 +17,7 @@ public class BlockEntityType : IRegisterable
     }
 
     public BlockEntity CreateBlockEntity() => _entitySupplier();
-    public BlockEntity CreateBlockEntity(IWorldAccessor world, Vector3Int position)
+    public BlockEntity CreateBlockEntity(IWorldAccessor world, Vector3IntB position)
     {
         var entity = CreateBlockEntity();
         entity.Initialize(world, position);

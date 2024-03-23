@@ -37,13 +37,13 @@ public class PhysicsBlock : SimpleBlock
             ConvertToEntity(context.World, context.ThisPosition, context.ThisBlockState);
     }
 
-    public virtual bool ShouldConvertToEntity(IWorldAccessor world, Vector3Int position, BlockState blockState)
+    public virtual bool ShouldConvertToEntity(IWorldAccessor world, Vector3IntB position, BlockState blockState)
     {
-        var blockStateUnder = world.GetBlockState(position + Vector3Int.Down);
+        var blockStateUnder = world.GetBlockState(position + Vector3IntB.Down);
         return blockStateUnder.IsAir() || blockStateUnder.Block.CanBeReplaced(blockStateUnder, blockState);
     }
 
-    public virtual void ConvertToEntity(IWorldAccessor world, Vector3Int position, BlockState blockState)
+    public virtual void ConvertToEntity(IWorldAccessor world, Vector3IntB position, BlockState blockState)
     {
         var realBlockState = world.GetBlockState(position);
         if(realBlockState != blockState)

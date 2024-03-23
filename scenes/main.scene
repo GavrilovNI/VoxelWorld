@@ -3,38 +3,32 @@
   "GameObjects": [
     {
       "__guid": "f7b78756-955b-4773-b322-645ac082f19e",
-      "Name": "Default Camera",
+      "Name": "Local Player Camera Duplicate",
       "Position": "-199.9835,127.6956,-98.1855",
       "Tags": "maincamera",
       "Enabled": true,
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "CameraComponent",
-          "__guid": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
-          "BackgroundColor": "0.33333,0.46275,0.52157,1",
-          "ClearFlags": "All",
-          "FieldOfView": 60,
-          "IsMainCamera": false,
-          "Orthographic": false,
-          "OrthographicHeight": 1204,
-          "Priority": 2,
-          "RenderExcludeTags": "",
-          "RenderTags": "",
-          "TargetEye": "None",
-          "Viewport": "0,0,1,1",
-          "ZFar": 10000,
-          "ZNear": 10
-        },
-        {
           "__type": "LocalPlayerCameraDuplicate",
           "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
           "Camera": {
             "_type": "component",
-            "component_id": "d32b19f5-4f08-4356-928d-8ca6dcd0c1d1",
-            "go": "f7b78756-955b-4773-b322-645ac082f19e",
+            "component_id": "d2751c85-c875-4a64-baf7-41b52c0aec01",
+            "go": "47ff2699-109e-4015-9482-7d20f186d20d",
             "component_type": "CameraComponent"
-          }
+          },
+          "DisableCameraObject": true
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "47ff2699-109e-4015-9482-7d20f186d20d",
+          "Name": "playercamera (1)",
+          "Position": "0,0,0",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "__Prefab": "prefabs/playercamera.prefab"
         }
       ]
     },
@@ -53,7 +47,7 @@
           },
           "BlockPhotoMaker": {
             "_type": "component",
-            "component_id": "17cdaf7d-e2c8-4c29-85d9-4f31e4b34606",
+            "component_id": "a3a1eeab-a66e-42b4-b1ca-ae7fdfe36451",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -168,7 +162,8 @@
           "Components": [
             {
               "__type": "CrosshairUI",
-              "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7"
+              "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7",
+              "IsShowing": false
             }
           ]
         },
@@ -188,6 +183,25 @@
               "PartLoadingTime": 20,
               "PartSize": 0.3,
               "WaitingPercent": 0.99
+            }
+          ]
+        },
+        {
+          "__guid": "276f355a-184a-4945-b65f-9dd09bffc14d",
+          "Name": "RespawnScreen",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "Components": [
+            {
+              "__type": "RespawnScreen",
+              "__guid": "594c9154-9e46-43da-8aa3-dd1c0536366f",
+              "IsShowing": false,
+              "LoadingScreen": {
+                "_type": "component",
+                "component_id": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
+                "go": "f78eae77-52a9-41c5-b05e-b2b4efc3f4a4",
+                "component_type": "FakeLoadingScreen"
+              }
             }
           ]
         }
@@ -217,8 +231,8 @@
           "Tint": "1,1,1,1"
         },
         {
-          "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
           "__type": "TextureMapShower",
+          "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
           "Blocks": true,
           "ModelRenderer": {
             "_type": "component",
@@ -253,7 +267,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-18T00:20:14.7966369\u002B01:00",
+  "LastSaved": "2024-03-23T01:12:49.0218085\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

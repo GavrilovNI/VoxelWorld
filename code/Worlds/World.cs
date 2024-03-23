@@ -20,13 +20,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static VoxelWorld.Worlds.Creation.ChunksCreator;
+using VoxelWorld.Players;
 
 namespace VoxelWorld.Worlds;
 
 public class World : Component, IWorldAccessor, ITickable
 {
-    public event Action<Vector3Int>? ChunkLoaded;
-    public event Action<Vector3Int>? ChunkUnloaded;
+    public event Action<Vector3IntB>? ChunkLoaded;
+    public event Action<Vector3IntB>? ChunkUnloaded;
 
 
     [Property, HideIf(nameof(IsSceneRunning), true)]
@@ -34,7 +35,7 @@ public class World : Component, IWorldAccessor, ITickable
     
     [Property] protected GameObject? ChunksParent { get; set; }
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
-    [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3Int(-10000, -10000, -16), new Vector3Int(10001, 10001, 17));
+    [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3IntB(-10000, -10000, -16), new Vector3IntB(10001, 10001, 17));
     [Property] public BBoxInt Limits => LimitsInChunks * WorldOptions.ChunkSize;
     [Property] protected float EntitiesLimitThreshold { get; set; } = 32;
     [Property] protected bool TickByItself { get; set; } = true;
@@ -43,7 +44,7 @@ public class World : Component, IWorldAccessor, ITickable
     public InitializationStatus InitializationStatus { get; private set; } = InitializationStatus.NotInitialized;
     public new ModedId Id { get; private set; }
     public BaseFileSystem? WorldFileSystem { get; private set; }
-    public Vector3Int ChunkSize => WorldOptions.ChunkSize;
+    public Vector3IntB ChunkSize => WorldOptions.ChunkSize;
 
 
     private bool IsSceneRunning => !Scene.IsEditor;
@@ -56,8 +57,8 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected readonly object ChunksCreationLocker = new();
     protected CancellationTokenSource TaskCreationTokenSource = new();
-    protected readonly ChunksCollection Chunks = new(Vector3Int.XYZIterationComparer);
-    protected readonly Dictionary<Vector3Int, (Task<ChunkCreationData> ChunkTask, ChunkCreationStatus Status, Chunk? PartiallyLoadedChunk)> CreatingChunks = new();
+    protected readonly ChunksCollection Chunks = new(Vector3IntB.XYZIterationComparer);
+    protected readonly Dictionary<Vector3IntB, (Task<ChunkCreationData> ChunkTask, ChunkCreationStatus Status, Chunk? PartiallyLoadedChunk)> CreatingChunks = new();
 
 
     public async Task Initialize(ModedId id, BaseFileSystem fileSystem, WorldOptions defaultWorldOptions)
@@ -137,7 +138,7 @@ public class World : Component, IWorldAccessor, ITickable
         if(OutOfLimitsChunk.IsValid())
             throw new InvalidOperationException($"{nameof(OutOfLimitsChunk)} was already created");
 
-        OutOfLimitsChunk = ChunksCreator.CreateChunkObject(LimitsInChunks.Mins - Vector3Int.One);
+        OutOfLimitsChunk = ChunksCreator.CreateChunkObject(LimitsInChunks.Mins - Vector3IntB.One);
         OutOfLimitsChunk.GameObject.Parent = GameObject;
         OutOfLimitsChunk.GameObject.Name = "Out of limits Chunk";
         OutOfLimitsChunk.EntityAdded += OnEntityAddedToChunk;
@@ -200,6 +201,8 @@ public class World : Component, IWorldAccessor, ITickable
         }
         else
         {
+            OutOfLimitsChunk.AddEntity(entity);
+
             var entityBlockPosition = GetBlockPosition(entity.Transform.Position);
             var distanceToLimits = Limits.ClosestPoint(entityBlockPosition).Distance(entityBlockPosition);
             if(distanceToLimits > EntitiesLimitThreshold)
@@ -207,8 +210,6 @@ public class World : Component, IWorldAccessor, ITickable
                 entity.Destroy();
                 return;
             }
-
-            OutOfLimitsChunk.AddEntity(entity);
         }
     }
 
@@ -231,7 +232,7 @@ public class World : Component, IWorldAccessor, ITickable
         }
     }
 
-    protected virtual void OnEntityRemovedFromChunk(Chunk chunk, Entity entity)
+    protected virtual void OnEntityRemovedFromChunk(Chunk chunk, Entity entity, bool destroyed)
     {
         if(entity is Player player)
         {
@@ -243,10 +244,10 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual bool IsChunkInLimits(Vector3Int chunkPosition) => LimitsInChunks.Contains(chunkPosition);
+    public virtual bool IsChunkInLimits(Vector3IntB chunkPosition) => LimitsInChunks.Contains(chunkPosition);
 
     // Thread safe
-    public virtual bool HasChunk(Vector3Int chunkPosition)
+    public virtual bool HasChunk(Vector3IntB chunkPosition)
     {
         if(!IsChunkInLimits(chunkPosition))
             return false;
@@ -255,7 +256,7 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    protected virtual Task<Chunk> GetOrCreateChunk(Vector3Int chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
+    protected virtual Task<Chunk> GetOrCreateChunk(Vector3IntB chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
     {
         if(!IsChunkInLimits(chunkPosition))
             throw new InvalidOperationException($"Chunk position {chunkPosition} is not in Limits {LimitsInChunks}");
@@ -345,7 +346,7 @@ public class World : Component, IWorldAccessor, ITickable
         }
     }
 
-    protected virtual Task<Chunk?> GetChunkOrAwaitFullyLoad(Vector3Int chunkPosition)
+    protected virtual Task<Chunk?> GetChunkOrAwaitFullyLoad(Vector3IntB chunkPosition)
     {
         lock(ChunksCreationLocker)
         {
@@ -379,7 +380,7 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    protected virtual Chunk? GetChunk(Vector3Int chunkPosition, bool includeLoading = false)
+    protected virtual Chunk? GetChunk(Vector3IntB chunkPosition, bool includeLoading = false)
     {
         if(!includeLoading)
             return Chunks.GetOrDefault(chunkPosition);
@@ -397,7 +398,7 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual async Task CreateChunk(Vector3Int chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
+    public virtual async Task CreateChunk(Vector3IntB chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
     {
         if(creationStatus == ChunkCreationStatus.None)
             return;
@@ -406,7 +407,7 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual async Task CreateChunksSimultaneously(IEnumerable<Vector3Int> chunkPositions, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
+    public virtual async Task CreateChunksSimultaneously(IEnumerable<Vector3IntB> chunkPositions, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing)
     {
         if(creationStatus == ChunkCreationStatus.None)
             return;
@@ -429,7 +430,7 @@ public class World : Component, IWorldAccessor, ITickable
         await Task.WhenAll(tasks);
     }
 
-    public virtual Vector3Int GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
+    public virtual Vector3IntB GetBlockPosition(Vector3 blockPosition, Vector3 hitNormal)
     {
         hitNormal = Transform.World.NormalToLocal(hitNormal.Normal);
         var result = Transform.World.PointToLocal(blockPosition).Divide(MathV.UnitsInMeter);
@@ -452,18 +453,18 @@ public class World : Component, IWorldAccessor, ITickable
 
         return result.Floor();
     }
-    public virtual Vector3Int GetBlockPosition(Vector3 position) => Transform.World.PointToLocal(position).Divide(MathV.UnitsInMeter).Floor();
+    public virtual Vector3IntB GetBlockPosition(Vector3 position) => Transform.World.PointToLocal(position).Divide(MathV.UnitsInMeter).Floor();
 
-    public virtual Vector3Int GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
-    public virtual Vector3 GetBlockGlobalPosition(Vector3Int blockPosition) => blockPosition * MathV.UnitsInMeter;
+    public virtual Vector3IntB GetChunkPosition(Vector3 position) => GetChunkPosition(GetBlockPosition(position));
+    public virtual Vector3 GetBlockGlobalPosition(Vector3IntB blockPosition) => blockPosition * MathV.UnitsInMeter;
 
-    public virtual Vector3Int GetChunkPosition(Vector3Int blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
-    public virtual Vector3Int GetBlockPositionInChunk(Vector3Int blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
-    public virtual Vector3Int GetBlockWorldPosition(Vector3Int chunkPosition, Vector3Int blockLocalPosition) => chunkPosition * ChunkSize + blockLocalPosition;
+    public virtual Vector3IntB GetChunkPosition(Vector3IntB blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
+    public virtual Vector3IntB GetBlockPositionInChunk(Vector3IntB blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
+    public virtual Vector3IntB GetBlockWorldPosition(Vector3IntB chunkPosition, Vector3IntB blockLocalPosition) => chunkPosition * ChunkSize + blockLocalPosition;
 
 
     // Thread safe
-    public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3Int blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
+    public virtual async Task<BlockStateChangingResult> SetBlockState(Vector3IntB blockPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.Default)
     {
         if(!Limits.Contains(blockPosition))
             return BlockStateChangingResult.NotChanged;
@@ -489,7 +490,7 @@ public class World : Component, IWorldAccessor, ITickable
         return result;
     }
 
-    protected virtual void NotifyNeighboursAboutBlockUpdate(Vector3Int blockPosition, BlockState oldBlockState, BlockState newBlockState)
+    protected virtual void NotifyNeighboursAboutBlockUpdate(Vector3IntB blockPosition, BlockState oldBlockState, BlockState newBlockState)
     {
         foreach(Direction direction in Direction.All)
         {
@@ -499,7 +500,7 @@ public class World : Component, IWorldAccessor, ITickable
         }
     }
 
-    protected virtual List<Direction> GetNeighboringChunkDirections(Vector3Int localBlockPosition)
+    protected virtual List<Direction> GetNeighboringChunkDirections(Vector3IntB localBlockPosition)
     {
         List<Direction> result = new();
 
@@ -519,7 +520,7 @@ public class World : Component, IWorldAccessor, ITickable
         return result;
     }
 
-    protected virtual bool NotifyNeighboringChunksAboutEdgeUpdate(Vector3Int updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
+    protected virtual bool NotifyNeighboringChunksAboutEdgeUpdate(Vector3IntB updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
     {
         var localBlockPosition = GetBlockPositionInChunk(updatedBlockPosition);
         List<Direction> neighboringChunkDirections = GetNeighboringChunkDirections(localBlockPosition);
@@ -536,7 +537,7 @@ public class World : Component, IWorldAccessor, ITickable
         return true;
     }
 
-    protected virtual void UpdateNeighboringChunks(Vector3Int chunkPosition)
+    protected virtual void UpdateNeighboringChunks(Vector3IntB chunkPosition)
     {
         foreach(Direction direction in Direction.All)
         {
@@ -547,7 +548,7 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
     // Thread safe
-    public virtual BlockState GetBlockState(Vector3Int blockPosition)
+    public virtual BlockState GetBlockState(Vector3IntB blockPosition)
     {
         var chunkPosition = GetChunkPosition(blockPosition);
         var chunk = GetChunk(chunkPosition);
@@ -557,7 +558,7 @@ public class World : Component, IWorldAccessor, ITickable
         return chunk.GetBlockState(blockPosition);
     }
 
-    public BlockEntity? GetBlockEntity(Vector3Int blockPosition)
+    public BlockEntity? GetBlockEntity(Vector3IntB blockPosition)
     {
         var chunkPosition = GetChunkPosition(blockPosition);
         var chunk = GetChunk(chunkPosition);
@@ -594,7 +595,7 @@ public class World : Component, IWorldAccessor, ITickable
         });
     }
 
-    public virtual async Task<(BinaryTag? Blocks, ListTag Entities)> SaveChunk(Vector3Int chunkPosition, IReadOnlySaveMarker saveMarker)
+    public virtual async Task<(BinaryTag? Blocks, ListTag Entities)> SaveChunk(Vector3IntB chunkPosition, IReadOnlySaveMarker saveMarker)
     {
         var chunk = await GetChunkOrAwaitFullyLoad(chunkPosition);
         if(chunk is null)
@@ -605,11 +606,11 @@ public class World : Component, IWorldAccessor, ITickable
 
     public virtual ListTag SaveOutOfLimitsEntitites(IReadOnlySaveMarker saveMarker) => OutOfLimitsChunk.Save(saveMarker).Entities;
 
-    public virtual async Task<Dictionary<Vector3Int, (BinaryTag? Blocks, ListTag Entities)>> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
+    public virtual async Task<Dictionary<Vector3IntB, (BinaryTag? Blocks, ListTag Entities)>> SaveUnsavedChunks(IReadOnlySaveMarker saveMarker)
     {
         await FullyLoadUnsavedChunks();
 
-        Dictionary<Vector3Int, (BinaryTag? blocks, ListTag entities)> result = new();
+        Dictionary<Vector3IntB, (BinaryTag? blocks, ListTag entities)> result = new();
         foreach(var chunk in Chunks.Where(c => !c.IsSaved))
             result[chunk.Position] = chunk.Save(saveMarker);
 
@@ -618,7 +619,7 @@ public class World : Component, IWorldAccessor, ITickable
 
     protected virtual async Task FullyLoadUnsavedChunks()
     {
-        List<Vector3Int> chunksToLoad = new();
+        List<Vector3IntB> chunksToLoad = new();
         lock(ChunksCreationLocker)
         {
             foreach(var (position, creatingData) in CreatingChunks)

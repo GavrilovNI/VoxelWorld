@@ -7,7 +7,7 @@
 @namespace VoxelWorld.UI
 
 @inherits PanelComponent
-@implements ILocalPlayerInitializable
+@implements ILocalPlayerListener
 
 <root class="enabled" style="background-image: url(@BackgroundImagePath);">
 	<div class="title-holder">
@@ -49,7 +49,7 @@
 	protected float TargetPercent { get; set; }
 	protected bool IsFinishing = false;
 
-	public void InitializeLocalPlayer(Player player) => Finish();
+	public void OnLocalPlayerCreated(Player player) => Finish();
 
 	protected override void OnEnabled()
 	{

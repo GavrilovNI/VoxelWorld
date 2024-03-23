@@ -19,6 +19,9 @@ public static class BBoxExtensions
     public static void Set(this CompoundTag collection, string key, BBox value) =>
         collection.Set(key, value.Write());
 
+    public static void Set(this ListTag collection, int index, BBox value) =>
+        collection.Set(index, value.Write());
+
     public static void Add(this ListTag collection, BBox value) =>
         collection.Add(value.Write());
 
@@ -26,11 +29,21 @@ public static class BBoxExtensions
         collection.Insert(index, value.Write());
 
 
-    public static BBox Get<T>(this CompoundTag collection, string key) where T : IEquatable<BBox> =>
-        collection.GetTag(key).To<ListTag>().To<T>();
+    public static BBox Get<T>(this CompoundTag collection, string key, BBox defaultValue = default) where T : IEquatable<BBox>
+    {
+        var tag = collection.GetTagOrNull(key);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<BBox>();
+    }
 
-    public static BBox Get<T>(this ListTag collection, int index) where T : IEquatable<BBox> =>
-        collection.GetTag(index).To<ListTag>().To<T>();
+    public static BBox Get<T>(this ListTag collection, int index, BBox defaultValue = default) where T : IEquatable<BBox>
+    {
+        var tag = collection.GetTagOrNull(index);
+        if(tag is not ListTag listTag)
+            return defaultValue;
+        return listTag.To<BBox>();
+    }
 
     public static BBox To<T>(this ListTag tag) where T : IEquatable<BBox> =>
         new(new Vector3(tag.Get<float>(0), tag.Get<float>(1), tag.Get<float>(2)),

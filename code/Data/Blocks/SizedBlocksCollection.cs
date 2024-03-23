@@ -4,6 +4,7 @@ using VoxelWorld.Blocks.States;
 using VoxelWorld.IO;
 using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.IO.NamedBinaryTags.Collections;
+using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
 using VoxelWorld.Mth;
 using VoxelWorld.Worlds;
 using System;
@@ -18,18 +19,18 @@ public class SizedBlocksCollection : ISaveStatusMarkable
     public event Action<BlockEntity>? BlockEntityAdded;
     public event Action<BlockEntity>? BlockEntityRemoved;
 
-    private readonly Dictionary<Vector3Int, BlockState> _blockStates = new();
-    private readonly Dictionary<Vector3Int, BlockEntity> _blockEntities = new();
+    private readonly Dictionary<Vector3IntB, BlockState> _blockStates = new();
+    private readonly Dictionary<Vector3IntB, BlockEntity> _blockEntities = new();
 
     protected IWorldAccessor World { get; }
-    protected Vector3Int Offset { get; }
-    public Vector3Int Size { get; }
+    protected Vector3IntB Offset { get; }
+    public Vector3IntB Size { get; }
     public bool AutoDestroyOldBlockEntities { get; set; } = true;
 
     public bool IsEmpty => _blockStates.Count == 0 && _blockEntities.Count == 0;
 
-    public IEnumerable<KeyValuePair<Vector3Int, BlockState>> BlockStates => _blockStates.AsEnumerable();
-    public IEnumerable<KeyValuePair<Vector3Int, BlockEntity>> BlockEntities => _blockEntities.AsEnumerable();
+    public IEnumerable<KeyValuePair<Vector3IntB, BlockState>> BlockStates => _blockStates.AsEnumerable();
+    public IEnumerable<KeyValuePair<Vector3IntB, BlockEntity>> BlockEntities => _blockEntities.AsEnumerable();
 
 
     private IReadOnlySaveMarker _saveMarker = SaveMarker.Saved;
@@ -54,7 +55,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
     }
 
 
-    public SizedBlocksCollection(IWorldAccessor world, Vector3Int offset, Vector3Int size)
+    public SizedBlocksCollection(IWorldAccessor world, Vector3IntB offset, Vector3IntB size)
     {
         if(size.IsAnyAxis(a => a <= 0))
             throw new ArgumentException("all axes of size must be positive");
@@ -64,19 +65,19 @@ public class SizedBlocksCollection : ISaveStatusMarkable
         Size = size;
     }
 
-    public BlockState GetBlockState(Vector3Int position)
+    public BlockState GetBlockState(Vector3IntB position)
     {
         AssertPosition(position);
         return _blockStates!.GetValueOrDefault(position, BlockState.Air);
     }
 
-    public BlockEntity? GetBlockEntity(Vector3Int position)
+    public BlockEntity? GetBlockEntity(Vector3IntB position)
     {
         AssertPosition(position);
         return _blockEntities!.GetValueOrDefault(position, null);
     }
 
-    public void SetBlockState(Vector3Int position, BlockState blockState, bool markDirty = true)
+    public void SetBlockState(Vector3IntB position, BlockState blockState, bool markDirty = true)
     {
         AssertPosition(position);
 
@@ -95,7 +96,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
             MarkNotSaved();
     }
 
-    public BlockStateChangingResult PlaceBlock(Vector3Int position, BlockState blockState, bool markDirty = true)
+    public BlockStateChangingResult PlaceBlock(Vector3IntB position, BlockState blockState, bool markDirty = true)
     {
         var oldState = GetBlockState(position);
         if(oldState == blockState)
@@ -146,7 +147,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
         return BlockStateChangingResult.FromChanged(oldState);
     }
 
-    public void SetBlockEntity(Vector3Int position, BlockEntity blockEntity, bool markDirty = true)
+    public void SetBlockEntity(Vector3IntB position, BlockEntity blockEntity, bool markDirty = true)
     {
         ArgumentNullException.ThrowIfNull(blockEntity);
         AssertPosition(position);
@@ -162,7 +163,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
             MarkNotSaved();
     }
 
-    public bool RemoveBlockEntity(Vector3Int position, bool markDirty = true)
+    public bool RemoveBlockEntity(Vector3IntB position, bool markDirty = true)
     {
         AssertPosition(position);
 
@@ -234,7 +235,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
     {
         var compoundTag = tag.To<CompoundTag>();
 
-        var size = Vector3Int.Read(compoundTag.GetTag("size"));
+        Vector3IntB size = compoundTag.Get<Vector3Int>("size");
         if(size != Size)
             throw new InvalidOperationException($"read size {size} is not equal to actual size {Size}");
 
@@ -243,7 +244,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
         for(int i = 0; i < blocksTag.Count; ++i)
         {
             var blockTag = blocksTag[i].To<CompoundTag>();
-            Vector3Int position = GetPositionFromIndex(i);
+            Vector3IntB position = GetPositionFromIndex(i);
 
             BlockState blockState = BlockState.Read(blockTag.GetTag("state"));
             _blockStates[position] = blockState;
@@ -278,17 +279,17 @@ public class SizedBlocksCollection : ISaveStatusMarkable
         _saveMarker = SaveMarker.NotSaved;
     }
 
-    protected Vector3Int GetPositionFromIndex(int index)
+    protected Vector3IntB GetPositionFromIndex(int index)
     {
         int z = index % Size.z;
         index /= Size.z;
         int y = index % Size.y;
         index /= Size.y;
         int x = index;
-        return new Vector3Int(x, y, z);
+        return new Vector3IntB(x, y, z);
     }
 
-    protected void AssertPosition(Vector3Int position, [CallerArgumentExpression(nameof(position))] string? paramName = null)
+    protected void AssertPosition(Vector3IntB position, [CallerArgumentExpression(nameof(position))] string? paramName = null)
     {
         if(position.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a)))
             throw new ArgumentOutOfRangeException(paramName, position, "Posiiton is out of bounds");

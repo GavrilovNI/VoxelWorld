@@ -22,11 +22,11 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 {
     public event Action<Chunk>? Destroyed = null;
     public event Action<Chunk, Entity>? EntityAdded = null;
-    public event Action<Chunk, Entity>? EntityRemoved = null;
+    public event Action<Chunk, Entity, bool>? EntityRemoved = null;
 
     [Property] protected GameObject EntitiesParent { get; set; } = null!;
-    [Property, HideIf(nameof(Initialized), true)] public Vector3Int Position { get; internal set; }
-    [Property, HideIf(nameof(Initialized), true)] public Vector3Int Size { get; internal set; } = 16;
+    [Property, HideIf(nameof(Initialized), true)] public Vector3IntB Position { get; internal set; }
+    [Property, HideIf(nameof(Initialized), true)] public Vector3IntB Size { get; internal set; } = 16;
     [Property] public ChunkModelUpdater ModelUpdater { get; internal set; } = null!;
 
     public bool Initialized { get; private set; } = false;
@@ -35,7 +35,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     public BBox ModelBounds => ModelUpdater.ModelBounds;
 
-    public Vector3Int BlockOffset => Position * Size;
+    public Vector3IntB BlockOffset => Position * Size;
 
     public bool IsSaved
     {
@@ -68,7 +68,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    public virtual void Initialize(Vector3Int position, Vector3Int size, IWorldAccessor world)
+    public virtual void Initialize(Vector3IntB position, Vector3IntB size, IWorldAccessor world)
     {
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Chunk)} {this} was already initialized or enabled");
@@ -79,7 +79,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Position = position;
         Size = size;
         World = world;
-        Blocks = new(world, World.GetBlockWorldPosition(position, Vector3Int.Zero), size);
+        Blocks = new(world, World.GetBlockWorldPosition(position, Vector3IntB.Zero), size);
     }
 
     public bool AddEntity(Entity entity)
@@ -132,7 +132,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    private bool RemoveEntityInternal(Entity entity)
+    private bool RemoveEntityInternal(Entity entity, bool destroyed = false)
     {
         lock(_entities)
         {
@@ -142,7 +142,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
                 entity.Destroyed -= OnEntityDestroyed;
                 entity.MovedToAnotherChunk -= OnEntityMovedToAnotherChunk;
                 _entitiesSaveMarker = SaveMarker.NotSaved;
-                EntityRemoved?.Invoke(this, entity);
+                EntityRemoved?.Invoke(this, entity, destroyed);
             }
             return removed;
         }
@@ -150,10 +150,10 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     private void OnEntityDestroyed(Entity entity)
     {
-        RemoveEntityInternal(entity);
+        RemoveEntityInternal(entity, true);
     }
 
-    private void OnEntityMovedToAnotherChunk(Entity entity, Vector3Int oldChunk, Vector3Int newChunk)
+    private void OnEntityMovedToAnotherChunk(Entity entity, Vector3IntB oldChunk, Vector3IntB newChunk)
     {
         if(newChunk != Position)
         {
@@ -222,7 +222,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
     // Thread safe
-    public BlockState GetBlockState(Vector3Int position)
+    public BlockState GetBlockState(Vector3IntB position)
     {
         lock(Blocks)
         {
@@ -231,7 +231,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
     // Thread safe
-    public BlockEntity? GetBlockEntity(Vector3Int position)
+    public BlockEntity? GetBlockEntity(Vector3IntB position)
     {
         lock(Blocks)
         {
@@ -240,7 +240,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
     // Thread safe
-    public async Task<BlockStateChangingResult> SetBlockState(Vector3Int localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
+    public async Task<BlockStateChangingResult> SetBlockState(Vector3IntB localPosition, BlockState blockState, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
@@ -261,7 +261,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     }
 
     // Thread safe
-    public async Task<bool> SetBlockStates(IDictionary<Vector3Int, BlockState> blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
+    public async Task<bool> SetBlockStates(IDictionary<Vector3IntB, BlockState> blockStates, BlockSetFlags flags = BlockSetFlags.UpdateModel | BlockSetFlags.MarkDirty)
     {
         if(flags.HasFlag(BlockSetFlags.UpdateNeigbours))
             throw new NotSupportedException($"{BlockSetFlags.UpdateNeigbours} is not supported in {nameof(Chunk)}");
@@ -311,19 +311,19 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return modified;
     }
 
-    public virtual bool IsInBounds(Vector3Int localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
+    public virtual bool IsInBounds(Vector3IntB localPosition) => !localPosition.IsAnyAxis((a, v) => v < 0 || v >= Size.GetAxis(a));
 
-    public virtual BlockEntity? GetExternalBlockEntity(Vector3Int localPosition)
+    public virtual BlockEntity? GetExternalBlockEntity(Vector3IntB localPosition)
     {
         if(IsInBounds(localPosition))
             return GetBlockEntity(localPosition);
 
-        Vector3Int globalPosition = World.GetBlockWorldPosition(Position, localPosition);
+        var globalPosition = World.GetBlockWorldPosition(Position, localPosition);
         return World.GetBlockEntity(globalPosition);
     }
 
     public virtual void OnNeighbouringChunkEdgeUpdated(Direction directionToNeighbouringChunk,
-        Vector3Int updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
+        Vector3IntB updatedBlockPosition, BlockState oldBlockState, BlockState newBlockState)
     {
         var sidedBlockPosition = updatedBlockPosition - directionToNeighbouringChunk;
         var sidedLocalBlockPosition = World.GetBlockPositionInChunk(sidedBlockPosition);
@@ -404,7 +404,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
 public static class ComponentListChunkExtensions
 {
-    public static T Create<T>(this ComponentList components, Vector3Int position, Vector3Int size, IWorldAccessor world, bool startEnabled = true) where T : Chunk, new()
+    public static T Create<T>(this ComponentList components, Vector3IntB position, Vector3IntB size, IWorldAccessor world, bool startEnabled = true) where T : Chunk, new()
     {
         var chunk = components.Create<T>(false);
 

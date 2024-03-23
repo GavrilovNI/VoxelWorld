@@ -61,5 +61,5 @@
         UpdateStyle();
     }
 
-    protected override int BuildHash() => HashCode.Combine(Text, FindRootPanel().Scale, Parent.Box.Rect.Height);
+    protected override int BuildHash() => HashCode.Combine(Text, FindRootPanel()?.Scale, Parent?.Box.Rect.Height);
 }

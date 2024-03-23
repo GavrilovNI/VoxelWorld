@@ -43,15 +43,15 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
     }
 
     [JsonIgnore, Hide]
-    public Vector2Int Position
+    public Vector2IntB Position
     {
         readonly get
         {
-            return new Vector2Int(Left, Top);
+            return new Vector2IntB(Left, Top);
         }
         set
         {
-            Vector2Int size = Size;
+            Vector2IntB size = Size;
             Left = value.x;
             Top = value.y;
             Size = size;
@@ -61,11 +61,11 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
     [JsonIgnore, Hide]
     public readonly Vector2 Center => Position + Size * 0.5f;
 
-    public Vector2Int Size
+    public Vector2IntB Size
     {
         readonly get
         {
-            return new Vector2Int(Width, Height);
+            return new Vector2IntB(Width, Height);
         }
         set
         {
@@ -78,16 +78,16 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
     public readonly RectInt WithoutPosition => new(0, 0, Width, Height);
 
     [JsonIgnore, Hide]
-    public readonly Vector2Int BottomLeft => new(Left, Bottom);
+    public readonly Vector2IntB BottomLeft => new(Left, Bottom);
 
     [JsonIgnore, Hide]
-    public readonly Vector2Int BottomRight => new(Right, Bottom);
+    public readonly Vector2IntB BottomRight => new(Right, Bottom);
 
     [JsonIgnore, Hide]
-    public readonly Vector2Int TopRight => new(Right, Top);
+    public readonly Vector2IntB TopRight => new(Right, Top);
 
     [JsonIgnore, Hide]
-    public readonly Vector2Int TopLeft => new(Left, Top);
+    public readonly Vector2IntB TopLeft => new(Left, Top);
 
     public RectInt(in int x, in int y, in int width, in int height)
     {
@@ -97,7 +97,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         Bottom = y + height;
     }
 
-    public RectInt(in Vector2Int position, in Vector2Int size = default) :
+    public RectInt(in Vector2IntB position, in Vector2IntB size = default) :
         this(position.x, position.y, size.x, size.y)
     {
     }
@@ -110,7 +110,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         Bottom = y + height
     };
 
-    public static RectInt FromPositionAndSize(in Vector2Int position, in Vector2Int size) => new()
+    public static RectInt FromPositionAndSize(in Vector2IntB position, in Vector2IntB size) => new()
     {
         Left = position.x,
         Top = position.y,
@@ -134,7 +134,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         height = Height;
     }
 
-    public readonly void Deconstruct(out Vector2Int position, out Vector2Int size)
+    public readonly void Deconstruct(out Vector2IntB position, out Vector2IntB size)
     {
         position = Position;
         size = Size;
@@ -181,7 +181,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         return true;
     }
 
-    public readonly bool IsInside(in Vector2Int pos)
+    public readonly bool IsInside(in Vector2IntB pos)
     {
         if(pos.x < Left)
             return false;
@@ -310,7 +310,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
     public static RectInt operator *(in RectInt a, in int b) => new(a.Left * b, a.Top * b, a.Width * b, a.Height * b);
     public static Rect operator *(in RectInt a, in float b) => new(a.Left * b, a.Top * b, a.Width * b, a.Height * b);
 
-    public static RectInt operator *(in RectInt a, in Vector2Int b) => new(a.Left * b.x, a.Top * b.y, a.Width * b.x, a.Height * b.y);
+    public static RectInt operator *(in RectInt a, in Vector2IntB b) => new(a.Left * b.x, a.Top * b.y, a.Width * b.x, a.Height * b.y);
     public static Rect operator *(in RectInt a, in Vector2 b) => new(a.Left * b.x, a.Top * b.y, a.Width * b.x, a.Height * b.y);
 
     public override readonly string ToString() => $"{Left},{Top},{Width},{Height}";
@@ -325,7 +325,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         Bottom = Math.Max(Bottom, r.Bottom);
     }
 
-    public void Add(Vector2Int point)
+    public void Add(Vector2IntB point)
     {
         Left = Math.Min(Left, point.x);
         Right = Math.Max(Right, point.x);
@@ -333,7 +333,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         Bottom = Math.Max(Bottom, point.y);
     }
 
-    public readonly RectInt AddPoint(Vector2Int pos)
+    public readonly RectInt AddPoint(Vector2IntB pos)
     {
         RectInt result = this;
         result.Add(pos);
@@ -393,7 +393,7 @@ public struct RectInt : IEquatable<RectInt>, INbtWritable, INbtStaticReadable<Re
         return Align(in size2, align);
     }
 
-    public static RectInt operator +(RectInt r, in Vector2Int p) => new(r.Position + p, r.Size);
+    public static RectInt operator +(RectInt r, in Vector2IntB p) => new(r.Position + p, r.Size);
     public static Rect operator +(RectInt r, in Vector2 p) => new(r.Position + p, r.Size);
 
 

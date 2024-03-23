@@ -14,14 +14,15 @@ namespace VoxelWorld.Players;
 
 public class PlayerSpawner : Component
 {
-    [Property] protected BBoxInt PreloadRange { get; set; } = BBoxInt.FromPositionAndRadius(0, new Vector3Int(2, 2, 3));
-    [Property] protected BBoxInt SafeBounds { get; set; } = BBoxInt.FromMinsAndSize(0, new Vector3Int(1, 1, 2));
+    [Property] protected BBoxInt PreloadRange { get; set; } = BBoxInt.FromPositionAndRadius(0, new Vector3IntB(2, 2, 3));
+    [Property] protected BBoxInt SafeBounds { get; set; } = BBoxInt.FromMinsAndSize(0, new Vector3IntB(1, 1, 2));
     protected static EntityType PlayerEntityType => BaseMod.Instance!.Entities.Player;
 
 
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)
     {
-        if(!TryLoadPlayer(steamId, out var player, false))
+        bool shouldTryLoadPLayer = !GameController.Instance!.WasPlayerSpawned(steamId);
+        if(!shouldTryLoadPLayer || !TryLoadPlayer(steamId, out var player, false))
         {
             player = (PlayerEntityType.CreateEntity(defaultSpawnConfig with { StartEnabled = false }) as Player)!;
             player.SetSteamId(steamId);
@@ -57,7 +58,7 @@ public class PlayerSpawner : Component
             if(cancellationToken.IsCancellationRequested)
                 return null;
 
-            await world.CreateChunk(world.GetChunkPosition(spawnBlockPosition + Vector3Int.Down));
+            await world.CreateChunk(world.GetChunkPosition(spawnBlockPosition + Vector3IntB.Down));
 
             if(cancellationToken.IsCancellationRequested)
                 return null;
@@ -69,9 +70,6 @@ public class PlayerSpawner : Component
             if(cancellationToken.IsCancellationRequested)
                 return null;
         }
-
-        foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerInitializable>(FindMode.EverythingInSelfAndDescendants))
-            localPlayerInitializable.InitializeLocalPlayer(player);
 
         if(world is not null)
         {
@@ -103,31 +101,31 @@ public class PlayerSpawner : Component
         return Player.TryReadPlayer(tag, steamId, out player, enable);
     }
 
-    protected virtual async Task<Vector3Int> FindSafePosition(IWorldAccessor world, Vector3Int startPosition, BBoxInt range, CancellationToken cancellationToken)
+    protected virtual async Task<Vector3IntB> FindSafePosition(IWorldAccessor world, Vector3IntB startPosition, BBoxInt range, CancellationToken cancellationToken)
     {
         var currentRange = range + startPosition;
         while(world.Limits.Overlaps(currentRange) && !await IsEmpty(world, currentRange, cancellationToken))
         {
-            startPosition += Vector3Int.Up;
+            startPosition += Vector3IntB.Up;
             currentRange = range + startPosition;
         }
 
         if(!world.Limits.Overlaps(currentRange))
         {
-            startPosition += Vector3Int.Down;
+            startPosition += Vector3IntB.Down;
             currentRange = range + startPosition;
 
             if(!world.Limits.Overlaps(currentRange))
-                return startPosition + Vector3Int.Up;
+                return startPosition + Vector3IntB.Up;
         }
 
         while(world.Limits.Overlaps(currentRange) && await IsEmpty(world, currentRange, cancellationToken))
         {
-            startPosition += Vector3Int.Down;
+            startPosition += Vector3IntB.Down;
             currentRange = range + startPosition;
         }
 
-        return startPosition + Vector3Int.Up;
+        return startPosition + Vector3IntB.Up;
     }
 
     protected virtual async Task<bool> IsEmpty(IWorldAccessor world, BBoxInt range, CancellationToken cancellationToken)
@@ -154,7 +152,7 @@ public class PlayerSpawner : Component
 
     protected virtual Task PreloadChunks(IWorldAccessor world, BBoxInt range, Vector3 spawnPosition)
     {
-        Vector3Int centerChunkPosition = world.GetChunkPosition(spawnPosition);
+        var centerChunkPosition = world.GetChunkPosition(spawnPosition);
         var positionsToLoad = (range + centerChunkPosition).GetPositions().Where(p => world.IsChunkInLimits(p)).ToHashSet();
 
         return world.CreateChunksSimultaneously(positionsToLoad);

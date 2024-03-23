@@ -9,10 +9,10 @@ namespace VoxelWorld.Worlds.Generation;
 public class WorldAutoLoader : Component, IWorldInitializable
 {
     [Property] public IWorldAccessor? World { get; set; } = null;
-    [Property] public BBoxInt Bounds { get; set; } = BBoxInt.FromPositionAndRadius(Vector3Int.Zero, 2);
+    [Property] public BBoxInt Bounds { get; set; } = BBoxInt.FromPositionAndRadius(Vector3IntB.Zero, 2);
     [Property] public float TimeBetweenSuccessfulAttempts { get; set; } = 1f;
 
-    protected HashSet<Vector3Int> LoadedChunks = new();
+    protected HashSet<Vector3IntB> LoadedChunks = new();
     protected Task? LoadingTask;
 
     protected bool IsStarted = false;
@@ -63,17 +63,17 @@ public class WorldAutoLoader : Component, IWorldInitializable
         World.ChunkUnloaded -= OnChunkUnloaded;
     }
 
-    protected virtual void OnChunkLoaded(Vector3Int position)
+    protected virtual void OnChunkLoaded(Vector3IntB position)
     {
         LoadedChunks.Add(position);
     }
 
-    protected virtual void OnChunkUnloaded(Vector3Int position)
+    protected virtual void OnChunkUnloaded(Vector3IntB position)
     {
         LoadedChunks.Remove(position);
     }
 
-    protected async Task LoadChunks(IReadOnlySet<Vector3Int> positions)
+    protected async Task LoadChunks(IReadOnlySet<Vector3IntB> positions)
     {
         if(positions.Count == 0)
             return;
@@ -81,14 +81,14 @@ public class WorldAutoLoader : Component, IWorldInitializable
         await World!.CreateChunksSimultaneously(positions);
     }
 
-    protected virtual HashSet<Vector3Int> GetChunkPositionsToLoad()
+    protected virtual HashSet<Vector3IntB> GetChunkPositionsToLoad()
     {
         var centralChunkPositrion = World!.GetChunkPosition(Transform.Position);
-        HashSet<Vector3Int> chunksToLoad = (Bounds + centralChunkPositrion).GetPositions()
+        HashSet<Vector3IntB> chunksToLoad = (Bounds + centralChunkPositrion).GetPositions()
             .Where(p => !LoadedChunks.Contains(p) && World.IsChunkInLimits(p))
             .ToHashSet();
 
-        HashSet<Vector3Int> except = new();
+        HashSet<Vector3IntB> except = new();
         foreach(var position in chunksToLoad.ToList())
         {
             if(World.HasChunk(position))
