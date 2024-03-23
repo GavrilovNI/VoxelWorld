@@ -74,6 +74,14 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         return v;
     });
 
+    public UnlimitedMesh<V> Scale(Vector3 center, Vector3 scale) => Convert((v) =>
+    {
+        var position = v.GetPosition();
+        var offset = position - center;
+        v.SetPosition(position + offset * scale);
+        return v;
+    });
+
     public UnlimitedMesh<V> RotateAround(Rotation rotation, Vector3 center)
     {
         var indices = _indices.Select(l => new List<ushort>(l)).ToList();
@@ -265,6 +273,14 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         }
 
         public virtual Builder Scale(Vector3 center, float scale) => ChangeEveryVertex((v) =>
+        {
+            var position = v.GetPosition();
+            var offset = position - center;
+            v.SetPosition(center + offset * scale);
+            return v;
+        });
+
+        public virtual Builder Scale(Vector3 center, Vector3 scale) => ChangeEveryVertex((v) =>
         {
             var position = v.GetPosition();
             var offset = position - center;

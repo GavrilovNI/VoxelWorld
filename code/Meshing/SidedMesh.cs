@@ -62,6 +62,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         return v;
     });
 
+    public SidedMesh<V> Scale(Vector3 center, Vector3 scale) => Convert((v) =>
+    {
+        var position = v.GetPosition();
+        var offset = position - center;
+        v.SetPosition(position + offset * scale);
+        return v;
+    });
+
     public SidedMesh<V> RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
     {
         if(rightAngleRotation == RightAngle.Angle0)
@@ -226,6 +234,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         }
 
         public virtual Builder Scale(Vector3 center, float scale) => ChangeEveryVertex((v) =>
+        {
+            var position = v.GetPosition();
+            var offset = position - center;
+            v.SetPosition(center + offset * scale);
+            return v;
+        });
+
+        public virtual Builder Scale(Vector3 center, Vector3 scale) => ChangeEveryVertex((v) =>
         {
             var position = v.GetPosition();
             var offset = position - center;
