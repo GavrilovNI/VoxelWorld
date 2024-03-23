@@ -21,7 +21,7 @@ public class TextureMap
     protected List<(TextureMapPart textureMapPart, int frame, AnimatedTexture animatedTexture)> AnimatedTextures = new();
     protected float AnimatedTime = 0;
 
-    public TextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, int mips = 1, Color32? fillColor = null, int textureBorderSize = 0)
+    public TextureMap(Vector2IntB initialSize, Vector2IntB multipleOfExpand, int mips = 1, Color32? fillColor = null, int textureBorderSize = 0)
     {
         FillColor = fillColor;
         Mips = mips;
@@ -31,11 +31,11 @@ public class TextureMap
         MultipleOfExpand = multipleOfExpand;
     }
 
-    public TextureMap(Vector2Int initialSize, int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) : this(initialSize, new Vector2Int(256, 256), mips, fillColor, textureBorderSize)
+    public TextureMap(Vector2IntB initialSize, int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) : this(initialSize, new Vector2IntB(256, 256), mips, fillColor, textureBorderSize)
     {
     }
 
-    public TextureMap(int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) : this(new Vector2Int(256, 256), mips, fillColor, textureBorderSize)
+    public TextureMap(int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) : this(new Vector2IntB(256, 256), mips, fillColor, textureBorderSize)
     {
     }
 
@@ -90,18 +90,18 @@ public class TextureMap
 
         for(int i = 1; i <= borderSize; ++i)
         {
-            Texture.Update(topPixels, topRect + new Vector2Int(0, -i));
-            Texture.Update(leftPixels, leftRect + new Vector2Int(-i, 0));
-            Texture.Update(bottomPixels, bottomRect + new Vector2Int(0, i));
-            Texture.Update(rightPixels, rightRect + new Vector2Int(i, 0));
+            Texture.Update(topPixels, topRect + new Vector2IntB(0, -i));
+            Texture.Update(leftPixels, leftRect + new Vector2IntB(-i, 0));
+            Texture.Update(bottomPixels, bottomRect + new Vector2IntB(0, i));
+            Texture.Update(rightPixels, rightRect + new Vector2IntB(i, 0));
         }
 
         Texture.Update(Texture.GetPixel(textureRect.Left, textureRect.Top),
             new RectInt(textureRect.TopLeft - borderSize, borderSize));
         Texture.Update(Texture.GetPixel(textureRect.Right - 1, textureRect.Top),
-            new RectInt(new Vector2Int(textureRect.Right, textureRect.Top - borderSize), borderSize));
+            new RectInt(new Vector2IntB(textureRect.Right, textureRect.Top - borderSize), borderSize));
         Texture.Update(Texture.GetPixel(textureRect.Left, textureRect.Bottom - 1),
-            new RectInt(new Vector2Int(textureRect.Left - borderSize, textureRect.Bottom), borderSize));
+            new RectInt(new Vector2IntB(textureRect.Left - borderSize, textureRect.Bottom), borderSize));
         Texture.Update(Texture.GetPixel(textureRect.Right - 1, textureRect.Bottom  -1),
             new RectInt(textureRect.BottomRight, borderSize));
     }
@@ -160,7 +160,7 @@ public class TextureMap
             Rect = rect;
         }
 
-        public bool TryTakeSpace(Vector2Int size, out RectInt rect)
+        public bool TryTakeSpace(Vector2IntB size, out RectInt rect)
         {
             if(IsFull || size.x > Rect.Width || size.y > Rect.Height)
             {
@@ -199,7 +199,7 @@ public class TextureMap
             return false;
         }
 
-        public void Expand(Vector2Int size)
+        public void Expand(Vector2IntB size)
         {
             if(size.x <= 0 && size.y <= 0)
                 return;

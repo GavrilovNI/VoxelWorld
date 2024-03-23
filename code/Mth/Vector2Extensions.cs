@@ -61,10 +61,10 @@ public static class Vector2Extensions
 
     public static Vector2 WithAxes(this Vector2 vector, Func<float, float> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
     
-    public static Vector2Int WithAxes(this Vector2 vector, Func<Axis, float, int> axisChanger) =>
+    public static Vector2IntB WithAxes(this Vector2 vector, Func<Axis, float, int> axisChanger) =>
         new(axisChanger.Invoke(Axis.X, vector.x), axisChanger.Invoke(Axis.Y, vector.y));
 
-    public static Vector2Int WithAxes(this Vector2 vector, Func<float, int> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
+    public static Vector2IntB WithAxes(this Vector2 vector, Func<float, int> axisChanger) => vector.WithAxes((_, v) => axisChanger.Invoke(v));
 
 
     public static bool IsAnyAxis(this Vector2 vector, Func<Axis, float, bool> predicate)

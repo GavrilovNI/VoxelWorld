@@ -15,20 +15,20 @@ public class PathedTextureMap : TextureMap
 
     protected Dictionary<string, TextureMapPart> PartsByPath = new();
 
-    public PathedTextureMap(Vector2Int initialSize, Vector2Int multipleOfExpand, string loadPathPrefix = "", int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) :
+    public PathedTextureMap(Vector2IntB initialSize, Vector2IntB multipleOfExpand, string loadPathPrefix = "", int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) :
         base(initialSize, multipleOfExpand, mips, fillColor, textureBorderSize)
     {
         LoadPathPrefix = loadPathPrefix;
         SetupDefaultTextures();
     }
 
-    public PathedTextureMap(Vector2Int initialSize, string loadPathPrefix = "", int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) :
-        this(initialSize, new Vector2Int(256, 256), loadPathPrefix, mips, fillColor, textureBorderSize)
+    public PathedTextureMap(Vector2IntB initialSize, string loadPathPrefix = "", int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) :
+        this(initialSize, new Vector2IntB(256, 256), loadPathPrefix, mips, fillColor, textureBorderSize)
     {
     }
 
     public PathedTextureMap(string loadPathPrefix = "", int mips = 1, Color32? fillColor = null, int textureBorderSize = 0) :
-        this(new Vector2Int(256, 256), loadPathPrefix, mips, fillColor, textureBorderSize)
+        this(new Vector2IntB(256, 256), loadPathPrefix, mips, fillColor, textureBorderSize)
     {
     }
 
@@ -107,11 +107,11 @@ public class PathedTextureMap : TextureMap
         return AddTexture(path, texture);
     }
 
-    public TextureMapPart GetOrLoadAnimatedTexture(string path, Vector2Int atlasSize, float[] framesLength, bool warnOnMissing = true) =>
+    public TextureMapPart GetOrLoadAnimatedTexture(string path, Vector2IntB atlasSize, float[] framesLength, bool warnOnMissing = true) =>
         GetOrLoadAnimatedTexture(FileSystem.Mounted, path, atlasSize, framesLength, warnOnMissing);
 
     //TODO: load atlasSize and framesLength from data file
-    public TextureMapPart GetOrLoadAnimatedTexture(BaseFileSystem fileSystem, string path, Vector2Int atlasSize, float[] framesLength, bool warnOnMissing = true)
+    public TextureMapPart GetOrLoadAnimatedTexture(BaseFileSystem fileSystem, string path, Vector2IntB atlasSize, float[] framesLength, bool warnOnMissing = true)
     {
         if(HasTexture(path))
             return GetTexture(path);

@@ -42,7 +42,7 @@ public static class Vector2IntExtensions
 
     public static bool IsAnyAxis(this Vector2Int vector, Func<Axis, int, bool> predicate)
     {
-        foreach(var axis in Axis.All)
+        foreach(var axis in Axis.XY)
         {
             if(predicate.Invoke(axis, vector.GetAxis(axis)))
                 return true;
@@ -53,7 +53,7 @@ public static class Vector2IntExtensions
 
     public static bool IsEveryAxis(this Vector2Int vector, Func<Axis, int, bool> predicate)
     {
-        foreach(var axis in Axis.All)
+        foreach(var axis in Axis.XY)
         {
             if(!predicate.Invoke(axis, vector.GetAxis(axis)))
                 return false;
@@ -64,7 +64,7 @@ public static class Vector2IntExtensions
 
     public static void EachAxis(this Vector2Int vector, Action<Axis, int> action)
     {
-        foreach(var axis in Axis.All)
+        foreach(var axis in Axis.XY)
             action.Invoke(axis, vector.GetAxis(axis));
     }
     public static void EachAxis(this Vector2Int vector, Action<int> action) => vector.EachAxis((a, v) => action.Invoke(v));

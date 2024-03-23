@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 
 namespace VoxelWorld.Mth;
 
-[JsonConverter(typeof(Vector2IntJsonConverter))]
+[JsonConverter(typeof(Vector2IntBJsonConverter))]
 public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INbtWritable, INbtStaticReadable<Vector2IntB>
 {
     public static readonly Vector2IntB One = new(1);
@@ -311,7 +311,7 @@ public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INb
         return new(listTag.Get<int>(0), listTag.Get<int>(1));
     }
 
-    public class Vector2IntJsonConverter : JsonConverter<Vector2IntB>
+    public class Vector2IntBJsonConverter : JsonConverter<Vector2IntB>
     {
         public override Vector2IntB Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -349,7 +349,7 @@ public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INb
                 return result;
             }
 
-            Log.Warning($"Vector2IntFromJson - unable to read from {reader.TokenType}");
+            Log.Warning($"Vector2IntBFromJson - unable to read from {reader.TokenType}");
             return default;
         }
 

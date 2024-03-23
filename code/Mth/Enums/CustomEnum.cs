@@ -104,7 +104,7 @@ public abstract class CustomEnum<T> : CustomEnum, INbtStaticReadable<T> where T 
                     return result;
             }
 
-            Log.Warning($"Vector2IntFromJson - unable to read from {reader.TokenType}");
+            Log.Warning($"CustomEnumFromJson - unable to read from {reader.TokenType}");
             return null!;
         }
 
