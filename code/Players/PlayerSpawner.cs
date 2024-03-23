@@ -21,7 +21,8 @@ public class PlayerSpawner : Component
 
     public virtual async Task<Player?> SpawnPlayer(ulong steamId, EntitySpawnConfig defaultSpawnConfig, CancellationToken cancellationToken)
     {
-        if(!TryLoadPlayer(steamId, out var player, false))
+        bool shouldTryLoadPLayer = !GameController.Instance!.WasPlayerSpawned(steamId);
+        if(!shouldTryLoadPLayer || !TryLoadPlayer(steamId, out var player, false))
         {
             player = (PlayerEntityType.CreateEntity(defaultSpawnConfig with { StartEnabled = false }) as Player)!;
             player.SetSteamId(steamId);

@@ -268,6 +268,14 @@ public sealed class GameController : Component
         return false;
     }
 
+    public bool WasPlayerSpawned(ulong steamId)
+    {
+        lock(_players)
+        {
+            return _players.ContainsKey(steamId);
+        }
+    }
+
     public async Task<Player?> TryRespawnPlayer(ulong steamId)
     {
         if(TryGetPlayer(steamId, out var player))
