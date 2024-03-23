@@ -187,7 +187,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
     {
         IEnumerable<Vector3> vertices = Enumerable.Empty<Vector3>();
         for(int i = 0; i < PartsCount; ++i)
-            vertices.Concat(_vertices[i].Select(v => v.GetPosition() + offset));
+            vertices = vertices.Concat(_vertices[i].Select(v => v.GetPosition() + offset));
         builder.AddCollisionHull(vertices.ToArray(), center, rotation);
     }
 
