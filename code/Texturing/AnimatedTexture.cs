@@ -11,14 +11,14 @@ public class AnimatedTexture
     protected Vector2IntB AtlasSize { get; }
     protected float[] FramesLength { get; }
 
-    protected Vector2Int FrameTextureSize { get; }
+    protected Vector2IntB FrameTextureSize { get; }
     protected float FullTime { get; }
 
     public float FramesCount => FramesLength.Length;
 
     protected Texture?[] Frames { get; }
 
-    public AnimatedTexture(Texture texture, Vector2Int atlasSize, float[] framesLength)
+    public AnimatedTexture(Texture texture, Vector2IntB atlasSize, float[] framesLength)
     {
         if(framesLength.Length < 1)
             throw new ArgumentException("Frames count should not be 0 or negative", nameof(framesLength));

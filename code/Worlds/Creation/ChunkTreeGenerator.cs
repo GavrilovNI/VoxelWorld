@@ -42,7 +42,7 @@ public class ChunkTreeGenerator : ChunkCreationStage
         return true;
     }
 
-    protected virtual async Task<bool> TryPlaceTreeAtXY(Chunk chunk, Vector2Int localPositionXY, int zMin, int zMax)
+    protected virtual async Task<bool> TryPlaceTreeAtXY(Chunk chunk, Vector2IntB localPositionXY, int zMin, int zMax)
     {
         for(int z = zMax; z >= zMin; --z)
         {

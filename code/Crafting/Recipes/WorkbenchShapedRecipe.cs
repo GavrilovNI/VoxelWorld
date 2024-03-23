@@ -10,7 +10,7 @@ namespace VoxelWorld.Crafting.Recipes;
 
 public class WorkbenchShapedRecipe : WorkbenchRecipe
 {
-    public Vector2Int Size { get; }
+    public Vector2IntB Size { get; }
     public int NotEmptyInputSize { get; }
     public ImmutableArray<ImmutableArray<Item?>> Input { get; }
     public bool CanMirrorX { get; }
@@ -69,7 +69,7 @@ public class WorkbenchShapedRecipe : WorkbenchRecipe
         }
     }
 
-    public virtual bool Matches(IReadOnlyIndexedCapability<Inventories.Stack<Item>> input, Vector2Int gridSize, Vector2Int offset, bool mirrorX, bool mirrorY)
+    public virtual bool Matches(IReadOnlyIndexedCapability<Inventories.Stack<Item>> input, Vector2IntB gridSize, Vector2IntB offset, bool mirrorX, bool mirrorY)
     {
         if(input.Size < NotEmptyInputSize)
             return false;
@@ -126,7 +126,7 @@ public class WorkbenchShapedRecipe : WorkbenchRecipe
         }
     }
 
-    public virtual bool Matches(IReadOnlyIndexedCapability<Inventories.Stack<Item>> input, Vector2Int gridSize, Vector2Int offset)
+    public virtual bool Matches(IReadOnlyIndexedCapability<Inventories.Stack<Item>> input, Vector2IntB gridSize, Vector2IntB offset)
     {
         if(input.Size < NotEmptyInputSize)
             return false;
@@ -162,7 +162,7 @@ public class WorkbenchShapedRecipe : WorkbenchRecipe
             return false;
 
         int width = MathF.Sqrt(input.Size).CeilToInt();
-        var gridSize = new Vector2Int(width, width);
+        var gridSize = new Vector2IntB(width, width);
 
         if(gridSize.IsAnyAxis((a, v) => v < Size.GetAxis(a)))
             return false;
@@ -171,7 +171,7 @@ public class WorkbenchShapedRecipe : WorkbenchRecipe
         {
             for(int y = 0; y <= gridSize.y - Size.y; ++y)
             {
-                var offset = new Vector2Int(x, y);
+                var offset = new Vector2IntB(x, y);
                 if(Matches(input, gridSize, offset))
                     return true;
             }

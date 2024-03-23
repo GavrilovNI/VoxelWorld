@@ -26,6 +26,6 @@ public static class TextureExtensions
     public static void Update(this Texture @this, ReadOnlySpan<Color32> data, RectInt rect) =>
         @this.Update(data, rect.Left, rect.Top, rect.Width, rect.Height);
 
-    public static void Update(this Texture @this, Texture texture, Vector2Int position) =>
+    public static void Update(this Texture @this, Texture texture, Vector2IntB position) =>
         @this.Update(texture.GetPixels(), position.x, position.y, texture.Width, texture.Height);
 }
