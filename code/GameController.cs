@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VoxelWorld.Crafting.Recipes;
+using System.Numerics;
 
 namespace VoxelWorld;
 
@@ -57,7 +58,19 @@ public sealed class GameController : Component
     [Property] public Material TranslucentVoxelsMaterial { get; private set; } = null!;
     [Property] public Material OpaqueItemsMaterial { get; private set; } = null!;
     [Property] public Material TranslucentItemsMaterial { get; private set; } = null!;
-    [Property] public Player? LocalPlayer { get; private set; }
+
+    public Player? LocalPlayer
+    {
+        get
+        {
+            if(TryGetPlayer(Steam.SteamId, out var player))
+                return player;
+            return null;
+        }
+    }
+
+
+    private readonly Dictionary<ulong, Player?> _players = new();
 
 
     private readonly WorldsContainer _worlds = new(); // TODO: make readonly?
@@ -241,26 +254,51 @@ public sealed class GameController : Component
         return world;
     }
 
+    public bool HasPlayer(ulong steamId) => TryGetPlayer(steamId, out _);
+
+    public bool TryGetPlayer(ulong steamId, out Player player)
+    {
+        lock(_players)
+        {
+            if(_players.TryGetValue(steamId, out player!) && player.IsValid())
+                return true;
+        }
+
+        player = null!;
+        return false;
+    }
+
     public async Task<Player?> TryRespawnPlayer(ulong steamId)
     {
+        if(TryGetPlayer(steamId, out var player))
+            player.Destroy();
+
         if(_worlds.TryGetWorld(BaseMod.Instance!.MainWorldId, out var world))
         {
             EntitySpawnConfig spawnConfig = new(world, true);
-            var player = await PlayerSpawner.SpawnPlayer(steamId, spawnConfig, CancellationToken.None);
+            player = await PlayerSpawner.SpawnPlayer(steamId, spawnConfig, CancellationToken.None);
 
             if(player.IsValid())
             {
-                bool isLocalPlayer = player.SteamId == Steam.SteamId;
-                if(isLocalPlayer)
+                lock(_players)
                 {
-                    if(LocalPlayer is not null)
-                        LocalPlayer.Destroyed -= OnLocalPlayerDestroyed;
-                    LocalPlayer = player;
-                    LocalPlayer.Destroyed += OnLocalPlayerDestroyed;
+                    if(HasPlayer(steamId))
+                    {
+                        player.Destroy();
+                        return null;
+                    }
 
-                    // TODO: remove when getting players entering/leaving controller
-                    foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
-                        localPlayerInitializable.OnLocalPlayerCreated(player);
+                    _players[player.SteamId] = player;
+
+                    player!.Destroyed += OnPlayerDestroyed;
+
+                    bool isLocalPlayer = player.SteamId == Steam.SteamId;
+                    if(isLocalPlayer)
+                    {
+                        // TODO: remove when getting players entering/leaving controller
+                        foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
+                            localPlayerInitializable.OnLocalPlayerCreated(player);
+                    }
                 }
             }
             return player;
@@ -268,16 +306,24 @@ public sealed class GameController : Component
         return null;
     }
 
-    private void OnLocalPlayerDestroyed(Entity entity)
+    private void OnPlayerDestroyed(Entity entity)
     {
-        if(LocalPlayer is not null && object.ReferenceEquals(entity, LocalPlayer))
-        {
-            // TODO: remove when getting players entering/leaving controller
-            foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
-                localPlayerInitializable.OnLocalPlayerDestroyed(LocalPlayer);
+        if(entity is not Player player)
+            return;
 
-            LocalPlayer.Destroyed -= OnLocalPlayerDestroyed;
-            LocalPlayer = null;
+        entity.Destroyed -= OnPlayerDestroyed;
+
+        lock(_players)
+        {
+            if(object.ReferenceEquals(entity, LocalPlayer))
+            {
+                // TODO: remove when getting players entering/leaving controller
+                foreach(var localPlayerInitializable in Scene.Components.GetAll<ILocalPlayerListener>(FindMode.EverythingInSelfAndDescendants))
+                    localPlayerInitializable.OnLocalPlayerDestroyed(LocalPlayer);
+            }
+
+            if(object.ReferenceEquals(_players.GetValueOrDefault(player.SteamId), entity))
+                _players[player.SteamId] = null;
         }
     }
 
