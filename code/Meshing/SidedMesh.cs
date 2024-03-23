@@ -233,6 +233,9 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         public Builder Add(IMeshPart<V> part, Vector3 offset = default)
         {
             part.AddToBuilder(Mesh._notSidedElements, offset);
+
+            if(!part.Bounds.Size.AlmostEqual(0))
+                BuildingBounds = BuildingBounds.AddOrCreate(part.Bounds + offset);
             return this;
         }
 
@@ -240,6 +243,9 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         {
             foreach(var direction in Direction.All)
                 part.AddSideToBuilder(GetOrCreateSidedBuilder(direction), direction, offset);
+
+            if(!part.Bounds.Size.AlmostEqual(0))
+                BuildingBounds = BuildingBounds.AddOrCreate(part.Bounds + offset);
             return this;
         }
 

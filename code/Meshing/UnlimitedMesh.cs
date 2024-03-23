@@ -283,6 +283,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         public virtual Builder Add(IMeshPart<V> meshPart, Vector3 offset = default)
         {
             meshPart.AddToBuilder(this, offset);
+            if(!meshPart.Bounds.Size.AlmostEqual(0))
+                BuildingBounds = BuildingBounds.AddOrCreate(meshPart.Bounds + offset);
             return this;
         }
 
