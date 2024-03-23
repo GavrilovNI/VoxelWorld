@@ -356,7 +356,7 @@ public class ChunkModelUpdater : Component
         var model = builder.Create();
         cancellationToken.ThrowIfCancellationRequested();
         collider.Model = model;
-        //collider.Enabled = !builder.IsEmpty();
+        collider.Enabled = !model.PhysicsBounds.Size.AlmostEqual(Vector3.Zero);
     }
 
 
