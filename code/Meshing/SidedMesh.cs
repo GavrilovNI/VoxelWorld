@@ -10,13 +10,14 @@ namespace VoxelWorld.Meshing;
 public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVertex
 {
     public BBox Bounds { get; private set; }
+    public bool IsEmpty { get; private set; }
 
     private readonly Dictionary<Direction, UnlimitedMesh<V>.Builder> _sidedElements = new();
     private readonly UnlimitedMesh<V>.Builder _notSidedElements = new();
 
     public SidedMesh()
     {
-
+        IsEmpty = true;
     }
 
     public SidedMesh(Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements, UnlimitedMesh<V>.Builder notSidedElements)
@@ -29,10 +30,11 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         _notSidedElements = new UnlimitedMesh<V>.Builder().Add(notSidedElements);
 
         RecalculateBounds();
+        RecalculateEmptiness();
     }
 
     private SidedMesh(Dictionary<Direction, UnlimitedMesh<V>.Builder> sidedElements,
-        UnlimitedMesh<V>.Builder notSidedElements, BBox bounds)
+        UnlimitedMesh<V>.Builder notSidedElements, BBox bounds, bool isEmpty)
     {
         foreach(var sidedElementEntry in sidedElements)
         {
@@ -41,17 +43,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         }
         _notSidedElements = new UnlimitedMesh<V>.Builder().Add(notSidedElements);
         Bounds = bounds;
-    }
-
-    public bool IsEmpty()
-    {
-        foreach(var (direction, element) in _sidedElements)
-        {
-            if(!element.IsEmpty())
-                return false;
-        }
-
-        return _notSidedElements.IsEmpty();
+        IsEmpty = isEmpty;
     }
 
     public SidedMesh<T> Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
@@ -141,13 +133,18 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         BBox? bounds = null;
         foreach(var (direction, sidedElement) in _sidedElements)
         {
-            if(!sidedElement.IsEmpty())
+            if(!sidedElement.IsEmpty)
                 bounds = bounds.AddOrCreate(sidedElement.Bounds);
         }
-        if(!_notSidedElements.IsEmpty())
+        if(!_notSidedElements.IsEmpty)
             bounds = bounds.AddOrCreate(_notSidedElements.Bounds);
 
         Bounds = bounds ?? new();
+    }
+
+    private void RecalculateEmptiness()
+    {
+        IsEmpty = _notSidedElements.IsEmpty && _sidedElements.All(e => e.Value.IsEmpty);
     }
 
     public (List<int> indices, List<V> vertices) ToRaw()
@@ -183,6 +180,15 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         protected BBox? BuildingBounds = null;
         public BBox Bounds => BuildingBounds ?? default;
 
+        public virtual bool IsEmpty
+        {
+            get
+            {
+                Mesh.RecalculateEmptiness();
+                return Mesh.IsEmpty;
+            }
+        }
+
         private UnlimitedMesh<V>.Builder GetOrCreateSidedBuilder(Direction direction)
         {
             if(!Mesh._sidedElements.TryGetValue(direction, out var builder))
@@ -199,7 +205,6 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             BuildingBounds = null;
             return this;
         }
-        public virtual bool IsEmpty() => Mesh.IsEmpty();
 
 
         public virtual SidedMesh<T>.Builder Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
@@ -209,14 +214,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
                 Mesh = Mesh.Convert(vertexChanger)
             };
 
-            result.BuildingBounds = result.Mesh.IsEmpty() ? null : Mesh.Bounds;
+            result.BuildingBounds = result.IsEmpty ? null : Mesh.Bounds;
             return result;
         }
 
         public virtual Builder ChangeEveryVertex(Func<V, V> vertexChanger)
         {
             Mesh = Mesh.Convert(vertexChanger);
-            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            BuildingBounds = IsEmpty ? null : Mesh.Bounds;
             return this;
         }
 
@@ -231,7 +236,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         public virtual Builder RotateAround(RightAngle rightAngleRotation, Direction lookDirection, Vector3 center)
         {
             Mesh = Mesh.RotateAround(rightAngleRotation, lookDirection, center);
-            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            BuildingBounds = IsEmpty ? null : Mesh.Bounds;
             return this;
         }
 
@@ -239,7 +244,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         {
             part.AddToBuilder(Mesh._notSidedElements, offset);
 
-            if(!part.Bounds.Size.AlmostEqual(0))
+            if(!part.IsEmpty)
                 BuildingBounds = BuildingBounds.AddOrCreate(part.Bounds + offset);
             return this;
         }
@@ -250,7 +255,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             foreach(var direction in Direction.All)
                 part.AddSideToBuilder(GetOrCreateSidedBuilder(direction), direction, offset);
 
-            if(!part.Bounds.Size.AlmostEqual(0))
+            if(!part.IsEmpty)
                 BuildingBounds = BuildingBounds.AddOrCreate(part.Bounds + offset);
             return this;
         }
@@ -262,7 +267,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             foreach(var (direction, sidedElement) in builder.Mesh._sidedElements)
                 Mesh._sidedElements[direction].Add(sidedElement);
 
-            if(!builder.IsEmpty())
+            if(!builder.IsEmpty)
                 BuildingBounds = BuildingBounds.AddOrCreate(builder.Bounds);
             return this;
         }
@@ -270,7 +275,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         public Builder Add(UnlimitedMesh<V>.Builder builder)
         {
             Mesh._notSidedElements.Add(builder);
-            if(!builder.IsEmpty())
+            if(!builder.IsEmpty)
                 BuildingBounds = BuildingBounds.AddOrCreate(builder.Bounds);
             return this;
         }
@@ -278,7 +283,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         public Builder Add(UnlimitedMesh<V>.Builder builder, Direction side)
         {
             GetOrCreateSidedBuilder(side).Add(builder);
-            if(!builder.IsEmpty())
+            if(!builder.IsEmpty)
                 BuildingBounds = BuildingBounds.AddOrCreate(builder.Bounds);
             return this;
         }
@@ -313,6 +318,6 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         public List<V> CombineVertices() => Mesh.CombineVertices();
         public List<int> CombineIndices() => Mesh.CombineIndices();
 
-        public SidedMesh<V> Build() => new(Mesh._sidedElements, Mesh._notSidedElements, Bounds);
+        public SidedMesh<V> Build() => new(Mesh._sidedElements, Mesh._notSidedElements, Bounds, IsEmpty);
     }
 }

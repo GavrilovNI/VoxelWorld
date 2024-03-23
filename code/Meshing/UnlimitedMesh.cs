@@ -1,6 +1,5 @@
 ﻿using Sandbox;
 using VoxelWorld.Mth;
-using VoxelWorld.Mth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,21 +13,24 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
     public BBox Bounds { get; private set; }
 
+    public bool IsEmpty { get; private set; }
+
     public int PartsCount => _vertices.Count;
 
     public IReadOnlyList<V> GetVertices(int partIndex) => _vertices[partIndex].AsReadOnly();
     public IReadOnlyList<ushort> GetIndices(int partIndex) => _indices[partIndex].AsReadOnly();
 
-    private UnlimitedMesh(List<List<V>> vertices, List<List<ushort>> indices, BBox bounds)
+    private UnlimitedMesh(List<List<V>> vertices, List<List<ushort>> indices, BBox bounds, bool isEmpty)
     {
         _vertices = vertices;
         _indices = indices;
         Bounds = bounds;
+        IsEmpty = isEmpty;
     }
 
     public UnlimitedMesh()
     {
-
+        IsEmpty = true;
     }
 
     public UnlimitedMesh(List<V> vertices, List<ushort> indices)
@@ -38,7 +40,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
         _vertices = new List<List<V>>() { vertices.ToList() };
         _indices = new List<List<ushort>>() { indices.ToList() };
-        Bounds = BBox.FromPoints(vertices.Select(v => v.GetPosition()));
+        RecalculateBounds();
+        RecalculateEmptiness();
     }
 
     public UnlimitedMesh(UnlimitedMesh<V> mesh)
@@ -46,6 +49,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         _vertices = mesh._vertices.Select(l => new List<V>(l)).ToList();
         _indices = mesh._indices.Select(l => new List<ushort>(l)).ToList();
         Bounds = mesh.Bounds;
+        IsEmpty = mesh.IsEmpty;
     }
 
     public UnlimitedMesh<T> Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex
@@ -74,7 +78,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
     {
         var indices = _indices.Select(l => new List<ushort>(l)).ToList();
 
-        BBox? bounds = IsEmpty() ? null : BBox.FromPositionAndSize(_vertices.First(v => v.Count > 0)[0].GetPosition(), 0f);
+        BBox? bounds = IsEmpty ? null : BBox.FromPositionAndSize(_vertices.First(v => v.Count > 0)[0].GetPosition(), 0f);
         var vertices = _vertices.Select(l => new List<V>(l.Select(v =>
         {
             var result = v;
@@ -84,22 +88,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             return result;
         }))).ToList();
 
-        return new(vertices, indices, bounds ?? new());
-    }
-
-    public bool IsEmpty()
-    {
-        foreach(var vertices in _vertices)
-        {
-            if(vertices.Count != 0)
-                return false;
-        }
-        foreach(var indices in _indices)
-        {
-            if(indices.Count != 0)
-                return false;
-        }
-        return true;
+        return new(vertices, indices, bounds ?? new(), IsEmpty);
     }
 
     public (List<int> indices, List<V> vertices) ToRaw()
@@ -210,6 +199,11 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         Bounds = bounds ?? new();
     }
 
+    private void RecalculateEmptiness()
+    {
+        IsEmpty = _vertices.All(v => v.Count == 0) && _indices.All(i => i.Count == 0);
+    }
+
     public class Builder : IMeshPart<V>
     {
         protected UnlimitedMesh<V> Mesh { get; private set; } = new();
@@ -228,7 +222,14 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         public int PartsCount => Mesh.PartsCount;
 
 
-        public virtual bool IsEmpty() => Mesh.IsEmpty();
+        public bool IsEmpty
+        {
+            get
+            {
+                Mesh.RecalculateEmptiness();
+                return Mesh.IsEmpty;
+            }
+        }
 
         public virtual Builder Clear()
         {
@@ -259,7 +260,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
             CurrentVertices = Vertices.Count == 0 ? null : Vertices[^1];
             CurrentIndices = Indices.Count == 0 ? null : Indices[^1];
-            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            BuildingBounds = IsEmpty ? null : Mesh.Bounds;
             return this;
         }
 
@@ -276,21 +277,21 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             Mesh = Mesh.RotateAround(rotation, center);
             CurrentVertices = Vertices.Count == 0 ? null : Vertices[^1];
             CurrentIndices = Indices.Count == 0 ? null : Indices[^1];
-            BuildingBounds = Mesh.IsEmpty() ? null : Mesh.Bounds;
+            BuildingBounds = IsEmpty ? null : Mesh.Bounds;
             return this;
         }
 
         public virtual Builder Add(IMeshPart<V> meshPart, Vector3 offset = default)
         {
             meshPart.AddToBuilder(this, offset);
-            if(!meshPart.Bounds.Size.AlmostEqual(0))
+            if(!meshPart.IsEmpty)
                 BuildingBounds = BuildingBounds.AddOrCreate(meshPart.Bounds + offset);
             return this;
         }
 
         public virtual Builder Add(UnlimitedMesh<V> mesh, Vector3 offset = default)
         {
-            if(mesh.IsEmpty())
+            if(mesh.IsEmpty)
                 return this;
 
             BuildingBounds = BuildingBounds.AddOrCreate(mesh.Bounds.Translate(offset));
@@ -478,7 +479,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         public void AddAsCollisionHull(ModelBuilder builder, int partIndex, Vector3 center, Rotation rotation, Vector3 offset = default) => Mesh.AddAsCollisionHull(builder, center, rotation, partIndex, offset);
 
 
-        public UnlimitedMesh<V> Build() => new(Mesh._vertices, Mesh._indices, Bounds);
+        public UnlimitedMesh<V> Build() => new(Mesh._vertices, Mesh._indices, Bounds, IsEmpty);
     }
 
     public class Builder<T> : Builder where T : Builder<T>

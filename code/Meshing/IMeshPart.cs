@@ -6,6 +6,7 @@ namespace VoxelWorld.Meshing;
 public interface IMeshPart<V> where V : unmanaged, IVertex
 {
     BBox Bounds { get; }
+    bool IsEmpty { get; }
 
     void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default);
 
