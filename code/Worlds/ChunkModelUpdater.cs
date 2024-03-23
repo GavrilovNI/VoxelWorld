@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using VoxelWorld.Rendering;
 
 namespace VoxelWorld.Worlds;
 
@@ -23,20 +24,24 @@ public class ChunkModelUpdater : Component
     [Property] protected ModelCollider PhysicsCollider { get; set; } = null!;
     [Property] public ModelCollider InteractionCollider { get; set; } = null!;
 
-    private bool _renderingEnabled = true;
+    [Property] protected UnlimitedModelRenderer OpaqueModelRenderer { get; set; } = null!;
+    [Property] protected UnlimitedModelRenderer TranslucentModelRenderer { get; set; } = null!;
+
     [Property] public bool RenderingEnabled
     {
-        get => _renderingEnabled;
-        set
+        get => (OpaqueModelRenderer.IsValid() && OpaqueModelRenderer.Enabled) &&
+            (TranslucentModelRenderer.IsValid() && TranslucentModelRenderer.Enabled);
+        set 
         {
-            _renderingEnabled = value;
-            foreach(var renderer in ModelRenderers)
-                renderer.Enabled = value;
+            if(OpaqueModelRenderer.IsValid())
+                OpaqueModelRenderer.Enabled = value;
+            if(TranslucentModelRenderer.IsValid())
+                TranslucentModelRenderer.Enabled = value;
         }
     }
     [Property] public bool PhysicsEnabled
     {
-        get => PhysicsCollider?.Enabled ?? false;
+        get => PhysicsCollider.IsValid() && PhysicsCollider.Enabled;
         set
         {
             if(PhysicsCollider.IsValid())
@@ -45,7 +50,7 @@ public class ChunkModelUpdater : Component
     }
     [Property] public bool InteractionEnabled
     {
-        get => InteractionCollider?.Enabled ?? false;
+        get => InteractionCollider.IsValid() && InteractionCollider.Enabled;
         set
         {
             if(InteractionCollider.IsValid())
@@ -57,7 +62,6 @@ public class ChunkModelUpdater : Component
 
 
     protected BlockMeshMap BlockMeshMap = null!;
-    protected readonly List<ModelRenderer> ModelRenderers = new();
 
 
     protected readonly object ModelUpdateLock = new();
@@ -267,32 +271,6 @@ public class ChunkModelUpdater : Component
         return oldModelUpdateTaskSource.Task;
     }
 
-
-    // Call only in game thread
-    protected virtual void DestroyModelRenderers()
-    {
-        ThreadSafe.AssertIsMainThread();
-
-        foreach(var modelComponent in ModelRenderers)
-            modelComponent.Destroy();
-        ModelRenderers.Clear();
-    }
-
-    // Call only in game thread
-    protected virtual List<ModelRenderer> AddModelRenderers(int count)
-    {
-        ThreadSafe.AssertIsMainThread();
-
-        List<ModelRenderer> result = new(count);
-        for(int i = 0; i < count; ++i)
-        {
-            var component = GameObject.Components.Create<ModelRenderer>(RenderingEnabled);
-            result.Add(component);
-            ModelRenderers.Add(component);
-        }
-        return result;
-    }
-
     // call only in main thread
     protected virtual void UpdateModelRenderers(ComplexMeshBuilder opaqueBuilder, ComplexMeshBuilder translucentBuilder, CancellationToken cancellationToken)
     {
@@ -301,51 +279,18 @@ public class ChunkModelUpdater : Component
         bool isEmpty = opaqueBuilder.PartsCount == 0 && translucentBuilder.PartsCount == 0;
         if(isEmpty)
         {
-            DestroyModelRenderers();
+            OpaqueModelRenderer.Clear();
+            TranslucentModelRenderer.Clear();
             return;
         }
 
-        var opaqueModels = CreateRenderModels(opaqueBuilder, OpaqueVoxelsMaterial);
-        var translucentModels = CreateRenderModels(translucentBuilder, TranslucentVoxelsMaterial);
-
-        DestroyModelRenderers();
-        var opaqueRenderers = AddModelRenderers(opaqueModels.Length);
-        var translucentRenderers = AddModelRenderers(translucentModels.Length);
-
         var blocksTexture = GameController.Instance!.BlocksTextureMap.Texture;
-        for(int i = 0; i < opaqueModels.Length; ++i)
-        {
-            opaqueRenderers[i].Model = opaqueModels[i];
-            opaqueRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
-        }
 
-        for(int i = 0; i < translucentModels.Length; ++i)
-        {
-            translucentRenderers[i].Model = translucentModels[i];
-            translucentRenderers[i].SceneObject.Attributes.Set("color", blocksTexture);
-        }
+        OpaqueModelRenderer.SetModels(opaqueBuilder.Build(), OpaqueVoxelsMaterial);
+        OpaqueModelRenderer.SceneObjectAttrubutes.Set("color", blocksTexture);
 
-        Model[] CreateRenderModels(ComplexMeshBuilder builder, Material material)
-        {
-            ThreadSafe.AssertIsMainThread();
-
-            var partsCount = builder.PartsCount;
-            cancellationToken.ThrowIfCancellationRequested();
-
-            Model[] models = new Model[partsCount];
-
-            for(int i = 0; i < partsCount; ++i)
-            {
-                ModelBuilder modelBuilder = new();
-                Mesh mesh = new(material);
-                builder.CreateBuffersFor(mesh, i);
-                modelBuilder.AddMesh(mesh);
-                models[i] = modelBuilder.Create();
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            return models;
-        }
+        TranslucentModelRenderer.SetModels(translucentBuilder.Build(), TranslucentVoxelsMaterial);
+        TranslucentModelRenderer.SceneObjectAttrubutes.Set("color", blocksTexture);
     }
 
     // call only in main thread

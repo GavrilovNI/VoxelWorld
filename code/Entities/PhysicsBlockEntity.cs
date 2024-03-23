@@ -9,11 +9,10 @@ using VoxelWorld.Meshing;
 using VoxelWorld.Meshing.Blocks;
 using VoxelWorld.Mth;
 using VoxelWorld.Mth.Enums;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-using Sandbox.Physics;
 using VoxelWorld.Worlds;
+using VoxelWorld.Rendering;
 
 namespace VoxelWorld.Entities;
 
@@ -21,8 +20,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
 {
     [Property] protected Rigidbody Rigidbody { get; set; } = null!;
     [Property] protected ModelCollider Collider { get; set; } = null!;
-
-    protected List<ModelRenderer> Renderers { get; set; } = new();
+    [Property] protected UnlimitedModelRenderer ModelRenderer { get; set; } = null!;
 
     public BBox ModelBounds { get; protected set; }
     public BlockState BlockState { get; private set; } = null!;
@@ -45,9 +43,7 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         if(BlockState.IsAir())
         {
             Collider.Enabled = false;
-            foreach(var renderer in Renderers)
-                renderer.Destroy();
-            Renderers.Clear();
+            ModelRenderer.Enabled = false;
             Rigidbody.Enabled = false;
             RecalculateBounds();
             return;
@@ -64,26 +60,16 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         ModelBuilder physicsModelBuilder = new();
         physicsMesh.AddAsCollisionHull(physicsModelBuilder, Vector3.Zero, Rotation.Identity);
         Collider.Model = physicsModelBuilder.Create();
+        Collider.Enabled = true;
 
         var isTransparent = blockState.Block.Properties.IsTransparent;
         var material = isTransparent ? game.TranslucentVoxelsMaterial : game.OpaqueVoxelsMaterial;
-
-        var visualMesh = blockMeshes.GetVisual(blockState)!;
-        ComplexMeshBuilder visualMeshBuilder = new ComplexMeshBuilder().Add(visualMesh);
-        for(int i = 0; i < visualMeshBuilder.PartsCount; ++i)
-        {
-            ModelBuilder modelBuilder = new();
-            Mesh mesh = new(material);
-            visualMeshBuilder.CreateBuffersFor(mesh, i);
-            modelBuilder.AddMesh(mesh);
-
-            var renderer = Components.Create<ModelRenderer>();
-            Renderers.Add(renderer);
-            renderer.Model = modelBuilder.Create();
-        }
+        var mesh = new ComplexMeshBuilder().Add(blockMeshes.GetVisual(blockState)!).Build();
+        ModelRenderer.SetModels(mesh, material);
+        ModelRenderer.Enabled = true;
 
         Rigidbody.Enabled = true;
-        RecalculateBounds(physicsMesh.Bounds, visualMeshBuilder.Bounds);
+        RecalculateBounds(physicsMesh.Bounds, mesh.Bounds);
     }
 
     protected override void DrawGizmosChild()

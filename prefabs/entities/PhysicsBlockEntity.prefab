@@ -15,12 +15,24 @@
           "go": "09ca0739-f949-47de-a034-c4eb3e80ab08",
           "component_type": "ModelCollider"
         },
+        "ModelRenderer": {
+          "_type": "component",
+          "component_id": "7de282fd-f340-43d7-be00-2c62ec26e248",
+          "go": "09ca0739-f949-47de-a034-c4eb3e80ab08",
+          "component_type": "UnlimitedModelRenderer"
+        },
         "Rigidbody": {
           "_type": "component",
           "component_id": "fdfc2001-c4f5-4e4a-a278-274993f72926",
           "go": "09ca0739-f949-47de-a034-c4eb3e80ab08",
           "component_type": "Rigidbody"
         }
+      },
+      {
+        "__type": "UnlimitedModelRenderer",
+        "__guid": "7de282fd-f340-43d7-be00-2c62ec26e248",
+        "RenderType": "On",
+        "Tint": "1,1,1,1"
       },
       {
         "__type": "Rigidbody",

@@ -1,21 +1,21 @@
 {
   "RootObject": {
-    "__guid": "d9884821-151c-4cf0-bcb5-4ff38c275acb",
+    "__guid": "e02c85dc-ce72-4c2a-96dd-2474cc431724",
     "Name": "chunk",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
       {
         "__type": "Chunk",
-        "__guid": "2ce25b2c-9c8f-43e6-baf1-e7a5d64f482d",
+        "__guid": "b5d54c7e-3ce5-495c-aadc-66f945851619",
         "EntitiesParent": {
           "_type": "gameobject",
-          "go": "a40e2614-a250-43df-bae5-d4181334dc8b"
+          "go": "73303163-07c4-4e1e-99c3-83e716ea23ec"
         },
         "ModelUpdater": {
           "_type": "component",
-          "component_id": "0c9ecce9-84c7-4c22-89d3-3f54f838672b",
-          "go": "d9884821-151c-4cf0-bcb5-4ff38c275acb",
+          "component_id": "744cc4af-bab4-4f47-a500-657bdb7f1cbf",
+          "go": "e02c85dc-ce72-4c2a-96dd-2474cc431724",
           "component_type": "ChunkModelUpdater"
         },
         "Position": "0,0,0",
@@ -23,33 +23,57 @@
       },
       {
         "__type": "ChunkModelUpdater",
-        "__guid": "0c9ecce9-84c7-4c22-89d3-3f54f838672b",
+        "__guid": "744cc4af-bab4-4f47-a500-657bdb7f1cbf",
         "Chunk": {
           "_type": "component",
-          "component_id": "2ce25b2c-9c8f-43e6-baf1-e7a5d64f482d",
-          "go": "d9884821-151c-4cf0-bcb5-4ff38c275acb",
+          "component_id": "b5d54c7e-3ce5-495c-aadc-66f945851619",
+          "go": "e02c85dc-ce72-4c2a-96dd-2474cc431724",
           "component_type": "Chunk"
         },
         "InteractionCollider": {
           "_type": "component",
-          "component_id": "7bf54b7b-38f7-4fa0-babb-ae2bc44761b3",
-          "go": "17fa8dbe-2eb2-4e20-91e8-e01f5b1b79a2",
+          "component_id": "1af80321-e789-46a6-91ea-447855c4819d",
+          "go": "e33ad51d-385b-488f-8265-4beea045680e",
           "component_type": "ModelCollider"
         },
         "InteractionEnabled": true,
+        "OpaqueModelRenderer": {
+          "_type": "component",
+          "component_id": "7834a584-ac1d-44cd-840c-57dad1a9ab30",
+          "go": "e02c85dc-ce72-4c2a-96dd-2474cc431724",
+          "component_type": "UnlimitedModelRenderer"
+        },
         "PhysicsCollider": {
           "_type": "component",
-          "component_id": "3552bcfe-c3ec-4ae4-b5d0-d5644ce69403",
-          "go": "517e2f6f-17d2-47c2-9c7a-f7ad5c745769",
+          "component_id": "c2186d28-c944-44e7-aff2-c973e149b4d2",
+          "go": "285de4fe-3d07-4f55-b481-d9da5d375bdf",
           "component_type": "ModelCollider"
         },
         "PhysicsEnabled": true,
-        "RenderingEnabled": true
+        "RenderingEnabled": true,
+        "TranslucentModelRenderer": {
+          "_type": "component",
+          "component_id": "c491147d-df9f-40e9-b1ec-6c9957192b66",
+          "go": "e02c85dc-ce72-4c2a-96dd-2474cc431724",
+          "component_type": "UnlimitedModelRenderer"
+        }
+      },
+      {
+        "__type": "UnlimitedModelRenderer",
+        "__guid": "7834a584-ac1d-44cd-840c-57dad1a9ab30",
+        "RenderType": "On",
+        "Tint": "1,1,1,1"
+      },
+      {
+        "__type": "UnlimitedModelRenderer",
+        "__guid": "c491147d-df9f-40e9-b1ec-6c9957192b66",
+        "RenderType": "On",
+        "Tint": "1,1,1,1"
       }
     ],
     "Children": [
       {
-        "__guid": "17fa8dbe-2eb2-4e20-91e8-e01f5b1b79a2",
+        "__guid": "e33ad51d-385b-488f-8265-4beea045680e",
         "Name": "Interactable",
         "Tags": "interactable,world,no_entity_collide",
         "Enabled": true,
@@ -57,25 +81,25 @@
         "Components": [
           {
             "__type": "WorldProxy",
-            "__guid": "01744f83-83c8-4385-91f8-81522645d768",
+            "__guid": "1cefeb74-6420-43b8-8bf0-54ecd017b3b1",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
             "__type": "ModelCollider",
-            "__guid": "7bf54b7b-38f7-4fa0-babb-ae2bc44761b3",
+            "__guid": "1af80321-e789-46a6-91ea-447855c4819d",
             "IsTrigger": false,
             "Static": true
           }
         ]
       },
       {
-        "__guid": "a40e2614-a250-43df-bae5-d4181334dc8b",
+        "__guid": "73303163-07c4-4e1e-99c3-83e716ea23ec",
         "Name": "Entities",
         "Enabled": true,
         "NetworkMode": 2
       },
       {
-        "__guid": "517e2f6f-17d2-47c2-9c7a-f7ad5c745769",
+        "__guid": "285de4fe-3d07-4f55-b481-d9da5d375bdf",
         "Name": "Physics",
         "Tags": "world",
         "Enabled": true,
@@ -83,12 +107,12 @@
         "Components": [
           {
             "__type": "WorldProxy",
-            "__guid": "e1dfe289-88af-47c2-8f3b-7fbc9903bda8",
+            "__guid": "8fee94f8-1c04-4741-a46c-c5eb3f9469a8",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
             "__type": "ModelCollider",
-            "__guid": "3552bcfe-c3ec-4ae4-b5d0-d5644ce69403",
+            "__guid": "c2186d28-c944-44e7-aff2-c973e149b4d2",
             "IsTrigger": false,
             "Static": true
           }
