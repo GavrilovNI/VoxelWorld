@@ -35,6 +35,8 @@
 		}
 	}
 
+	[Property] public FakeLoadingScreen LoadingScreen { get; protected set; }
+
 	protected override void OnTreeFirstBuilt() => this.Panel?.SetClass("enabled", IsShowing);
 
 	public void OnLocalPlayerCreated(Player player) => IsShowing = false;
@@ -49,6 +51,7 @@
 		if(!GameController.Instance!.LocalPlayer.IsValid())
 		{
 			IsShowing = false;
+			LoadingScreen.Enabled = true;
 			var player = await GameController.Instance.TryRespawnPlayer(Steam.SteamId);
 
 			if (!player.IsValid())

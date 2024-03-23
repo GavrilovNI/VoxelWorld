@@ -14,7 +14,7 @@
           "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
           "Camera": {
             "_type": "component",
-            "component_id": "1a9bac28-6787-4ea2-be3a-2ae96c4337e9",
+            "component_id": "d2751c85-c875-4a64-baf7-41b52c0aec01",
             "go": "47ff2699-109e-4015-9482-7d20f186d20d",
             "component_type": "CameraComponent"
           },
@@ -47,7 +47,7 @@
           },
           "BlockPhotoMaker": {
             "_type": "component",
-            "component_id": "2195dfd3-4cd2-4ae9-b0cf-3bf6a42a385d",
+            "component_id": "a3a1eeab-a66e-42b4-b1ca-ae7fdfe36451",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -195,7 +195,13 @@
             {
               "__type": "RespawnScreen",
               "__guid": "594c9154-9e46-43da-8aa3-dd1c0536366f",
-              "IsShowing": false
+              "IsShowing": false,
+              "LoadingScreen": {
+                "_type": "component",
+                "component_id": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
+                "go": "f78eae77-52a9-41c5-b05e-b2b4efc3f4a4",
+                "component_type": "FakeLoadingScreen"
+              }
             }
           ]
         }
@@ -261,7 +267,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-23T00:27:01.0673304\u002B01:00",
+  "LastSaved": "2024-03-23T01:12:49.0218085\u002B01:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []
