@@ -180,13 +180,13 @@ public class PhysicsBlockEntity : Entity, Component.ICollisionListener
         Destroy();
 
         var blockCenterPosition = ConvertingWorld.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
-        Sound.Play(currentState.Block.Properties.PlaceSound, blockCenterPosition);
+        Sound.Play(BlockState.Block.Properties.PlaceSound, blockCenterPosition);
 
-        var currentBlockkState = ConvertingWorld.GetBlockState(blockPosition);
-        if(currentBlockkState.Block is PhysicsBlock physicsBlock)
+        currentState = ConvertingWorld.GetBlockState(blockPosition);
+        if(currentState.Block is PhysicsBlock physicsBlock)
         {
-            if(physicsBlock.ShouldConvertToEntity(ConvertingWorld, blockPosition, currentBlockkState))
-                physicsBlock.ConvertToEntity(ConvertingWorld, blockPosition, currentBlockkState);
+            if(physicsBlock.ShouldConvertToEntity(ConvertingWorld, blockPosition, currentState))
+                physicsBlock.ConvertToEntity(ConvertingWorld, blockPosition, currentState);
         }
 
         lock(ConvertionStatusLocker)
