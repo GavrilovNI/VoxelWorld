@@ -15,11 +15,11 @@
           "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
           "component_type": "BoxCollider"
         },
-        "Renderer": {
+        "ModelRenderer": {
           "_type": "component",
-          "component_id": "c7eca098-5689-4fa6-b36d-cf67ed846f0a",
+          "component_id": "18a3a305-217e-46c6-9470-6448daa9fcff",
           "go": "f8fc1fd0-5cb1-4fb3-8655-ff20ab0da438",
-          "component_type": "ModelRenderer"
+          "component_type": "UnlimitedModelRenderer"
         },
         "Rigidbody": {
           "_type": "component",
@@ -29,9 +29,8 @@
         }
       },
       {
-        "__type": "ModelRenderer",
-        "__guid": "c7eca098-5689-4fa6-b36d-cf67ed846f0a",
-        "BodyGroups": 18446744073709551615,
+        "__type": "UnlimitedModelRenderer",
+        "__guid": "18a3a305-217e-46c6-9470-6448daa9fcff",
         "RenderType": "On",
         "Tint": "1,1,1,1"
       },

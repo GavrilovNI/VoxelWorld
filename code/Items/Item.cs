@@ -8,27 +8,29 @@ using VoxelWorld.Registries;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace VoxelWorld.Items;
 
 public class Item : IRegisterable, IStackValue<Item>
 {
     public ModedId Id { get; }
-    public Model Model { get; }
+    public ImmutableArray<Model> Models { get; }
     public Texture Texture { get; }
     public int StackLimit { get; }
     public bool IsFlatModel { get; } //TODO: remove
 
-    public Item(in ModedId id, Model model, Texture texture, int stackLimit, bool isFlatModel = false)
+    public Item(in ModedId id, Model[] models, Texture texture, int stackLimit, bool isFlatModel = false)
     {
         Id = id;
-        Model = model;
+        Models = ImmutableArray.Create(models);
         Texture = texture;
         StackLimit = stackLimit;
         IsFlatModel = isFlatModel;
     }
 
-    public Item(in ModedId id, Model model, Texture texture, bool isFlatModel = false) : this(id, model, texture, DefaultValues.ItemStackLimit, isFlatModel)
+    public Item(in ModedId id, Model[] models, Texture texture, bool isFlatModel = false) : this(id, models, texture, DefaultValues.ItemStackLimit, isFlatModel)
     {
     }
 

@@ -3,11 +3,8 @@ using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.IO.NamedBinaryTags.Collections;
 using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
 using VoxelWorld.Items;
-using VoxelWorld.Meshing;
 using VoxelWorld.Mods.Base;
-using System.Collections.Generic;
-using System.Linq;
-using VoxelWorld.Inventories;
+using VoxelWorld.Rendering;
 
 namespace VoxelWorld.Entities;
 
@@ -16,7 +13,7 @@ public class ItemStackEntity : Entity
     [Property] protected Rigidbody Rigidbody { get; set; } = null!;
     [Property] protected BoxCollider Collider { get; set; } = null!;
 
-    [Property] protected ModelRenderer Renderer { get; set; } = null!;
+    [Property, RequireComponent] protected UnlimitedModelRenderer ModelRenderer { get; set; } = null!;
 
     public Inventories.Stack<Item> ItemStack { get; private set; } = null!;
     public BBox ModelBounds { get; protected set; }
@@ -44,7 +41,7 @@ public class ItemStackEntity : Entity
     {
         Started = true;
         if(!ItemStack.IsEmpty && ItemStack.Value!.IsFlatModel)
-            Renderer.SceneObject.Attributes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
+            ModelRenderer.SceneObjectAttrubutes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
     }
 
     public virtual void SetItemStack(Inventories.Stack<Item> itemStack)
@@ -55,21 +52,22 @@ public class ItemStackEntity : Entity
         if(itemStack.IsEmpty)
         {
             Collider.Enabled = false;
-            Renderer.Enabled = false;
+            ModelRenderer.Enabled = false;
             Rigidbody.Enabled = false;
             ModelBounds = new BBox();
             return;
         }
 
-        var itemModel = ItemStack.Value!.Model;
-        Renderer.Model = itemModel;
-        ModelBounds = itemModel.Bounds;
+        var itemModels = ItemStack.Value!.Models;
+        ModelRenderer.SetModels(itemModels);
+        ModelBounds = ModelRenderer.ModelBounds;
         if(Started && ItemStack.Value!.IsFlatModel)
-            Renderer.SceneObject.Attributes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
+            ModelRenderer.SceneObjectAttrubutes.Set("color", GameController.Instance!.ItemsTextureMap.Texture);
 
-        Collider.Center = itemModel.Bounds.Center;
-        Collider.Scale = itemModel.Bounds.Size;
-        Renderer.Enabled = true;
+        Collider.Center = ModelBounds.Center;
+        Collider.Scale = ModelBounds.Size;
+
+        ModelRenderer.Enabled = true;
         Collider.Enabled = true;
         Rigidbody.Enabled = true;
     }

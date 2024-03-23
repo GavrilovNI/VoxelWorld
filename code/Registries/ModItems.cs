@@ -73,11 +73,15 @@ public class ModItems : ModRegisterables<Item>
                 meshBuilder.Add(meshPart).Scale(Vector3.Zero, modelScale);
             }
 
-            ModelBuilder modelBuilder = new();
-            Mesh mesh = new(material);
-            meshBuilder.CreateBuffersFor(mesh, 0);
-            modelBuilder.AddMesh(mesh);
-            Model model = modelBuilder.Create();
+            Model[] models = new Model[meshBuilder.PartsCount];
+            for(int i = 0; i < models.Length; ++i)
+            {
+                ModelBuilder modelBuilder = new();
+                Mesh mesh = new(material);
+                meshBuilder.CreateBuffersFor(mesh, i);
+                modelBuilder.AddMesh(mesh);
+                models[i] = modelBuilder.Create();
+            }
 
             var propertyType = property.PropertyType;
             if(propertyType.IsGenericType)
@@ -86,7 +90,7 @@ public class ModItems : ModRegisterables<Item>
                 continue;
             }
 
-            var args = new object[] { block!, model, texture, autoAttribute.StackLimit, autoAttribute.UseFlatModel };
+            var args = new object[] { block!, models, texture, autoAttribute.StackLimit, autoAttribute.UseFlatModel };
             object blockItem;
             try
             {
