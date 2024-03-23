@@ -89,9 +89,14 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
 
     public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
     {
-        builder.Add(_notSidedElements, offset);
+        AddNotSidedPartToBuilder(builder, offset);
         foreach(var face in sidesToAdd)
             AddSideToBuilder(builder, face, offset);
+    }
+
+    public void AddNotSidedPartToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default)
+    {
+        builder.Add(_notSidedElements, offset);
     }
 
     public void AddSideToBuilder(UnlimitedMesh<V>.Builder builder, Direction sideToAdd, Vector3 offset = default)
@@ -241,6 +246,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
 
         public Builder Add(ISidedMeshPart<V> part, Vector3 offset = default)
         {
+            part.AddNotSidedPartToBuilder(Mesh._notSidedElements, offset);
             foreach(var direction in Direction.All)
                 part.AddSideToBuilder(GetOrCreateSidedBuilder(direction), direction, offset);
 
@@ -279,6 +285,8 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
 
         public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
             Mesh.AddToBuilder(builder, sidesToAdd, offset);
+        public void AddNotSidedPartToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) =>
+            Mesh.AddNotSidedPartToBuilder(builder, offset);
         public void AddSideToBuilder(UnlimitedMesh<V>.Builder builder, Direction sideToAdd, Vector3 offset = default) =>
             Mesh.AddSideToBuilder(builder, sideToAdd, offset);
         public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) =>
