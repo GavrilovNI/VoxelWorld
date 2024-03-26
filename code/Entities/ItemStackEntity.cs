@@ -4,13 +4,14 @@ using VoxelWorld.IO.NamedBinaryTags.Collections;
 using VoxelWorld.IO.NamedBinaryTags.Values.Sandboxed;
 using VoxelWorld.Items;
 using VoxelWorld.Mods.Base;
+using VoxelWorld.Physics;
 using VoxelWorld.Rendering;
 
 namespace VoxelWorld.Entities;
 
 public class ItemStackEntity : Entity
 {
-    [Property] protected Rigidbody Rigidbody { get; set; } = null!;
+    [Property] protected RigidbodyWithMemory Rigidbody { get; set; } = null!;
     [Property] protected BoxCollider Collider { get; set; } = null!;
 
     [Property, RequireComponent] protected UnlimitedModelRenderer ModelRenderer { get; set; } = null!;

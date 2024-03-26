@@ -23,9 +23,9 @@
         },
         "Rigidbody": {
           "_type": "component",
-          "component_id": "fdfc2001-c4f5-4e4a-a278-274993f72926",
+          "component_id": "cb5a29d1-90ba-412c-95d0-18576456bdba",
           "go": "09ca0739-f949-47de-a034-c4eb3e80ab08",
-          "component_type": "Rigidbody"
+          "component_type": "RigidbodyWithMemory"
         }
       },
       {
@@ -35,8 +35,8 @@
         "Tint": "1,1,1,1"
       },
       {
-        "__type": "Rigidbody",
-        "__guid": "fdfc2001-c4f5-4e4a-a278-274993f72926",
+        "__type": "RigidbodyWithMemory",
+        "__guid": "cb5a29d1-90ba-412c-95d0-18576456bdba",
         "AngularDamping": 0,
         "Gravity": true,
         "LinearDamping": 0,

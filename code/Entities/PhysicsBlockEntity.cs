@@ -13,12 +13,13 @@ using System.Threading.Tasks;
 using System;
 using VoxelWorld.Worlds;
 using VoxelWorld.Rendering;
+using VoxelWorld.Physics;
 
 namespace VoxelWorld.Entities;
 
 public class PhysicsBlockEntity : Entity, Component.ICollisionListener
 {
-    [Property] protected Rigidbody Rigidbody { get; set; } = null!;
+    [Property] protected RigidbodyWithMemory Rigidbody { get; set; } = null!;
     [Property] protected ModelCollider Collider { get; set; } = null!;
     [Property] protected UnlimitedModelRenderer ModelRenderer { get; set; } = null!;
 
