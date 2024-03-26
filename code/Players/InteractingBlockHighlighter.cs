@@ -10,7 +10,7 @@ public class InteractingBlockHighlighter : Component
     [Property, RequireComponent] protected WorldInteractor WorldInteractor { get; set; } = null!;
     [Property, RequireComponent] protected GameObject HighlightedBlockPrefab { get; set; } = null!;
 
-    protected HighlightedBlock HighlightedBlock = null!;
+    protected HighlightedBlock? HighlightedBlock;
 
 
     protected virtual void UpdateHighlightedBlock()
@@ -18,19 +18,19 @@ public class InteractingBlockHighlighter : Component
         if(WorldInteractor.Active)
             UpdateHighlightedBlock(WorldInteractor.TraceResult);
         else
-            HighlightedBlock.GameObject.Enabled = false;
+            HighlightedBlock!.GameObject.Enabled = false;
     }
 
     protected virtual void UpdateHighlightedBlock(PhysicsTraceResult traceResult)
     {
         if(!traceResult.Hit || !World.TryFindInObject(traceResult.Body?.GetGameObject(), out var world))
         {
-            HighlightedBlock.GameObject.Enabled = false;
+            HighlightedBlock!.GameObject.Enabled = false;
             return;
         }
 
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
-        HighlightedBlock.Transform.World = world.GameObject.Transform.World.WithPosition(world.GetBlockGlobalPosition(blockPosition));
+        HighlightedBlock!.Transform.World = world.GameObject.Transform.World.WithPosition(world.GetBlockGlobalPosition(blockPosition));
         HighlightedBlock.BlockState = world.GetBlockState(blockPosition);
         HighlightedBlock.GameObject.Enabled = true;
     }
@@ -49,9 +49,20 @@ public class InteractingBlockHighlighter : Component
     protected override void OnUpdate() => UpdateHighlightedBlock();
     protected override void OnEnabled()
     {
+        if(!HighlightedBlock.IsValid())
+            return;
+
         HighlightedBlock.GameObject.Enabled = true;
         UpdateHighlightedBlock();
     }
-    protected override void OnDisabled() => HighlightedBlock.GameObject.Enabled = false;
-    protected override void OnDestroy() => HighlightedBlock.GameObject.Destroy();
+    protected override void OnDisabled()
+    {
+        if(HighlightedBlock.IsValid())
+            HighlightedBlock.GameObject.Enabled = false;
+    }
+    protected override void OnDestroy()
+    {
+        if(HighlightedBlock.IsValid())
+            HighlightedBlock.GameObject.Destroy();
+    }
 }
