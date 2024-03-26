@@ -7,6 +7,8 @@ using VoxelWorld.Worlds;
 using System.Linq;
 using System.Threading.Tasks;
 using VoxelWorld.Mth;
+using VoxelWorld.Blocks.States;
+using VoxelWorld.Rendering;
 
 namespace VoxelWorld.Players;
 
@@ -14,9 +16,10 @@ public class WorldInteractor : Component
 {
     [Property] public Player Player { get; set; } = null!;
     [Property] public GameObject Eye { get; set; } = null!;
-    public float ReachDistance => Player.ReachDistance;
-
+    [Property] public float ReachDistance => Player.ReachDistance;
     [Property] public string InteractionTag { get; set; } = "interactable";
+
+    public PhysicsTraceResult TraceResult { get; protected set; }
 
     protected virtual PhysicsTraceResult Trace()
     {
@@ -27,7 +30,12 @@ public class WorldInteractor : Component
     protected override void OnUpdate()
     {
         if(GameController.LoadingStatus != LoadingStatus.Loaded)
+        {
+            TraceResult = default;
             return;
+        }
+
+        TraceResult = Trace();
 
         bool attacking = Input.Pressed("attack1");
         bool usingItem = Input.Pressed("attack2");
@@ -36,18 +44,16 @@ public class WorldInteractor : Component
         if(!attacking && !usingItem)
         {
             if(selectingBlock)
-                SelectBlock();
+                SelectBlock(TraceResult);
             return;
         }
 
         bool swapInteractionOrder = Input.Down("SwapInteractionOrder");
-        _ = Interact(attacking, !swapInteractionOrder);
+        _ = Interact(TraceResult, attacking, !swapInteractionOrder);
     }
 
-    protected virtual InteractionResult SelectBlock()
+    protected virtual InteractionResult SelectBlock(PhysicsTraceResult traceResult)
     {
-        var traceResult = Trace();
-
         if(!traceResult.Hit)
             return InteractionResult.Pass;
 
@@ -109,10 +115,8 @@ public class WorldInteractor : Component
         return InteractionResult.Fail;
     }
 
-    protected virtual async Task<InteractionResult> Interact(bool attacking, bool interactWithBlockFirst = true)
+    protected virtual async Task<InteractionResult> Interact(PhysicsTraceResult traceResult, bool attacking, bool interactWithBlockFirst = true)
     {
-        var traceResult = Trace();
-
         InteractionResult interactionResult;
         if(interactWithBlockFirst)
         {
@@ -184,7 +188,6 @@ public class WorldInteractor : Component
 
         var blockPosition = world.GetBlockPosition(traceResult.EndPosition, traceResult.Normal);
         var blockState = world.GetBlockState(blockPosition);
-
         var block = blockState.Block;
 
         Item? item = Player.Inventory.GetHandItem(handType).Value;
@@ -204,11 +207,27 @@ public class WorldInteractor : Component
 
         if(attacking && !blockState.IsAir())
         {
+            if(!Player.IsCreative)
+                return await BreakBlockSurvival(handType, traceResult);
+
             await blockState.Block.Break(blockContext);
             var blockCenterPosition = world.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
             Sound.Play(block.Properties.BreakSound, blockCenterPosition);
             return InteractionResult.Success;
         }
+
+        return InteractionResult.Pass;
+    }
+
+    protected virtual void HighlightBlock(IWorldAccessor world, Vector3IntB blockPosition, BlockState blockState)
+    {
+
+    }
+
+    protected virtual async Task<InteractionResult> BreakBlockSurvival(HandType handType, PhysicsTraceResult traceResult)
+    {
+
+
 
         return InteractionResult.Pass;
     }
