@@ -11,6 +11,40 @@ public class ComplexMeshBuilder : UnlimitedMesh<ComplexVertex>.Builder<ComplexMe
     public static readonly Vector4 TangentForward = new(Vector3.Forward, 1);
     public static readonly Vector4 TangentUp = new(Vector3.Up, 1);
 
+    public virtual ComplexMeshBuilder AddTriangle(Vector3 a, Vector3 b, Vector3 c, Rect uv)
+    {
+        if(!CanAddToCurrent(4, 6))
+            AddNewDataList();
+
+        AddVertex(a, uv.TopLeft);
+        AddVertex(b, uv.BottomLeft);
+        AddVertex(c, uv.BottomRight);
+
+        AddTriangleIndex(3, 2, 1);
+
+        return this;
+    }
+
+    public virtual ComplexMeshBuilder AddTriangle(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, Vector4 tangent, Rect uv)
+    {
+        if(!CanAddToCurrent(4, 6))
+            AddNewDataList();
+
+        var oldNormal = Default.Normal;
+        var oldTangent = Default.Tangent;
+        Default.Normal = normal;
+        Default.Tangent = tangent;
+
+        AddTriangle(a, b, c, uv);
+
+        Default.Normal = oldNormal;
+        Default.Tangent = oldTangent;
+        return this;
+    }
+
+    public virtual ComplexMeshBuilder AddTriangle(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, Vector4 tangent) =>
+        AddTriangle(a, b, c, normal, tangent, UvFull);
+
     public virtual ComplexMeshBuilder AddQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Rect uv)
     {
         if(!CanAddToCurrent(4, 6))
