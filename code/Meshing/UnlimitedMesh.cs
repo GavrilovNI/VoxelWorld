@@ -221,7 +221,16 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         protected List<V>? CurrentVertices;
         protected List<ushort>? CurrentIndices;
 
-        protected BBox? BuildingBounds = null;
+        private BBox? _buildingBounds = null;
+        protected BBox? BuildingBounds
+        {
+            get => _buildingBounds;
+            set
+            {
+                _buildingBounds = value;
+                Mesh.Bounds = value ?? default;
+            }
+        }
         public BBox Bounds => BuildingBounds ?? default;
 
         public V Default;
