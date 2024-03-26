@@ -67,6 +67,7 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
             result._indices.Add(new List<ushort>(indices));
 
         result.RecalculateBounds();
+        result.RecalculateEmptiness();
         return result;
     }
 
