@@ -207,27 +207,11 @@ public class WorldInteractor : Component
 
         if(attacking && !blockState.IsAir())
         {
-            if(!Player.IsCreative)
-                return await BreakBlockSurvival(handType, traceResult);
-
             await blockState.Block.Break(blockContext);
             var blockCenterPosition = world.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
             Sound.Play(block.Properties.BreakSound, blockCenterPosition);
             return InteractionResult.Success;
         }
-
-        return InteractionResult.Pass;
-    }
-
-    protected virtual void HighlightBlock(IWorldAccessor world, Vector3IntB blockPosition, BlockState blockState)
-    {
-
-    }
-
-    protected virtual async Task<InteractionResult> BreakBlockSurvival(HandType handType, PhysicsTraceResult traceResult)
-    {
-
-
 
         return InteractionResult.Pass;
     }
