@@ -1,0 +1,43 @@
+{
+  "RootObject": {
+    "__guid": "cfff9fac-79d0-44fd-90d5-6d56f18fe030",
+    "Name": "highlightedblock",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "Components": [
+      {
+        "__type": "HighlightedBlock",
+        "__guid": "4d246506-f6c8-4432-9844-45fb4ecde01c",
+        "Material": "materials/invisible.vmat",
+        "ModelRenderer": {
+          "_type": "component",
+          "component_id": "fb45d650-8a82-42ca-a31b-9d6f8c84c221",
+          "go": "cfff9fac-79d0-44fd-90d5-6d56f18fe030",
+          "component_type": "UnlimitedModelRenderer"
+        }
+      },
+      {
+        "__type": "UnlimitedModelRenderer",
+        "__guid": "fb45d650-8a82-42ca-a31b-9d6f8c84c221",
+        "RenderType": "Off",
+        "Tint": "1,1,1,1"
+      },
+      {
+        "__type": "HighlightOutline",
+        "__guid": "9c6f242b-865c-4576-baef-67fd3e33b69f",
+        "Color": "0.2,0.2,0.2,1",
+        "InsideColor": "0,0,0,0",
+        "InsideObscuredColor": "0,0,0,0",
+        "ObscuredColor": "0,0,0,0",
+        "Width": 0.25
+      }
+    ],
+    "Children": []
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "ResourceVersion": 1,
+  "__version": 1,
+  "__references": []
+}

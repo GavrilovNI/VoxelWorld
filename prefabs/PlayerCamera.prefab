@@ -61,6 +61,10 @@
         "__type": "AudioListener",
         "__guid": "babe795e-f7fe-45a3-a55e-f174a6cbabda",
         "UseCameraDirection": true
+      },
+      {
+        "__type": "Highlight",
+        "__guid": "f20338ca-8682-4027-8d8d-4066015d56af"
       }
     ],
     "Children": []

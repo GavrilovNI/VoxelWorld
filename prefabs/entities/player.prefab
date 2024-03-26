@@ -11,7 +11,7 @@
         "__guid": "c3e4c2f6-9055-4f7f-beb6-86ad4335cb60",
         "Camera": {
           "_type": "component",
-          "component_id": "d049a24f-129c-427e-9c17-8bf0735207b0",
+          "component_id": "22ebef3b-dcd6-401a-bffb-10f936c49ec2",
           "go": "b649e4c5-21e1-4b4c-8fbf-f06d9ec72d1a",
           "component_type": "CameraComponent"
         },
@@ -38,21 +38,6 @@
       {
         "__type": "PlayerInventory",
         "__guid": "fa8836e4-6593-495f-9b90-ede482ea4aa2"
-      },
-      {
-        "__type": "WorldInteractor",
-        "__guid": "d961a06b-624b-45f8-b5d8-c22b974db5ed",
-        "Eye": {
-          "_type": "gameobject",
-          "go": "b649e4c5-21e1-4b4c-8fbf-f06d9ec72d1a"
-        },
-        "InteractionTag": "interactable",
-        "Player": {
-          "_type": "component",
-          "component_id": "c3e4c2f6-9055-4f7f-beb6-86ad4335cb60",
-          "go": "c4d10287-dc83-4fab-b072-a1343584c902",
-          "component_type": "Player"
-        }
       },
       {
         "__type": "WorldAutoLoader",
@@ -134,7 +119,7 @@
             "__guid": "3e617387-18ea-4c6f-b317-7630359285bb",
             "Camera": {
               "_type": "component",
-              "component_id": "d049a24f-129c-427e-9c17-8bf0735207b0",
+              "component_id": "22ebef3b-dcd6-401a-bffb-10f936c49ec2",
               "go": "b649e4c5-21e1-4b4c-8fbf-f06d9ec72d1a",
               "component_type": "CameraComponent"
             },
@@ -221,6 +206,45 @@
               "component_id": "c38bb7bc-4c2f-4db9-8c62-cde71f7ea9ae",
               "go": "c4d10287-dc83-4fab-b072-a1343584c902",
               "component_type": "PlayerController"
+            }
+          }
+        ]
+      },
+      {
+        "__guid": "89a88c89-09ce-4414-93b3-f4a8a1d02a6d",
+        "Name": "WorldInteractor",
+        "Position": "131.9807,64.56663,-14.40919",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "Components": [
+          {
+            "__type": "WorldInteractor",
+            "__guid": "ea63d51f-2449-479a-b07f-ca4ce1eccad5",
+            "Eye": {
+              "_type": "gameobject",
+              "go": "b649e4c5-21e1-4b4c-8fbf-f06d9ec72d1a"
+            },
+            "InteractionTag": "interactable",
+            "Player": {
+              "_type": "component",
+              "component_id": "c3e4c2f6-9055-4f7f-beb6-86ad4335cb60",
+              "go": "c4d10287-dc83-4fab-b072-a1343584c902",
+              "component_type": "Player"
+            },
+            "ReachDistance": 196.84999
+          },
+          {
+            "__type": "InteractingBlockHighlighter",
+            "__guid": "9a1b25c3-cfb0-42d8-8389-e7843f25526b",
+            "HighlightedBlockPrefab": {
+              "_type": "gameobject",
+              "prefab": "prefabs/highlightedblock.prefab"
+            },
+            "WorldInteractor": {
+              "_type": "component",
+              "component_id": "ea63d51f-2449-479a-b07f-ca4ce1eccad5",
+              "go": "89a88c89-09ce-4414-93b3-f4a8a1d02a6d",
+              "component_type": "WorldInteractor"
             }
           }
         ]
