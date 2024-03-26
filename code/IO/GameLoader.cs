@@ -52,13 +52,15 @@ public class GameLoader : Component
         return (loaded, path);
     }
 
-    public string GetNotTakenSavePath(BaseFileSystem savesFileSystemm, string fileName)
+    public virtual string GetNotTakenSavePath(BaseFileSystem savesFileSystemm, string fileName)
     {
-        string result = IOUtils.RemoveInvalidCharacters(fileName);
-        result = string.IsNullOrWhiteSpace(result) ? "New Game" : result;
+        string baseName = IOUtils.RemoveInvalidCharacters(fileName);
+        baseName = string.IsNullOrWhiteSpace(baseName) ? "New Game" : baseName;
         int addValue = 1;
+
+        string result = baseName;
         while(savesFileSystemm.DirectoryExists(result))
-            result = $"{result} ({addValue++})";
+            result = $"{baseName} ({addValue++})";
         return result;
     }
 }
