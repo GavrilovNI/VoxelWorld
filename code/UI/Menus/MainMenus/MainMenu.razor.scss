@@ -70,10 +70,22 @@ MainMenu {
 
             &:hover {
                 background-color: #555;
+
+                &:not(.disabled) {
+                    sound-in: "sounds/voxelworld/ui/menu/button_hover.sound";
+                }
             }
 
             &:active {
                 background-color: #888;
+
+                &.disabled {
+                    sound-in: "sounds/voxelworld/ui/menu/button_down_disabled.sound";
+                }
+
+                &:not(.disabled) {
+                    sound-in: "sounds/voxelworld/ui/menu/button_down.sound";
+                }
             }
         }
     }
