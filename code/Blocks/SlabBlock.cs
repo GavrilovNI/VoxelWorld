@@ -65,29 +65,46 @@ public class SlabBlock : SimpleBlock
             return false;
 
         var newSlabType = placingBlockState.GetValue(SlabTypeProperty);
-        return currentSlabType != newSlabType;
+        return newSlabType == SlabType.Double;
     }
 
-    protected virtual SlabType GetSlabPart(IWorldProvider world, Vector3IntB blockPosition, PhysicsTraceResult traceResult, SlabType slabTypeAtCenter)
+    protected virtual SlabType GetSlabPartByHeight(IWorldProvider world, Vector3IntB blockPosition, Vector3 hitPosition, SlabType slabTypeAtCenter)
     {
-        var blockLocalYPosition = traceResult.HitPosition.z - world.GetBlockGlobalPosition(blockPosition).z;
+        var blockLocalZPosition = hitPosition.z - world.GetBlockGlobalPosition(blockPosition).z;
 
         const float halfBlockHeight = MathV.UnitsInMeter / 2f;
 
-        if(blockLocalYPosition.AlmostEqual(halfBlockHeight, 0.1f))
+        if(blockLocalZPosition.AlmostEqual(halfBlockHeight, 0.1f))
             return slabTypeAtCenter;
 
-        bool isBottom = blockLocalYPosition < halfBlockHeight;
+        bool isBottom = blockLocalZPosition < halfBlockHeight;
         return isBottom ? SlabType.Bottom : SlabType.Top;
     }
 
     public override BlockState GetStateForPlacement(in BlockActionContext context)
     {
         var currentBlockState = context.BlockState;
-        if(currentBlockState.Block == this)
-            return currentBlockState.With(SlabTypeProperty, SlabType.Double);
 
-        var slabType = GetSlabPart(context.World, context.Position, context.TraceResult, SlabType.Bottom);
+        if(currentBlockState.Block == this)
+        {
+            var currentSlabType = currentBlockState.GetValue(SlabTypeProperty);
+
+            if(currentSlabType != SlabType.Double)
+            {
+                var hitNormal = context.TraceResult.Normal;
+                bool placingSecondPart = hitNormal.AlmostEqual(Vector3.Up) && currentSlabType == SlabType.Bottom ||
+                        hitNormal.AlmostEqual(Vector3.Down) && currentSlabType == SlabType.Top;
+
+                if(placingSecondPart)
+                    return DefaultBlockState.With(SlabTypeProperty, SlabType.Double);
+            }
+        }
+
+        var slabType = GetSlabPartByHeight(context.World, context.Position, context.TraceResult.HitPosition, SlabType.Bottom);
+
+        if(currentBlockState.Block == this)
+            slabType = slabType.Combine(currentBlockState.GetValue(SlabTypeProperty));
+
         return DefaultBlockState.With(SlabTypeProperty, slabType);
     }
 
@@ -100,7 +117,7 @@ public class SlabBlock : SimpleBlock
             return;
         }
 
-        var slabType = GetSlabPart(context.World, context.Position, context.TraceResult, SlabType.Bottom);
+        var slabType = GetSlabPartByHeight(context.World, context.Position, context.TraceResult.HitPosition, SlabType.Bottom);
         await context.World.SetBlockState(context.Position, DefaultBlockState.With(SlabTypeProperty, slabType.GetOpposite()));
     }
 

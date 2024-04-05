@@ -37,6 +37,13 @@ public class SlabType : CustomEnum<SlabType>, ICustomEnum<SlabType>
         return Double;
     }
 
+    public SlabType Combine(SlabType other)
+    {
+        if(this == other)
+            return this;
+        return SlabType.Double;
+    }
+
     public static bool TryParse(string name, out SlabType value) => TryParse(All, name, out value);
 
     public static explicit operator SlabType(int ordinal) => All[ordinal];
