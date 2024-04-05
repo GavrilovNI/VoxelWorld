@@ -14,17 +14,7 @@ public static class Vector3Extensions
         return unsignedAngle * sign;
     }
 
-    public static Vector3 ProjectOnPlane(this Vector3 vector, in Vector3 planeNormal)
-    {
-        float sqrMag = planeNormal.Dot(planeNormal);
-        if(sqrMag.AlmostEqual(0))
-            return vector;
-
-        var dot = vector.Dot(planeNormal);
-        return new Vector3(vector.x - planeNormal.x * dot / sqrMag,
-            vector.y - planeNormal.y * dot / sqrMag,
-            vector.z - planeNormal.z * dot / sqrMag);
-    }
+    public static Vector3 ProjectOnPlane(this Vector3 vector, in Vector3 planeNormal) => Vector3.VectorPlaneProject(vector, planeNormal);
 
     public static Vector3IntB Floor(this Vector3 vector) => new((int)MathF.Floor(vector.x), (int)MathF.Floor(vector.y), (int)MathF.Floor(vector.z));
     public static Vector3IntB Ceiling(this Vector3 vector) => new((int)MathF.Ceiling(vector.x), (int)MathF.Ceiling(vector.y), (int)MathF.Ceiling(vector.z));
