@@ -57,15 +57,19 @@
         "Static": false
       },
       {
-        "__type": "CharacterController",
+        "__type": "CustomCharacterController",
         "__guid": "2cfd31e0-bcf6-412b-aeae-c518250046e3",
         "Acceleration": 10,
         "Bounciness": 0.3,
+        "Gravity": "0,0,-850",
         "GroundAngle": 45,
         "Height": 64,
         "IgnoreLayers": "no_entity_collide,interactable,trigger",
         "Radius": 16,
-        "StepHeight": 20
+        "StepHeight": 20,
+        "TryUnstuckOnMove": true,
+        "UseSceneGravity": true,
+        "Velocity": "0,0,0"
       },
       {
         "__type": "PlayerController",
@@ -76,7 +80,7 @@
           "_type": "component",
           "component_id": "2cfd31e0-bcf6-412b-aeae-c518250046e3",
           "go": "c4d10287-dc83-4fab-b072-a1343584c902",
-          "component_type": "CharacterController"
+          "component_type": "CustomCharacterController"
         },
         "CrouchSpeed": 70,
         "Eye": {
@@ -193,7 +197,7 @@
               "_type": "component",
               "component_id": "2cfd31e0-bcf6-412b-aeae-c518250046e3",
               "go": "c4d10287-dc83-4fab-b072-a1343584c902",
-              "component_type": "CharacterController"
+              "component_type": "CustomCharacterController"
             },
             "DistanceBetweenSteps": 60,
             "Feet": {

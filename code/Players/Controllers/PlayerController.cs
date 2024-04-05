@@ -1,12 +1,13 @@
 ﻿using Sandbox;
 using VoxelWorld.Controlling;
 using VoxelWorld.Mth;
+using VoxelWorld.Physics;
 
 namespace VoxelWorld.Players.Controllers;
 
 public class PlayerController : Component
 {
-    [Property] protected CharacterController CharacterController { get; set; } = null!;
+    [Property, RequireComponent] protected CustomCharacterController CharacterController { get; set; } = null!;
     [Property] protected GameObject Eye { get; set; } = null!;
     [Property] protected float WalkSpeed { get; set; } = 160f;
     [Property] protected float RunSpeed { get; set; } = 270f;
@@ -19,24 +20,13 @@ public class PlayerController : Component
 
     public bool IsCrouching { get; protected set; } = false;
 
-    public virtual Vector3 Gravity => Scene.PhysicsWorld.Gravity;
-    public Vector3 GravityNormal
-    {
-        get
-        {
-            var gravity = Gravity;
-            var result = gravity.Normal;
-            if(result.AlmostEqual(0))
-                return Vector3.Down;
-            return result;
-        }
-    }
+    public virtual Vector3 Gravity => CharacterController.Gravity;
+    public Vector3 GravityNormal => CharacterController.GravityNormal;
 
     public Vector3 WishVelocity { get; protected set; }
 
     protected override void OnAwake()
     {
-        CharacterController ??= Components.Get<CharacterController>();
     }
 
     protected override void OnUpdate()

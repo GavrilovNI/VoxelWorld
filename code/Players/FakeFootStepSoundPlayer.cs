@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using System.Linq;
 using VoxelWorld.Mth;
+using VoxelWorld.Physics;
 using VoxelWorld.Players.Controllers;
 using VoxelWorld.Worlds;
 
@@ -10,7 +11,7 @@ public class FakeFootStepSoundPlayer : Component
 {
     [Property] public GameObject Feet { get; set; } = null!;
     [Property] public float DistanceBetweenSteps { get; set; } = 60f;
-    [Property, RequireComponent] public CharacterController CharacterController { get; set; } = null!;
+    [Property, RequireComponent] public CustomCharacterController CharacterController { get; set; } = null!;
     [Property, RequireComponent] public PlayerController PlayerController { get; set; } = null!;
     [Property] public float MaxTraceDownDistance { get; set; } = 100f;
 
