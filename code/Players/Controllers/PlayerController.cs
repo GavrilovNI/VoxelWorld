@@ -1,4 +1,6 @@
 ﻿using Sandbox;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using VoxelWorld.Controlling;
 using VoxelWorld.Mth;
 using VoxelWorld.Physics;
@@ -50,6 +52,8 @@ public class PlayerController : Component
 
     protected virtual void Move()
     {
+        CharacterController.CategorizePosition();
+
         var halfGravityVelocity = Gravity * (Time.Delta * 0.5f);
         var gravityNormal = GravityNormal;
 
@@ -61,6 +65,48 @@ public class PlayerController : Component
             CharacterController.Velocity = CharacterController.Velocity.ProjectOnPlane(gravityNormal);
             CharacterController.Accelerate(WishVelocity);
             CharacterController.ApplyFriction(GroundFriction, StopSpeed);
+
+            if(GameInput.IsCrouching)
+            {
+                var horizontalVelocity = CharacterController.Velocity.ProjectOnPlane(GravityNormal);
+                var totalOffset = horizontalVelocity.Normal;
+
+                Vector3[] offsets = new Vector3[] {
+                    new Vector3(totalOffset.x, 0f, 0f).Normal,
+                    new Vector3(0f, totalOffset.y, 0f).Normal,
+                    new Vector3(0f, 0f, totalOffset.z).Normal,
+                    totalOffset,
+                };
+
+                foreach(var offset in offsets)
+                    PreventBlockFalling(offset);
+
+                void PreventBlockFalling(Vector3 offset)
+                {
+                    if(offset == Vector3.Zero || CharacterController.Velocity == Vector3.Zero)
+                        return;
+
+                    CharacterControllerHelper helper = CharacterController.CreateHelper();
+                    helper.Velocity = offset;
+                    helper.TryMoveWithStep(1f, CharacterController.StepHeight);
+                    bool willBeOnGround = CharacterController.IsOnGroundAt(helper.Position, out var groundTraceResult);
+
+                    if(willBeOnGround)
+                        return;
+
+                    var startpos = groundTraceResult.EndPosition;
+                    helper.Position = startpos;
+                    var traceResult = helper.TraceMove(-offset * 1.1f);
+
+                    if(!traceResult.Hit)
+                    {
+                        CharacterController.Velocity = Vector3.Zero;
+                        return;
+                    }
+
+                    CharacterController.Velocity = CharacterController.Velocity.ProjectOnPlane(traceResult.Normal);
+                }
+            }
         }
         else
         {
