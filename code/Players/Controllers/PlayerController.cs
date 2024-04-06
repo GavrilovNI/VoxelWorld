@@ -29,6 +29,7 @@ public class PlayerController : Component
     [Property] protected float StopSpeed { get; set; } = 140f;
     [Property] protected float AirWishVelocityClamp { get; set; } = 50f;
 
+    public bool IsCrouchingRequested { get; protected set; } = false;
     public bool IsCrouching { get; protected set; } = false;
 
     public virtual Vector3 Gravity => CharacterController.Gravity;
@@ -43,7 +44,9 @@ public class PlayerController : Component
 
     protected override void OnUpdate()
     {
-        IsCrouching = GameInput.IsCrouching;
+        IsCrouchingRequested = GameInput.IsCrouching;
+        bool isFullyStanding = CharacterController.Height >= ColliderDefaultHeight || CharacterController.Height.AlmostEqual(ColliderDefaultHeight);
+        IsCrouching = IsCrouchingRequested || !isFullyStanding;
         WishVelocity = CalculateWishVelocity();
         UpdateEyePosition();
     }
@@ -57,7 +60,7 @@ public class PlayerController : Component
 
     protected virtual void ResetEyePositionAndHeight()
     {
-        var targetHeight = (IsCrouching ? ColliderCrouchingHeight : ColliderDefaultHeight);
+        var targetHeight = (IsCrouchingRequested ? ColliderCrouchingHeight : ColliderDefaultHeight);
         CharacterController.Height = targetHeight;
         Collider.Scale = new Vector3(Collider.Scale.x, Collider.Scale.y, targetHeight);
         Collider.Center = new Vector3(0f, 0f, targetHeight / 2f);
@@ -73,7 +76,7 @@ public class PlayerController : Component
 
     protected virtual void LerpCollidersHeight()
     {
-        var targetHeight = (IsCrouching ? ColliderCrouchingHeight : ColliderDefaultHeight);
+        var targetHeight = (IsCrouchingRequested ? ColliderCrouchingHeight : ColliderDefaultHeight);
         var currentHeight = CharacterController.Height;
 
         if(currentHeight == targetHeight)
@@ -82,7 +85,7 @@ public class PlayerController : Component
         var t = HeightLerpSpeed * Time.Delta / (MathF.Abs(targetHeight - currentHeight) / MathF.Abs(ColliderDefaultHeight - ColliderCrouchingHeight));
         var newHeight = currentHeight.LerpTo(targetHeight, t);
 
-        if(!IsCrouching)
+        if(!IsCrouchingRequested)
         {
             var traceResult = CharacterController.TraceDirection(CharacterController.Transform.Rotation.Up * (newHeight - currentHeight)).Run();
             
