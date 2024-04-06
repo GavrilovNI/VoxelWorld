@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using VoxelWorld.Controlling;
@@ -10,7 +11,15 @@ namespace VoxelWorld.Players.Controllers;
 public class PlayerController : Component
 {
     [Property, RequireComponent] protected CustomCharacterController CharacterController { get; set; } = null!;
-    [Property] protected GameObject Eye { get; set; } = null!;
+
+    [Property, Group("Eye")] protected GameObject Eye { get; set; } = null!;
+    [Property, Group("Eye")] protected float EyeOffsetFromTop { get; set; } = 10f;
+
+    [Property, Group("Collider"), RequireComponent] protected BoxCollider Collider { get; set; } = null!;
+    [Property, Group("Collider")] protected float ColliderDefaultHeight { get; set; } = 71f;
+    [Property, Group("Collider")] protected float ColliderCrouchingHeight { get; set; } = 56f;
+    [Property, Group("Collider")] protected float HeightLerpSpeed { get; set; } = 10f;
+
     [Property] protected float WalkSpeed { get; set; } = 160f;
     [Property] protected float RunSpeed { get; set; } = 270f;
     [Property] protected float CrouchSpeed { get; set; } = 70f;
@@ -29,18 +38,61 @@ public class PlayerController : Component
 
     protected override void OnAwake()
     {
+        ResetEyePositionAndHeight();
     }
 
     protected override void OnUpdate()
     {
         IsCrouching = GameInput.IsCrouching;
         WishVelocity = CalculateWishVelocity();
+        UpdateEyePosition();
     }
 
     protected override void OnFixedUpdate()
     {
+        LerpCollidersHeight();
         Rotate(); // TODO: move to OnUpdate when get not that laggy
         Move();
+    }
+
+    protected virtual void ResetEyePositionAndHeight()
+    {
+        var targetHeight = (IsCrouching ? ColliderCrouchingHeight : ColliderDefaultHeight);
+        CharacterController.Height = targetHeight;
+        Collider.Scale = new Vector3(Collider.Scale.x, Collider.Scale.y, targetHeight);
+        Collider.Center = new Vector3(0f, 0f, targetHeight / 2f);
+
+        UpdateEyePosition();
+    }
+
+    protected virtual void UpdateEyePosition()
+    {
+        var heightHeight = CharacterController.Height - EyeOffsetFromTop;
+        Eye.Transform.Local = Eye.Transform.Local.WithPosition(new Vector3(0f, 0f, heightHeight));
+    }
+
+    protected virtual void LerpCollidersHeight()
+    {
+        var targetHeight = (IsCrouching ? ColliderCrouchingHeight : ColliderDefaultHeight);
+        var currentHeight = CharacterController.Height;
+
+        if(currentHeight == targetHeight)
+            return;
+
+        var t = HeightLerpSpeed * Time.Delta / (MathF.Abs(targetHeight - currentHeight) / MathF.Abs(ColliderDefaultHeight - ColliderCrouchingHeight));
+        var newHeight = currentHeight.LerpTo(targetHeight, t);
+
+        if(!IsCrouching)
+        {
+            var traceResult = CharacterController.TraceDirection(CharacterController.Transform.Rotation.Up * (newHeight - currentHeight)).Run();
+            
+            if(traceResult.Hit)
+                newHeight = currentHeight + traceResult.Distance - 0.01f;
+        }
+
+        CharacterController.Height = newHeight;
+        Collider.Scale = new Vector3(Collider.Scale.x, Collider.Scale.y, newHeight);
+        Collider.Center = new Vector3(0f, 0f, newHeight / 2f);
     }
 
     protected virtual void Rotate()

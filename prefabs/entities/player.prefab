@@ -51,9 +51,9 @@
       {
         "__type": "BoxCollider",
         "__guid": "1e7a68c2-4e72-4063-93da-b816c0c10111",
-        "Center": "0,0,32",
+        "Center": "0,0,35.5",
         "IsTrigger": false,
-        "Scale": "32,32,64",
+        "Scale": "35.5,35.5,71",
         "Static": false
       },
       {
@@ -63,9 +63,9 @@
         "Bounciness": 0.3,
         "Gravity": "0,0,-850",
         "GroundAngle": 45,
-        "Height": 64,
+        "Height": 71,
         "IgnoreLayers": "no_entity_collide,interactable,trigger",
-        "Radius": 16,
+        "Radius": 17.75,
         "StepHeight": 20,
         "TryUnstuckOnMove": true,
         "UseSceneGravity": true,
@@ -82,12 +82,22 @@
           "go": "c4d10287-dc83-4fab-b072-a1343584c902",
           "component_type": "CustomCharacterController"
         },
+        "Collider": {
+          "_type": "component",
+          "component_id": "63e6cb06-cfdc-497a-897c-cd371ff4fb80",
+          "go": "f02cafe5-60e3-4b0b-a46b-489ad6fda95d",
+          "component_type": "BoxCollider"
+        },
+        "ColliderCrouchingHeight": 56,
+        "ColliderDefaultHeight": 71,
         "CrouchSpeed": 70,
         "Eye": {
           "_type": "gameobject",
           "go": "607b7cec-3bcf-4d23-bc8a-ca6d00e71f40"
         },
+        "EyeOffsetFromTop": 10,
         "GroundFriction": 4,
+        "HeightLerpSpeed": 10,
         "JumpVelocity": 320,
         "RunSpeed": 270,
         "StopSpeed": 140,
@@ -114,7 +124,7 @@
       {
         "__guid": "607b7cec-3bcf-4d23-bc8a-ca6d00e71f40",
         "Name": "Eye",
-        "Position": "0,0,64",
+        "Position": "0,0,61",
         "Enabled": true,
         "NetworkMode": 2,
         "Components": [
