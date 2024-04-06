@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 using VoxelWorld.Entities;
-using VoxelWorld.SandcubeExtensions;
+using VoxelWorld.SandboxExtensions;
 
 namespace VoxelWorld.Players;
 

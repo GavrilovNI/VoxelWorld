@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using System.Linq;
 
-namespace VoxelWorld.SandcubeExtensions;
+namespace VoxelWorld.SandboxExtensions;
 
 public static class ComponentExtensions
 {
