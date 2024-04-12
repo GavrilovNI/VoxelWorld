@@ -6,11 +6,11 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "BaseMod",
+        "__type": "VoxelWorld.Mods.Base.BaseMod",
         "__guid": "ed65e427-89b3-42da-9c29-2c308f64788e"
       },
       {
-        "__type": "BaseModEntities",
+        "__type": "VoxelWorld.Mods.Base.Entities.BaseModEntities",
         "__guid": "cd8054fc-8475-40fd-b389-7ec6d8099b6b",
         "ItemStackPrefab": {
           "_type": "gameobject",
@@ -26,7 +26,7 @@
         }
       },
       {
-        "__type": "WorldAutoLoader",
+        "__type": "VoxelWorld.Worlds.Generation.WorldAutoLoader",
         "__guid": "0fce4f70-dc08-4654-b32c-f07dbbb30a77",
         "Bounds": {
           "Mins": "-2,-2,-2",

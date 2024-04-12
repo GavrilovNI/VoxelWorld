@@ -7,7 +7,7 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "ItemStackEntity",
+        "__type": "VoxelWorld.Entities.ItemStackEntity",
         "__guid": "b7903ab1-b3ac-4b80-a906-54b5b4c7e126",
         "Collider": {
           "_type": "component",
@@ -29,13 +29,13 @@
         }
       },
       {
-        "__type": "UnlimitedModelRenderer",
+        "__type": "VoxelWorld.Rendering.UnlimitedModelRenderer",
         "__guid": "18a3a305-217e-46c6-9470-6448daa9fcff",
         "RenderType": "On",
         "Tint": "1,1,1,1"
       },
       {
-        "__type": "RigidbodyWithMemory",
+        "__type": "VoxelWorld.Physics.RigidbodyWithMemory",
         "__guid": "10bae55b-298b-4e64-954d-64f28c9d540b",
         "AngularDamping": 0,
         "Gravity": true,
@@ -51,7 +51,7 @@
         "StartAsleep": false
       },
       {
-        "__type": "BoxCollider",
+        "__type": "Sandbox.BoxCollider",
         "__guid": "af9cef21-a36c-4d35-95e5-8daf89936faa",
         "Center": "25,25,25",
         "IsTrigger": false,

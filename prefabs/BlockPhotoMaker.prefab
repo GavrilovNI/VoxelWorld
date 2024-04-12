@@ -6,7 +6,7 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "BlockPhotoMaker",
+        "__type": "VoxelWorld.Texturing.BlockPhotoMaker",
         "__guid": "fadad29e-9a0e-4ebd-9d9c-8463c1b7f035",
         "Camera": {
           "_type": "component",
@@ -39,7 +39,7 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "CameraComponent",
+            "__type": "Sandbox.CameraComponent",
             "__guid": "f90eaa84-9a95-407c-b4b0-7028a681b2e6",
             "BackgroundColor": "0,0,0,0",
             "ClearFlags": "All",
@@ -65,7 +65,7 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "World",
+            "__type": "VoxelWorld.Worlds.World",
             "__guid": "0f1f2381-82b2-49db-b2c7-526e0f0bca49",
             "ChunksCreator": {
               "_type": "component",
@@ -90,7 +90,7 @@
             }
           },
           {
-            "__type": "ChunksCreator",
+            "__type": "VoxelWorld.Worlds.Creation.ChunksCreator",
             "__guid": "8a19d256-4b62-42e6-8f6f-e258a9badfac",
             "BreakFromPrefab": true,
             "ChunkPrefab": {
@@ -115,7 +115,7 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "DirectionalLight",
+            "__type": "Sandbox.DirectionalLight",
             "__guid": "282f2c39-44b6-480c-af6d-d21a7ffddf63",
             "FogMode": "Enabled",
             "FogStrength": 1,

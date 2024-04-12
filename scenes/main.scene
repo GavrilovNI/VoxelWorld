@@ -10,11 +10,11 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "LocalPlayerCameraDuplicate",
+          "__type": "VoxelWorld.Players.LocalPlayerCameraDuplicate",
           "__guid": "b4872aa3-243c-41fb-bef8-a62cbe0c99ce",
           "Camera": {
             "_type": "component",
-            "component_id": "d2751c85-c875-4a64-baf7-41b52c0aec01",
+            "component_id": "0fdc2f30-b819-4256-ba14-4ddb4da7d966",
             "go": "47ff2699-109e-4015-9482-7d20f186d20d",
             "component_type": "CameraComponent"
           },
@@ -39,7 +39,7 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "GameController",
+          "__type": "VoxelWorld.GameController",
           "__guid": "ffe37fb8-2302-45f2-90c5-317fa05eeeb5",
           "BaseModPrefab": {
             "_type": "gameobject",
@@ -47,7 +47,7 @@
           },
           "BlockPhotoMaker": {
             "_type": "component",
-            "component_id": "a3a1eeab-a66e-42b4-b1ca-ae7fdfe36451",
+            "component_id": "626cb11b-158c-4a5a-9916-b85da23cfc84",
             "go": "df09f31c-b3a2-4d51-a5ea-ef80a7db029c",
             "component_type": "BlockPhotoMaker"
           },
@@ -80,7 +80,7 @@
           }
         },
         {
-          "__type": "PlayerSpawner",
+          "__type": "VoxelWorld.Players.PlayerSpawner",
           "__guid": "51c0e7a1-af4d-4d0c-a2c2-57986fec7ee1",
           "PreloadRange": {
             "Mins": "-2,-2,-3",
@@ -113,7 +113,7 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "ScreenPanel",
+          "__type": "Sandbox.ScreenPanel",
           "__guid": "8fb43bd9-75cf-472a-b8f6-2800f69e71d5",
           "AutoScreenScale": true,
           "Opacity": 1,
@@ -121,7 +121,7 @@
           "ZIndex": 100
         },
         {
-          "__type": "MenuController",
+          "__type": "VoxelWorld.Menus.MenuController",
           "__guid": "7c2472c4-8bf5-481a-aac7-201da111e072",
           "EscapeScreen": {
             "_type": "gameobject",
@@ -137,7 +137,7 @@
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "HotbarUI",
+              "__type": "VoxelWorld.UI.Inventories.Players.HotbarUI",
               "__guid": "e5a60e86-aead-4235-b831-b2850f23b15f"
             }
           ]
@@ -149,7 +149,7 @@
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "EscapeScreen",
+              "__type": "VoxelWorld.UI.Screens.EscapeScreen",
               "__guid": "2a8bbb0e-2fd8-4e59-ba61-f38e0190cfca"
             }
           ]
@@ -161,7 +161,7 @@
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "CrosshairUI",
+              "__type": "VoxelWorld.UI.CrosshairUI",
               "__guid": "7c041eef-4fed-4e94-b262-7c7718867ad7",
               "IsShowing": false
             }
@@ -174,7 +174,7 @@
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "FakeLoadingScreen",
+              "__type": "VoxelWorld.UI.FakeLoadingScreen",
               "__guid": "1efea7a5-1c90-4848-be0f-1169cd34f54e",
               "BackgroundImagePath": "textures/voxelworld/ui/background.png",
               "FinishingTime": 1,
@@ -193,7 +193,7 @@
           "NetworkMode": 2,
           "Components": [
             {
-              "__type": "RespawnScreen",
+              "__type": "VoxelWorld.UI.Screens.RespawnScreen",
               "__guid": "594c9154-9e46-43da-8aa3-dd1c0536366f",
               "IsShowing": false,
               "LoadingScreen": {
@@ -222,7 +222,7 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "ModelRenderer",
+          "__type": "Sandbox.ModelRenderer",
           "__guid": "3210fd8a-5df4-42a5-aa02-9fa4a2079b80",
           "BodyGroups": 18446744073709551615,
           "MaterialOverride": "materials/voxels_translucent.vmat",
@@ -231,7 +231,7 @@
           "Tint": "1,1,1,1"
         },
         {
-          "__type": "TextureMapShower",
+          "__type": "VoxelWorld.Texturing.TextureMapShower",
           "__guid": "9c13d838-ad47-454d-97db-2b07ec4bb5bc",
           "Blocks": true,
           "ModelRenderer": {
@@ -267,7 +267,7 @@
   },
   "Title": "main",
   "Description": "",
-  "LastSaved": "2024-03-23T01:12:49.0218085\u002B01:00",
+  "LastSaved": "2024-04-12T22:17:03.492896\u002B02:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

@@ -6,7 +6,7 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "Chunk",
+        "__type": "VoxelWorld.Worlds.Chunk",
         "__guid": "b5d54c7e-3ce5-495c-aadc-66f945851619",
         "EntitiesParent": {
           "_type": "gameobject",
@@ -22,7 +22,7 @@
         "Size": "16,16,16"
       },
       {
-        "__type": "ChunkModelUpdater",
+        "__type": "VoxelWorld.Worlds.ChunkModelUpdater",
         "__guid": "744cc4af-bab4-4f47-a500-657bdb7f1cbf",
         "Chunk": {
           "_type": "component",
@@ -59,13 +59,13 @@
         }
       },
       {
-        "__type": "UnlimitedModelRenderer",
+        "__type": "VoxelWorld.Rendering.UnlimitedModelRenderer",
         "__guid": "7834a584-ac1d-44cd-840c-57dad1a9ab30",
         "RenderType": "On",
         "Tint": "1,1,1,1"
       },
       {
-        "__type": "UnlimitedModelRenderer",
+        "__type": "VoxelWorld.Rendering.UnlimitedModelRenderer",
         "__guid": "c491147d-df9f-40e9-b1ec-6c9957192b66",
         "RenderType": "On",
         "Tint": "1,1,1,1"
@@ -80,12 +80,12 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "WorldProxy",
+            "__type": "VoxelWorld.Worlds.WorldProxy",
             "__guid": "1cefeb74-6420-43b8-8bf0-54ecd017b3b1",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
-            "__type": "ModelCollider",
+            "__type": "Sandbox.ModelCollider",
             "__guid": "1af80321-e789-46a6-91ea-447855c4819d",
             "IsTrigger": false,
             "Static": true
@@ -106,12 +106,12 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "WorldProxy",
+            "__type": "VoxelWorld.Worlds.WorldProxy",
             "__guid": "8fee94f8-1c04-4741-a46c-c5eb3f9469a8",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
-            "__type": "ModelCollider",
+            "__type": "Sandbox.ModelCollider",
             "__guid": "c2186d28-c944-44e7-aff2-c973e149b4d2",
             "IsTrigger": false,
             "Static": true

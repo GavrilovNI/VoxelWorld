@@ -7,11 +7,11 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "Player",
+        "__type": "VoxelWorld.Entities.Player",
         "__guid": "c3e4c2f6-9055-4f7f-beb6-86ad4335cb60",
         "Camera": {
           "_type": "component",
-          "component_id": "22ebef3b-dcd6-401a-bffb-10f936c49ec2",
+          "component_id": "9b3c2dfd-99a9-4916-9d99-7b11c35219f0",
           "go": "b649e4c5-21e1-4b4c-8fbf-f06d9ec72d1a",
           "component_type": "CameraComponent"
         },
@@ -36,11 +36,11 @@
         "SteamId": 0
       },
       {
-        "__type": "PlayerInventory",
+        "__type": "VoxelWorld.Inventories.Players.PlayerInventory",
         "__guid": "fa8836e4-6593-495f-9b90-ede482ea4aa2"
       },
       {
-        "__type": "WorldAutoLoader",
+        "__type": "VoxelWorld.Worlds.Generation.WorldAutoLoader",
         "__guid": "4502ba2c-db23-4c4e-aa02-7638ff57c7f9",
         "Bounds": {
           "Mins": "-2,-2,-2",
@@ -49,7 +49,7 @@
         "TimeBetweenSuccessfulAttempts": 1
       },
       {
-        "__type": "BoxCollider",
+        "__type": "Sandbox.BoxCollider",
         "__guid": "1e7a68c2-4e72-4063-93da-b816c0c10111",
         "Center": "0,0,35.5",
         "IsTrigger": false,
@@ -57,7 +57,7 @@
         "Static": false
       },
       {
-        "__type": "CustomCharacterController",
+        "__type": "VoxelWorld.Physics.CustomCharacterController",
         "__guid": "2cfd31e0-bcf6-412b-aeae-c518250046e3",
         "Acceleration": 10,
         "Bounciness": 0.3,
@@ -72,7 +72,7 @@
         "Velocity": "0,0,0"
       },
       {
-        "__type": "PlayerController",
+        "__type": "VoxelWorld.Players.Controllers.PlayerController",
         "__guid": "c38bb7bc-4c2f-4db9-8c62-cde71f7ea9ae",
         "AirFriction": 0.1,
         "AirWishVelocityClamp": 50,
@@ -84,8 +84,8 @@
         },
         "Collider": {
           "_type": "component",
-          "component_id": "63e6cb06-cfdc-497a-897c-cd371ff4fb80",
-          "go": "f02cafe5-60e3-4b0b-a46b-489ad6fda95d",
+          "component_id": "1e7a68c2-4e72-4063-93da-b816c0c10111",
+          "go": "c4d10287-dc83-4fab-b072-a1343584c902",
           "component_type": "BoxCollider"
         },
         "ColliderCrouchingHeight": 56,
@@ -105,7 +105,7 @@
         "WalkSpeed": 160
       },
       {
-        "__type": "HotbarController",
+        "__type": "VoxelWorld.Inventories.Players.HotbarController",
         "__guid": "7b73e22e-be42-4e60-a7dd-3883132cf78f",
         "Inventory": {
           "_type": "component",
@@ -130,11 +130,11 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "VerticalCameraController",
+            "__type": "VoxelWorld.Players.Controllers.VerticalCameraController",
             "__guid": "3e617387-18ea-4c6f-b317-7630359285bb",
             "Camera": {
               "_type": "component",
-              "component_id": "22ebef3b-dcd6-401a-bffb-10f936c49ec2",
+              "component_id": "9b3c2dfd-99a9-4916-9d99-7b11c35219f0",
               "go": "b649e4c5-21e1-4b4c-8fbf-f06d9ec72d1a",
               "component_type": "CameraComponent"
             },
@@ -159,7 +159,7 @@
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ItemDropper",
+                "__type": "VoxelWorld.Players.ItemDropper",
                 "__guid": "f26c6eaa-19a5-4216-b893-453407939112",
                 "Velocity": 100
               }
@@ -175,7 +175,7 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "ItemPickuper",
+            "__type": "VoxelWorld.Players.ItemPickuper",
             "__guid": "541da757-f110-46ee-9719-531f85086336",
             "Inventory": {
               "_type": "component",
@@ -186,7 +186,7 @@
             "PickupTime": 1
           },
           {
-            "__type": "SphereCollider",
+            "__type": "Sandbox.SphereCollider",
             "__guid": "54dc246c-8e21-481f-ab0e-c1e850d3a628",
             "Center": "0,0,32",
             "IsTrigger": true,
@@ -202,7 +202,7 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "FakeFootStepSoundPlayer",
+            "__type": "VoxelWorld.Players.FakeFootStepSoundPlayer",
             "__guid": "094baff8-2adb-4a90-b59b-1c67df4c22f4",
             "CharacterController": {
               "_type": "component",
@@ -233,7 +233,7 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "WorldInteractor",
+            "__type": "VoxelWorld.Players.WorldInteractor",
             "__guid": "ea63d51f-2449-479a-b07f-ca4ce1eccad5",
             "Eye": {
               "_type": "gameobject",
@@ -249,7 +249,7 @@
             "ReachDistance": 196.84999
           },
           {
-            "__type": "InteractingBlockHighlighter",
+            "__type": "VoxelWorld.Players.InteractingBlockHighlighter",
             "__guid": "9a1b25c3-cfb0-42d8-8389-e7843f25526b",
             "HighlightedBlockPrefab": {
               "_type": "gameobject",

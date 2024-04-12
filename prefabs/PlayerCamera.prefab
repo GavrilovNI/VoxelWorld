@@ -6,7 +6,7 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "CameraComponent",
+        "__type": "Sandbox.CameraComponent",
         "__guid": "cdaf28f8-d032-44ac-9aa3-6e52f3552e80",
         "BackgroundColor": "0.25292,0.26086,0.29703,1",
         "ClearFlags": "All",
@@ -23,12 +23,12 @@
         "ZNear": 1
       },
       {
-        "__type": "Sharpen",
+        "__type": "Sandbox.Sharpen",
         "__guid": "9d6ae0a7-58b6-4ff2-ae87-1cbe3925c989",
         "Scale": 1
       },
       {
-        "__type": "Bloom",
+        "__type": "Sandbox.Bloom",
         "__guid": "6f0b0fb2-2408-4dda-821d-98f1b26e6356",
         "BloomColor": {
           "color": [
@@ -58,12 +58,12 @@
         "ThresholdWidth": 2
       },
       {
-        "__type": "AudioListener",
+        "__type": "Sandbox.AudioListener",
         "__guid": "babe795e-f7fe-45a3-a55e-f174a6cbabda",
         "UseCameraDirection": true
       },
       {
-        "__type": "Highlight",
+        "__type": "Sandbox.Highlight",
         "__guid": "f20338ca-8682-4027-8d8d-4066015d56af"
       }
     ],

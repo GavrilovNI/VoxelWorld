@@ -6,7 +6,7 @@
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "Chunk",
+        "__type": "VoxelWorld.Worlds.Chunk",
         "__guid": "c2056cca-2685-4c7e-9b5a-53626ba0f4d3",
         "EntitiesParent": {
           "_type": "gameobject",
@@ -22,7 +22,7 @@
         "Size": "16,16,16"
       },
       {
-        "__type": "ChunkModelUpdater",
+        "__type": "VoxelWorld.Worlds.ChunkModelUpdater",
         "__guid": "4641bf02-dc1c-4da8-a5ac-16e924f3d5ae",
         "Chunk": {
           "_type": "component",
@@ -59,13 +59,13 @@
         }
       },
       {
-        "__type": "UnlimitedModelRenderer",
+        "__type": "VoxelWorld.Rendering.UnlimitedModelRenderer",
         "__guid": "ab236322-1a4b-4376-9ad0-66421b9b69f7",
         "RenderType": "On",
         "Tint": "1,1,1,1"
       },
       {
-        "__type": "UnlimitedModelRenderer",
+        "__type": "VoxelWorld.Rendering.UnlimitedModelRenderer",
         "__guid": "ee965658-692d-440f-aa69-6dea842721b2",
         "RenderType": "On",
         "Tint": "1,1,1,1"
@@ -80,12 +80,12 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "WorldProxy",
+            "__type": "VoxelWorld.Worlds.WorldProxy",
             "__guid": "1ede8d92-e015-43e0-aa48-cfe504b021c8",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
-            "__type": "ModelCollider",
+            "__type": "Sandbox.ModelCollider",
             "__guid": "a07d3315-3c75-4e17-be2f-d6a65c2dd382",
             "__enabled": false,
             "IsTrigger": false,
@@ -108,12 +108,12 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "WorldProxy",
+            "__type": "VoxelWorld.Worlds.WorldProxy",
             "__guid": "975b9426-b046-4f4e-965d-438d502f515f",
             "DoNotEnableIfWorldIsNotValid": true
           },
           {
-            "__type": "ModelCollider",
+            "__type": "Sandbox.ModelCollider",
             "__guid": "d4216a6a-48e9-472f-996c-965904c7fcd0",
             "__enabled": false,
             "IsTrigger": false,

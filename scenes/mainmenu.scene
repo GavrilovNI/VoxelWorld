@@ -8,7 +8,7 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "ScreenPanel",
+          "__type": "Sandbox.ScreenPanel",
           "__guid": "34754562-0139-455d-aa98-7ab942cf4ed1",
           "AutoScreenScale": true,
           "Opacity": 1,
@@ -16,7 +16,7 @@
           "ZIndex": 100
         },
         {
-          "__type": "MainMenuController",
+          "__type": "VoxelWorld.UI.Menus.MainMenus.MainMenuController",
           "__guid": "a6d13006-05bb-4a3f-b07c-c821973d5843",
           "MainMenu": {
             "_type": "component",
@@ -26,7 +26,7 @@
           }
         },
         {
-          "__type": "MainMenu",
+          "__type": "VoxelWorld.UI.Menus.MainMenus.MainMenu",
           "__guid": "25a5e17d-9e30-4673-a0ab-b958c453891f",
           "BackgroundImagePath": "textures/voxelworld/ui/background.png",
           "GameSelectionMenu": {
@@ -43,7 +43,7 @@
           }
         },
         {
-          "__type": "GameSelectionMenu",
+          "__type": "VoxelWorld.UI.Menus.MainMenus.GameSelectionMenu",
           "__guid": "4ed0e177-b8b8-47da-952d-be3d143ec72d",
           "BackgroundImagePath": "textures/voxelworld/ui/background.png",
           "GameCreationMenu": {
@@ -67,7 +67,7 @@
           "SavesPath": "saves"
         },
         {
-          "__type": "GameCreationMenu",
+          "__type": "VoxelWorld.UI.Menus.MainMenus.GameCreationMenu",
           "__guid": "16e1c163-0361-44d1-8f4e-5ab87d53bcd6",
           "BackgroundImagePath": "textures/voxelworld/ui/background.png",
           "GameLoader": {
@@ -85,7 +85,7 @@
           "SavesPath": "saves"
         },
         {
-          "__type": "GameLoader",
+          "__type": "VoxelWorld.IO.GameLoader",
           "__guid": "f0a1c673-e05a-4438-9cf2-fac8c28f9594",
           "ErrorScene": "scenes/mainmenu.scene",
           "GameScene": "scenes/main.scene"
@@ -99,7 +99,7 @@
       "NetworkMode": 2,
       "Components": [
         {
-          "__type": "CameraComponent",
+          "__type": "Sandbox.CameraComponent",
           "__guid": "2056b7b0-7d6f-4e66-8ade-b93d94376679",
           "BackgroundColor": "0.33333,0.46275,0.52157,1",
           "ClearFlags": "All",
@@ -141,7 +141,7 @@
   },
   "Title": "mainmenu",
   "Description": "",
-  "LastSaved": "2024-03-17T04:07:41.0206291\u002B01:00",
+  "LastSaved": "2024-04-12T22:17:07.948669\u002B02:00",
   "ResourceVersion": 1,
   "__version": 1,
   "__references": []

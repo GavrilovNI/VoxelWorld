@@ -1,22 +1,22 @@
 {
   "RootObject": {
-    "__guid": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+    "__guid": "c3fb6ce3-c224-430b-b89b-5cf5a7ae5d76",
     "Name": "world",
     "Enabled": true,
     "NetworkMode": 2,
     "Components": [
       {
-        "__type": "World",
-        "__guid": "e911e5df-985f-4b18-9924-3fd172f11ce3",
+        "__type": "VoxelWorld.Worlds.World",
+        "__guid": "d271fb65-b97f-432e-a82e-9426e2f52410",
         "ChunksCreator": {
           "_type": "component",
-          "component_id": "46f4739a-e979-4019-8506-e07f0ae71f3c",
-          "go": "46c9122a-814d-4ffc-95ca-b1e60413b4a3",
+          "component_id": "36fbcffc-48fe-425a-9f16-feb5261cc110",
+          "go": "596f9714-0420-4ec7-b901-a8190db47feb",
           "component_type": "ChunksCreator"
         },
         "ChunksParent": {
           "_type": "gameobject",
-          "go": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa"
+          "go": "725c9777-56fe-4e14-95df-1c5a20af76f1"
         },
         "EntitiesLimitThreshold": 32,
         "IsService": false,
@@ -35,26 +35,26 @@
         }
       },
       {
-        "__type": "WorldSaver",
-        "__guid": "f49413c1-90cf-4811-8810-6432416f7e0c",
+        "__type": "VoxelWorld.IO.Worlds.WorldSaver",
+        "__guid": "3ffe6f54-abab-499b-aead-60df29079167",
         "World": {
           "_type": "component",
-          "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
-          "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+          "component_id": "d271fb65-b97f-432e-a82e-9426e2f52410",
+          "go": "c3fb6ce3-c224-430b-b89b-5cf5a7ae5d76",
           "component_type": "World"
         }
       }
     ],
     "Children": [
       {
-        "__guid": "46c9122a-814d-4ffc-95ca-b1e60413b4a3",
+        "__guid": "596f9714-0420-4ec7-b901-a8190db47feb",
         "Name": "ChunksCreator",
         "Enabled": true,
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "ChunksCreator",
-            "__guid": "46f4739a-e979-4019-8506-e07f0ae71f3c",
+            "__type": "VoxelWorld.Worlds.Creation.ChunksCreator",
+            "__guid": "36fbcffc-48fe-425a-9f16-feb5261cc110",
             "BreakFromPrefab": true,
             "ChunkPrefab": {
               "_type": "gameobject",
@@ -62,84 +62,84 @@
             },
             "ChunksParent": {
               "_type": "gameobject",
-              "go": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa"
+              "go": "725c9777-56fe-4e14-95df-1c5a20af76f1"
             },
             "EntitiesLoader": {
               "_type": "component",
-              "component_id": "9e22235b-56df-4e1d-8d46-a05d3b9854e8",
-              "go": "1117d0be-87a3-4161-9e14-d6f675bbb56f",
+              "component_id": "3820b8e7-a0b2-4553-97b6-3375d2ddbc38",
+              "go": "adf6c1e4-8062-4a33-aba3-1450039627d1",
               "component_type": "ChunkEntitiesLoader"
             },
             "LandscapeGenerator": {
               "_type": "component",
-              "component_id": "3b916e6d-ba78-4413-983e-787a81e6d4f1",
-              "go": "d00cb542-6a67-423b-a241-24c33c388b04",
+              "component_id": "012b0e0c-0aa5-4fd0-9f99-3fa633c030a3",
+              "go": "b7d4294a-5e25-4f1a-b02f-25dd5dfbe67a",
               "component_type": "ChunkLandscapeGenerator"
             },
             "Loader": {
               "_type": "component",
-              "component_id": "0b801d63-d59f-41c6-990b-7e89ff5b7fea",
-              "go": "098fef58-b283-4632-a256-97967ccbba44",
+              "component_id": "b8082d35-f7af-4615-95df-214ea271504f",
+              "go": "4a8e5e17-744b-4993-8c92-a3cc6206e902",
               "component_type": "ChunkLoader"
             },
             "ModelAwaiter": {
               "_type": "component",
-              "component_id": "6bc8f1b4-e6cd-471d-b2ed-f8da4555cbee",
-              "go": "4301fffd-ebf6-42c6-96b4-e71f8f19d6af",
+              "component_id": "a02aa94f-58fb-41d8-bee1-da85d408ce28",
+              "go": "09e238b1-956e-4ed2-af0c-5d94d109931e",
               "component_type": "ChunkModelAwaiter"
             },
             "TreeGenerator": {
               "_type": "component",
-              "component_id": "b22a5d8b-32d2-41f9-aa44-0d5ad69827a7",
-              "go": "38e3f01d-196c-46a6-808b-706c6b0fc5dd",
+              "component_id": "cedf6b1e-d7cc-4036-909d-1efea0031bc5",
+              "go": "c8f7dee3-41ab-424e-a310-f8813155b11a",
               "component_type": "ChunkTreeGenerator"
             },
             "World": {
               "_type": "component",
-              "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
-              "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+              "component_id": "d271fb65-b97f-432e-a82e-9426e2f52410",
+              "go": "c3fb6ce3-c224-430b-b89b-5cf5a7ae5d76",
               "component_type": "World"
             }
           }
         ],
         "Children": [
           {
-            "__guid": "098fef58-b283-4632-a256-97967ccbba44",
+            "__guid": "4a8e5e17-744b-4993-8c92-a3cc6206e902",
             "Name": "Loader",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ChunkLoader",
-                "__guid": "0b801d63-d59f-41c6-990b-7e89ff5b7fea",
+                "__type": "VoxelWorld.Worlds.Creation.ChunkLoader",
+                "__guid": "b8082d35-f7af-4615-95df-214ea271504f",
                 "World": {
                   "_type": "component",
-                  "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
-                  "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+                  "component_id": "d271fb65-b97f-432e-a82e-9426e2f52410",
+                  "go": "c3fb6ce3-c224-430b-b89b-5cf5a7ae5d76",
                   "component_type": "World"
                 }
               }
             ]
           },
           {
-            "__guid": "d00cb542-6a67-423b-a241-24c33c388b04",
+            "__guid": "b7d4294a-5e25-4f1a-b02f-25dd5dfbe67a",
             "Name": "Landscape",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ChunkLandscapeGenerator",
-                "__guid": "3b916e6d-ba78-4413-983e-787a81e6d4f1",
+                "__type": "VoxelWorld.Worlds.Creation.ChunkLandscapeGenerator",
+                "__guid": "012b0e0c-0aa5-4fd0-9f99-3fa633c030a3",
                 "Generator": {
                   "_type": "component",
-                  "component_id": "31a5c2ff-9c1c-4820-8034-5feb096f0220",
-                  "go": "d00cb542-6a67-423b-a241-24c33c388b04",
+                  "component_id": "6ba3e636-5c11-4bee-a8a3-77b28471603f",
+                  "go": "b7d4294a-5e25-4f1a-b02f-25dd5dfbe67a",
                   "component_type": "WorldGenerator"
                 }
               },
               {
-                "__type": "WorldGenerator",
-                "__guid": "31a5c2ff-9c1c-4820-8034-5feb096f0220",
+                "__type": "VoxelWorld.Worlds.Generation.WorldGenerator",
+                "__guid": "6ba3e636-5c11-4bee-a8a3-77b28471603f",
                 "AdditiveDensityFromHeightCurve": {
                   "rangey": "-1,1",
                   "frames": [
@@ -199,56 +199,56 @@
             ]
           },
           {
-            "__guid": "38e3f01d-196c-46a6-808b-706c6b0fc5dd",
+            "__guid": "c8f7dee3-41ab-424e-a310-f8813155b11a",
             "Name": "TreeGenerator",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ChunkTreeGenerator",
-                "__guid": "b22a5d8b-32d2-41f9-aa44-0d5ad69827a7",
+                "__type": "VoxelWorld.Worlds.Creation.ChunkTreeGenerator",
+                "__guid": "cedf6b1e-d7cc-4036-909d-1efea0031bc5",
                 "Generator": {
                   "_type": "component",
-                  "component_id": "31a5c2ff-9c1c-4820-8034-5feb096f0220",
-                  "go": "d00cb542-6a67-423b-a241-24c33c388b04",
+                  "component_id": "6ba3e636-5c11-4bee-a8a3-77b28471603f",
+                  "go": "b7d4294a-5e25-4f1a-b02f-25dd5dfbe67a",
                   "component_type": "WorldGenerator"
                 },
                 "World": {
                   "_type": "component",
-                  "component_id": "e911e5df-985f-4b18-9924-3fd172f11ce3",
-                  "go": "7f7850df-27fa-4c5e-a0f6-e20443347eae",
+                  "component_id": "d271fb65-b97f-432e-a82e-9426e2f52410",
+                  "go": "c3fb6ce3-c224-430b-b89b-5cf5a7ae5d76",
                   "component_type": "World"
                 }
               }
             ]
           },
           {
-            "__guid": "4301fffd-ebf6-42c6-96b4-e71f8f19d6af",
+            "__guid": "09e238b1-956e-4ed2-af0c-5d94d109931e",
             "Name": "ModelAwaiter",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ChunkModelAwaiter",
-                "__guid": "6bc8f1b4-e6cd-471d-b2ed-f8da4555cbee"
+                "__type": "VoxelWorld.Worlds.Creation.ChunkModelAwaiter",
+                "__guid": "a02aa94f-58fb-41d8-bee1-da85d408ce28"
               }
             ]
           },
           {
-            "__guid": "1117d0be-87a3-4161-9e14-d6f675bbb56f",
+            "__guid": "adf6c1e4-8062-4a33-aba3-1450039627d1",
             "Name": "EntitiesLoader",
             "Enabled": true,
             "NetworkMode": 2,
             "Components": [
               {
-                "__type": "ChunkEntitiesLoader",
-                "__guid": "9e22235b-56df-4e1d-8d46-a05d3b9854e8",
+                "__type": "VoxelWorld.Worlds.Creation.ChunkEntitiesLoader",
+                "__guid": "3820b8e7-a0b2-4553-97b6-3375d2ddbc38",
                 "BreakFromPrefab": true
               }
             ]
           },
           {
-            "__guid": "99aa4442-8f64-4eb8-8fb0-e9fc6a351b0d",
+            "__guid": "075579d6-ecdd-41d1-9ebb-5501a11b5c9f",
             "Name": "CreatingChunks",
             "Enabled": true,
             "NetworkMode": 2
@@ -256,7 +256,7 @@
         ]
       },
       {
-        "__guid": "6ccfc71b-d782-43eb-8ec8-f23f4b20fa94",
+        "__guid": "4c2336d5-ce54-4019-9f26-d8f648871e21",
         "Name": "Sun",
         "Rotation": "-0.1464466,0.3535534,0.3535534,0.8535534",
         "Tags": "light_directional,light",
@@ -264,8 +264,8 @@
         "NetworkMode": 2,
         "Components": [
           {
-            "__type": "DirectionalLight",
-            "__guid": "0894f2bc-2ec1-47e4-8e9f-6d37831fae68",
+            "__type": "Sandbox.DirectionalLight",
+            "__guid": "e31f9c22-0872-4b99-93b9-59c21d95baed",
             "FogMode": "Enabled",
             "FogStrength": 1,
             "LightColor": "0.91373,0.98039,1,1",
@@ -275,7 +275,7 @@
         ]
       },
       {
-        "__guid": "27e4d572-63da-43a7-b5e8-c5c1f6e4a0fa",
+        "__guid": "725c9777-56fe-4e14-95df-1c5a20af76f1",
         "Name": "Chunks",
         "Enabled": true,
         "NetworkMode": 2
