@@ -28,13 +28,17 @@ public class PlayerController : Component
     [Property] protected float AirFriction { get; set; } = 0.1f;
     [Property] protected float StopSpeed { get; set; } = 140f;
     [Property] protected float AirWishVelocityClamp { get; set; } = 50f;
+    [Property] protected float DoublePressTimeThreshold { get; set; } = 0.5f;
 
     public bool IsCrouchingRequested { get; protected set; } = false;
-    public bool IsCrouching { get; protected set; } = false;
+    public bool IsRunningRequested { get; protected set; } = false;
+    public PlayerMoveType MoveType { get; protected set; } = PlayerMoveType.Standing;
+    protected TimeSince TimeSinceFirstForwardPressed { get; set; } = float.MaxValue;
 
     public virtual Vector3 Gravity => CharacterController.Gravity;
     public Vector3 GravityNormal => CharacterController.GravityNormal;
 
+    public Vector3 WishDirection { get; protected set; }
     public Vector3 WishVelocity { get; protected set; }
 
     protected override void OnAwake()
@@ -44,11 +48,36 @@ public class PlayerController : Component
 
     protected override void OnUpdate()
     {
-        IsCrouchingRequested = GameInput.IsCrouching;
-        bool isFullyStanding = CharacterController.Height >= ColliderDefaultHeight || CharacterController.Height.AlmostEqual(ColliderDefaultHeight);
-        IsCrouching = IsCrouchingRequested || !isFullyStanding;
-        WishVelocity = CalculateWishVelocity();
+        WishDirection = CalculateWishDirection();
+        UpdateMoveType();
+        WishVelocity = WishDirection * GetWishSpeed();
+
         UpdateEyePosition();
+    }
+
+    protected virtual void UpdateMoveType()
+    {
+        IsCrouchingRequested = GameInput.IsCrouching;
+        IsRunningRequested = GameInput.IsRunning ||
+            (GameInput.IsForwardPressed && TimeSinceFirstForwardPressed <= DoublePressTimeThreshold);
+
+        bool isFullyStanding = CharacterController.Height >= ColliderDefaultHeight || CharacterController.Height.AlmostEqual(ColliderDefaultHeight);
+
+        var upDirection = CharacterController.Transform.Rotation.Up;
+        var lookingHorizontalDirection = Eye.Transform.Rotation.Forward.ProjectOnPlane(upDirection);
+        var isMoovingForward = lookingHorizontalDirection.AlmostEqual(0f) || WishDirection.ProjectOnPlane(upDirection).Angle(lookingHorizontalDirection) < 90f;
+
+        if(WishDirection.AlmostEqual(0f))
+            MoveType = PlayerMoveType.Standing;
+        else if(IsCrouchingRequested || !isFullyStanding)
+            MoveType = PlayerMoveType.Crouching;
+        else if((IsRunningRequested || MoveType == PlayerMoveType.Running) && isMoovingForward)
+            MoveType = PlayerMoveType.Running;
+        else
+            MoveType = PlayerMoveType.Walking;
+
+        if(GameInput.IsForwardPressed)
+            TimeSinceFirstForwardPressed = 0f;
     }
 
     protected override void OnFixedUpdate()
@@ -183,24 +212,20 @@ public class PlayerController : Component
         CharacterController.Punch(-GravityNormal * JumpVelocity);
     }
 
-    protected virtual float GetWishSpeed(Vector3 input)
+    protected virtual float GetWishSpeed() => MoveType switch
     {
-        if(IsCrouching)
-            return CrouchSpeed;
+        PlayerMoveType.Standing => 0f,
+        PlayerMoveType.Crouching => CrouchSpeed,
+        PlayerMoveType.Walking => WalkSpeed,
+        PlayerMoveType.Running => RunSpeed,
+        _ => throw new NotSupportedException($"Invalid {nameof(PlayerMoveType)} ({MoveType})")
+    };
 
-        bool goingForward = input.x > 0;
-        if(goingForward && GameInput.IsRunning)
-            return RunSpeed;
-
-        return WalkSpeed;
-    }
-
-    protected virtual Vector3 CalculateWishVelocity()
+    protected virtual Vector3 CalculateWishDirection()
     {
         var input = Input.AnalogMove.WithZ(0);
         Vector3 result = input * Eye.Transform.Rotation;
         result = result.ProjectOnPlane(GravityNormal).Normal;
-        result *= GetWishSpeed(input);
         return result;
     }
 }

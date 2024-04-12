@@ -35,7 +35,7 @@ public class FakeFootStepSoundPlayer : Component
         if(CharacterController.IsOnGround && !WasOnGround ||
             DistanceTravelled > DistanceBetweenSteps)
         {
-            if(!PlayerController.IsCrouching)
+            if(PlayerController.MoveType != PlayerMoveType.Crouching)
                 PlaySound();
             DistanceTravelled = 0;
         }

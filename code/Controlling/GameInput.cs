@@ -6,6 +6,7 @@ public static class GameInput
 {
     public static Vector2 LookDelta => Input.MouseDelta * Preferences.Sensitivity;
 
+    public static bool IsForwardPressed => Input.Pressed("Forward");
     public static bool IsCrouching => Input.Down("Crouch");
     public static bool IsRunning => Input.Down("Run_");
     public static bool IsJumpPressed => Input.Pressed("Jump");

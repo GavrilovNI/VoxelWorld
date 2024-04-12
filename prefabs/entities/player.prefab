@@ -91,6 +91,7 @@
         "ColliderCrouchingHeight": 56,
         "ColliderDefaultHeight": 71,
         "CrouchSpeed": 70,
+        "DoublePressTimeThreshold": 0.5,
         "Eye": {
           "_type": "gameobject",
           "go": "607b7cec-3bcf-4d23-bc8a-ca6d00e71f40"
