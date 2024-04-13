@@ -31,7 +31,7 @@ public sealed class BaseModBlocks : ModRegisterables<Block>
     public SimpleBlock Stone { get; } = new(MakeId("stone"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("stone")}.png"));
     public SlabBlock StoneSlab { get; } = new(MakeId("stone_slab"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("stone")}.png"));
     public SimpleBlock Dirt { get; } = new(MakeId("dirt"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("dirt")}.png"));
-    public SimpleBlock Grass { get; } = new(MakeId("grass"),
+    public GrassBlock Grass { get; } = new(MakeId("grass"),
         BlockTexturesLoader.Pillar.WithTexture(Direction.Down, $"{GetBlockPathPart("dirt")}.png").LoadTextureUvs(TextureMap, GetBlockPathPart("grass")));
     public SimpleBlock Cobblestone { get; } = new(MakeId("cobblestone"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("cobblestone")}.png"));
     public GlassBlock Glass { get; } = new(MakeId("glass"), TextureMap.GetOrLoadTexture($"{GetBlockPathPart("glass")}.png"));
