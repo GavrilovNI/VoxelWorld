@@ -22,7 +22,6 @@ public abstract class TwoPartBlock : Block
     public IReadOnlyDictionary<Direction, IUvProvider> FirstUvProviders { get; private set; }
     public IReadOnlyDictionary<Direction, IUvProvider> SecondUvProviders { get; private set; }
 
-    [SetsRequiredMembers]
     public TwoPartBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> firstUvProviders,
         IReadOnlyDictionary<Direction, IUvProvider> secondUvProviders) : base(id)
     {
@@ -30,7 +29,6 @@ public abstract class TwoPartBlock : Block
         SecondUvProviders = secondUvProviders;
     }
 
-    [SetsRequiredMembers]
     public TwoPartBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : this(id, uvProviders, uvProviders)
     {
     }

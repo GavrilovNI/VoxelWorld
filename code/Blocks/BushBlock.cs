@@ -15,7 +15,6 @@ public class BushBlock : Block
 {
     public IUvProvider UvProvider { get; }
 
-    [SetsRequiredMembers]
     public BushBlock(in ModedId id, IUvProvider uvProvider) : base(id)
     {
         UvProvider = uvProvider;

@@ -27,13 +27,11 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
     public string OpenSound { get; init; } = "sounds/voxelworld/blocks/door_open.sound";
     public string CloseSound { get; init; } = "sounds/voxelworld/blocks/door_close.sound";
 
-    [SetsRequiredMembers]
     public DoorBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> bottomUvProviders,
         IReadOnlyDictionary<Direction, IUvProvider> topUvProviders) : base(id, bottomUvProviders, topUvProviders)
     {
     }
 
-    [SetsRequiredMembers]
     public DoorBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }

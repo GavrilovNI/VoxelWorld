@@ -22,13 +22,11 @@ public class SlabBlock : SimpleBlock
 {
     public static readonly BlockProperty<SlabType> SlabTypeProperty = new((Id)"type");
 
-    [SetsRequiredMembers]
     public SlabBlock(in ModedId id, IUvProvider fullBlockUvProvider) :
         base(id, fullBlockUvProvider)
     {
     }
 
-    [SetsRequiredMembers]
     public SlabBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> fullBlockUvProviders) :
         base(id, fullBlockUvProviders)
     {

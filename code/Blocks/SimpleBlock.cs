@@ -15,7 +15,6 @@ public class SimpleBlock : Block
     public IReadOnlyDictionary<Direction, IUvProvider> UvProviders { get; private set; }
 
 
-    [SetsRequiredMembers]
     public SimpleBlock(in ModedId id, IUvProvider uvProvider) : base(id)
     {
         UvProviders = new Dictionary<Direction, IUvProvider>()
@@ -29,7 +28,6 @@ public class SimpleBlock : Block
         };
     }
 
-    [SetsRequiredMembers]
     public SimpleBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id)
     {
         UvProviders = uvProviders;

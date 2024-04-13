@@ -11,7 +11,6 @@ namespace VoxelWorld.Blocks;
 
 public class GlassBlock : SimpleBlock
 {
-    [SetsRequiredMembers]
     public GlassBlock(in ModedId id, IUvProvider uvProvider) : base(id, uvProvider)
     {
         Properties = BlockProperties.Default with
@@ -20,7 +19,6 @@ public class GlassBlock : SimpleBlock
         };
     }
 
-    [SetsRequiredMembers]
     public GlassBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
         Properties = BlockProperties.Default with

@@ -22,9 +22,8 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public ModedId Id { get; }
     public readonly BlockState DefaultBlockState;
     public readonly BlockStateSet BlockStateSet;
-    public required BlockProperties Properties { get; init; }
+    public BlockProperties Properties { get; init; }
 
-    [SetsRequiredMembers]
     public Block(in ModedId id, in BlockProperties properties)
     {
         Id = id;
@@ -33,7 +32,6 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
         Properties = properties;
     }
 
-    [SetsRequiredMembers]
     public Block(in ModedId id) : this(id, BlockProperties.Default)
     {
     }

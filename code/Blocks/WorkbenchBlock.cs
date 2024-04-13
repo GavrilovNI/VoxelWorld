@@ -15,12 +15,10 @@ namespace VoxelWorld.Blocks;
 
 public class WorkbenchBlock : SimpleBlock
 {
-    [SetsRequiredMembers]
     public WorkbenchBlock(in ModedId id, IUvProvider uvProvider) : base(id, uvProvider)
     {
     }
 
-    [SetsRequiredMembers]
     public WorkbenchBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }

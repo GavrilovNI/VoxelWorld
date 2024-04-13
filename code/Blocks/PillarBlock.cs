@@ -17,7 +17,6 @@ public class PillarBlock : SimpleBlock
 {
     public static readonly BlockProperty<Axis> AxisProperty = new((Id)"axis");
 
-    [SetsRequiredMembers]
     public PillarBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }

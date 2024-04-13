@@ -17,12 +17,10 @@ public class GrassBlock : SimpleBlock
     public BBoxInt SpreadingRange { get; init; } = new BBoxInt(-Vector3IntB.One, Vector3IntB.One);
     public int SpreadingSpeed { get; init; } = 3;
 
-    [SetsRequiredMembers]
     public GrassBlock(in ModedId id, IUvProvider uvProvider) : base(id, uvProvider)
     {
     }
 
-    [SetsRequiredMembers]
     public GrassBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }

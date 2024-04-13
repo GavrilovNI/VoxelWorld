@@ -16,12 +16,10 @@ namespace VoxelWorld.Blocks;
 
 public abstract class ItemStorageBlock : SimpleBlock, IEntityBlock
 {
-    [SetsRequiredMembers]
     public ItemStorageBlock(in ModedId id, IUvProvider uvProvider) : base(id, uvProvider)
     {
     }
 
-    [SetsRequiredMembers]
     public ItemStorageBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }

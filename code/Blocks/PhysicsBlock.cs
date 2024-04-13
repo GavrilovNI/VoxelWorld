@@ -15,12 +15,10 @@ namespace VoxelWorld.Blocks;
 public class PhysicsBlock : SimpleBlock
 {
 
-    [SetsRequiredMembers]
     public PhysicsBlock(in ModedId id, IUvProvider uvProvider) : base(id, uvProvider)
     {
     }
 
-    [SetsRequiredMembers]
     public PhysicsBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }

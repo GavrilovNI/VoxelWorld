@@ -20,7 +20,6 @@ public class HorizontalDirectionalBlock : SimpleBlock, IOneAxisRotatableBlock, I
 {
     public static readonly FilteredBlockProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
 
-    [SetsRequiredMembers]
     public HorizontalDirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }
