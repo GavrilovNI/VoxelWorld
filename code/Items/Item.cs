@@ -2,14 +2,12 @@
 using VoxelWorld.Interactions;
 using VoxelWorld.Inventories;
 using VoxelWorld.IO.NamedBinaryTags;
-using VoxelWorld.Meshing;
 using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace VoxelWorld.Items;
 

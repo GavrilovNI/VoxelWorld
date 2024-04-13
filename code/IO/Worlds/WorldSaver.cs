@@ -1,6 +1,5 @@
 ﻿using Sandbox;
 using VoxelWorld.Data;
-using VoxelWorld.Entities;
 using VoxelWorld.IO.Helpers;
 using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.Worlds;
@@ -9,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Sandbox.Utility;
 
 namespace VoxelWorld.IO.Worlds;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VoxelWorld.Data;
+﻿namespace VoxelWorld.Data;
 
 public interface IOneOf
 {

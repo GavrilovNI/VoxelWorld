@@ -1,5 +1,4 @@
-﻿using Sandbox;
-using VoxelWorld.Registries;
+﻿using VoxelWorld.Registries;
 
 namespace VoxelWorld.Entities.Types;
 

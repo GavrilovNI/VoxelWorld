@@ -1,5 +1,4 @@
-﻿using Sandbox;
-using VoxelWorld.IO.NamedBinaryTags.Values;
+﻿using VoxelWorld.IO.NamedBinaryTags.Values;
 using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
 using System.Collections;

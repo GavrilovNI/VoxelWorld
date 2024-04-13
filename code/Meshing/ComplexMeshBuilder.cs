@@ -1,6 +1,4 @@
 ﻿using Sandbox;
-using VoxelWorld.Mth;
-using VoxelWorld.Mth.Enums;
 using System.Collections.Generic;
 
 namespace VoxelWorld.Meshing;

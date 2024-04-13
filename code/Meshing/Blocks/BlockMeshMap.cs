@@ -1,5 +1,4 @@
-﻿using System;
-using VoxelWorld.Blocks.States;
+﻿using VoxelWorld.Blocks.States;
 using System.Collections.Generic;
 
 namespace VoxelWorld.Meshing.Blocks;

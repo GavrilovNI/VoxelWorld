@@ -20,7 +20,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static VoxelWorld.Worlds.Creation.ChunksCreator;
-using VoxelWorld.Players;
 
 namespace VoxelWorld.Worlds;
 

@@ -4,11 +4,8 @@ using VoxelWorld.Interactions;
 using VoxelWorld.Inventories;
 using VoxelWorld.Items;
 using VoxelWorld.Worlds;
-using System.Linq;
 using System.Threading.Tasks;
 using VoxelWorld.Mth;
-using VoxelWorld.Blocks.States;
-using VoxelWorld.Rendering;
 
 namespace VoxelWorld.Players;
 

@@ -2,7 +2,6 @@
 using VoxelWorld.Mth;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace VoxelWorld.Texturing;
 

@@ -7,7 +7,6 @@ using VoxelWorld.Mth.Enums;
 using VoxelWorld.Registries;
 using VoxelWorld.Texturing;
 using VoxelWorld.Worlds;
-using System.Diagnostics.CodeAnalysis;
 
 namespace VoxelWorld.Blocks;
 

@@ -1,6 +1,5 @@
 ﻿using Editor;
 using Sandbox;
-using VoxelWorld.Mth;
 
 namespace VoxelWorld.Editor;
 

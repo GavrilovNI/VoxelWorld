@@ -5,7 +5,6 @@ using VoxelWorld.Mth.Enums;
 using VoxelWorld.Registries;
 using VoxelWorld.Texturing;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace VoxelWorld.Blocks;
 

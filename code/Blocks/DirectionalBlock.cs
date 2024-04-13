@@ -7,7 +7,6 @@ using VoxelWorld.Blocks.States.Properties;
 using VoxelWorld.Interactions;
 using System.Collections.Generic;
 using VoxelWorld.Registries;
-using System.Diagnostics.CodeAnalysis;
 using VoxelWorld.Texturing;
 using System.Linq;
 using VoxelWorld.Blocks.Interfaces;

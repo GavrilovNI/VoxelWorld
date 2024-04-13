@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VoxelWorld.Mth;
-using VoxelWorld.Inventories;
 
 namespace VoxelWorld.Registries;
 

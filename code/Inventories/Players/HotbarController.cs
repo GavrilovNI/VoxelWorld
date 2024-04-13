@@ -2,7 +2,6 @@
 using VoxelWorld.Controlling;
 using VoxelWorld.Entities;
 using VoxelWorld.Interactions;
-using VoxelWorld.Items;
 using VoxelWorld.Menus;
 
 namespace VoxelWorld.Inventories.Players;

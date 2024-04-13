@@ -1,6 +1,5 @@
 ﻿using Sandbox;
 using System.Collections.Generic;
-using VoxelWorld.Blocks.Entities;
 using VoxelWorld.Entities;
 using VoxelWorld.Inventories;
 using VoxelWorld.Inventories.Players;

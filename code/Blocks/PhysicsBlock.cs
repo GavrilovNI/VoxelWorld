@@ -1,4 +1,5 @@
-﻿using VoxelWorld.Blocks.States;
+﻿using System.Collections.Generic;
+using VoxelWorld.Blocks.States;
 using VoxelWorld.Entities;
 using VoxelWorld.Interactions;
 using VoxelWorld.Mods.Base;
@@ -7,8 +8,6 @@ using VoxelWorld.Mth.Enums;
 using VoxelWorld.Registries;
 using VoxelWorld.Texturing;
 using VoxelWorld.Worlds;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace VoxelWorld.Blocks;
 

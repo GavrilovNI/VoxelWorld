@@ -1,5 +1,4 @@
 ﻿using System;
-using VoxelWorld.Registries;
 
 namespace VoxelWorld.Crafting.Recipes.Exceptions;
 

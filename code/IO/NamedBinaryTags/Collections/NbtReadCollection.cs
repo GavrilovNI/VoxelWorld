@@ -1,7 +1,6 @@
 ﻿using VoxelWorld.IO.NamedBinaryTags.Values;
 using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 using System;
-using VoxelWorld.Mth;
 
 namespace VoxelWorld.IO.NamedBinaryTags.Collections;
 

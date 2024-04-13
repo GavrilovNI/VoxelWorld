@@ -1,6 +1,5 @@
 ﻿using Sandbox;
 using VoxelWorld.Interactions;
-using VoxelWorld.IO;
 using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.IO.NamedBinaryTags.Collections;
 using VoxelWorld.Items;

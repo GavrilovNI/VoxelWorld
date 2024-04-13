@@ -1,7 +1,6 @@
 ﻿using Sandbox;
 using VoxelWorld.Items;
 using VoxelWorld.Meshing;
-using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 
 namespace VoxelWorld.Mods.Base.Items;

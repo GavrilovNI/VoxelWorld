@@ -20,7 +20,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VoxelWorld.Crafting.Recipes;
-using System.Numerics;
 
 namespace VoxelWorld;
 

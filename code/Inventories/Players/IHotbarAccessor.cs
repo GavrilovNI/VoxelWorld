@@ -1,6 +1,4 @@
-﻿using VoxelWorld.Items;
-
-namespace VoxelWorld.Inventories.Players;
+﻿namespace VoxelWorld.Inventories.Players;
 
 public interface IHotbarAccessor
 {

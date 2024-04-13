@@ -2,7 +2,6 @@
 using VoxelWorld.Blocks.States.Properties;
 using VoxelWorld.Blocks.States.Properties.Enums;
 using VoxelWorld.Interactions;
-using VoxelWorld.Mth;
 using VoxelWorld.Mth.Enums;
 using VoxelWorld.Registries;
 using VoxelWorld.Texturing;
@@ -10,7 +9,6 @@ using VoxelWorld.Worlds;
 using VoxelWorld.Meshing;
 using VoxelWorld.Meshing.Blocks;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace VoxelWorld.Blocks;

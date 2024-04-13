@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using VoxelWorld.Entities;
 
 namespace VoxelWorld.Menus;
 

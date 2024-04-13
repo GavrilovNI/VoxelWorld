@@ -9,7 +9,6 @@ using VoxelWorld.Registries;
 using VoxelWorld.Texturing;
 using VoxelWorld.Worlds;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace VoxelWorld.Blocks;
