@@ -52,14 +52,15 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
         }
     }
 
+    // can include max
     [JsonIgnore]
-    public readonly Vector3IntB RandomPointIntInside
+    public readonly Vector3IntB RandomIntPointInside
     {
         get
         {
-            var x = Game.Random.Float(Mins.x, Maxs.x).RoundToInt();
-            var y = Game.Random.Float(Mins.y, Maxs.y).RoundToInt();
-            var z = Game.Random.Float(Mins.z, Maxs.z).RoundToInt();
+            var x = Game.Random.Int(Mins.x, Maxs.x);
+            var y = Game.Random.Int(Mins.y, Maxs.y);
+            var z = Game.Random.Int(Mins.z, Maxs.z);
             return new(x, y, z);
         }
     }
