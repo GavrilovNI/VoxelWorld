@@ -135,6 +135,16 @@ public struct BBoxInt : IEquatable<BBoxInt>, INbtWritable, INbtStaticReadable<BB
     public static implicit operator BBox(in BBoxInt bbox) => new(bbox.Mins, bbox.Maxs);
 
 
+    // includes maxs
+    public readonly Vector3 GetRandomPointInside(Random random) =>
+        new(random.Float(Mins.x, Maxs.x), random.Float(Mins.y, Maxs.y), random.Float(Mins.z, Maxs.z));
+
+    public readonly Vector3IntB GetRandomIntPointInside(Random random, bool includeMaxs = true)
+    {
+        var maxs = includeMaxs ? Maxs + 1 : Maxs;
+        return new(random.Next(Mins.x, maxs.x), random.Next(Mins.y, maxs.y), random.Next(Mins.z, maxs.z));
+    }
+
     public readonly IEnumerable<Vector3IntB> GetPositions(bool includeMaxs = true) => GetPositions(true, includeMaxs);
 
     public readonly IEnumerable<Vector3IntB> GetPositions(bool includeMins, bool includeMaxs)
