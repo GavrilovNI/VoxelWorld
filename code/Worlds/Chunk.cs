@@ -213,6 +213,26 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         TickBlockEntities();
     }
 
+    public virtual void TickRandom(int blocksCount)
+    {
+        if(blocksCount <= 0)
+            return;
+
+        for(int i = 0; i < blocksCount; ++i)
+        {
+            Vector3IntB localBlockPosition = GetRandomLocalBlockPosition();
+            var blockState = GetBlockState(localBlockPosition);
+            blockState.Block.TickRandom(World, World.GetBlockWorldPosition(Position, localBlockPosition), blockState);
+        }
+    }
+
+    protected virtual Vector3IntB GetRandomLocalBlockPosition()
+    {
+        byte[] bytes = new byte[3];
+        World.Random.NextBytes(bytes);
+        return new Vector3IntB(bytes[0], bytes[1], bytes[2]) % Size;
+    }
+
     // Call only im main thread
     protected virtual void TickBlockEntities()
     {

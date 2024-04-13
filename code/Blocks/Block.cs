@@ -74,6 +74,8 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
             Break(context.World, context.ThisPosition, context.ThisBlockState);
     }
 
+    public virtual void TickRandom(IWorldAccessor world, Vector3IntB position, BlockState blockState) { }
+
 
     // Thread safe
     public abstract ISidedMeshPart<ComplexVertex> CreateVisualMesh(BlockState blockState);

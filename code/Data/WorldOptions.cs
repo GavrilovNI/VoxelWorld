@@ -10,6 +10,7 @@ public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<Wo
     public required Vector3IntB ChunkSize { get; init; }
     public required Vector3IntB RegionSize { get; init; }
     public int Seed { get; init; } = 0;
+    public float RandomTickSpeed { get; init; } = DefaultValues.RandomTickSpeed;
 
     public WorldOptions()
     {
@@ -21,6 +22,7 @@ public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<Wo
         tag.Set("chunk_size", ChunkSize);
         tag.Set("region_size", RegionSize);
         tag.Set("seed", Seed);
+        tag.Set("random_tick_speed", RandomTickSpeed);
         return tag;
     }
 
@@ -33,6 +35,7 @@ public readonly record struct WorldOptions : INbtWritable, INbtStaticReadable<Wo
             ChunkSize = compoundTag.Get<Vector3Int>("chunk_size", DefaultValues.ChunkSize),
             RegionSize = compoundTag.Get<Vector3Int>("region_size", DefaultValues.RegionSize),
             Seed = compoundTag.Get<int>("seed"),
+            RandomTickSpeed = compoundTag.Get<float>("random_tick_speed", DefaultValues.RandomTickSpeed),
         };
     }
 }

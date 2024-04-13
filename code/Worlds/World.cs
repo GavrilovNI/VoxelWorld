@@ -46,6 +46,8 @@ public class World : Component, IWorldAccessor, ITickable
     public BaseFileSystem? WorldFileSystem { get; private set; }
     public Vector3IntB ChunkSize => WorldOptions.ChunkSize;
 
+    public Random Random { get; protected set; } = new ThreadSafeRandom();
+
 
     private bool IsSceneRunning => !Scene.IsEditor;
     
@@ -180,6 +182,10 @@ public class World : Component, IWorldAccessor, ITickable
     {
         foreach(var chunk in Chunks)
             chunk.Tick();
+
+        var randomTickBlocksCountPerChunk = (ChunkSize.x * ChunkSize.y * ChunkSize.z * WorldOptions.RandomTickSpeed).FloorToInt();
+        foreach(var chunk in Chunks)
+            chunk.TickRandom(randomTickBlocksCountPerChunk);
     }
 
     public async Task AddEntity(Entity entity)
