@@ -13,6 +13,7 @@ public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor
     GameObject GameObject { get; }
     Random Random { get; }
 
+    bool IsLoadedAt(Vector3IntB blockPosition);
     Task CreateChunk(Vector3IntB chunkPosition, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing);
     Task CreateChunksSimultaneously(IEnumerable<Vector3IntB> chunkPositions, ChunkCreationStatus creationStatus = ChunkCreationStatus.Finishing);
     Task AddEntity(Entity entity);

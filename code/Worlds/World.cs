@@ -252,6 +252,8 @@ public class World : Component, IWorldAccessor, ITickable
     // Thread safe
     public virtual bool IsChunkInLimits(Vector3IntB chunkPosition) => LimitsInChunks.Contains(chunkPosition);
 
+    public virtual bool IsLoadedAt(Vector3IntB blockPosition) => HasChunk(GetChunkPosition(blockPosition));
+
     // Thread safe
     public virtual bool HasChunk(Vector3IntB chunkPosition)
     {
