@@ -73,6 +73,8 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Chunk)} {this} was already initialized or enabled");
         ArgumentNullException.ThrowIfNull(world);
+        if(size.IsAnyAxis(x => x <= 0 || x > byte.MaxValue))
+            throw new ArgumentOutOfRangeException(nameof(size), size, $"Every axis {this} should be in range [1, {byte.MaxValue}]");
 
         Initialized = true;
 
@@ -80,6 +82,11 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Size = size;
         World = world;
         Blocks = new(world, World.GetBlockWorldPosition(position, Vector3IntB.Zero), size);
+    }
+
+    protected override void OnValidate()
+    {
+        Size = Size.WithAxes(x => Math.Clamp(x, 1, byte.MaxValue));
     }
 
     public bool AddEntity(Entity entity)
