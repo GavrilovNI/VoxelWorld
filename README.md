@@ -1,6 +1,7 @@
 # Voxel World
-Voxel World is a 3d game of sandbox and survival genre.
-[Game page](https://asset.party/sandcube/voxelworld).
+Voxel World is a 3d game of sandbox and survival genre. [Game page](https://asset.party/sandcube/voxelworld).
+<br/><br/>
+![78a62a1d-ea97-4e1c-a420-65ef4b6279de](https://github.com/GavrilovNI/VoxelWorld/assets/9992453/1b690cca-410f-4af2-a489-dad01fea4fea)
 
 ## Features
 
