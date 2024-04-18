@@ -46,7 +46,7 @@ public class WorldInteractor : Component
         }
 
         bool swapInteractionOrder = Input.Down("SwapInteractionOrder");
-        _ = Interact(TraceResult, attacking, !swapInteractionOrder);
+        _ = Interact(TraceResult, attacking, swapInteractionOrder == attacking);
     }
 
     protected virtual InteractionResult SelectBlock(PhysicsTraceResult traceResult)
