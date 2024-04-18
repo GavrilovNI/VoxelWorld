@@ -58,7 +58,7 @@ public sealed class BaseModItems : ModItems
         new Model[] { ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/stick.png") },
         Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/stick.png"), true);
 
-    public Item WoodenPickaxe { get; private set; } = new Item(MakeId("wooden_pickaxe"),
+    public DiggingItem WoodenPickaxe { get; private set; } = new(MakeId("wooden_pickaxe"),
         new Model[] { ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/wooden_pickaxe.png") },
         Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_pickaxe.png"), 1, true);
 
