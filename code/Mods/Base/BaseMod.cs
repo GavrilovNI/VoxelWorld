@@ -10,6 +10,7 @@ using VoxelWorld.Mods.Base.Recipes;
 using VoxelWorld.Crafting.Recipes;
 using VoxelWorld.Items;
 using VoxelWorld.Inventories;
+using VoxelWorld.Mods.Base.Blocks.Data;
 
 namespace VoxelWorld.Mods.Base;
 
@@ -22,6 +23,7 @@ public sealed class BaseMod : Component, IMod
 
     public BaseModBlocks Blocks { get; private set; } = null!;
     public BaseModBlockEntities BlockEntities { get; private set; } = null!;
+    public BaseModBlockDataTypes BlockDataTypes { get; private set; } = null!;
     public BaseModItems Items { get; private set; } = null!;
     public BaseModEntities Entities { get; private set; } = null!;
     public BaseRecipeTypes RecipeTypes { get; private set; } = null!;
@@ -41,6 +43,7 @@ public sealed class BaseMod : Component, IMod
 
         Blocks = new();
         BlockEntities = new();
+        BlockDataTypes = new();
         Items = new();
         Entities = Components.Get<BaseModEntities>(true);
         RecipeTypes = new();
@@ -60,6 +63,7 @@ public sealed class BaseMod : Component, IMod
 
         await Blocks.Register(registries);
         await BlockEntities.Register(registries);
+        await BlockDataTypes.Register(registries);
         GameController.Instance!.RebuildBlockMeshes(registries.GetRegistry<Block>());
         await Items.Register(registries);
         await Entities.Register(registries);
