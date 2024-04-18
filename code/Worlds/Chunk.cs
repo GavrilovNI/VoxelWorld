@@ -15,10 +15,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VoxelWorld.Worlds.Data;
 
 namespace VoxelWorld.Worlds;
 
-public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITickable
+public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITickable, IAdditionalDataAccessor
 {
     public event Action<Chunk>? Destroyed = null;
     public event Action<Chunk, Entity>? EntityAdded = null;
@@ -55,6 +56,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     protected SizedBlocksCollection Blocks = null!;
     private readonly Dictionary<Guid, Entity> _entities = new();
+    private readonly BlocksAdditionalDataCollection _additionalData = new();
 
     public IEnumerable<Entity> Entities
     {
@@ -280,7 +282,13 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         Task modelUpdateTask;
         lock(Blocks)
         {
+            // TODO: should we update block if setting same blockstate?
+
             result = Blocks.PlaceBlock(localPosition, blockState, flags.HasFlag(BlockSetFlags.MarkDirty));
+
+            if(result.Changed)
+                ResetAllAdditionalData(localPosition);
+
             modelUpdateTask = GetModelUpdateTask(flags, result.Changed);
         }
         await modelUpdateTask;
@@ -425,6 +433,52 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
                 Blocks.MarkSaved(saveMarker);
                 _entitiesSaveMarker = saveMarker;
             }
+        }
+    }
+
+    public Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition, T value) where T : notnull
+    {
+        lock(_additionalData)
+        {
+            _additionalData.Set(dataType, blockPosition, value);
+
+            var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
+            dataType.OnValueChanged(World, worldPosition, value);
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition) where T : notnull
+    {
+        lock(_additionalData)
+        {
+            _additionalData.Reset(dataType, blockPosition);
+
+            var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
+            dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue);
+        }
+        return Task.CompletedTask;
+    }
+
+    protected Task ResetAllAdditionalData(Vector3Int blockPosition)
+    {
+        lock(_additionalData)
+        {
+            var notDefaultValues = _additionalData.GetNotDefaultValuesAt(blockPosition).ToList();
+            _additionalData.ClearAt(blockPosition);
+
+            var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
+            foreach(var (dataType, _) in notDefaultValues)
+                dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue);
+        }
+        return Task.CompletedTask;
+    }
+
+    public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int blockPosition) where T : notnull
+    {
+        lock(_additionalData)
+        {
+            return _additionalData.Get(dataType, blockPosition);
         }
     }
 }

@@ -5,10 +5,11 @@ using VoxelWorld.Worlds.Creation;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using VoxelWorld.Worlds.Data;
 
 namespace VoxelWorld.Worlds;
 
-public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor
+public interface IWorldAccessor : IWorldProvider, IBlockStateAccessor, IAdditionalDataAccessor
 {
     GameObject GameObject { get; }
     Random Random { get; }

@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static VoxelWorld.Worlds.Creation.ChunksCreator;
+using VoxelWorld.Worlds.Data;
 
 namespace VoxelWorld.Worlds;
 
@@ -574,6 +575,48 @@ public class World : Component, IWorldAccessor, ITickable
 
         blockPosition = GetBlockPositionInChunk(blockPosition);
         return chunk.GetBlockEntity(blockPosition);
+    }
+
+
+    public async Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition, T value) where T : notnull
+    {
+        BlocksAdditionalDataType.AssertRegestered(dataType);
+
+        if(!Limits.Contains(blockPosition))
+            return;
+
+        var chunkPosition = GetChunkPosition(blockPosition);
+        var chunk = await GetOrCreateChunk(chunkPosition);
+
+        var localBlockPosition = GetBlockPositionInChunk(blockPosition);
+        await chunk.SetAdditionalData(dataType, localBlockPosition, value);
+    }
+
+    public async Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition) where T : notnull
+    {
+        BlocksAdditionalDataType.AssertRegestered(dataType);
+
+        if(!Limits.Contains(blockPosition))
+            return;
+
+        var chunkPosition = GetChunkPosition(blockPosition);
+        var chunk = await GetOrCreateChunk(chunkPosition);
+
+        var localBlockPosition = GetBlockPositionInChunk(blockPosition);
+        await chunk.ResetAdditionalData(dataType, localBlockPosition);
+    }
+
+    public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int blockPosition) where T : notnull
+    {
+        BlocksAdditionalDataType.AssertRegestered(dataType);
+
+        var chunkPosition = GetChunkPosition(blockPosition);
+        var chunk = GetChunk(chunkPosition);
+        if(chunk is null)
+            return dataType.DefaultValue;
+
+        var localBlockPosition = GetBlockPositionInChunk(blockPosition);
+        return chunk.GetAdditionalData(dataType, localBlockPosition);
     }
 
     // Thread safe
