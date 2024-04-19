@@ -592,7 +592,7 @@ public class World : Component, IWorldAccessor, ITickable
         await chunk.SetAdditionalData(dataType, localBlockPosition, value);
     }
 
-    public async Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition) where T : notnull
+    public async Task ResetAdditionalData(BlocksAdditionalDataType dataType, Vector3IntB blockPosition)
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 

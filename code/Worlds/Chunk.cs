@@ -448,7 +448,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return Task.CompletedTask;
     }
 
-    public Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition) where T : notnull
+    public Task ResetAdditionalData(BlocksAdditionalDataType dataType, Vector3IntB blockPosition)
     {
         lock(_additionalData)
         {

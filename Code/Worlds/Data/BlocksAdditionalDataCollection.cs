@@ -22,7 +22,7 @@ public class BlocksAdditionalDataCollection
         GetOrCreateBlockData(position)[dataType] = value;
     }
 
-    public void Reset<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB position) where T : notnull
+    public void Reset(BlocksAdditionalDataType dataType, in Vector3IntB position)
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 
