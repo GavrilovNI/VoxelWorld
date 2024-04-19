@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using VoxelWorld.IO.NamedBinaryTags;
+using VoxelWorld.IO.NamedBinaryTags.Values.Unmanaged;
 using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 using VoxelWorld.Worlds;
@@ -21,4 +23,8 @@ public class BlockBreakingProgressDataType : BlocksAdditionalDataType<BlockBreak
         }
         return Task.CompletedTask;
     }
+
+    public override BinaryTag Save(BlockBreakingProgress value) => new FloatTag(value);
+
+    public override BlockBreakingProgress Load(BinaryTag tag) => tag.To<FloatTag>().Value;
 }

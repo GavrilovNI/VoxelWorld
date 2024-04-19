@@ -226,6 +226,13 @@ public class SizedBlocksCollection : ISaveStatusMarkable
             blockTag.Set("state", blockState);
             if(blockEntity is not null)
                 blockTag.Set("entity", blockEntity.Write());
+
+            CompoundTag additionalDataTags = new();
+            foreach(var (dataType, value) in AdditionalData.GetNotDefaultValuesAt(position))
+                additionalDataTags.Set(dataType.Id, dataType.SaveAsObject(value));
+
+            if(!additionalDataTags.IsDataEmpty)
+                blockTag.Set("additional_data", additionalDataTags);
         }
 
         if(!IsSaved && !keepDirty)
@@ -261,6 +268,22 @@ public class SizedBlocksCollection : ISaveStatusMarkable
             else
             {
                 RemoveBlockEntity(position);
+            }
+
+            CompoundTag additionalDataTags = blockTag.GetTag<CompoundTag>("additional_data");
+            foreach(var (dataIdStr, additionalDataTag) in additionalDataTags)
+            {
+                if(!ModedId.TryParse(dataIdStr, out var dataId) ||
+                    !BlocksAdditionalDataType.TryGet(dataId, out var dataType))
+                {
+                    Log.Warning($"Couldn't find {nameof(BlocksAdditionalDataType)} '{dataIdStr}'");
+                    continue;
+                }
+
+                var value = dataType.LoadAsObject(additionalDataTag);
+#pragma warning disable CS0618 // Type or member is obsolete
+                AdditionalData.Set(dataType, position, value);
+#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 

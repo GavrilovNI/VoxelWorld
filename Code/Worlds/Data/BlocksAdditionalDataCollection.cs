@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VoxelWorld.Mth;
 
 namespace VoxelWorld.Worlds.Data;
 
@@ -8,6 +9,20 @@ public class BlocksAdditionalDataCollection
 {
     private readonly Dictionary<Vector3IntB, Dictionary<BlocksAdditionalDataType, object>> _data = new();
 
+    [Obsolete("Try using Set<T> instead")]
+    public void Set(BlocksAdditionalDataType dataType, in Vector3IntB position, object value)
+    {
+        BlocksAdditionalDataType.AssertRegestered(dataType);
+        BlocksAdditionalDataType.AssertValueType(dataType, value);
+
+        if(dataType.DefaultValue.Equals(value))
+        {
+            Reset(dataType, position);
+            return;
+        }
+
+        GetOrCreateBlockData(position)[dataType] = value;
+    }
 
     public void Set<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB position, T value) where T : notnull
     {
