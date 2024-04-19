@@ -147,18 +147,19 @@ public class WorldInteractor : Component
 
     protected virtual async Task<InteractionResult> InteractWithItem(HandType handType, SceneTraceResult traceResult, bool attacking)
     {
-        Item? item = Player.Inventory.GetHandItem(handType).Value;
+        var stack = Player.Inventory.GetHandItem(handType);
 
         ItemActionContext itemContext = new()
         {
             Player = Player,
-            Item = item!,
+            Stack = stack,
             HandType = handType,
             TraceResult = traceResult
         };
 
-        if(item is not null)
+        if(!stack.IsEmpty)
         {
+            var item = stack.Value!;
             var itemInteractionResult = await (attacking ? item.OnAttack(itemContext) : item.OnUse(itemContext));
             if(itemInteractionResult.ConsumesAction)
                 return itemInteractionResult;
@@ -187,11 +188,11 @@ public class WorldInteractor : Component
         var blockState = world.GetBlockState(blockPosition);
         var block = blockState.Block;
 
-        Item? item = Player.Inventory.GetHandItem(handType).Value;
+        var stack = Player.Inventory.GetHandItem(handType);
         BlockActionContext blockContext = new()
         {
             Player = Player,
-            Item = item,
+            Stack = stack,
             HandType = handType,
             TraceResult = traceResult,
             World = world,

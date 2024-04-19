@@ -6,13 +6,14 @@ using VoxelWorld.Mth;
 using VoxelWorld.Mth.Enums;
 using VoxelWorld.Worlds;
 using System.Diagnostics.CodeAnalysis;
+using VoxelWorld.Inventories;
 
 namespace VoxelWorld.Interactions;
 
 public record class BlockActionContext
 {
     public required Player Player { get; init; }
-    public required Item? Item { get; init; }
+    public required Stack<Item> Stack { get; init; }
     public required HandType HandType { get; init; }
     public required SceneTraceResult TraceResult { get; init; }
 
@@ -29,7 +30,7 @@ public record class BlockActionContext
     public BlockActionContext(ItemActionContext itemActionContext, IWorldAccessor world, Vector3IntB position, BlockState blockState)
     {
         Player = itemActionContext.Player;
-        Item = itemActionContext.Item;
+        Stack = itemActionContext.Stack;
         HandType = itemActionContext.HandType;
         TraceResult = itemActionContext.TraceResult;
 
