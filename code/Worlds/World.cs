@@ -29,7 +29,7 @@ public class World : Component, IWorldAccessor, ITickable
     public event Action<Vector3IntB>? ChunkLoaded;
     public event Action<Vector3IntB>? ChunkUnloaded;
 
-    public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 4 };
+    public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 1 };
     
     [Property] protected GameObject? ChunksParent { get; set; }
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
