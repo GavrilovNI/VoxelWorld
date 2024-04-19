@@ -56,7 +56,6 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     protected SizedBlocksCollection Blocks = null!;
     private readonly Dictionary<Guid, Entity> _entities = new();
-    private readonly BlocksAdditionalDataCollection _additionalData = new();
 
     public IEnumerable<Entity> Entities
     {
@@ -438,9 +437,9 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     public Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition, T value) where T : notnull
     {
-        lock(_additionalData)
+        lock(Blocks)
         {
-            _additionalData.Set(dataType, blockPosition, value);
+            Blocks.AdditionalData.Set(dataType, blockPosition, value);
         }
 
         var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
@@ -449,9 +448,9 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     public Task ResetAdditionalData(BlocksAdditionalDataType dataType, Vector3IntB blockPosition)
     {
-        lock(_additionalData)
+        lock(Blocks)
         {
-            _additionalData.Reset(dataType, blockPosition);
+            Blocks.AdditionalData.Reset(dataType, blockPosition);
         }
 
         var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
@@ -461,10 +460,10 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     protected Task ResetAllAdditionalData(Vector3IntB blockPosition)
     {
         List<KeyValuePair<BlocksAdditionalDataType, object>> notDefaultValues;
-        lock(_additionalData)
+        lock(Blocks)
         {
-            notDefaultValues = _additionalData.GetNotDefaultValuesAt(blockPosition).ToList();
-            _additionalData.ClearAt(blockPosition);
+            notDefaultValues = Blocks.AdditionalData.GetNotDefaultValuesAt(blockPosition).ToList();
+            Blocks.AdditionalData.ClearAt(blockPosition);
         }
 
         List<Task> tasks = new();
@@ -473,14 +472,14 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         foreach(var (dataType, _) in notDefaultValues)
             tasks.Add(dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue));
 
-        return Task.WhenAll(ta); // TODO: should we somehow await inside lock?
+        return Task.WhenAll(tasks); // TODO: should we somehow await inside lock?
     }
 
     public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB blockPosition) where T : notnull
     {
-        lock(_additionalData)
+        lock(Blocks)
         {
-            return _additionalData.Get(dataType, blockPosition);
+            return Blocks.AdditionalData.Get(dataType, blockPosition);
         }
     }
 }

@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using VoxelWorld.Worlds.Data;
+using VoxelWorld.Registries;
 
 namespace VoxelWorld.Data.Blocks;
 
@@ -31,6 +33,7 @@ public class SizedBlocksCollection : ISaveStatusMarkable
 
     public IEnumerable<KeyValuePair<Vector3IntB, BlockState>> BlockStates => _blockStates.AsEnumerable();
     public IEnumerable<KeyValuePair<Vector3IntB, BlockEntity>> BlockEntities => _blockEntities.AsEnumerable();
+    public BlocksAdditionalDataCollection AdditionalData { get; set; } = new();
 
 
     private IReadOnlySaveMarker _saveMarker = SaveMarker.Saved;
