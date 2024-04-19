@@ -21,7 +21,7 @@ public class InteractingBlockHighlighter : Component
             HighlightedBlock!.GameObject.Enabled = false;
     }
 
-    protected virtual void UpdateHighlightedBlock(PhysicsTraceResult traceResult)
+    protected virtual void UpdateHighlightedBlock(SceneTraceResult traceResult)
     {
         if(!traceResult.Hit || !World.TryFindInObject(traceResult.Body?.GetGameObject(), out var world))
         {

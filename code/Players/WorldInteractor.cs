@@ -16,12 +16,12 @@ public class WorldInteractor : Component
     [Property] public float ReachDistance => Player.ReachDistance;
     [Property] public string InteractionTag { get; set; } = "interactable";
 
-    public PhysicsTraceResult TraceResult { get; protected set; }
+    public SceneTraceResult TraceResult { get; protected set; }
 
-    protected virtual PhysicsTraceResult Trace()
+    protected virtual SceneTraceResult Trace()
     {
         var ray = new Ray(Eye.Transform.Position, Eye.Transform.Rotation.Forward);
-        return Scene.PhysicsWorld.Trace.Ray(ray, ReachDistance).WithTag(InteractionTag).Run();
+        return Scene.Trace.Ray(ray, ReachDistance).WithTag(InteractionTag).Run();
     }
 
     protected override void OnUpdate()
@@ -49,7 +49,7 @@ public class WorldInteractor : Component
         _ = Interact(TraceResult, attacking, swapInteractionOrder == attacking);
     }
 
-    protected virtual InteractionResult SelectBlock(PhysicsTraceResult traceResult)
+    protected virtual InteractionResult SelectBlock(SceneTraceResult traceResult)
     {
         if(!traceResult.Hit)
             return InteractionResult.Pass;
@@ -112,7 +112,7 @@ public class WorldInteractor : Component
         return InteractionResult.Fail;
     }
 
-    protected virtual async Task<InteractionResult> Interact(PhysicsTraceResult traceResult, bool attacking, bool interactWithBlockFirst = true)
+    protected virtual async Task<InteractionResult> Interact(SceneTraceResult traceResult, bool attacking, bool interactWithBlockFirst = true)
     {
         InteractionResult interactionResult;
         if(interactWithBlockFirst)
@@ -137,7 +137,7 @@ public class WorldInteractor : Component
     }
 
 
-    protected virtual async Task<InteractionResult> InteractWithItem(PhysicsTraceResult traceResult, bool attacking)
+    protected virtual async Task<InteractionResult> InteractWithItem(SceneTraceResult traceResult, bool attacking)
     {
         var interactionResult = await InteractWithItem(HandType.Main, traceResult, attacking);
         if(interactionResult.ConsumesAction)
@@ -145,7 +145,7 @@ public class WorldInteractor : Component
         return await InteractWithItem(HandType.Secondary, traceResult, attacking);
     }
 
-    protected virtual async Task<InteractionResult> InteractWithItem(HandType handType, PhysicsTraceResult traceResult, bool attacking)
+    protected virtual async Task<InteractionResult> InteractWithItem(HandType handType, SceneTraceResult traceResult, bool attacking)
     {
         Item? item = Player.Inventory.GetHandItem(handType).Value;
 
@@ -167,7 +167,7 @@ public class WorldInteractor : Component
         return InteractionResult.Pass;
     }
 
-    protected virtual async Task<InteractionResult> InteractWithBlock(PhysicsTraceResult traceResult, bool attacking)
+    protected virtual async Task<InteractionResult> InteractWithBlock(SceneTraceResult traceResult, bool attacking)
     {
         var interactionResult = await InteractWithBlock(HandType.Main, traceResult, attacking);
         if(interactionResult.ConsumesAction)
@@ -175,7 +175,7 @@ public class WorldInteractor : Component
         return await InteractWithBlock(HandType.Secondary, traceResult, attacking);
     }
 
-    protected virtual async Task<InteractionResult> InteractWithBlock(HandType handType, PhysicsTraceResult traceResult, bool attacking)
+    protected virtual async Task<InteractionResult> InteractWithBlock(HandType handType, SceneTraceResult traceResult, bool attacking)
     {
         if(!traceResult.Hit)
             return InteractionResult.Pass;

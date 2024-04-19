@@ -14,7 +14,7 @@ public record class BlockActionContext
     public required Player Player { get; init; }
     public required Item? Item { get; init; }
     public required HandType HandType { get; init; }
-    public required PhysicsTraceResult TraceResult { get; init; }
+    public required SceneTraceResult TraceResult { get; init; }
 
     public required IWorldAccessor World { get; init; }
     public required Vector3IntB Position { get; init; }
