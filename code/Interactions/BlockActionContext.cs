@@ -26,6 +26,17 @@ public record class BlockActionContext
 
     }
 
+    public BlockActionContext(BlockActionContext other)
+    {
+        Player = other.Player;
+        Stack = other.Stack;
+        HandType = other.HandType;
+        TraceResult = other.TraceResult;
+        World = other.World;
+        Position = other.Position;
+        BlockState = other.BlockState;
+    }
+
     [SetsRequiredMembers]
     public BlockActionContext(ItemActionContext itemActionContext, IWorldAccessor world, Vector3IntB position, BlockState blockState)
     {
