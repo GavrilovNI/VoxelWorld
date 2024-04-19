@@ -17,6 +17,7 @@ public class Item : IRegisterable, IStackValue<Item>
     public ImmutableArray<Model> Models { get; }
     public Texture Texture { get; }
     public int StackLimit { get; }
+    public ItemProperties Properties { get; init; }
     public bool IsFlatModel { get; } //TODO: remove
 
     public Item(in ModedId id, Model[] models, Texture texture, int stackLimit, bool isFlatModel = false)
