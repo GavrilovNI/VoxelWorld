@@ -60,9 +60,21 @@ public sealed class BaseModItems : ModItems
 
     public Item WoodenPickaxe { get; private set; } = new(MakeId("wooden_pickaxe"),
         new Model[] { ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/wooden_pickaxe.png") },
-        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_pickaxe.png"), 1, true);
+        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_pickaxe.png"), 1, true)
+    {
+        Properties = new()
+        {
+            BlockDamage = 30,
+        }
+    };
 
     public Item WoodenAxe { get; private set; } = new Item(MakeId("wooden_axe"),
         new Model[] { ItemFlatModelCreator.CreateModelFromMap($"{BaseMod.ModName}/items/wooden_axe.png") },
-        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_axe.png"), 1, true);
+        Texture.Load(FileSystem.Mounted, $"textures/{BaseMod.ModName}/items/wooden_axe.png"), 1, true)
+    {
+        Properties = new()
+        {
+            BlockDamage = 30,
+        }
+    };
 }

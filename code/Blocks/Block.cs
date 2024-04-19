@@ -12,6 +12,7 @@ using VoxelWorld.Worlds;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sandbox;
 
 namespace VoxelWorld.Blocks;
 
@@ -57,7 +58,40 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public virtual bool CanBeReplaced(BlockState currentBlockState, BlockState placingBlockState) => IsAir();
     public virtual void OnPlaced(in BlockActionContext context, BlockState placedBlockState) { }
 
-    public virtual Task<InteractionResult> OnAttack(BlockAttackingContext context) => Task.FromResult(InteractionResult.Pass);
+    public virtual async Task<InteractionResult> OnAttack(BlockAttackingContext context)
+    {
+        if(IsAir())
+            return InteractionResult.Fail;
+
+        if(!Properties.IsBreakable)
+            return InteractionResult.Consume;
+
+        var world = context.World;
+        var blockPosition = context.Position;
+
+        var progressDataType = BaseMod.Instance!.BlockDataTypes.BreakingProgress;
+        var progress = world.GetAdditionalData(progressDataType, blockPosition);
+
+        var progressDelta = Properties.Health <= 0f ? 1f : context.Damage / Properties.Health;
+        if(progressDelta >= 0f)
+        {
+            progress += progressDelta;
+
+            var blockCenterPosition = world.GetBlockGlobalPosition(blockPosition) + MathV.UnitsInMeter / 2f;
+            if(progress < 1f)
+                Sound.Play(Properties.DamageSound, blockCenterPosition);
+
+            await world.SetAdditionalData(progressDataType, blockPosition, progress);
+
+            if(progress >= 1f)
+                Sound.Play(Properties.BreakSound, blockCenterPosition);
+
+            return InteractionResult.Success;
+        }
+
+        return InteractionResult.Fail;
+    }
+
     public virtual Task<InteractionResult> OnInteract(BlockActionContext context) => Task.FromResult(InteractionResult.Pass);
     public virtual Task Break(BlockActionContext context) => Break(context.World, context.Position, context.BlockState);
     public virtual Task Break(IWorldAccessor world, Vector3IntB position, BlockState blockState) => world.SetBlockState(position, BlockState.Air);

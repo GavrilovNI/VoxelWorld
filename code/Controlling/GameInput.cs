@@ -16,4 +16,10 @@ public static class GameInput
     public static bool IsSlotPressed(int slotIndex) => Input.Pressed($"Slot{slotIndex + 1}");
     public static bool IsSlotPrevPressed => Input.Pressed("SlotPrev");
     public static bool IsSlotNextPressed => Input.Pressed("SlotNext");
+    public static bool IsSelectingBlockPressed => Input.Pressed("selectblock");
+
+    public static bool IsAttacking => Input.Down("attack1");
+    public static bool IsAttackingPressed => Input.Pressed("attack1");
+    public static bool IsInteractPressed => Input.Pressed("attack2");
+    public static bool IsSwappingInteractionOrder => Input.Down("SwapInteractionOrder");
 }
