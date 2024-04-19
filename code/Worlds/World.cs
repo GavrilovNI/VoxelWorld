@@ -578,7 +578,7 @@ public class World : Component, IWorldAccessor, ITickable
     }
 
 
-    public async Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition, T value) where T : notnull
+    public async Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition, T value) where T : notnull
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 
@@ -592,7 +592,7 @@ public class World : Component, IWorldAccessor, ITickable
         await chunk.SetAdditionalData(dataType, localBlockPosition, value);
     }
 
-    public async Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition) where T : notnull
+    public async Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition) where T : notnull
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 
@@ -606,7 +606,7 @@ public class World : Component, IWorldAccessor, ITickable
         await chunk.ResetAdditionalData(dataType, localBlockPosition);
     }
 
-    public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int blockPosition) where T : notnull
+    public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB blockPosition) where T : notnull
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 

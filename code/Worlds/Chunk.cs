@@ -436,7 +436,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    public Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition, T value) where T : notnull
+    public Task SetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition, T value) where T : notnull
     {
         lock(_additionalData)
         {
@@ -448,7 +448,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return Task.CompletedTask;
     }
 
-    public Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3Int blockPosition) where T : notnull
+    public Task ResetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, Vector3IntB blockPosition) where T : notnull
     {
         lock(_additionalData)
         {
@@ -460,7 +460,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return Task.CompletedTask;
     }
 
-    protected Task ResetAllAdditionalData(Vector3Int blockPosition)
+    protected Task ResetAllAdditionalData(Vector3IntB blockPosition)
     {
         lock(_additionalData)
         {
@@ -474,7 +474,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return Task.CompletedTask;
     }
 
-    public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int blockPosition) where T : notnull
+    public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB blockPosition) where T : notnull
     {
         lock(_additionalData)
         {

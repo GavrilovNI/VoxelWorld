@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace VoxelWorld.Worlds.Data;
 
 public class BlocksAdditionalDataCollection
 {
-    private readonly Dictionary<Vector3Int, Dictionary<BlocksAdditionalDataType, object>> _data = new();
+    private readonly Dictionary<Vector3IntB, Dictionary<BlocksAdditionalDataType, object>> _data = new();
 
 
-    public void Set<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int position, T value) where T : notnull
+    public void Set<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB position, T value) where T : notnull
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 
@@ -22,7 +22,7 @@ public class BlocksAdditionalDataCollection
         GetOrCreateBlockData(position)[dataType] = value;
     }
 
-    public void Reset<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int position) where T : notnull
+    public void Reset<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB position) where T : notnull
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 
@@ -34,7 +34,7 @@ public class BlocksAdditionalDataCollection
             _data.Remove(position);
     }
 
-    public T Get<T>(BlocksAdditionalDataType<T> dataType, in Vector3Int position) where T : notnull
+    public T Get<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB position) where T : notnull
     {
         BlocksAdditionalDataType.AssertRegestered(dataType);
 
