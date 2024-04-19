@@ -7,37 +7,31 @@ public class CustomCharacterController : Component
 {
     [Range(0f, 200f, 0.01f, true, true)]
     [Property]
-    [DefaultValue(16f)]
     public float Radius { get; set; } = 16f;
 
 
     [Range(0f, 200f, 0.01f, true, true)]
     [Property]
-    [DefaultValue(64f)]
     public float Height { get; set; } = 64f;
 
 
     [Range(0f, 50f, 0.01f, true, true)]
     [Property]
-    [DefaultValue(18f)]
     public float StepHeight { get; set; } = 18f;
 
 
     [Range(0f, 90f, 0.01f, true, true)]
     [Property]
-    [DefaultValue(45f)]
     public float GroundAngle { get; set; } = 45f;
 
 
     [Range(0f, 64f, 0.01f, true, true)]
     [Property]
-    [DefaultValue(10f)]
     public float Acceleration { get; set; } = 10f;
 
 
     [Range(0f, 1f, 0.01f, true, true)]
     [Property]
-    [DefaultValue(0.3f)]
     [Description("When jumping into walls, should we bounce off or just stop dead?")]
     public float Bounciness { get; set; } = 0.3f;
 
@@ -52,7 +46,6 @@ public class CustomCharacterController : Component
     public bool IsOnGround { get; protected set; }
 
     [Property]
-    [DefaultValue(true)]
     public bool UseSceneGravity { get; set; } = true;
 
     private Vector3 _gravity = Vector3.Down * 850;
@@ -76,7 +69,6 @@ public class CustomCharacterController : Component
     }
 
     [Property]
-    [DefaultValue(true)]
     public bool TryUnstuckOnMove { get; protected set; } = true;
 
 
