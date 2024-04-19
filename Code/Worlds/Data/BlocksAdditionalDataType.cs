@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 
@@ -19,7 +19,7 @@ public class BlocksAdditionalDataType : IRegisterable
         DefaultValue = defaultValue;
     }
 
-    public virtual void OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, object newValue) { }
+    public virtual Task OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, object newValue) => Task.CompletedTask;
 
 
     public static BlocksAdditionalDataType Get(in ModedId dataId) =>
@@ -51,9 +51,9 @@ public class BlocksAdditionalDataType<T> : BlocksAdditionalDataType where T : no
 
     [Obsolete("Try using OnValueChanged<T>")]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
-    public sealed override void OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, object newValue) =>
+    public sealed override Task OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, object newValue) =>
         OnValueChanged(world, blockPosition, (T)newValue);
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
-    public virtual void OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, in T newValue) { }
+    public virtual Task OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, in T newValue) => Task.CompletedTask;
 }

@@ -1,4 +1,5 @@
-﻿using VoxelWorld.Mth;
+﻿using System.Threading.Tasks;
+using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 using VoxelWorld.Worlds;
 using VoxelWorld.Worlds.Data;
@@ -11,12 +12,13 @@ public class BlockBreakingProgressDataType : BlocksAdditionalDataType<BlockBreak
     {
     }
 
-    public override void OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, in BlockBreakingProgress newProgress)
+    public override Task OnValueChanged(IWorldAccessor world, in Vector3IntB blockPosition, in BlockBreakingProgress newProgress)
     {
         if(newProgress >= 1f)
         {
             var blockState = world.GetBlockState(blockPosition);
-            blockState.Block.Break(world, blockPosition, blockState);
+            return blockState.Block.Break(world, blockPosition, blockState);
         }
+        return Task.CompletedTask;
     }
 }

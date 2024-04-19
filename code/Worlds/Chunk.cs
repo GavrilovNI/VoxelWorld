@@ -441,11 +441,10 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         lock(_additionalData)
         {
             _additionalData.Set(dataType, blockPosition, value);
-
-            var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
-            dataType.OnValueChanged(World, worldPosition, value);
         }
-        return Task.CompletedTask;
+
+        var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
+        return dataType.OnValueChanged(World, worldPosition, value); // TODO: should we somehow await inside lock?
     }
 
     public Task ResetAdditionalData(BlocksAdditionalDataType dataType, Vector3IntB blockPosition)
@@ -453,25 +452,28 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         lock(_additionalData)
         {
             _additionalData.Reset(dataType, blockPosition);
-
-            var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
-            dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue);
         }
-        return Task.CompletedTask;
+
+        var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
+        return dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue); // TODO: should we somehow await inside lock?
     }
 
     protected Task ResetAllAdditionalData(Vector3IntB blockPosition)
     {
+        List<KeyValuePair<BlocksAdditionalDataType, object>> notDefaultValues;
         lock(_additionalData)
         {
-            var notDefaultValues = _additionalData.GetNotDefaultValuesAt(blockPosition).ToList();
+            notDefaultValues = _additionalData.GetNotDefaultValuesAt(blockPosition).ToList();
             _additionalData.ClearAt(blockPosition);
-
-            var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
-            foreach(var (dataType, _) in notDefaultValues)
-                dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue);
         }
-        return Task.CompletedTask;
+
+        List<Task> tasks = new();
+
+        var worldPosition = World.GetBlockWorldPosition(Position, blockPosition);
+        foreach(var (dataType, _) in notDefaultValues)
+            tasks.Add(dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue));
+
+        return Task.WhenAll(ta); // TODO: should we somehow await inside lock?
     }
 
     public T GetAdditionalData<T>(BlocksAdditionalDataType<T> dataType, in Vector3IntB blockPosition) where T : notnull
