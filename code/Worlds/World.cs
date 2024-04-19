@@ -29,8 +29,6 @@ public class World : Component, IWorldAccessor, ITickable
     public event Action<Vector3IntB>? ChunkLoaded;
     public event Action<Vector3IntB>? ChunkUnloaded;
 
-
-    [Property, HideIf(nameof(IsSceneRunning), true)]
     public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 4 };
     
     [Property] protected GameObject? ChunksParent { get; set; }
@@ -48,8 +46,6 @@ public class World : Component, IWorldAccessor, ITickable
 
     public Random Random { get; protected set; } = new ThreadSafeRandom();
 
-
-    private bool IsSceneRunning => !Scene.IsEditor;
     
     
     private readonly Dictionary<ulong, Player?> _players = new();

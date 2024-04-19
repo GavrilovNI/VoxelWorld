@@ -48,7 +48,7 @@ public sealed class GameController : Component
     [Property] public GameObject WorldsParent { get; private set; } = null!;
     [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
-    [Property] public WorldOptions DefaultWorldOptions { get; private set; } = new() { ChunkSize = 16, RegionSize = 4 };
+    public WorldOptions DefaultWorldOptions { get; private set; } = new() { ChunkSize = 16, RegionSize = 4 };
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public PlayerSpawner PlayerSpawner { get; private set; } = null!;
 
