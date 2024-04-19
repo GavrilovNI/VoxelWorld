@@ -48,7 +48,7 @@ public abstract class Block : IRegisterable, INbtWritable, INbtStaticReadable<Bl
     public virtual bool ShouldAddFace(BlockState blockState, BlockMeshType meshType, Direction direction,
         BlockState neighborBlockState) => true;
 
-    public virtual IEnumerable<BlockProperty> CombineProperties() => Enumerable.Empty<BlockProperty>();
+    public virtual IEnumerable<BlockStateProperty> CombineProperties() => Enumerable.Empty<BlockStateProperty>();
     public virtual BlockState CreateDefaultBlockState(BlockState blockState) => blockState;
 
     public bool IsAir() => this == BaseMod.Instance!.Blocks.Air;

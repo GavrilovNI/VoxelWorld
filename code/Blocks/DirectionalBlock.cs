@@ -21,7 +21,7 @@ public class DirectionalBlock : SimpleBlock, IRotatableBlock, IMirrorableBlock
     {
     }
 
-    public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { DirectionProperty };
+    public override IEnumerable<BlockStateProperty> CombineProperties() => new BlockStateProperty[] { DirectionProperty };
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(DirectionProperty, Direction.Forward);
 

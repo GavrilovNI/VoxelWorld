@@ -31,7 +31,7 @@ public class SlabBlock : SimpleBlock
     {
     }
 
-    public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { SlabTypeProperty };
+    public override IEnumerable<BlockStateProperty> CombineProperties() => new BlockStateProperty[] { SlabTypeProperty };
 
     public override bool HidesNeighbourFace(BlockState blockState, BlockMeshType meshType, Direction directionToFace)
     {

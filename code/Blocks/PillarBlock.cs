@@ -20,7 +20,7 @@ public class PillarBlock : SimpleBlock
     {
     }
 
-    public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[]{ AxisProperty };
+    public override IEnumerable<BlockStateProperty> CombineProperties() => new BlockStateProperty[]{ AxisProperty };
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(AxisProperty, Axis.Z);
 

@@ -15,13 +15,13 @@ namespace VoxelWorld.Blocks;
 
 public class HorizontalDirectionalBlock : SimpleBlock, IOneAxisRotatableBlock, IMirrorableBlock
 {
-    public static readonly FilteredBlockProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
+    public static readonly FilteredBlockStateProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
 
     public HorizontalDirectionalBlock(in ModedId id, IReadOnlyDictionary<Direction, IUvProvider> uvProviders) : base(id, uvProviders)
     {
     }
 
-    public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { DirectionProperty };
+    public override IEnumerable<BlockStateProperty> CombineProperties() => new BlockStateProperty[] { DirectionProperty };
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(DirectionProperty, Direction.Forward);
 

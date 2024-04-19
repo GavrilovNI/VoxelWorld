@@ -18,7 +18,7 @@ namespace VoxelWorld.Blocks;
 
 public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
 {
-    public static readonly FilteredBlockProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
+    public static readonly FilteredBlockStateProperty<Direction> DirectionProperty = new((Id)"direction", Direction.HorizontalSet.Contains);
     public static readonly BlockProperty<BoolEnum> OpenedProperty = new((Id)"opened");
     public static readonly BlockProperty<DoorHingeSide> HingeProperty = new((Id)"hinge_side");
 
@@ -34,8 +34,8 @@ public class DoorBlock : TwoPartBlock, IOneAxisRotatableBlock, IMirrorableBlock
     {
     }
 
-    public override IEnumerable<BlockProperty> CombineProperties() =>
-        new BlockProperty[] { PartTypeProperty, DirectionProperty, OpenedProperty, HingeProperty };
+    public override IEnumerable<BlockStateProperty> CombineProperties() =>
+        new BlockStateProperty[] { PartTypeProperty, DirectionProperty, OpenedProperty, HingeProperty };
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) =>
         blockState.With(PartTypeProperty, TwoPartBlockPartType.First)

@@ -32,7 +32,7 @@ public abstract class TwoPartBlock : Block
     }
 
 
-    public override IEnumerable<BlockProperty> CombineProperties() => new BlockProperty[] { PartTypeProperty };
+    public override IEnumerable<BlockStateProperty> CombineProperties() => new BlockStateProperty[] { PartTypeProperty };
 
     public override BlockState CreateDefaultBlockState(BlockState blockState) => blockState.With(PartTypeProperty, TwoPartBlockPartType.First);
 

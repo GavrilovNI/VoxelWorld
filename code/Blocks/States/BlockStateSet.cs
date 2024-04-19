@@ -10,10 +10,10 @@ namespace VoxelWorld.Blocks.States;
 public sealed class BlockStateSet : IEnumerable<BlockState>
 {
     public readonly Block Block;
-    private readonly HashSet<BlockProperty> _properties = new();
+    private readonly HashSet<BlockStateProperty> _properties = new();
     private readonly List<BlockState> _blockStates = new();
 
-    public BlockStateSet(Block block, IEnumerable<BlockProperty> properties)
+    public BlockStateSet(Block block, IEnumerable<BlockStateProperty> properties)
     {
         Block = block;
         foreach(var property in properties)
@@ -25,10 +25,10 @@ public sealed class BlockStateSet : IEnumerable<BlockState>
         _blockStates = GenerateBlockStates();
     }
 
-    public BlockState FindBlockState(IReadOnlyDictionary<BlockProperty, CustomEnum> stateProperties)
+    public BlockState FindBlockState(IReadOnlyDictionary<BlockStateProperty, CustomEnum> stateProperties)
     {
         if(!_properties.SetEquals(stateProperties.Keys))
-            throw new ArgumentException($"not all {nameof(BlockProperty)} are provided", nameof(stateProperties));
+            throw new ArgumentException($"not all {nameof(BlockStateProperty)} are provided", nameof(stateProperties));
 
         foreach(var state in _blockStates)
         {
@@ -54,11 +54,11 @@ public sealed class BlockStateSet : IEnumerable<BlockState>
 
         if(_properties.Count == 0)
         {
-            states.Add(new BlockState(Block, new Dictionary<BlockProperty, CustomEnum>()));
+            states.Add(new BlockState(Block, new Dictionary<BlockStateProperty, CustomEnum>()));
             return states;
         }
 
-        Dictionary<BlockProperty, CustomEnum> defaultStateProperties = new();
+        Dictionary<BlockStateProperty, CustomEnum> defaultStateProperties = new();
         foreach(var property in _properties)
         {
             var allValues = property.GetAllValues();
@@ -66,10 +66,10 @@ public sealed class BlockStateSet : IEnumerable<BlockState>
                 defaultStateProperties.Add(property, allValues.First());
         }
 
-        List<Dictionary<BlockProperty, CustomEnum>> allStateProperties = new();
+        List<Dictionary<BlockStateProperty, CustomEnum>> allStateProperties = new();
         allStateProperties.Add(defaultStateProperties);
 
-        List<BlockProperty> leftProperties = new(_properties);
+        List<BlockStateProperty> leftProperties = new(_properties);
         for(int i = leftProperties.Count - 1; i >= 0; --i)
         {
             var property = leftProperties[i];
@@ -78,7 +78,7 @@ public sealed class BlockStateSet : IEnumerable<BlockState>
             {
                 foreach(var value in property.GetAllValues())
                 {
-                    Dictionary<BlockProperty, CustomEnum> newProperties = new(allStateProperties[j])
+                    Dictionary<BlockStateProperty, CustomEnum> newProperties = new(allStateProperties[j])
                     {
                         [property] = value
                     };

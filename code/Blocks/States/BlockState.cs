@@ -14,11 +14,11 @@ public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
 {
     public static BlockState Air => BaseMod.Instance!.Blocks.Air.DefaultBlockState;
 
-    internal readonly Dictionary<BlockProperty, CustomEnum> _properties;
-    private readonly Dictionary<(BlockProperty, CustomEnum), BlockState> _neighbors;
+    internal readonly Dictionary<BlockStateProperty, CustomEnum> _properties;
+    private readonly Dictionary<(BlockStateProperty, CustomEnum), BlockState> _neighbors;
     public readonly Block Block;
 
-    internal BlockState(Block block, Dictionary<BlockProperty, CustomEnum> properties)
+    internal BlockState(Block block, Dictionary<BlockStateProperty, CustomEnum> properties)
     {
         Block = block;
         _properties = properties;
@@ -28,17 +28,17 @@ public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
     public bool IsAir() => Block.IsAir();
 
     [Obsolete("Try using With<T>")]
-    public BlockState With(BlockProperty property, CustomEnum value)
+    public BlockState With(BlockStateProperty property, CustomEnum value)
     {
         if(!_properties.ContainsKey(property))
-            throw new ArgumentException($"{nameof(BlockProperty)} {property} is not registered in this {nameof(BlockState)}. this: {this}", nameof(property));
+            throw new ArgumentException($"{nameof(BlockStateProperty)} {property} is not registered in this {nameof(BlockState)}. this: {this}", nameof(property));
         if(!property.IsValidValue(value))
             throw new ArgumentException($"{value} is not valid type for {property}", nameof(value));
 
         var key = (property, value);
         if(!_neighbors.TryGetValue(key, out var state))
         {
-            Dictionary<BlockProperty, CustomEnum> properties = new(_properties)
+            Dictionary<BlockStateProperty, CustomEnum> properties = new(_properties)
             {
                 [property] = value
             };
@@ -50,7 +50,7 @@ public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
     }
 
     [Obsolete("Try using Change<T>")]
-    public BlockState Change(BlockProperty property, Func<CustomEnum, CustomEnum> newValueAccessor)
+    public BlockState Change(BlockStateProperty property, Func<CustomEnum, CustomEnum> newValueAccessor)
     {
         var currentValue = GetValue(property);
         return With(property, newValueAccessor(currentValue));
@@ -67,10 +67,10 @@ public sealed class BlockState : INbtWritable, INbtStaticReadable<BlockState>
     }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-    public CustomEnum GetValue(BlockProperty blockProperty) => _properties[blockProperty];
+    public CustomEnum GetValue(BlockStateProperty blockProperty) => _properties[blockProperty];
 
     public T GetValue<T>(BlockProperty<T> blockProperty) where T : CustomEnum<T>, ICustomEnum<T> =>
-        (GetValue((BlockProperty)blockProperty) as T)!;
+        (GetValue((BlockStateProperty)blockProperty) as T)!;
 
 
     public BinaryTag Write()
