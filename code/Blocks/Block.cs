@@ -1,5 +1,4 @@
-﻿using VoxelWorld.Blocks.Properties;
-using VoxelWorld.Blocks.States;
+﻿using VoxelWorld.Blocks.States;
 using VoxelWorld.Blocks.States.Properties;
 using VoxelWorld.Interactions;
 using VoxelWorld.IO.NamedBinaryTags;

@@ -1,5 +1,4 @@
 ﻿using VoxelWorld.Blocks;
-using VoxelWorld.Blocks.Properties;
 using VoxelWorld.Mth.Enums;
 using VoxelWorld.Registries;
 using VoxelWorld.Texturing;

@@ -1,5 +1,4 @@
-﻿using VoxelWorld.Blocks.Properties;
-using VoxelWorld.Blocks.States;
+﻿using VoxelWorld.Blocks.States;
 using VoxelWorld.Meshing.Blocks;
 using VoxelWorld.Mth.Enums;
 using VoxelWorld.Registries;

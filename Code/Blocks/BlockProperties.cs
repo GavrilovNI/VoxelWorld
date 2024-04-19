@@ -1,6 +1,6 @@
 ﻿
 
-namespace VoxelWorld.Blocks.Properties;
+namespace VoxelWorld.Blocks;
 
 public readonly record struct BlockProperties
 {
