@@ -56,7 +56,7 @@ public struct ComplexVertex : IVertex
         Color = Color32.White;
     }
 
-    public Vector3 GetPosition() => Position;
+    public readonly Vector3 GetPosition() => Position;
     public void SetPosition(Vector3 position) => Position = position;
 
 

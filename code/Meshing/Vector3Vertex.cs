@@ -20,7 +20,7 @@ public struct Vector3Vertex : IVertex
         Position = position;
     }
 
-    public Vector3 GetPosition() => Position;
+    public readonly Vector3 GetPosition() => Position;
     public void SetPosition(Vector3 position) => Position = position;
 
     public static implicit operator Vector3(Vector3Vertex vertex) => vertex.Position;
