@@ -12,12 +12,12 @@ namespace VoxelWorld.IO.Helpers;
 public class RegionalSaveHelper
 {
     public BaseFileSystem FileSystem { get; }
-    public Vector3IntB RegionSize { get; }
+    public Vector3Byte RegionSize { get; }
     public string FilesExtension { get; }
     protected int MaxChunksCount { get; }
     protected BBoxInt Bounds { get; }
 
-    public RegionalSaveHelper(BaseFileSystem fileSystem, Vector3IntB regionSize, string filesExtension)
+    public RegionalSaveHelper(BaseFileSystem fileSystem, Vector3Byte regionSize, string filesExtension)
     {
         FileSystem = fileSystem;
         RegionSize = regionSize;
@@ -43,7 +43,7 @@ public class RegionalSaveHelper
         }
 
         var firstChunkPosition = regionPosition * RegionSize;
-        var localChunkPosition = globalChunkPosition - firstChunkPosition;
+        var localChunkPosition = (Vector3Byte)(globalChunkPosition - firstChunkPosition);
         var chunkIndex = GetChunkIndex(localChunkPosition);
 
         if(chunkIndex >= regionTag.Count)
@@ -61,7 +61,7 @@ public class RegionalSaveHelper
         return true;
     }
 
-    public Dictionary<Vector3IntB, BinaryTag> LoadRegion(Vector3IntB regionPosition)
+    public Dictionary<Vector3Byte, BinaryTag> LoadRegion(Vector3IntB regionPosition)
     {
         if(!HasRegionFile(regionPosition))
             return new();
@@ -76,7 +76,7 @@ public class RegionalSaveHelper
         if(possibleRegionTag is not ListTag regionTag || regionTag.TagsType != BinaryTagType.Compound)
             return new();
 
-        Dictionary<Vector3IntB, BinaryTag> result = new();
+        Dictionary<Vector3Byte, BinaryTag> result = new();
         for(int chunkIndex = 0; chunkIndex < MaxChunksCount && chunkIndex < regionTag.Count; ++chunkIndex)
         {
             var chunkPosition = GetChunkPosition(chunkIndex);
@@ -85,7 +85,7 @@ public class RegionalSaveHelper
         return result;
     }
 
-    public void SaveRegion(Vector3IntB regionPosition, IReadOnlyDictionary<Vector3IntB, BinaryTag> localChunkedTags)
+    public void SaveRegion(Vector3IntB regionPosition, IReadOnlyDictionary<Vector3Byte, BinaryTag> localChunkedTags)
     {
         if(localChunkedTags.All(x => x.Value.IsDataEmpty))
         {
@@ -125,25 +125,25 @@ public class RegionalSaveHelper
         {
             var regionPosition = region.Key;
             var firstChunkPosition = regionPosition * RegionSize;
-            var localTags = region.ToDictionary(kv => kv.Key - firstChunkPosition, kv => kv.Value);
+            var localTags = region.ToDictionary(kv => (Vector3Byte)(kv.Key - firstChunkPosition), kv => kv.Value);
             SaveRegion(regionPosition, localTags);
         }
     }
 
 
-    protected virtual int GetChunkIndex(Vector3IntB chunkPosition)
+    protected virtual int GetChunkIndex(Vector3Byte chunkPosition)
     {
         return chunkPosition.z + RegionSize.z * (chunkPosition.y + RegionSize.y * chunkPosition.x);
     }
 
-    protected virtual Vector3IntB GetChunkPosition(int chunkIndex)
+    protected virtual Vector3Byte GetChunkPosition(int chunkIndex)
     {
         int z = chunkIndex % RegionSize.z;
         chunkIndex /= RegionSize.z;
         int y = chunkIndex % RegionSize.y;
         chunkIndex /= RegionSize.y;
         int x = chunkIndex % RegionSize.x;
-        return new(x, y, z);
+        return new((byte)x, (byte)y, (byte)z);
     }
 
     public virtual string GetRegionFilePath(in Vector3IntB regionPosition) =>

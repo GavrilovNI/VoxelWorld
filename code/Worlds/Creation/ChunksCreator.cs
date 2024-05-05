@@ -21,7 +21,7 @@ public class ChunksCreator : Component
 
     protected CancellationTokenSource CommonTokenSource { get; set; } = new();
 
-    protected Vector3IntB ChunkSize => World.ChunkSize;
+    protected Vector3Byte ChunkSize => World.ChunkSize;
 
     public record struct ChunkCreationData(Chunk Chunk, bool WasLoaded);
 

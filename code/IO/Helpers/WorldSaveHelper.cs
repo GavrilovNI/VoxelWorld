@@ -45,7 +45,7 @@ public class WorldSaveHelper
         return true;
     }
 
-    public virtual RegionalSaveHelper GetRegionalHelper(Id id, Vector3IntB regionSize) =>
+    public virtual RegionalSaveHelper GetRegionalHelper(Id id, Vector3Byte regionSize) =>
         new(FileSystem.CreateDirectoryAndSubSystem(id), regionSize, id);
 
     public virtual void SaveOutOfLimitsEntities(BinaryTag tag)

@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VoxelWorld.Crafting.Recipes;
+using VoxelWorld.Mth;
 
 namespace VoxelWorld;
 
@@ -48,7 +49,7 @@ public sealed class GameController : Component
     [Property] public GameObject WorldsParent { get; private set; } = null!;
     [Property] public GameObject BaseModPrefab { get; private set; } = null!;
     [Property] public GameObject WorldPrefab { get; private set; } = null!;
-    public WorldOptions DefaultWorldOptions { get; private set; } = new() { ChunkSize = 16, RegionSize = 1 };
+    public WorldOptions DefaultWorldOptions { get; private set; } = new();
     [Property] public BlockPhotoMaker BlockPhotoMaker { get; private set; } = null!;
     [Property] public PlayerSpawner PlayerSpawner { get; private set; } = null!;
 

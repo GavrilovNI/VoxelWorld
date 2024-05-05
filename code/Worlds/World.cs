@@ -29,7 +29,7 @@ public class World : Component, IWorldAccessor, ITickable
     public event Action<Vector3IntB>? ChunkLoaded;
     public event Action<Vector3IntB>? ChunkUnloaded;
 
-    public WorldOptions WorldOptions { get; private set; } = new WorldOptions() { ChunkSize = 16, RegionSize = 1 };
+    public WorldOptions WorldOptions { get; private set; } = new();
     
     [Property] protected GameObject? ChunksParent { get; set; }
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
@@ -42,7 +42,7 @@ public class World : Component, IWorldAccessor, ITickable
     public InitializationStatus InitializationStatus { get; private set; } = InitializationStatus.NotInitialized;
     public new ModedId Id { get; private set; }
     public BaseFileSystem? WorldFileSystem { get; private set; }
-    public Vector3IntB ChunkSize => WorldOptions.ChunkSize;
+    public Vector3Byte ChunkSize => WorldOptions.ChunkSize;
 
     public Random Random { get; protected set; } = new ThreadSafeRandom();
 
@@ -471,7 +471,7 @@ public class World : Component, IWorldAccessor, ITickable
     public virtual Vector3 GetBlockGlobalPosition(Vector3IntB blockPosition) => blockPosition * MathV.UnitsInMeter;
 
     public virtual Vector3IntB GetChunkPosition(Vector3IntB blockPosition) => blockPosition.WithAxes((a, v) => (int)MathF.Floor(((float)v) / ChunkSize.GetAxis(a)));
-    public virtual Vector3IntB GetBlockPositionInChunk(Vector3IntB blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
+    public virtual Vector3Byte GetBlockPositionInChunk(Vector3IntB blockPosition) => (blockPosition % ChunkSize + ChunkSize) % ChunkSize;
     public virtual Vector3IntB GetBlockWorldPosition(Vector3IntB chunkPosition, Vector3IntB blockLocalPosition) => chunkPosition * ChunkSize + blockLocalPosition;
 
 

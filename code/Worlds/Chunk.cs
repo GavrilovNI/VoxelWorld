@@ -27,7 +27,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
     [Property] protected GameObject EntitiesParent { get; set; } = null!;
     [Property, HideIf(nameof(Initialized), true)] public Vector3IntB Position { get; internal set; }
-    [Property, HideIf(nameof(Initialized), true)] public Vector3IntB Size { get; internal set; } = 16;
+    [Property, HideIf(nameof(Initialized), true)] public Vector3Byte Size { get; internal set; } = 16;
     [Property] public ChunkModelUpdater ModelUpdater { get; internal set; } = null!;
 
     public bool Initialized { get; private set; } = false;
@@ -69,25 +69,18 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         }
     }
 
-    public virtual void Initialize(Vector3IntB position, Vector3IntB size, IWorldAccessor world)
+    public virtual void Initialize(Vector3IntB position, Vector3Byte size, IWorldAccessor world)
     {
         if(Initialized)
             throw new InvalidOperationException($"{nameof(Chunk)} {this} was already initialized or enabled");
         ArgumentNullException.ThrowIfNull(world);
-        if(size.IsAnyAxis(x => x <= 0 || x > byte.MaxValue))
-            throw new ArgumentOutOfRangeException(nameof(size), size, $"Every axis {this} should be in range [1, {byte.MaxValue}]");
-
+        
         Initialized = true;
 
         Position = position;
         Size = size;
         World = world;
         Blocks = new(world, World.GetBlockWorldPosition(position, Vector3IntB.Zero), size);
-    }
-
-    protected override void OnValidate()
-    {
-        Size = Size.WithAxes(x => Math.Clamp(x, 1, byte.MaxValue));
     }
 
     public bool AddEntity(Entity entity)
@@ -221,17 +214,17 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
         for(int i = 0; i < blocksCount; ++i)
         {
-            Vector3IntB localBlockPosition = GetRandomLocalBlockPosition();
+            Vector3Byte localBlockPosition = GetRandomLocalBlockPosition();
             var blockState = GetBlockState(localBlockPosition);
             blockState.Block.TickRandom(World, World.GetBlockWorldPosition(Position, localBlockPosition), blockState);
         }
     }
 
-    protected virtual Vector3IntB GetRandomLocalBlockPosition()
+    protected virtual Vector3Byte GetRandomLocalBlockPosition()
     {
         byte[] bytes = new byte[3];
         World.Random.NextBytes(bytes);
-        return new Vector3IntB(bytes[0], bytes[1], bytes[2]) % Size;
+        return new Vector3Byte(bytes[0], bytes[1], bytes[2]) % Size;
     }
 
     // Call only im main thread
@@ -286,7 +279,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
             result = Blocks.PlaceBlock(localPosition, blockState, flags.HasFlag(BlockSetFlags.MarkDirty));
 
             if(result.Changed)
-                ResetAllAdditionalData(localPosition);
+                ResetAllAdditionalData((Vector3Byte)localPosition);
 
             modelUpdateTask = GetModelUpdateTask(flags, result.Changed);
         }
@@ -350,7 +343,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
     public virtual BlockEntity? GetExternalBlockEntity(Vector3IntB localPosition)
     {
         if(IsInBounds(localPosition))
-            return GetBlockEntity(localPosition);
+            return GetBlockEntity((Vector3Byte)localPosition);
 
         var globalPosition = World.GetBlockWorldPosition(Position, localPosition);
         return World.GetBlockEntity(globalPosition);
@@ -457,7 +450,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         return dataType.OnValueChanged(World, worldPosition, dataType.DefaultValue); // TODO: should we somehow await inside lock?
     }
 
-    protected Task ResetAllAdditionalData(Vector3IntB blockPosition)
+    protected Task ResetAllAdditionalData(Vector3Byte blockPosition)
     {
         List<KeyValuePair<BlocksAdditionalDataType, object>> notDefaultValues;
         lock(Blocks)
@@ -486,7 +479,7 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
 
 public static class ComponentListChunkExtensions
 {
-    public static T Create<T>(this ComponentList components, Vector3IntB position, Vector3IntB size, IWorldAccessor world, bool startEnabled = true) where T : Chunk, new()
+    public static T Create<T>(this ComponentList components, Vector3IntB position, Vector3Byte size, IWorldAccessor world, bool startEnabled = true) where T : Chunk, new()
     {
         var chunk = components.Create<T>(false);
 
