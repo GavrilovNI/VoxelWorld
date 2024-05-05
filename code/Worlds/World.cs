@@ -439,19 +439,27 @@ public class World : Component, IWorldAccessor, ITickable
         hitNormal = Transform.World.NormalToLocal(hitNormal.Normal);
         var result = Transform.World.PointToLocal(blockPosition).Divide(MathV.UnitsInMeter);
 
+        const float epsilon = 0.0001f;
+        const float minusEpsilon = -epsilon;// -0.0001
+        const float epsilonMinusOne = epsilon - 1f; // -0.9999
+        const float oneMinusEpsilon = 1f - epsilon; // 0.9999
+
         foreach(var axis in Axis.All)
         {
-            var mod = result.GetAxis(axis) % 1;
             var hitAxis = hitNormal.GetAxis(axis);
+            if(hitAxis.AlmostEqual(0f))
+                continue;
 
-            if(hitAxis > 0)
+            var mod = result.GetAxis(axis) % 1f;
+
+            if(hitAxis > 0f)
             {
-                if((mod.AlmostEqual(0) && mod >= 0) || mod.AlmostEqual(-1))
-                    result = result.WithAxis(axis, result.GetAxis(axis) - 1);
+                if(mod >= 0f && mod < epsilon || mod < epsilonMinusOne)
+                    result = result.WithAxis(axis, result.GetAxis(axis) - 1f);
             }
-            else if(mod.AlmostEqual(1))
+            else if(mod > oneMinusEpsilon || (mod > minusEpsilon && mod < 0f))
             {
-                result = result.WithAxis(axis, result.GetAxis(axis) + 1);
+                result = result.WithAxis(axis, result.GetAxis(axis) + 1f);
             }
         }
 
