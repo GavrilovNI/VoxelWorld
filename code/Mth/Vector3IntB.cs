@@ -90,8 +90,10 @@ public struct Vector3IntB : IEquatable<Vector3IntB>, IParsable<Vector3IntB>, INb
     [JsonIgnore]
     public readonly float LengthSquared => x * x + y * y + z * z;
 
+    [JsonIgnore]
     public readonly Angles EulerAngles => VectorAngle(this);
 
+    [JsonIgnore]
     public readonly Vector3 Inverse => new(1f / x, 1f / y, 1f / z);
 
     public int this[int index]
