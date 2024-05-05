@@ -71,6 +71,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
         return result;
     }
 
+    IMeshPart<T> IMeshPart<V>.Convert<T>(Func<V, T> vertexChanger) => Convert(vertexChanger);
+
     public UnlimitedMesh<V> Scale(Vector3 center, float scale) => Convert((v) =>
     {
         var position = v.GetPosition();
@@ -272,6 +274,8 @@ public sealed class UnlimitedMesh<V> : IMeshPart<V> where V : unmanaged, IVertex
 
         public virtual UnlimitedMesh<T>.Builder Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex =>
             new(Mesh.Convert(vertexChanger));
+
+        IMeshPart<T> IMeshPart<V>.Convert<T>(Func<V, T> vertexChanger) => Convert(vertexChanger);
 
         public virtual Builder ChangeEveryVertex(Func<V, V> vertexChanger)
         {

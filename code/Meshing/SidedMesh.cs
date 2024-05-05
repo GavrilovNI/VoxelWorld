@@ -45,6 +45,8 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         return new SidedMesh<T>(sidedElements, notSidedElements);
     }
 
+    ISidedMeshPart<T> ISidedMeshPart<V>.Convert<T>(Func<V, T> vertexChanger) => Convert(vertexChanger);
+
     public SidedMesh<V> Scale(Vector3 center, float scale) => Convert((v) =>
     {
         var position = v.GetPosition();
@@ -227,6 +229,8 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
 
         public virtual SidedMesh<T>.Builder Convert<T>(Func<V, T> vertexChanger) where T : unmanaged, IVertex =>
             new (Mesh.Convert(vertexChanger));
+
+        ISidedMeshPart<T> ISidedMeshPart<V>.Convert<T>(Func<V, T> vertexChanger) => Convert(vertexChanger);
 
         public virtual Builder ChangeEveryVertex(Func<V, V> vertexChanger)
         {
