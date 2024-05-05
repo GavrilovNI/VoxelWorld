@@ -61,6 +61,36 @@ public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INb
     public readonly float LengthSquared => x * x + y * y;
 
     [JsonIgnore]
+    public readonly Vector2 Inverse => new(1f / x, 1f / y);
+
+    public int this[int index]
+    {
+        readonly get
+        {
+            return index switch
+            {
+                0 => x,
+                1 => y,
+                _ => throw new IndexOutOfRangeException(),
+            };
+        }
+        set
+        {
+            switch(index)
+            {
+                case 0:
+                    x = value;
+                    break;
+                case 1:
+                    y = value;
+                    break;
+                default:
+                    throw new IndexOutOfRangeException();
+            }
+        }
+    }
+
+    [JsonIgnore]
     public readonly Vector2IntB Perpendicular => new(0 - y, x);
 
     [JsonIgnore]
