@@ -119,6 +119,8 @@ public struct Vector3IntB : IEquatable<Vector3IntB>, IParsable<Vector3IntB>, INb
                 case 2:
                     z = value;
                     break;
+                default:
+                    throw new IndexOutOfRangeException();
             }
         }
     }
