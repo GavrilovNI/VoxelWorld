@@ -389,7 +389,7 @@ public struct Vector3IntB : IEquatable<Vector3IntB>, IParsable<Vector3IntB>, INb
     public static bool TryParse(string? str, out Vector3IntB result) => TryParse(str, CultureInfo.InvariantCulture, out result);
 
 
-    public override readonly string ToString() => ToString("0.####");
+    public override readonly string ToString() => ToString("0");
 
     public readonly string ToString(string? valueFormat)
     {

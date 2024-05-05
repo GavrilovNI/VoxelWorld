@@ -318,7 +318,7 @@ public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INb
     public static bool TryParse(string? str, out Vector2IntB result) => TryParse(str, CultureInfo.InvariantCulture, out result);
 
 
-    public override readonly string ToString() => ToString("0.####");
+    public override readonly string ToString() => ToString("0");
 
     public readonly string ToString(string? valueFormat)
     {
