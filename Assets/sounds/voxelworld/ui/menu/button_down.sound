@@ -1,16 +1,16 @@
 {
   "UI": false,
-  "Volume": "1.00,1.00,0",
-  "Pitch": "1.00,1.00,0",
+  "Volume": "0.20,1.00,0",
+  "Pitch": "3.00,1.00,0",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/physics/props/cardboard_carton_biscuits/impact_a_01.vsnd",
-    "sounds/physics/props/cardboard_carton_biscuits/impact_a_02.vsnd",
-    "sounds/physics/props/cardboard_carton_biscuits/impact_a_03.vsnd"
+    "sounds/impacts/melee/bluntweapon/wood-1.vsnd",
+    "sounds/impacts/melee/bluntweapon/wood-2.vsnd",
+    "sounds/impacts/melee/bluntweapon/wood-3.vsnd",
+    "sounds/impacts/melee/bluntweapon/wood-4.vsnd"
   ],
   "Occlusion": true,
-  "Reflections": true,
   "AirAbsorption": true,
   "Transmission": true,
   "OcclusionRadius": 64,
