@@ -3,6 +3,7 @@ using VoxelWorld.IO.NamedBinaryTags;
 using VoxelWorld.IO.NamedBinaryTags.Collections;
 using VoxelWorld.Mth.Enums;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -13,7 +14,7 @@ using System.Text.Json.Serialization;
 namespace VoxelWorld.Mth;
 
 [JsonConverter(typeof(Vector2IntBJsonConverter))]
-public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INbtWritable, INbtStaticReadable<Vector2IntB>
+public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, IEnumerable<int>, INbtWritable, INbtStaticReadable<Vector2IntB>
 {
     public static readonly Vector2IntB One = new(1);
     public static readonly Vector2IntB Zero = new(0);
@@ -317,6 +318,13 @@ public struct Vector2IntB : IEquatable<Vector2IntB>, IParsable<Vector2IntB>, INb
 
     public static bool TryParse(string? str, out Vector2IntB result) => TryParse(str, CultureInfo.InvariantCulture, out result);
 
+
+    public readonly IEnumerator<int> GetEnumerator()
+    {
+        yield return x;
+        yield return y;
+    }
+    readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public override readonly string ToString() => ToString("0");
 
