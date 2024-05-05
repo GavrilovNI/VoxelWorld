@@ -222,19 +222,12 @@ public struct Vector3IntB : IEquatable<Vector3IntB>, IParsable<Vector3IntB>, INb
         return true;
     }
 
-    public static Vector3 CubicBezier(Vector3 source, Vector3 target, Vector3 sourceTangent, Vector3 targetTangent, float t) =>
-        Vector3.CubicBezier(source, target, sourceTangent, targetTangent, t);
-
     public readonly Vector3IntB SubtractDirection(Vector3IntB direction, int strength = 1) => this - direction * Dot(direction) * strength;
     public readonly Vector3 SubtractDirection(Vector3 direction, float strength = 1f) => this - direction * Dot(direction) * strength;
 
     public readonly Vector3 SnapToGrid(float gridSize, bool sx = true, bool sy = true, bool sz = true) => ((Vector3)this).SnapToGrid(gridSize, sx, sy, sz);
 
-    public static Vector3 SmoothDamp(Vector3 current, Vector3 target, ref Vector3 velocity, float smoothTime, float deltaTime) =>
-        Vector3.SmoothDamp(current, target, ref velocity, smoothTime, deltaTime);
-
-    public static float GetAngle(Vector3 v1, Vector3 v2) => Vector3.GetAngle(v1, v2);
-    public readonly float Angle(Vector3 v2) => GetAngle(this, v2);
+    public readonly float Angle(Vector3 v2) => Vector3.GetAngle(this, v2);
     public static Angles VectorAngle(Vector3 vec) => Vector3.VectorAngle(vec);
 
     public readonly Vector3 AddClamped(Vector3 toAdd, float maxLength) => ((Vector3)this).AddClamped(toAdd, maxLength);
@@ -334,7 +327,6 @@ public struct Vector3IntB : IEquatable<Vector3IntB>, IParsable<Vector3IntB>, INb
     public static explicit operator Vector3IntB(Vector2 vector) => new((int)vector.x, (int)vector.y, 0);
     public static explicit operator Vector3IntB(Vector3 vector) => new((int)vector.x, (int)vector.y, (int)vector.z);
     public static explicit operator Vector3IntB(Vector4 vector) => new((int)vector.x, (int)vector.y, (int)vector.z);
-    public static explicit operator Vector3IntB(Color color) => (Vector3IntB)(Vector3)color;
     public static explicit operator Vector3IntB(System.Numerics.Vector3 vector) => new((int)vector.X, (int)vector.Y, (int)vector.Z);
     public static implicit operator Vector3IntB(int all) => new(all);
 
