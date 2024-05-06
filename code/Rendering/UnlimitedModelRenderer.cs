@@ -136,6 +136,7 @@ public class UnlimitedModelRenderer : Component, IEnumerable<ModelRenderer>
             renderer.MaterialOverride = MaterialOverride;
             renderer.Tint = Tint;
             renderer.RenderType = RenderType;
+            renderer.Enabled = true;
         }
 
         RequiredCount = count;
