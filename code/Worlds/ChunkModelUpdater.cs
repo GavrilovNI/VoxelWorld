@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using VoxelWorld.Rendering;
+using VoxelWorld.Data;
 
 namespace VoxelWorld.Worlds;
 
@@ -376,7 +377,7 @@ public class ChunkModelUpdater : Component
     // Thread safe
     protected virtual void BuildVisualMesh(UnlimitedMesh<ComplexVertex>.Builder opaqueMeshBuilder, UnlimitedMesh<ComplexVertex>.Builder transparentMeshBuilder)
     {
-        BuildMesh((Vector3Byte localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
+        BuildMesh((Vector3Byte localPosition, BlockState blockState, DirectionSet visibleFaces) =>
         {
             var builder = blockState.Block.Properties.IsTransparent ? transparentMeshBuilder : opaqueMeshBuilder;
             BlockMeshMap.GetVisual(blockState)!.AddToBuilder(builder, visibleFaces, localPosition * MathV.UnitsInMeter);
@@ -386,7 +387,7 @@ public class ChunkModelUpdater : Component
     // Thread safe
     protected virtual void BuildPhysicsMesh(ModelBuilder builder)
     {
-        BuildMesh((Vector3Byte localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
+        BuildMesh((Vector3Byte localPosition, BlockState blockState, DirectionSet visibleFaces) =>
         {
             BlockMeshMap.GetPhysics(blockState)!.AddAsCollisionMesh(builder, visibleFaces, localPosition * MathV.UnitsInMeter);
         }, BlockMeshType.Physics);
@@ -395,17 +396,17 @@ public class ChunkModelUpdater : Component
     // Thread safe
     protected virtual void BuildInteractionMesh(ModelBuilder builder)
     {
-        BuildMesh((Vector3Byte localPosition, BlockState blockState, HashSet<Direction> visibleFaces) =>
+        BuildMesh((Vector3Byte localPosition, BlockState blockState, DirectionSet visibleFaces) =>
         {
             BlockMeshMap.GetInteraction(blockState)!.AddAsCollisionMesh(builder, visibleFaces, localPosition * MathV.UnitsInMeter);
         }, BlockMeshType.Interaction);
     }
 
-    protected delegate void BuildMeshAction(Vector3Byte localPosition, BlockState blockState, HashSet<Direction> visibleFaces);
+    protected delegate void BuildMeshAction(Vector3Byte localPosition, BlockState blockState, DirectionSet visibleFaces);
     // Thread safe
     protected virtual void BuildMesh(BuildMeshAction action, BlockMeshType meshType)
     {
-        HashSet<Direction> visibleFaces = new();
+        DirectionSet visibleFaces = new();
         for(byte x = 0; x < Chunk.Size.x; ++x)
         {
             for(byte y = 0; y < Chunk.Size.y; ++y)

@@ -4,6 +4,7 @@ using VoxelWorld.Mth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VoxelWorld.Data;
 
 namespace VoxelWorld.Meshing;
 
@@ -80,7 +81,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         return new(sidedElements, notSidedElements);
     }
 
-    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
+    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, DirectionSet sidesToAdd, Vector3 offset = default)
     {
         AddNotSidedPartToBuilder(builder, offset);
         foreach(var face in sidesToAdd)
@@ -98,9 +99,9 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             builder.Add(element, offset);
     }
 
-    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) => AddToBuilder(builder, Direction.AllSet, offset);
+    public void AddToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) => AddToBuilder(builder, DirectionSet.All, offset);
     // thread safe
-    public void AddAsCollisionMesh(ModelBuilder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
+    public void AddAsCollisionMesh(ModelBuilder builder, DirectionSet sidesToAdd, Vector3 offset = default)
     {
         _notSidedElements.AddAsCollisionMesh(builder, offset);
         foreach(var direction in sidesToAdd)
@@ -111,10 +112,10 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
     }
 
     // thread safe
-    public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => AddAsCollisionMesh(builder, Direction.AllSet, offset);
+    public void AddAsCollisionMesh(ModelBuilder builder, Vector3 offset = default) => AddAsCollisionMesh(builder, DirectionSet.All, offset);
 
     // thread safe
-    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default)
+    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, DirectionSet sidesToAdd, Vector3 offset = default)
     {
         var vertices = _notSidedElements.CombineVertices();
         foreach(var direction in sidesToAdd)
@@ -127,7 +128,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
         builder.AddCollisionHull(verticesResult, center, rotation);
     }
     // thread safe
-    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) => AddAsCollisionHull(builder, center, rotation, Direction.AllSet, offset);
+    public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, Vector3 offset = default) => AddAsCollisionHull(builder, center, rotation, DirectionSet.All, offset);
 
     private void RecalculateBounds()
     {
@@ -332,7 +333,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             return this;
         }
 
-        public void AddToBuilder(UnlimitedMesh<V>.Builder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
+        public void AddToBuilder(UnlimitedMesh<V>.Builder builder, DirectionSet sidesToAdd, Vector3 offset = default) =>
             Mesh.AddToBuilder(builder, sidesToAdd, offset);
         public void AddNotSidedPartToBuilder(UnlimitedMesh<V>.Builder builder, Vector3 offset = default) =>
             Mesh.AddNotSidedPartToBuilder(builder, offset);
@@ -342,7 +343,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             Mesh.AddToBuilder(builder, offset);
 
         // thread safe if builder is not being changed during execution
-        public void AddAsCollisionMesh(ModelBuilder builder, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
+        public void AddAsCollisionMesh(ModelBuilder builder, DirectionSet sidesToAdd, Vector3 offset = default) =>
             Mesh.AddAsCollisionMesh(builder, sidesToAdd, offset);
 
         // thread safe if builder is not being changed during execution
@@ -350,7 +351,7 @@ public sealed class SidedMesh<V> : ISidedMeshPart<V> where V : unmanaged, IVerte
             Mesh.AddAsCollisionMesh(builder, offset);
 
         // thread safe if builder is not being changed during execution
-        public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, IReadOnlySet<Direction> sidesToAdd, Vector3 offset = default) =>
+        public void AddAsCollisionHull(ModelBuilder builder, Vector3 center, Rotation rotation, DirectionSet sidesToAdd, Vector3 offset = default) =>
             Mesh.AddAsCollisionHull(builder, center, rotation, sidesToAdd, offset);
 
         // thread safe if builder is not being changed during execution
