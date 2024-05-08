@@ -52,7 +52,7 @@ public abstract class Entity : Component
         TypeId = typeId;
 
         _oldTransform = Transform.World;
-        Transform.OnTransformChanged = () =>
+        Transform.OnTransformChanged += () =>
         {
             if(_oldTransform.Position.AlmostEqual(Transform.Position))
                 return;
@@ -132,6 +132,9 @@ public abstract class Entity : Component
         _oldTransform = Transform.World;
         OnTransformChanged(oldTransform, Transform.World);
         TransformChanged?.Invoke(this, oldTransform, Transform.World);
+
+        if(!Enabled)
+            Transform.ClearInterpolation();
     }
 
     protected virtual void OnTransformChanged(Transform oldTransform, Transform newTransform) { }
