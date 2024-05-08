@@ -22,8 +22,11 @@ public class GrassBlock : SimpleBlock
     {
     }
 
-    protected virtual bool CanStayGrass(IWorldAccessor world, Vector3IntB position) =>
-        world.GetBlockState(position + Vector3IntB.Up).IsAir();
+    protected virtual bool CanStayGrass(IWorldAccessor world, Vector3IntB position)
+    {
+        var blockStateOnTop = world.GetBlockState(position + Vector3IntB.Up);
+        return blockStateOnTop.IsAir() || blockStateOnTop.Block.Properties.IsTransparent;
+    }
 
     protected virtual bool TrySpread(IWorldAccessor world, Vector3IntB spreadPosition)
     {
