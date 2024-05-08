@@ -29,12 +29,12 @@ public class World : Component, IWorldAccessor, ITickable
     public event Action<Vector3IntB>? ChunkLoaded;
     public event Action<Vector3IntB>? ChunkUnloaded;
 
-    public WorldOptions WorldOptions { get; private set; } = new();
+    public WorldOptions Options { get; private set; } = new();
     
     [Property] protected GameObject? ChunksParent { get; set; }
     [Property] protected ChunksCreator ChunksCreator { get; set; } = null!;
     [Property] public BBoxInt LimitsInChunks { get; private set; } = new BBoxInt(new Vector3IntB(-10000, -10000, -16), new Vector3IntB(10001, 10001, 17));
-    [Property] public BBoxInt Limits => LimitsInChunks * WorldOptions.ChunkSize;
+    [Property] public BBoxInt Limits => LimitsInChunks * Options.ChunkSize;
     [Property] protected float EntitiesLimitThreshold { get; set; } = 32;
     [Property] protected bool TickByItself { get; set; } = true;
     [Property] protected bool IsService { get; set; } = false;
@@ -42,7 +42,7 @@ public class World : Component, IWorldAccessor, ITickable
     public InitializationStatus InitializationStatus { get; private set; } = InitializationStatus.NotInitialized;
     public new ModedId Id { get; private set; }
     public BaseFileSystem? WorldFileSystem { get; private set; }
-    public Vector3Byte ChunkSize => WorldOptions.ChunkSize;
+    public Vector3Byte ChunkSize => Options.ChunkSize;
 
     public Random Random { get; protected set; } = new ThreadSafeRandom();
 
@@ -74,12 +74,12 @@ public class World : Component, IWorldAccessor, ITickable
         WorldSaveHelper saveHelper = new(WorldFileSystem);
         if(saveHelper.TryReadWorldOptions(out var worldOptions))
         {
-            WorldOptions = worldOptions;
+            Options = worldOptions;
         }
         else
         {
-            WorldOptions = defaultWorldOptions;
-            saveHelper.SaveWorldOptions(WorldOptions);
+            Options = defaultWorldOptions;
+            saveHelper.SaveWorldOptions(Options);
         }
 
         if(!OutOfLimitsChunk.IsValid())
@@ -179,7 +179,7 @@ public class World : Component, IWorldAccessor, ITickable
         foreach(var chunk in Chunks)
             chunk.Tick();
 
-        var randomTickBlocksCountPerChunk = (ChunkSize.x * ChunkSize.y * ChunkSize.z * WorldOptions.RandomTickSpeed).FloorToInt();
+        var randomTickBlocksCountPerChunk = (ChunkSize.x * ChunkSize.y * ChunkSize.z * Options.RandomTickSpeed).FloorToInt();
         foreach(var chunk in Chunks)
             chunk.TickRandom(randomTickBlocksCountPerChunk);
     }

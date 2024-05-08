@@ -21,7 +21,7 @@ public class WorldGenerator : Component, IWorldInitializationListener
         DensityNoiseSettings = DensityNoiseSettings with { Seed = seed };
     }
 
-    public void OnWorldInitialized(World world) => SetSeed(world.WorldOptions.Seed);
+    public void OnWorldInitialized(World world) => SetSeed(world.Options.Seed);
 
     protected bool ShouldPlaceBlock(in Vector3IntB position, float surfaceHeight)
     {

@@ -17,7 +17,7 @@ public class ChunkLoader : ChunkCreationStage, IWorldInitializationListener
     public void OnWorldInitialized(World world)
     {
         WorldFileSystem = world.WorldFileSystem!;
-        WorldOptions = world.WorldOptions;
+        WorldOptions = world.Options;
     }
 
     public override async Task<bool> TryProcess(Chunk chunk, CancellationToken cancellationToken)

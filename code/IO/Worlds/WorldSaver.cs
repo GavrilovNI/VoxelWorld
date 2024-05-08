@@ -17,7 +17,7 @@ public class WorldSaver : Component, ISaver
 
     protected static GameSaveHelper GameSaveHelper => GameController.Instance!.CurrentGameSaveHelper!;
     protected BaseFileSystem WorldFileSystem => World.WorldFileSystem!;
-    protected WorldOptions WorldOptions => World.WorldOptions;
+    protected WorldOptions WorldOptions => World.Options;
 
 
     public virtual async Task<bool> Save()
