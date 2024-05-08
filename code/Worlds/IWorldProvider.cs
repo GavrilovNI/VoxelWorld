@@ -1,6 +1,7 @@
 ﻿using VoxelWorld.Mth;
 using VoxelWorld.Registries;
 using System;
+using VoxelWorld.Data;
 
 namespace VoxelWorld.Worlds;
 
@@ -11,6 +12,7 @@ public interface IWorldProvider : IBlockStateProvider, IBlockEntityProvider, IWo
 
     ModedId Id { get; }
     BBoxInt Limits { get; }
+    WorldOptions Options { get; }
 
     bool HasChunk(Vector3IntB chunkPosition);
     bool IsChunkInLimits(Vector3IntB chunkPosition);
