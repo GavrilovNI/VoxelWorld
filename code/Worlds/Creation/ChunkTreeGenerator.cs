@@ -82,13 +82,17 @@ public class ChunkTreeGenerator : ChunkCreationStage
     protected virtual async Task PlaceTree(Chunk chunk, Vector3IntB localPosition)
     {
         var blocks = BaseMod.Instance!.Blocks;
+        var dirt = blocks.Dirt.DefaultBlockState;
         var log = blocks.WoodLog.DefaultBlockState.With(PillarBlock.AxisProperty, Axis.Z);
         var leaves = blocks.TreeLeaves.DefaultBlockState;
 
         const int leavesHalfWidth = 1;
         const int leavesMinHeigth = 2;
 
-        List<Task> tasks = new();
+        List<Task> tasks = new()
+        {
+            SetBlockState(chunk, localPosition + Vector3IntB.Down, dirt)
+        };
 
         for(int i = 0; i < TrunkHeight; ++i)
             tasks.Add(SetBlockState(chunk, localPosition + new Vector3IntB(0, 0, i), log));
