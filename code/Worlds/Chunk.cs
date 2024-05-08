@@ -373,9 +373,9 @@ public class Chunk : Component, IBlockStateAccessor, IBlockEntityProvider, ITick
         {
             lock(_entities)
             {
-                MarkSaved(saveMarker);
                 var blocks = Blocks.IsSaved ? null : SaveBlocks();
                 var entities = SaveEntities();
+                MarkSaved(saveMarker);
                 return (blocks, entities);
             }
         }
